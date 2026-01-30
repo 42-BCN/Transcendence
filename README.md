@@ -1,389 +1,209 @@
 _This project has been created as part of the 42 curriculum by camanica-, capapes, mafontser, mvelazqu._
 
-
-# Full Web / Full-Stack Model
+# Full Web / Full-Stack Model (Adjusted)
 
 Web / Full-Stack Development
 │
 ├─ 1) Foundations (the Web platform)
 │  │
-│  ├─ <details open>
-│  │   <summary><strong>HTML</strong></summary>
+│  ├─ HTML
+│  │  ├─ what: structure + semantics
+│  │  └─ depends on: Browser to render
 │  │
-│  │   - **what:** structure + semantics  
-│  │   - **depends on:** Browser to render
+│  ├─ CSS
+│  │  ├─ what: layout + visuals
+│  │  └─ depends on: Browser to apply
 │  │
-│  │   </details>
+│  ├─ JavaScript
+│  │  ├─ what: behavior + logic
+│  │  └─ runs on: Browser and/or Node.js
 │  │
-│  ├─ <details open>
-│  │   <summary><strong>CSS</strong></summary>
-│  │
-│  │   - **what:** layout + visuals  
-│  │   - **depends on:** Browser to apply
-│  │
-│  │   </details>
-│  │
-│  ├─ <details open>
-│  │   <summary><strong>JavaScript</strong></summary>
-│  │
-│  │   - **what:** behavior + logic  
-│  │   - **runs on:** Browser and/or Node.js
-│  │
-│  │   </details>
-│  │
-│  └─ <details open>
-│      <summary><strong>TypeScript</strong></summary>
-│
-│      - **what:** typed JavaScript (dev-time safety)  
-│      - **depends on:** compiler/tooling → outputs JavaScript
-│
-│      </details>
+│  └─ TypeScript
+│     ├─ what: typed JavaScript (dev-time safety)
+│     └─ depends on: compiler/tooling → outputs JavaScript
 │
 ├─ 2) Data & Config Formats (structure & exchange)
 │  │
-│  ├─ <details>
-│  │   <summary><strong>JSON</strong></summary>
+│  ├─ JSON
+│  │  ├─ what: API payloads + config
+│  │  └─ used by: frontend ↔ backend data exchange
 │  │
-│  │   - **what:** API payloads + config  
-│  │   - **used by:** frontend ↔ backend data exchange
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>YAML</strong></summary>
-│
-│      - **what:** configuration format  
-│      - **used by:** Docker Compose, CI/CD, infrastructure config
-│
-│      </details>
+│  └─ YAML
+│     ├─ what: configuration format
+│     └─ used by: Docker Compose, CI/CD, infrastructure config
 │
 ├─ 3) UI & Application Layer
 │  │
-│  ├─ <details open>
-│  │   <summary><strong>React</strong></summary>
+│  ├─ React
+│  │  ├─ what: UI library (components)
+│  │  └─ depends on: JavaScript/TypeScript + Browser runtime
 │  │
-│  │   - **what:** UI library (components)  
-│  │   - **depends on:** JavaScript/TypeScript + Browser runtime
+│  ├─ Next.js
+│  │  ├─ what: React framework (routing, SSR/SSG, server features)
+│  │  └─ depends on: React + Node.js (server) + Browser (client)
 │  │
-│  │   </details>
+│  ├─ Tailwind CSS
+│  │  ├─ what: utility-first styling system
+│  │  └─ depends on: build tooling to generate CSS → consumed by Browser
 │  │
-│  ├─ <details open>
-│  │   <summary><strong>Next.js</strong></summary>
+│  ├─ Headless UI (category)
+│  │  ├─ what: behavior/accessibility patterns without styling
+│  │  └─ examples: Radix UI / React Aria / component libraries (as choices in UI ecosystem)
 │  │
-│  │   - **what:** React framework (routing, SSR/SSG, server features)  
-│  │   - **depends on:** React + Node.js (server) + Browser (client)
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>Tailwind CSS</strong></summary>
-│  │
-│  │   - **what:** utility-first styling system  
-│  │   - **depends on:** build tooling to generate CSS → consumed by Browser
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>Headless UI</strong></summary>
-│  │
-│  │   - **what:** behavior/accessibility patterns without styling  
-│  │   - **examples:** Radix UI / React Aria / component libraries
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>three.js</strong></summary>
-│
-│      - **what:** 3D graphics library for the web  
-│      - **depends on:** Browser (WebGL) + JavaScript/TypeScript
-│
-│      </details>
+│  └─ three.js
+│     ├─ what: 3D graphics library for the web
+│     └─ depends on: Browser (WebGL) + JavaScript/TypeScript
 │
 ├─ 4) Execution Environments (where code runs)
 │  │
-│  ├─ <details>
-│  │   <summary><strong>Browser</strong></summary>
+│  ├─ Browser
+│  │  ├─ runs: frontend JavaScript
+│  │  └─ consumes: HTTP APIs
 │  │
-│  │   - runs: frontend JavaScript  
-│  │   - consumes: HTTP APIs
+│  ├─ Node.js
+│  │  ├─ runs: Next.js server + tooling
+│  │  └─ can host: HTTP APIs
 │  │
-│  │   </details>
-│  │
-│  ├─ <details open>
-│  │   <summary><strong>Node.js</strong></summary>
-│  │
-│  │   - runs: Next.js server + tooling  
-│  │   - can host: HTTP APIs
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>Python</strong></summary>
-│
-│      - runs: backend services (e.g., Django)  
-│      - depends on: Python runtime environment
-│
-│      </details>
+│  └─ Python
+│     ├─ runs: backend services (e.g., Django)
+│     └─ depends on: Python runtime environment
 │
 ├─ 5) Design & UX Workflow
 │  │
-│  └─ <details>
-│      <summary><strong>Figma</strong></summary>
-│
-│      - what: design source of truth (layouts, components, tokens)  
-│      - feeds: implementation (React + Tailwind)
-│
-│      </details>
+│  └─ Figma
+│     ├─ what: design source of truth (layouts, components, tokens)
+│     └─ feeds: implementation (React + Tailwind)
 │
 ├─ 6) Communication & Security
 │  │
-│  ├─ <details>
-│  │   <summary><strong>HTTP APIs</strong></summary>
+│  ├─ HTTP APIs
+│  │  ├─ what: request/response boundary (often REST/JSON)
+│  │  └─ used by: Browser, Postman
 │  │
-│  │   - what: request/response boundary (often REST/JSON)  
-│  │   - used by: Browser, Postman
+│  ├─ Cookies
+│  │  ├─ what: browser-stored session/auth data
+│  │  └─ depends on: Browser + server Set-Cookie
 │  │
-│  │   </details>
+│  ├─ JWT
+│  │  ├─ what: signed auth/claims token
+│  │  └─ transported via: headers or cookies
 │  │
-│  ├─ <details>
-│  │   <summary><strong>Cookies</strong></summary>
+│  ├─ Hashing
+│  │  ├─ what: one-way password protection
+│  │  └─ used by: backend auth flows
 │  │
-│  │   - what: browser-stored session/auth data  
-│  │   - depends on: Browser + server Set-Cookie
+│  ├─ Salting
+│  │  ├─ what: random data added before hashing (prevents rainbow-table reuse)
+│  │  └─ used with: hashing for stored credentials
 │  │
-│  │   </details>
+│  ├─ CORS
+│  │  ├─ what: browser-enforced cross-origin rules
+│  │  └─ depends on: Browser + server headers
 │  │
-│  ├─ <details>
-│  │   <summary><strong>JWT</strong></summary>
-│  │
-│  │   - what: signed auth/claims token  
-│  │   - transported via: headers or cookies
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>Hashing</strong></summary>
-│  │
-│  │   - what: one-way password protection  
-│  │   - used by: backend auth flows
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>Salting</strong></summary>
-│  │
-│  │   - what: random data added before hashing  
-│  │   - used with: hashing for stored credentials
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>CORS</strong></summary>
-│  │
-│  │   - what: browser-enforced cross-origin rules  
-│  │   - depends on: Browser + server headers
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>Environment secrets</strong></summary>
+│  └─ Environment secrets
+│     ├─ what: keys/passwords not committed to git
+│     └─ depends on: runtime environment (.env/CI/secret manager)
 │
-│      - what: keys/passwords not committed to git  
-│      - depends on: runtime environment (.env/CI/secret manager)
-│
-│      </details>
-│
-├─ 7) Backend Frameworks
+├─ 7) Backend Frameworks (server-side application layer)
 │  │
-│  └─ <details>
-│      <summary><strong>Django</strong></summary>
-│
-│      - what: Python web framework (routing, views, auth patterns)  
-│      - depends on: Python runtime + database driver/ORM
-│
-│      </details>
+│  └─ Django
+│     ├─ what: Python web framework (routing, views, auth patterns)
+│     └─ depends on: Python runtime + database driver/ORM (if used)
 │
 ├─ 8) Data Layer (store and retrieve)
 │  │
-│  ├─ <details open>
-│  │   <summary><strong>PostgreSQL</strong></summary>
+│  ├─ PostgreSQL
+│  │  ├─ what: relational database (persistent truth)
+│  │  └─ depends on: running DB service (local/compose/cloud)
 │  │
-│  │   - what: relational database (persistent truth)  
-│  │   - depends on: running DB service
+│  ├─ SQL
+│  │  ├─ what: query language for relational DBs
+│  │  └─ used by: debugging, performance tuning, DB access layers
 │  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>SQL</strong></summary>
-│  │
-│  │   - what: query language for relational DBs  
-│  │   - used by: debugging, performance tuning
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>ORM</strong></summary>
-│
-│      - what: maps objects ↔ tables  
-│      - depends on: DB connection + schema
-│
-│      </details>
+│  └─ ORM
+│     ├─ what: maps objects ↔ tables, abstracts SQL
+│     └─ depends on: DB connection + schema definitions
 │
 ├─ 9) Package Management & Dependencies
 │  │
-│  ├─ <details>
-│  │   <summary><strong>npm / npx</strong></summary>
+│  ├─ npm / npx
+│  │  ├─ what: install/run JS tooling and libraries
+│  │  └─ depends on: Node.js
 │  │
-│  │   - what: install/run JS tooling  
-│  │   - depends on: Node.js
+│  ├─ Python package management
+│  │  ├─ pip
+│  │  └─ Poetry (optional alternative)
 │  │
-│  │   </details>
+│  ├─ package.json
+│  │  └─ defines: JS dependencies + scripts
 │  │
-│  ├─ <details>
-│  │   <summary><strong>pip / Poetry</strong></summary>
-│  │
-│  │   - what: Python package management
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>package.json</strong></summary>
-│  │
-│  │   - defines: JS dependencies + scripts
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>node_modules</strong></summary>
-│
-│      - contains: installed JS dependencies
-│
-│      </details>
+│  └─ node_modules
+│     └─ contains: installed JS dependencies
 │
 ├─ 10) Tooling & Developer Utilities
 │  │
-│  ├─ <details>
-│  │   <summary><strong>TypeScript Compiler</strong></summary>
+│  ├─ TypeScript compiler
+│  │  └─ transforms: TypeScript → JavaScript
 │  │
-│  │   - transforms: TypeScript → JavaScript
+│  ├─ Vite (if used)
+│  │  ├─ what: dev server + bundler (frontend-focused)
+│  │  └─ depends on: Node.js + project config
 │  │
-│  │   </details>
+│  ├─ Zod
+│  │  ├─ what: runtime schema validation
+│  │  └─ used for: validating API inputs/outputs and shared data contracts
 │  │
-│  ├─ <details>
-│  │   <summary><strong>Vite</strong></summary>
-│  │
-│  │   - what: dev server + bundler  
-│  │   - depends on: Node.js + config
-│  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>Zod</strong></summary>
-│  │
-│  │   - what: runtime schema validation  
-│  │   - used for: API validation
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>Seed data</strong></summary>
+│  └─ Seed data
+│     ├─ what: initial/dev/demo data for the database
+│     └─ depends on: database + schema (often executed via scripts/ORM)
 │
-│      - what: initial/dev/demo data  
-│      - depends on: database + schema
-│
-│      </details>
-│
-├─ 11) API Contracts & Manual Testing
+├─ 11) API Contracts & Manual API Testing
 │  │
-│  ├─ <details>
-│  │   <summary><strong>Swagger / OpenAPI</strong></summary>
+│  ├─ Swagger / OpenAPI
+│  │  ├─ what: API contract & documentation
+│  │  └─ feeds: frontend integration + Postman collections
 │  │
-│  │   - what: API contract & documentation  
-│  │   - feeds: frontend + Postman
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│     <summary><strong>Postman</strong></summary>
-│
-│      - what: API client for manual testing  
-│  │   - depends on: reachable APIs
-│
-│      </details>
+│  └─ Postman
+│     ├─ what: API client for manual testing
+│     └─ depends on: reachable HTTP APIs
 │
 ├─ 12) Code Quality, Auditing & Accessibility
 │  │
-│  ├─ <details>
-│  │   <summary><strong>ESLint</strong></summary>
+│  ├─ ESLint
+│  │  └─ depends on: Node.js + config
 │  │
-│  │   - depends on: Node.js + config
+│  ├─ Prettier
+│  │  └─ depends on: Node.js + config
 │  │
-│  │   </details>
-│  │
-│  ├─ <details>
-│  │   <summary><strong>Prettier</strong></summary>
-│  │
-│  │   - depends on: Node.js + config
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>Lighthouse</strong></summary>
-│
-│      - what: audits performance, accessibility, SEO  
-│  │   - depends on: running site
-│
-│      </details>
+│  └─ Lighthouse
+│     ├─ what: audits performance, accessibility, SEO, best practices
+│     └─ depends on: running site/app in a browser context
 │
 ├─ 13) Version Control & Collaboration
 │  │
-│  └─ <details open>
-│      <summary><strong>Git</strong></summary>
-│
-│      - tracks: history, branching, collaboration
-│
-│      </details>
+│  └─ Git
+│     └─ tracks: history, branching, collaboration
 │
 ├─ 14) Environment & Infrastructure
 │  │
-│  ├─ <details open>
-│  │   <summary><strong>Docker</strong></summary>
+│  ├─ Docker
+│  │  ├─ what: container runtime for consistent environments
+│  │  └─ runs: app + DB as containers
 │  │
-│  │   - what: container runtime  
-│  │   - runs: app + DB
-│  │
-│  │   </details>
-│  │
-│  └─ <details>
-│      <summary><strong>Docker Compose</strong></summary>
-│
-│      - what: multi-container orchestration  
-│  │   - depends on: Docker + YAML
-│
-│      </details>
+│  └─ Docker Compose
+│     ├─ what: multi-container orchestration (dev/CI)
+│     └─ depends on: Docker + docker-compose.yml (YAML)
 │
 └─ 15) Monitoring & Observability
    │
-   ├─ <details>
-   │   <summary><strong>Prometheus</strong></summary>
+   ├─ Prometheus
+   │  ├─ what: metrics collection + time-series storage
+   │  └─ depends on: exported metrics endpoints/instrumentation
    │
-   │   - what: metrics collection  
-   │   - depends on: instrumentation
+   ├─ Grafana
+   │  ├─ what: dashboards/visualization for metrics
+   │  └─ depends on: a metrics source (e.g., Prometheus)
    │
-   │   </details>
-   │
-   ├─ <details>
-   │   <summary><strong>Grafana</strong></summary>
-   │
-   │   - what: dashboards  
-   │   - depends on: Prometheus
-   │
-   │   </details>
-   │
-   └─ <details>
-       <summary><strong>ELK Stack</strong></summary>
-
-       - what: log ingestion, search, visualization  
-       - depends on: log shipping pipeline
-
-       </details>
+   └─ ELK (Elasticsearch + Logstash + Kibana)
+      ├─ what: log ingestion, search, and visualization
+      └─ depends on: application/system logs shipping pipeline
