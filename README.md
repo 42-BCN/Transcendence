@@ -5,196 +5,196 @@ _This project has been created as part of the 42 curriculum by camanica-, capape
 ### 1. Foundations (the Web platform)
 
 - **HTML**
-	- <span style="color: gray">what: structure + semantics</span>  
-	- <span style="color: gray">depends on: Browser to render</span>  
+  - what: structure + semantics
+  - depends on: Browser to render
 
-- **CSS** 
-	- <span style="color: gray">what: layout + visuals</span>  
-	- <span style="color: gray">depends on: Browser to apply</span>  
+- **CSS**
+  - what: layout + visuals
+  - depends on: Browser to apply
 
-- **JavaScript**  
-	- <span style="color: gray">what: behavior + logic</span>  
-	- <span style="color: gray">runs on: Browser and/or Node.js</span>  
+- **JavaScript**
+  - what: behavior + logic
+  - runs on: Browser and/or Node.js
 
-- **TypeScript**  
-	- <span style="color: gray">what: typed JavaScript (dev-time safety)</span>  
-	- <span style="color: gray">depends on: compiler/tooling → outputs JavaScript</span>  
+- **TypeScript**
+  - what: typed JavaScript (dev-time safety)
+  - depends on: compiler/tooling → outputs JavaScript
 
 ### 2. Data & Config Formats (structure & exchange)
 
-- **JSON**  
-	- <span style="color: gray">what: API payloads + config</span>  
-	- <span style="color: gray">used by: frontend ↔ backend data exchange</span>  
+- **JSON**
+  - what: API payloads + config
+  - used by: frontend ↔ backend data exchange
 
-- **YAML**  
-	- <span style="color: gray">what: configuration format</span>  
-	- <span style="color: gray">used by: Docker Compose, CI/CD, infrastructure config</span>  
+- **YAML**
+  - what: configuration format
+  - used by: Docker Compose, CI/CD, infrastructure config
 
 ### 3. UI & Application Layer
 
-- **React**  
-	- <span style="color: gray">what: UI library (components)</span>  
-	- <span style="color: gray">depends on: JavaScript/TypeScript + Browser runtime</span>  
+- **React**
+  - what: UI library (components)
+  - depends on: JavaScript/TypeScript + Browser runtime
 
-- **Next.js**  
-	- <span style="color: gray">what: React framework (routing, SSR/SSG, server features)</span>  
-	- <span style="color: gray">depends on: React + Node.js (server) + Browser (client)</span>  
+- **Next.js**
+  - what: React framework (routing, SSR/SSG, server features)
+  - depends on: React + Node.js (server) + Browser (client)
 
-- **Tailwind CSS**  
-	- <span style="color: gray">what: utility-first styling system</span>  
-	- <span style="color: gray">depends on: build tooling → CSS → Browser</span>  
+- **Tailwind CSS**
+  - what: utility-first styling system
+  - depends on: build tooling → CSS → Browser
 
-- **Headless UI (category)**  
-	- <span style="color: gray">what: behavior/accessibility patterns without styling</span>  
-	- <span style="color: gray">examples: Radix UI / React Aria / component libraries</span>  
+- **Headless UI (category)**
+  - what: behavior/accessibility patterns without styling
+  - examples: Radix UI / React Aria / component libraries
 
-- **three.js**  
-	- <span style="color: gray">what: 3D graphics library for the web</span>  
-	- <span style="color: gray">depends on: Browser (WebGL) + JavaScript/TypeScript</span>  
+- **three.js**
+  - what: 3D graphics library for the web
+  - depends on: Browser (WebGL) + JavaScript/TypeScript
 
 ### 4. Execution Environments (where code runs)
 
-- **Browser**  
-	- <span style="color: gray">runs: frontend JavaScript</span>  
-	- <span style="color: gray">consumes: HTTP APIs</span>  
+- **Browser**
+  - runs: frontend JavaScript
+  - consumes: HTTP APIs
 
-- **Node.js**  
-	- <span style="color: gray">runs: Next.js server + tooling</span>  
-	- <span style="color: gray">can host: HTTP APIs</span>  
+- **Node.js**
+  - runs: Next.js server + tooling
+  - can host: HTTP APIs
 
-- **Python**  
-	- <span style="color: gray">runs: backend services (e.g., Django)</span>  
-	- <span style="color: gray">depends on: Python runtime environment</span>  
+- **Python**
+  - runs: backend services (e.g., Django)
+  - depends on: Python runtime environment
 
 ### 5. Design & UX Workflow
 
-- **Figma**  
-	- <span style="color: gray">what: design source of truth (layouts, components, tokens)</span>  
-	- <span style="color: gray">feeds: implementation (React + Tailwind)</span>  
+- **Figma**
+  - what: design source of truth (layouts, components, tokens)
+  - feeds: implementation (React + Tailwind)
 
 ### 6. Communication & Security
 
-- **HTTP APIs**  
-	- <span style="color: gray">what: request/response boundary (often REST/JSON)</span>  
-	- <span style="color: gray">used by: Browser, Postman</span>  
+- **HTTP APIs**
+  - what: request/response boundary (often REST/JSON)
+  - used by: Browser, Postman
 
-- **Cookies**  
-	- <span style="color: gray">what: browser-stored session/auth data</span>  
-	- <span style="color: gray">depends on: Browser + server Set-Cookie</span>  
+- **Cookies**
+  - what: browser-stored session/auth data
+  - depends on: Browser + server Set-Cookie
 
-- **JWT**  
-	- <span style="color: gray">what: signed auth/claims token</span>  
-	- <span style="color: gray">transported via: headers or cookies</span>  
+- **JWT**
+  - what: signed auth/claims token
+  - transported via: headers or cookies
 
-- **Hashing**  
-	- <span style="color: gray">what: one-way password protection</span>  
-	- <span style="color: gray">used by: backend auth flows</span>  
+- **Hashing**
+  - what: one-way password protection
+  - used by: backend auth flows
 
-- **Salting**  
-	- <span style="color: gray">what: random data added before hashing</span>  
-	- <span style="color: gray">used with: hashing for stored credentials</span>  
+- **Salting**
+  - what: random data added before hashing
+  - used with: hashing for stored credentials
 
-- **CORS**  
-	- <span style="color: gray">what: browser-enforced cross-origin rules</span>  
-	- <span style="color: gray">depends on: Browser + server headers</span>  
+- **CORS**
+  - what: browser-enforced cross-origin rules
+  - depends on: Browser + server headers
 
-- **Environment secrets**  
-	- <span style="color: gray">what: keys/passwords not committed to git</span>  
-	- <span style="color: gray">depends on: runtime environment (.env/CI/secret manager)</span>  
+- **Environment secrets**
+  - what: keys/passwords not committed to git
+  - depends on: runtime environment (.env/CI/secret manager)
 
 ### 7. Backend Frameworks
 
-- **Django**  
-	- <span style="color: gray">what: Python web framework</span>  
-	- <span style="color: gray">depends on: Python runtime + database layer</span>  
+- **Django**
+  - what: Python web framework
+  - depends on: Python runtime + database layer
 
 ### 8. Data Layer (store and retrieve)
 
-- **PostgreSQL**  
-	- <span style="color: gray">what: relational database (persistent truth)</span>  
-	- <span style="color: gray">depends on: running DB service</span>  
+- **PostgreSQL**
+  - what: relational database (persistent truth)
+  - depends on: running DB service
 
-- **SQL**  
-	- <span style="color: gray">what: query language</span>  
-	- <span style="color: gray">used by: debugging, tuning, access layers</span>  
+- **SQL**
+  - what: query language
+  - used by: debugging, tuning, access layers
 
-- **ORM**  
-	- <span style="color: gray">what: maps objects ↔ tables</span>  
-	- <span style="color: gray">depends on: DB connection + schema</span>  
+- **ORM**
+  - what: maps objects ↔ tables
+  - depends on: DB connection + schema
 
 ### 9. Package Management & Dependencies
 
-- **npm / npx**  
-	- <span style="color: gray">what: install/run JS tooling and libraries</span>  
-	- <span style="color: gray">depends on: Node.js</span>  
+- **npm / npx**
+  - what: install/run JS tooling and libraries
+  - depends on: Node.js
 
-- **pip / Poetry**  
-	- <span style="color: gray">what: Python packages</span>  
+- **pip / Poetry**
+  - what: Python packages
 
-- **package.json**  
-	- <span style="color: gray">defines: JS dependencies + scripts</span>  
+- **package.json**
+  - defines: JS dependencies + scripts
 
-- **node_modules**  
-	- <span style="color: gray">contains: installed JS dependencies</span>  
+- **node_modules**
+  - contains: installed JS dependencies
 
 ### 10. Tooling & Developer Utilities
 
-- **TypeScript compiler**  
-	- <span style="color: gray">transforms: TypeScript → JavaScript</span>  
+- **TypeScript compiler**
+  - transforms: TypeScript → JavaScript
 
-- **Vite**  
-	- <span style="color: gray">what: dev server + bundler</span>  
-	- <span style="color: gray">depends on: Node.js + project config</span>  
+- **Vite**
+  - what: dev server + bundler
+  - depends on: Node.js + project config
 
-- **Zod**  
-	- <span style="color: gray">what: runtime schema validation</span>  
-	- <span style="color: gray">used for: shared contracts</span>  
+- **Zod**
+  - what: runtime schema validation
+  - used for: shared contracts
 
-- **Seed data**  
-	- <span style="color: gray">what: initial/dev/demo DB data</span>  
-	- <span style="color: gray">depends on: database + schema</span>  
+- **Seed data**
+  - what: initial/dev/demo DB data
+  - depends on: database + schema
 
 ### 11. API Contracts & Manual API Testing
 
-- **Swagger / OpenAPI**  
-	- <span style="color: gray">what: API contract & documentation</span>  
+- **Swagger / OpenAPI**
+  - what: API contract & documentation
 
-- **Postman**  
-	- <span style="color: gray">what: API client for manual testing</span>  
+- **Postman**
+  - what: API client for manual testing
 
 ### 12. Code Quality, Auditing & Accessibility
 
-- **ESLint**  
-	- <span style="color: gray">what: linting</span>  
+- **ESLint**
+  - what: linting
 
-- **Prettier**  
-	- <span style="color: gray">what: formatting</span>  
+- **Prettier**
+  - what: formatting
 
-- **Lighthouse**  
-	- <span style="color: gray">what: performance, accessibility, SEO audits</span>  
+- **Lighthouse**
+  - what: performance, accessibility, SEO audits
 
 ### 13. Version Control & Collaboration
 
-- **Git**  
-	- <span style="color: gray">tracks: history, branching, collaboration</span>  
+- **Git**
+  - tracks: history, branching, collaboration
 
 ### 14. Environment & Infrastructure
 
-- **Docker**  
-	- <span style="color: gray">what: container runtime</span>  
-	- <span style="color: gray">runs: app + DB</span>  
+- **Docker**
+  - what: container runtime
+  - runs: app + DB
 
-- **Docker Compose**  
-	- <span style="color: gray">what: multi-container orchestration</span>  
-	- <span style="color: gray">depends on: YAML config</span>  
+- **Docker Compose**
+  - what: multi-container orchestration
+  - depends on: YAML config
 
 ### 15. Monitoring & Observability
 
-- **Prometheus**  
-	- <span style="color: gray">what: metrics collection</span>  
+- **Prometheus**
+  - what: metrics collection
 
-- **Grafana**  
-	- <span style="color: gray">what: dashboards</span>  
+- **Grafana**
+  - what: dashboards
 
-- **ELK Stack**  
-	- <span style="color: gray">what: centralized logging</span>  
+- **ELK Stack**
+  - what: centralized logging
