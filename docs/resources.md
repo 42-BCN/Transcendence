@@ -1,21 +1,27 @@
 # Resources
 
-## Docs.
+## Docs
 
-https://developer.mozilla.org/en-US/.
+https://developer.mozilla.org/en-US/
 
-## Learn.
+## Learn
 
-https://web.dev/.
-https://developer.mozilla.org/en-US/docs/Learn_web_development.
+https://web.dev/
 
-## Cheatsheets.
+https://developer.mozilla.org/en-US/docs/Learn_web_development
 
-https://css-tricks.com/snippets/css/a-guide-to-flexbox/.
-https://css-tricks.com/css-grid-layout-guide/.
+## Cheatsheets
 
-## CSS GAMES.
+https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 
-https://flexboxfroggy.com/.
-https://cssgridgarden.com/.
-https://flukeout.github.io/.
+https://css-tricks.com/css-grid-layout-guide/
+
+
+## CSS GAMES
+
+https://flexboxfroggy.com/
+
+https://cssgridgarden.com/
+
+https://flukeout.github.io/
+
