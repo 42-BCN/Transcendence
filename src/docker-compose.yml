@@ -1,0 +1,20 @@
+services:
+  hello:
+    image: nginxdemos/hello
+    expose:
+      - "80"
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8443:443"
+    env_file:
+      - .env.local
+    volumes:
+      - ./nginx:/etc/nginx
+      - ./${CERT_DIR:-../certs}:/etc/nginx/certs:ro
+    depends_on:
+      - hello
+    restart: unless-stopped
+
+# - [ ] not using container-name for services to avoid conflicts when multiple projects are run on the same host
+# networks are not defined to use default bridge network
