@@ -96,5 +96,5 @@ esac
 
 echo
 echo "🎉 Certificates ready in: $CERT_DIR"
-echo "📄 Certificate: $(pwd)/$CRT"
-echo "🔑 Private key:  $(pwd)/$KEY"
+echo "📄 Certificate: $(pwd)$CRT"
+echo "🔑 Private key:  $(pwd)$KEY"
