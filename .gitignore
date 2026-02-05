@@ -60,6 +60,7 @@ secrets/
 # Next.js build output
 # ------------------------------
 .next/
+/src/web/apps/web/dev
 out/
 dist/
 
