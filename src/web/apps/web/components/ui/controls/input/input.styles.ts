@@ -25,11 +25,11 @@ export type InputRacState = {
 };
 
 function inputState(state: InputRacState) {
-  return cn(
-    state.isDisabled && 'opacity-50 cursor-not-allowed',
-    state.isInvalid && 'border-red-500',
-    state.isFocusVisible && 'ring-2 ring-offset-2 ring-blue-500',
-  );
+  const disabled = state.isDisabled && 'opacity-50 cursor-not-allowed';
+  const focus = state.isFocusVisible && 'ring-2 ring-offset-2 ring-blue-500';
+  const valid = state.isInvalid && 'border-red-500';
+
+  return cn(disabled, focus, valid);
 }
 
 export function inputClass(args: {

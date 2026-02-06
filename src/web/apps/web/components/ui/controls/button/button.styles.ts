@@ -27,11 +27,11 @@ export type ButtonRacState = {
 };
 
 function buttonState(state: ButtonRacState) {
-  return cn(
-    state.isPressed && 'translate-y-px',
-    state.isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
-    state.isFocusVisible && 'ring ring-offset ring-black-500 rounded-none',
-  );
+  const pressed = state.isPressed && 'translate-y-px';
+  const disabled = state.isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none';
+  const focus = state.isFocusVisible && 'ring ring-offset ring-black-500 rounded-none';
+
+  return cn(pressed, disabled, focus);
 }
 
 export function buttonClass(args: {

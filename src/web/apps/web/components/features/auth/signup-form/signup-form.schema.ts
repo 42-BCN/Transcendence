@@ -2,15 +2,17 @@ import { z } from 'zod';
 
 export const signupSchema = z
   .object({
-    email: z.string().min(1, 'Email is required').email('Invalid email'),
-
-    password: z.string().min(8, 'At least 8 characters'),
-
-    confirmPassword: z.string(),
+    email: z.string().email('Enter a valid email'),
+    password: z.string().min(8, 'Minimum 8 characters'),
+    confirmPassword: z.string().min(8, 'Minimum 8 characters'),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password.length >= 8 && confirmPassword.length >= 8 && password !== confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['confirmPassword'], // <-- ensures errors.confirmPassword is set
+        message: 'Passwords do not match',
+      });
+    }
   });
-
-export type SignupFormData = z.infer<typeof signupSchema>;
+export type SignupValues = z.infer<typeof signupSchema>;

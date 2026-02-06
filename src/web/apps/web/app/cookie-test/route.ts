@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-export async function GET() {
+export function GET() {
   const res = NextResponse.json({ ok: true });
 
-  res.cookies.set("nginx_test", "works", {
+  res.cookies.set('nginx_test', 'works', {
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
-    path: "/",
+    sameSite: 'lax',
+    path: '/',
   });
 
   return res;
