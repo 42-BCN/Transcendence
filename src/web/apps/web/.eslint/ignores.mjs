@@ -8,5 +8,8 @@ export default {
     'build/**',
     '**/*.min.js',
     '**/*.bundle.js',
+    'public/**',
+    '.cache/**',
+    'coverage/**',
   ],
 };

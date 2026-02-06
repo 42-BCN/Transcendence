@@ -18,14 +18,19 @@ export default [
   ignores,
   js.configs.recommended,
   {
-    files: ['**/*.{ts,tsx}'],
+    files: [
+      'app/**/*.{ts,tsx}',
+      'components/**/*.{ts,tsx}',
+      'lib/**/*.{ts,tsx}',
+      'scripts/**/*.{ts,tsx}',
+    ],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: { jsx: true },
-        project: ['./tsconfig.json'],
+        project: ['./tsconfig.eslint.json'],
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {
@@ -40,6 +45,13 @@ export default [
       import: importPlugin,
       'unused-imports': unusedImports,
       unicorn,
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: ['./tsconfig.eslint.json'],
+        },
+      },
     },
     rules: {
       ...nextPlugin.configs.recommended.rules,
@@ -108,6 +120,25 @@ export default [
       ...prettierConfig.rules,
 
       'jsx-a11y/anchor-is-valid': 'off',
+    },
+  },
+  {
+    files: ['components/ui/controls/**/*.{ts,tsx}'],
+    rules: {
+      complexity: ['error', 3],
+      'max-lines-per-function': ['warn', { max: 30 }],
+    },
+  },
+  {
+    files: ['components/features/**/*.{ts,tsx}'],
+    rules: {
+      complexity: ['warn', 6],
+    },
+  },
+  {
+    files: ['**/*.styles.{ts,tsx}'],
+    rules: {
+      complexity: ['warn', 6],
     },
   },
 ];
