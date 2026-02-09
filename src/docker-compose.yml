@@ -15,6 +15,18 @@ services:
     depends_on:
       - hello
     restart: unless-stopped
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./docker/Dockerfile
+    working_dir: /app
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend/app:/app
+      - node_modules_backend:/app/node_modules
+volumes:
+    node_modules_backend:
 
 # - [ ] not using container-name for services to avoid conflicts when multiple projects are run on the same host
 # networks are not defined to use default bridge network
