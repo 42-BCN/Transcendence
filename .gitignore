@@ -49,4 +49,32 @@ secrets/
 *.p12
 *.keystore
 
+# ------------------------------
+# Dependencies
+# ------------------------------
+*/**/node_modules/
+.pnp/
+.pnp.js
+
+# ------------------------------
+# Next.js build output
+# ------------------------------
+.next/
+/src/web/apps/web/dev
+out/
+dist/
+
+# ------------------------------
+# Logs
+# ------------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------
+# TypeScript
+# ------------------------------
+**/*.tsbuildinfo
+
 
