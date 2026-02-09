@@ -1,6 +1,6 @@
 const nextConfig = {
   serverActions: {
-    allowedOrigins: ['localhost:8443'],
+    allowedOrigins: ['http://localhost:8443', 'https://localhost:8443'],
   },
 };
 module.exports = nextConfig;
