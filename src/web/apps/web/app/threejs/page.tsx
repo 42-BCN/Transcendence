@@ -1,37 +1,58 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Robot } from '@/components/threejs/robot';
+import { useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { CharacterEntity } from '@/components/threejs/characterEntity';
 import { Grid, OrbitControls } from '@react-three/drei';
+import { SocketManager } from '@/components/threejs/SocketManager';
+import { socket } from '@/components/threejs/socket';
 
-function Box(props) {
-  // This reference will give us direct access to the mesh
-  const meshRef = useRef();
-  // Set up state for the hovered and active state
-  const [hovered, setHover] = useState(false);
-  const [active, setActive] = useState(false);
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => (meshRef.current.rotation.x += delta));
-  // Return view, these are regular three.js elements expressed in JSX
+type Character = {
+  id: string;
+  position: [number, number, number];
+  target?: [number, number, number];
+  color: string;
+};
+
+function FloorClickToMove({ mapSize = 10, cellSize = 1 }: { mapSize?: number; cellSize?: number }) {
   return (
     <mesh
-      {...props}
-      ref={meshRef}
-      scale={active ? 3 : 2}
-      onClick={() => setActive(!active)}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, 0, 0]}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+
+        // Intersection point with the plane
+        const p = e.point; // THREE.Vector3 in world coords
+
+        // Clamp to board bounds (centered)
+        const half = mapSize / 2;
+        const clampedX = Math.max(-half, Math.min(half, p.x));
+        const clampedZ = Math.max(-half, Math.min(half, p.z));
+
+        // Snap to grid cells
+        const snappedX = Math.round(clampedX / cellSize) * cellSize;
+        const snappedZ = Math.round(clampedZ / cellSize) * cellSize;
+
+        // Emit to server (Y stays 0)
+        socket.emit('moveTo', [snappedX, 0, snappedZ]);
+      }}
     >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+      {/* Plane sized to your grid */}
+      <planeGeometry args={[mapSize, mapSize]} />
+
+      {/* Invisible but still clickable */}
+      <meshStandardMaterial transparent opacity={0} />
     </mesh>
   );
 }
 
+// eslint-disable-next-line max-lines-per-function
 export default function threejsPage() {
+  const [characters, setCharacters] = useState<Character[]>([]);
   return (
     <div className="w-screen h-screen">
+      <SocketManager onCharacters={setCharacters} />
       <Canvas
         className="w-full h-full"
         camera={{
@@ -51,7 +72,7 @@ export default function threejsPage() {
 
         {/* Rim / back light (adds depth) */}
         <pointLight position={[0, 8, -10]} intensity={0.4} />
-
+        <FloorClickToMove mapSize={10} cellSize={1} />
         {/* Isometric-style controls */}
         <OrbitControls
           target={[0, 0, 0]}
@@ -71,8 +92,10 @@ export default function threejsPage() {
           sectionColor="#e5e7eb" // big lines (gray-200)
         />
 
-        {/* Robot */}
-        <Robot scale={0.2} position={[0, 0, 0]} />
+        {/* ✅ Render ALL characters */}
+        {characters.map((c) => (
+          <CharacterEntity key={c.id} c={c} />
+        ))}
       </Canvas>
     </div>
   );
