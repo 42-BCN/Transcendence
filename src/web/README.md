@@ -31,7 +31,7 @@
 		- ------ | *config files*  
 		.prettierignore   
 		.prettierrc.json  
-		eslint.config.msj  
+		eslint.config.mjs  
 		next-env.d.ts  
 		postcss.config.js  
 		tailwind.config.js  
@@ -56,7 +56,7 @@ README.md | *this documentation*
 Is the routing and composition layer.
 It wires features together but owns no business logic itself.
 
-| Area                | ✅ **DO**                                    | ❌ **DON’T**                                |
+| Area                | ✅ **DO**                                   | ❌ **DON’T**                               |
 | ------------------- | ------------------------------------------- | ------------------------------------------ |
 | **Purpose**         | Use `app/` to define routes & URL structure | Use `app/` as a generic code folder        |
 | **Responsibility**  | Treat `app/` as an orchestration layer      | Treat `app/` as a business or domain layer |
