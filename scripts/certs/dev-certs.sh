@@ -62,7 +62,7 @@ Choose how HTTPS certificates should be generated:
 
 EOF
   printf "Select option [1/2/3] (default: 2): "
-  read choice || choice="1"
+  read choice || choice="2"
 
   case "$choice" in
     "1") CERT_METHOD="mkcert" ;;
