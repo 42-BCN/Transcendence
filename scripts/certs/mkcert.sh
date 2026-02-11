@@ -44,8 +44,10 @@ install_mkcert() {
       has apt || return 1
       sudo apt update
       sudo apt install -y libnss3-tools
+      tmp_mkcert="$(mktemp)"
       curl -L https://github.com/FiloSottile/mkcert/releases/latest/download/mkcert-linux-amd64 \
-        -o /usr/local/bin/mkcert
+        -o "$tmp_mkcert"
+      sudo mv "$tmp_mkcert" /usr/local/bin/mkcert
       sudo chmod +x /usr/local/bin/mkcert
       ;;
     wsl)
