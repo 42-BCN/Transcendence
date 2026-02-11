@@ -57,7 +57,8 @@ io.on('connection', (socket) => {
     c.target = [clamp(snap(x, CELL_SIZE), -half, half), y, clamp(snap(z, CELL_SIZE), -half, half)];
 
     io.emit('characters', characters);
-    c.position = [... c.target];
+    if (c.target)
+      c.position = [... c.target];
   });
 
   socket.on('disconnect', () => {

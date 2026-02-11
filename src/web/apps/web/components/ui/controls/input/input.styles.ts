@@ -37,7 +37,7 @@ export function inputClass(args: {
   size?: InputSize;
   state: InputRacState;
 }) {
-  const { variant = 'primary', size = 'md', state } = args;
+  const { variant = 'default', size = 'md', state } = args;
   return cn(
     inputBase,
     inputPropsStyles.variant[variant],

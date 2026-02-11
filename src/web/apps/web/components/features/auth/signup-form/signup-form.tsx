@@ -18,8 +18,8 @@ export function SignupFeature({ action }: SignupFeatureProps) {
       action={action}
       method="POST"
       onSubmit={(e) => {
-        const ok = form.validateBeforeSubmit();
-        if (!ok) e.preventDefault();
+        const res = form.validateBeforeSubmit();
+        if (!res.ok) e.preventDefault();
       }}
     >
       {form.fieldsBase.map((base) => {
