@@ -38,6 +38,7 @@ services:
       - ./${CERT_DIR:-../certs}:/etc/nginx/certs:ro
     depends_on:
       - hello
+      - web
     restart: unless-stopped
 volumes:
   node_modules:
