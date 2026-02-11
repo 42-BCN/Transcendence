@@ -60,7 +60,7 @@ Never share or submit to the repository your certificate key
 
 2. Custom -> Trusted certificates -> import
 
-4. Select the file at the root of this repo: localhost.ctr
+4. Select the file at the root of this repo: localhost.crt
 
 6. Click OK
 

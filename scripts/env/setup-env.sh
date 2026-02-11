@@ -18,7 +18,7 @@ echo
 CERT_DIR="$ROOT_DIR/certs"
 
 if [ ! -d "$CERT_DIR" ] || [ -z "$(ls -A "$CERT_DIR")" ]; then
-  echo "⚠️  Development certificates not found. Run scripts/dev-certs.sh to create them."
+  echo "⚠️  Development certificates not found. Run scripts/certs/dev-certs.sh to create them."
   echo
   exit 1
 else
