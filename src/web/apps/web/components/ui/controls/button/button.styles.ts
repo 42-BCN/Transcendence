@@ -1,11 +1,11 @@
 import { cn } from '@/lib/styles/cn';
 
 const buttonBase =
-  'border inline-flex items-center justify-center font-medium transition text-gray-900 rounded';
+  'border inline-flex items-center justify-center font-medium transition text-gray-900 ';
 
 const buttonPropsStyles = {
   variant: {
-    primary: 'border-gray-900 hover:bg-slate-100',
+    primary: 'border-gray-900 bg-white hover:bg-slate-100',
     secondary: 'border-gray-400 hover:bg-slate-100',
     ghost: 'hover:bg-slate-100',
     danger: 'border-red-600 hover:bg-red-700',
@@ -29,7 +29,9 @@ export type ButtonRacState = {
 function buttonState(state: ButtonRacState) {
   const pressed = state.isPressed && 'translate-y-px';
   const disabled = state.isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none';
-  const focus = state.isFocusVisible && 'ring ring-offset ring-black rounded-none';
+  const focus =
+    state.isFocusVisible &&
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible ring-black';
 
   return cn(pressed, disabled, focus);
 }
