@@ -70,7 +70,7 @@ Fix options:
 2) Install OpenSSL on your machine, then re-run this script
 
 After fixing, run:
-  ./scripts/setup-dev-https.sh
+  ./scripts/certs/dev-certs.sh
 
 EOF
   exit 1
