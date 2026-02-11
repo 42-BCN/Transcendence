@@ -1,0 +1,16 @@
+export default {
+  'unicorn/prefer-includes': 'error',
+  'unicorn/prefer-optional-catch-binding': 'error',
+  'unicorn/explicit-length-check': 'warn',
+  'unicorn/no-useless-undefined': 'warn',
+  'unicorn/prefer-string-slice': 'warn',
+  'unicorn/prefer-array-flat': 'warn',
+  'unicorn/better-regex': 'warn',
+  'unicorn/prevent-abbreviations': 'off',
+  'unicorn/filename-case': 'off',
+  'unicorn/no-null': 'off',
+  'unicorn/no-array-reduce': 'off',
+  'unicorn/no-for-loop': 'off',
+  'unicorn/prefer-module': 'off',
+  'unicorn/prefer-top-level-await': 'off',
+};

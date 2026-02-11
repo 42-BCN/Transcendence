@@ -1,0 +1,80 @@
+# --------------------
+# System files
+# --------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# -------------------
+# Editors files
+# -------------------
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+
+# Vim
+*.swp
+*.swo
+
+# -------------------
+# env | secrets
+# -------------------
+.env
+.env.local
+
+secrets/
+.private/
+.credentials/
+
+# -------------------
+# certs | keys | tokens
+# -------------------
+*.pem
+*.key
+*.crt
+*.p12
+*.keystore
+
+# ------------------------------
+# Dependencies
+# ------------------------------
+*/**/node_modules/
+.pnp/
+.pnp.js
+
+# ------------------------------
+# Next.js build output
+# ------------------------------
+.next/
+/src/web/apps/web/dev
+out/
+dist/
+
+# ------------------------------
+# Logs
+# ------------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------
+# TypeScript
+# ------------------------------
+**/*.tsbuildinfo
+
+

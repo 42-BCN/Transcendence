@@ -1,0 +1,48 @@
+[
+  {
+    "id": "Nh-HfXk90coT4Ct9AAAB",
+    "position": [
+      2,
+      0,
+      -5
+    ],
+    "color": "#98eb0b",
+    "target": [
+      3,
+      0,
+      -1
+    ]
+  },
+  {
+    "id": "6Yv0F9bOUB9PyLlfAAAB",
+    "position": [
+      0,
+      0,
+      -1
+    ],
+    "color": "#7d0b1c"
+  },
+  {
+    "id": "3RdsMB4v7H6vEp8sAAAF",
+    "position": [
+      3,
+      0,
+      0
+    ],
+    "color": "#e73cec"
+  },
+  {
+    "id": "xeM8iW_nuqS6poxnAAAB",
+    "position": [
+      -2,
+      0,
+      -3
+    ],
+    "color": "#55e32a",
+    "target": [
+      0,
+      0,
+      2
+    ]
+  }
+]

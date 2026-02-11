@@ -1,0 +1,48 @@
+services:
+  socket:
+    build:
+      context: ./socket
+      dockerfile: ./docker/Dockerfile
+    working_dir: /app
+    ports:
+      - "3100:3100"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./socket/app:/app
+      - node_modules_socket:/app/node_modules
+  web:
+    build:
+      context: ./web
+      dockerfile: ./docker/Dockerfile
+    working_dir: /app
+    expose:
+      - "3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./web/apps/web:/app
+      - node_modules:/app/node_modules
+  hello:
+    image: nginxdemos/hello
+    expose:
+      - "80"
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8443:443"
+    env_file:
+      - .env.local
+    volumes:
+      - ./nginx:/etc/nginx
+      - ${CERT_DIR:-../certs}:/etc/nginx/certs:ro
+    depends_on:
+      - hello
+      - web
+    restart: unless-stopped
+volumes:
+  node_modules:
+  node_modules_socket:
+
+# - [ ] not using container-name for services to avoid conflicts when multiple projects are run on the same host
+# networks are not defined to use default bridge network
