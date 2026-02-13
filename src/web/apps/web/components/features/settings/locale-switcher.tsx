@@ -1,31 +1,34 @@
 'use client';
 
-import { Link, usePathname } from '@/i18n/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
+import { useParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 
 export function LocaleSwitcher() {
-  const pathname = usePathname();
-  const currentLocale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname(); // ✅ should be '/' when on '/es'
+  const params = useParams();
+  const locale = useLocale();
 
   return (
     <nav aria-label="Language selector">
-      <Link
-        href={{ pathname }}
-        locale="en"
-        aria-current={currentLocale === 'en' ? 'true' : undefined}
+      <button
+        type="button"
+        onClick={() => router.replace({ pathname, params } as any, { locale: 'en' })}
+        aria-current={locale === 'en' ? 'true' : undefined}
       >
         English
-      </Link>
+      </button>
 
       {' · '}
 
-      <Link
-        href={{ pathname }}
-        locale="es"
-        aria-current={currentLocale === 'es' ? 'true' : undefined}
+      <button
+        type="button"
+        onClick={() => router.replace({ pathname, params } as any, { locale: 'es' })}
+        aria-current={locale === 'es' ? 'true' : undefined}
       >
         Español
-      </Link>
+      </button>
     </nav>
   );
 }

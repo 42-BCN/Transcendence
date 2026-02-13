@@ -1,4 +1,17 @@
-export const locales = ['en', 'es'] as const;
-export type Locale = (typeof locales)[number];
+import { defineRouting } from 'next-intl/routing';
 
-export const defaultLocale: Locale = 'en';
+export const routing = defineRouting({
+  locales: ['en', 'es'],
+  defaultLocale: 'en',
+  // localePrefix: 'never',
+
+  pathnames: {
+    '/': '/',
+  },
+  localeCookie: 'locale-cookie-false'
+    ? false
+    : {
+        // 200 days
+        maxAge: 200 * 24 * 60 * 60,
+      },
+});
