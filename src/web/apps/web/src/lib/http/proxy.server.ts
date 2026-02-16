@@ -1,6 +1,7 @@
 import type { HttpMethod } from './utils';
+import { envServer } from '../env.server';
 
-const API_BASE_URL = process.env.API_BASE_URL ?? '';
+const API_BASE_URL = envServer.apiBaseUrl ?? '';
 // Throwing on missing API_BASE_URL at module evaluation time can
 // break next build / server startup in environments where
 // the variable isn’t set yet (or for routes that don’t use this helper).

@@ -1,6 +1,14 @@
 import { defineRouting } from 'next-intl/routing';
+import { envPublic } from '@/lib/env.public';
 
-const disableLocaleCookie = process.env.NEXT_PUBLIC_LOCALE_COOKIE === 'false';
+
+const localeCookie =
+  envPublic.localeCookieEnabled === 'false'
+    ? false
+    : {
+        name: envPublic.localeCookieName,
+        maxAge: 200 * 24 * 60 * 60,
+      };
 
 export const routing = defineRouting({
   locales: ['en', 'es'],
@@ -18,6 +26,5 @@ export const routing = defineRouting({
       es: '/iniciar-sesion', // or keep '/login' if you want
     },
   },
-
-  localeCookie: disableLocaleCookie ? false : { maxAge: 200 * 24 * 60 * 60 },
+  localeCookie,
 });

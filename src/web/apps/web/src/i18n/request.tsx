@@ -3,6 +3,7 @@ import { type Formats, hasLocale, IntlErrorCode } from 'next-intl';
 import { getRequestConfig } from 'next-intl/server';
 import defaultMessages from './messages/en.json';
 import { routing } from './routing';
+import { envServer } from '@/lib/env.server';
 
 export const formats = {
   dateTime: {
@@ -31,7 +32,6 @@ export const formats = {
 } satisfies Formats;
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  // Typically corresponds to the `[locale]` segment
   const requested = await requestLocale;
   const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
 
@@ -52,7 +52,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     onError(error) {
       if (
         error.message ===
-        (process.env.NODE_ENV === 'production'
+        (envServer.nodeEnv === 'production'
           ? IntlErrorCode.MISSING_MESSAGE
           : 'MISSING_MESSAGE: Could not resolve `missing` in `Index`.')
       ) {
