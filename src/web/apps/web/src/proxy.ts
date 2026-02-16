@@ -19,9 +19,9 @@ export default function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip all paths that should not be internationalized
-    '/((?!_next|.*/opengraph-image|.*\\..*).*)',
+    '/((?!api|trpc|_next|_vercel|_next/image|.*\\..*).*)',
 
     // Necessary for base path to work
-    '/src/',
+    // '/src/',
   ],
 };

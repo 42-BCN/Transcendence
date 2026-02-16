@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { getLocale } from 'next-intl/server';
 import './globals.css';
 
 export const metadata = {
@@ -13,14 +14,8 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: { locale?: string };
-}) {
-  const locale = params?.locale ?? 'en';
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const locale = await getLocale();
 
   return (
     <html lang={locale}>
