@@ -31,7 +31,7 @@ declare const messages: {
     "newsArticle": "News article #{articleId}"
   },
   "LocaleSwitcher": {
-    "switchLocale": "Change to {locale, select, es {Spanish} en {Inglés} other {Desconocido}}"
+    "switchLocale": "Change to {locale, select, es {Spanish} en {English} other {Unknown}}"
   }
 };
 export default messages;
