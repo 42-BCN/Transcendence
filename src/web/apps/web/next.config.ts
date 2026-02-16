@@ -1,10 +1,14 @@
 import type { NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
 
-const nextConfig: NextConfig = {
+const nextConfig: NextConfig = {};
+
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: './src/i18n/request.tsx',
   experimental: {
-    // browserDebugInfoInTerminal: true,
+    createMessagesDeclaration: ['./src/i18n/messages/en.json'],
   },
-  allowedOrigins: ['https://localhost:8443', 'http://localhost:8443'],
-};
+});
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
+

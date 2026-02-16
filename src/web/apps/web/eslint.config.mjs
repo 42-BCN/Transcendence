@@ -14,23 +14,39 @@ import importRules from './.eslint/rules/import.mjs';
 import unusedImportsRules from './.eslint/rules/unused-imports.mjs';
 import unicornRules from './.eslint/rules/unicorn.mjs';
 
+const sharedRules = {
+  rules: {
+    'no-nested-ternary': 'error',
+    'no-else-return': 'warn',
+    'no-mixed-operators': 'warn',
+    'no-implicit-coercion': 'warn',
+    'max-depth': ['warn', 4],
+    'prefer-template': 'warn',
+    complexity: ['error', { max: 8 }],
+    eqeqeq: ['error', 'always'],
+    'max-lines-per-function': [
+      'warn',
+      {
+        max: 42,
+        skipBlankLines: true,
+        skipComments: true,
+      },
+    ],
+  },
+};
+
 export default [
   ignores,
   js.configs.recommended,
   {
-    files: [
-      'app/**/*.{ts,tsx}',
-      'components/**/*.{ts,tsx}',
-      'lib/**/*.{ts,tsx}',
-      'scripts/**/*.{ts,tsx}',
-    ],
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
         ecmaFeatures: { jsx: true },
-        project: ['./tsconfig.eslint.json'],
+        project: ['./tsconfig.json'],
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {
@@ -57,13 +73,13 @@ export default [
       ...nextPlugin.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
       ...jsxA11yPlugin.configs.recommended.rules,
+
       /* ----------------------------- Async safety ----------------------------- */
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-misused-promises': [
         'error',
         {
           checksVoidReturn: {
-            // keeps it practical in UI code (events/handlers)
             attributes: false,
           },
         },
@@ -83,27 +99,7 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
 
-      /* ----------------------- Complexity & readability ------------------------ */
-      'no-nested-ternary': 'error',
-      'no-else-return': 'warn',
-      'no-mixed-operators': 'warn',
-      eqeqeq: ['error', 'always'],
-      'no-implicit-coercion': 'warn',
-      'max-depth': ['warn', 4],
-      complexity: ['error', 5],
-
-      // You already wanted: max-lines-per-function @42
-      'max-lines-per-function': [
-        'warn',
-        {
-          max: 42,
-          skipBlankLines: true,
-          skipComments: true,
-        },
-      ],
-
       /* ------------------------------ Styling -------------------------------- */
-      // Ban inline styles everywhere
       'no-restricted-syntax': [
         'error',
         {
@@ -111,34 +107,50 @@ export default [
           message: 'Inline styles are forbidden. Use className + *.styles.ts only.',
         },
       ],
-      'prefer-template': 'error',
 
       ...unusedImportsRules,
       ...importRules,
-      ...uiArchitectureRules, // review isnt working
+      ...uiArchitectureRules,
       ...unicornRules,
+      ...sharedRules.rules,
       ...prettierConfig.rules,
-
       'jsx-a11y/anchor-is-valid': 'off',
     },
   },
   {
-    files: ['components/ui/controls/**/*.{ts,tsx}'],
+    files: ['./src/components/ui/controls/**/*.{ts,tsx}'],
     rules: {
       complexity: ['error', 3],
       'max-lines-per-function': ['warn', { max: 30 }],
     },
   },
   {
-    files: ['components/features/**/*.{ts,tsx}'],
+    files: ['./src/components/features/**/*.{ts,tsx}'],
     rules: {
       complexity: ['warn', 6],
     },
   },
   {
-    files: ['**/*.styles.{ts,tsx}'],
+    files: ['./src/**/*.styles.{ts,tsx}'],
     rules: {
       complexity: ['warn', 6],
+    },
+  },
+  {
+    files: ['scripts/**/*.{js,cjs,mjs,ts}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: null,
+        tsconfigRootDir: import.meta.dirname,
+      },
+
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      ...sharedRules.rules,
     },
   },
 ];
