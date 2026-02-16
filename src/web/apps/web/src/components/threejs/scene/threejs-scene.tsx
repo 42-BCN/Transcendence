@@ -1,7 +1,8 @@
 import { Canvas } from '@react-three/fiber';
+import type { ReactNode } from 'react';
 import { Grid, OrbitControls } from '@react-three/drei';
 
-export function ThreejsScene({ children }) {
+export function ThreejsScene({ children }: { children: ReactNode }) {
   return (
     <Canvas
       className="w-full h-full"
