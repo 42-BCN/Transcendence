@@ -23,30 +23,30 @@ export default {
       zones: [
         // controls must not depend on composites
         {
-          target: './components/ui/controls',
-          from: './components/ui/composites',
+          target: '@/components/ui/controls',
+          from: '@/components/ui/composites',
           message:
             'ui/controls must not import from ui/composites. Move shared code down or refactor.',
         },
 
         // controls must not depend on features
         {
-          target: './components/ui/controls',
-          from: './components/features',
+          target: '@/components/ui/controls',
+          from: '@/components/features',
           message: 'ui/controls must not import from features. UI controls must stay generic.',
         },
 
         // composites must not depend on features
         {
-          target: './components/ui/composites',
-          from: './components/features',
+          target: '@/components/ui/composites',
+          from: '@/components/features',
           message: 'ui/composites must not import from features. Keep composites reusable.',
         },
 
         // UI must not import from app routes
         {
-          target: './components/ui',
-          from: './app',
+          target: '@/components/ui',
+          from: '@/app',
           message: 'UI must not import from app/. app can import UI, not the other way around.',
         },
       ],

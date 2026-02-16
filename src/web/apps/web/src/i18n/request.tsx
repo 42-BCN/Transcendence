@@ -1,47 +1,44 @@
-import {headers} from 'next/headers';
-import {Formats, hasLocale, IntlErrorCode} from 'next-intl';
-import {getRequestConfig} from 'next-intl/server';
+import { headers } from 'next/headers';
+import { type Formats, hasLocale, IntlErrorCode } from 'next-intl';
+import { getRequestConfig } from 'next-intl/server';
 import defaultMessages from './messages/en.json';
-import {routing} from './routing';
+import { routing } from './routing';
 
 export const formats = {
   dateTime: {
     medium: {
       dateStyle: 'medium',
       timeStyle: 'short',
-      hour12: false
+      hour12: false,
     },
     long: {
       dateStyle: 'full',
       timeStyle: 'long',
-      hour12: false
-    }
+      hour12: false,
+    },
   },
   number: {
     precise: {
-      maximumFractionDigits: 5
-    }
+      maximumFractionDigits: 5,
+    },
   },
   list: {
     enumeration: {
       style: 'long',
-      type: 'conjunction'
-    }
-  }
+      type: 'conjunction',
+    },
+  },
 } satisfies Formats;
 
-export default getRequestConfig(async ({requestLocale}) => {
+export default getRequestConfig(async ({ requestLocale }) => {
   // Typically corresponds to the `[locale]` segment
   const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
-    : routing.defaultLocale;
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
 
   const now = (await headers()).get('x-now');
   const timeZone = (await headers()).get('x-time-zone') ?? 'Europe/Vienna';
-  const localeMessages = (await import(`./messages/${locale}.json`))
-    .default;
-  const messages = {...defaultMessages, ...localeMessages};
+  const localeMessages = (await import(`./messages/${locale}.json`)).default;
+  const messages = { ...defaultMessages, ...localeMessages };
 
   return {
     locale,
@@ -64,11 +61,10 @@ export default getRequestConfig(async ({requestLocale}) => {
         console.error(JSON.stringify(error.message));
       }
     },
-    getMessageFallback({key, namespace}) {
-      return (
-        '`getMessageFallback` called for ' +
-        [namespace, key].filter((part) => part != null).join('.')
-      );
-    }
+    getMessageFallback({ key, namespace }) {
+      return `getMessageFallback called for ${[namespace, key]
+        .filter((part) => part !== null)
+        .join('.')}`;
+    },
   };
 });

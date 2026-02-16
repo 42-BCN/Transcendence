@@ -2,40 +2,48 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@ui/*": ["components/ui/*"],
-      "@/*": ["./*"]
+      "@ui/*": [
+        "src/components/ui/*"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@/*": [
+        "src/*"
+      ]
     },
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "strict": true,
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
-    "esModuleInterop": true,
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowArbitraryExtensions": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "allowJs": true
   },
   "include": [
     "next-env.d.ts",
-    "app/**/*.ts",
-    "app/**/*.tsx",
-    "components/**/*.ts",
-    "components/**/*.tsx",
-    "lib/**/*.ts",
-    "lib/**/*.tsx",
-    "scripts/**/*.ts",
-    "scripts/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next", "out", "dist", "build", "dev"]
+  "exclude": [
+    "node_modules"
+  ]
 }

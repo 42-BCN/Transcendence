@@ -1,15 +1,18 @@
+'use client';
+
 import { useLocale, useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
 
 export function Navigation() {
   const t = useTranslations('LocaleSwitcher');
 
   const locale = useLocale();
-  console.log(locale);
   const otherLocale = locale === 'en' ? 'es' : 'en';
 
+  const pathname = usePathname();
+
   return (
-    <Link href="/" locale={otherLocale}>
+    <Link href={pathname} locale={otherLocale}>
       {t('switchLocale', { locale: otherLocale })}
     </Link>
   );

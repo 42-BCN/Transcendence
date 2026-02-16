@@ -13,11 +13,11 @@ export function validate<T extends Record<string, unknown>>(
     return { ok: true, data: result.data, errors: {} };
   }
 
-  const flat = result.error.flatten().fieldErrors;
+  const flat = result.error.flatten().fieldErrors as Partial<Record<keyof T, string[]>>;
   const errors: FieldErrorsOf<T> = {};
 
   for (const k of fieldNames) {
-    const msg = flat[String(k)]?.[0];
+    const msg = flat[k]?.[0];
     if (touched[k] && msg) errors[k] = msg;
   }
 
