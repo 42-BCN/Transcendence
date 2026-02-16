@@ -1,11 +1,9 @@
 import { LoginFeature } from '@/components/features/auth/login-form';
 
-export default function SignupPage() {
+export default function LoginPage() {
   return (
     <main className="mx-auto max-w-md p-6">
-      <h1 className="mb-6 text-xl font-semibold">Login Acount</h1>
-
-      {/* ✅ Now it's actually used */}
+      <h1 className="mb-6 text-xl font-semibold">Login Account</h1>
       <LoginFeature />
     </main>
   );
