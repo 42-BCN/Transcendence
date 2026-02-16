@@ -23,7 +23,7 @@ export function LoginFeature() {
         return <TextField key={String(name)} {...base} {...form.getTextFieldProps(name)} />;
       })}
 
-      <Button type="submit">Sign up</Button>
+      <Button type="submit">Log in</Button>
     </Form>
   );
 }

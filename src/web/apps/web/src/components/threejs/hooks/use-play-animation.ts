@@ -5,7 +5,7 @@ import { useAnimations } from '@react-three/drei';
 
 export function usePlayAnimation<T extends string>(
   animations: THREE.AnimationClip[],
-  groupRef: RefObject<THREE.Object3D>,
+  groupRef: RefObject<THREE.Object3D | null>,
   animation: T,
 ) {
   const { actions } = useAnimations(animations, groupRef);
@@ -15,6 +15,7 @@ export function usePlayAnimation<T extends string>(
     if (!action) return;
 
     action.reset().fadeIn(0.2).play();
+
     return () => {
       action.fadeOut(0.2);
     };

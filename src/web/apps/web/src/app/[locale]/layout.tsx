@@ -1,16 +1,18 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { type Locale, NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider } from 'next-intl';
 import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/server';
 import { Navigation } from '@components/features/navigation/navigation';
+import { HtmlLangSync } from '@/i18n/html-lang-sync';
 
-type Props = {
-  children: ReactNode;
-  params: { locale: string };
-};
-
-export async function generateMetadata({ params }: Omit<Props, 'children'>): Promise<Metadata> {
-  const locale = params.locale as Locale;
+export async function generateMetadata({
+  _children,
+  params,
+}: {
+  _children: ReactNode;
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
 
   const t = await getTranslations({ locale, namespace: 'LocaleLayout' });
   const formatter = await getFormatter({ locale });
@@ -33,11 +35,29 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
   };
 }
 
-export default function LocaleLayout({ children }: { children: ReactNode }) {
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}): Promise<ReactNode> {
+  const { locale } = await params;
+
   return (
-    <NextIntlClientProvider>
+    <NextIntlClientProvider locale={locale}>
+      <HtmlLangSync />
       <Navigation />
       {children}
     </NextIntlClientProvider>
   );
 }
+
+// export default function LocaleLayout({ children }: { children: ReactNode }) {
+//   return (
+//     <NextIntlClientProvider>
+//       <Navigation />
+//       {children}
+//     </NextIntlClientProvider>
+//   );
+// }

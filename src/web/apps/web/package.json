@@ -13,7 +13,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "clean": "rm -rf .next node_modules",
-    "create:component": "node scripts/create-component.mjs"
+    "create:component": "node scripts/create-component.js"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

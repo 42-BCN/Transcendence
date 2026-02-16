@@ -28,6 +28,6 @@
     "newsArticle": "Noticias #{articleId}"
   },
   "LocaleSwitcher": {
-    "switchLocale": "Cambiar a {locale, select, es {Espaniol} en {Inglés} other {Desconocido}}"
+    "switchLocale": "Cambiar a {locale, select, es {Español} en {Inglés} other {Desconocido}}"
   }
 }
