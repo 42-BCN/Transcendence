@@ -4,10 +4,7 @@ import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 import { envServer } from '../env.server';
 
-const API_BASE_URL = envServer.apiBaseUrl ?? '';
-if (!API_BASE_URL) {
-  throw new Error('Missing API_BASE_URL (server env)');
-}
+const API_BASE_URL = envServer.apiBaseUrl;
 
 function cookieHeaders(cookie?: string): Record<string, string> {
   return cookie ? { Cookie: cookie } : {};
