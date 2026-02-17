@@ -49,12 +49,3 @@ export default async function LocaleLayout({
     </NextIntlClientProvider>
   );
 }
-
-// export default function LocaleLayout({ children }: { children: ReactNode }) {
-//   return (
-//     <NextIntlClientProvider>
-//       <Navigation />
-//       {children}
-//     </NextIntlClientProvider>
-//   );
-// }
