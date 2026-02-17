@@ -19,7 +19,8 @@
     "tailwind.config.js": "postcss.config.js",
     "tailwind.config.ts": "postcss.config.js",
 
-    "tsconfig.json": "tsconfig.tsbuildinfo"
+    "tsconfig.json": "tsconfig.tsbuildinfo",
+    "favicon.ico": "icon-*.png, icon.svg, apple-*.png, manifest.ts, favicon-*.png"
   },
   "files.exclude": {
     "**/.git": true,
