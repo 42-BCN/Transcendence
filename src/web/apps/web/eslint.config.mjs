@@ -8,11 +8,11 @@ import prettierConfig from 'eslint-config-prettier';
 import unicorn from 'eslint-plugin-unicorn';
 import js from '@eslint/js';
 import globals from 'globals';
-import ignores from './.eslint/ignores.mjs';
-import uiArchitectureRules from './.eslint/rules/ui-architecture.mjs';
-import importRules from './.eslint/rules/import.mjs';
-import unusedImportsRules from './.eslint/rules/unused-imports.mjs';
-import unicornRules from './.eslint/rules/unicorn.mjs';
+import ignores from './eslint.ignore.mjs';
+import uiArchitectureRules from './.eslint/ui-architecture.mjs';
+import importRules from './.eslint/import.mjs';
+import unusedImportsRules from './.eslint/unused-imports.mjs';
+import unicornRules from './.eslint/unicorn.mjs';
 
 const sharedRules = {
   rules: {
@@ -115,6 +115,14 @@ export default [
       ...sharedRules.rules,
       ...prettierConfig.rules,
       'jsx-a11y/anchor-is-valid': 'off',
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'process',
+          property: 'env',
+          message: 'Do not use process.env.* directly. Use envPublic/envServer entrypoints.',
+        },
+      ],
     },
   },
   {
@@ -151,6 +159,32 @@ export default [
     },
     rules: {
       ...sharedRules.rules,
+    },
+  },
+  {
+    // Env variables guardrails
+    files: ['src/lib/env.public.ts', 'src/lib/env.server.ts'],
+    rules: {
+      'no-restricted-properties': 'off',
+    },
+  },
+  // Allow process.env access ONLY in env modules,
+  // but still ban process.env.FOO (member access) specifically
+  {
+    files: ['src/lib/env.public.ts', 'src/lib/env.server.ts'],
+    rules: {
+      'no-restricted-properties': 'off',
+      'no-restricted-syntax': [
+        'error',
+        {
+          // Disallow: process.env.SOMETHING
+          // (but allow: process.env[name])
+          selector:
+            'MemberExpression[object.object.name="process"][object.property.name="env"][computed=false]',
+          message:
+            'Do not use process.env.VAR. Use requiredPublic("NEXT_PUBLIC_*") / requiredServer("VAR") helpers.',
+        },
+      ],
     },
   },
 ];

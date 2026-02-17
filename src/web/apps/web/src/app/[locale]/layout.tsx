@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/server';
 import { Navigation } from '@components/features/navigation/navigation';
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
+import { envPublic } from '@/lib/env.public';
 
 export async function generateMetadata({
   _children,
@@ -19,11 +20,7 @@ export async function generateMetadata({
   const now = await getNow({ locale });
   const timeZone = await getTimeZone({ locale });
 
-  const base = new URL('https://localhost:8443');
-  // if (process.env.NEXT_PUBLIC_USE_CASE === 'base-path') {
-  //   base.pathname = '/base/path';
-  // }
-
+  const base = new URL(envPublic.appUrl);
   return {
     metadataBase: base,
     title: t('title'),
@@ -52,12 +49,3 @@ export default async function LocaleLayout({
     </NextIntlClientProvider>
   );
 }
-
-// export default function LocaleLayout({ children }: { children: ReactNode }) {
-//   return (
-//     <NextIntlClientProvider>
-//       <Navigation />
-//       {children}
-//     </NextIntlClientProvider>
-//   );
-// }

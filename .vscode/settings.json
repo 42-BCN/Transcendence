@@ -1,0 +1,36 @@
+{
+  // Formatting & Consistency
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Explorer nested files and ignores
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.tsx": "${capture}.styles.ts",
+    ".prettierrc.json": ".prettierignore",
+
+    "eslint.config.mjs": "eslint.ignore.mjs, .eslintcache",
+
+    "next.config.ts": "next-env.d.ts",
+    "next.config.js": "next-env.d.ts",
+    "next.config.mjs": "next-env.d.ts",
+
+    "tailwind.config.json": "postcss.config.js",
+    "tailwind.config.js": "postcss.config.js",
+    "tailwind.config.ts": "postcss.config.js",
+
+    "tsconfig.json": "tsconfig.tsbuildinfo",
+    "favicon.ico": "icon-*.png, icon.svg, apple-*.png, manifest.ts, favicon-*.png"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.next": true,
+    "**/node_modules": true,
+    "**/web/dev": true
+  }
+}
