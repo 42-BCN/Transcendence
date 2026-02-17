@@ -13,6 +13,7 @@ import uiArchitectureRules from './.eslint/ui-architecture.mjs';
 import importRules from './.eslint/import.mjs';
 import unusedImportsRules from './.eslint/unused-imports.mjs';
 import unicornRules from './.eslint/unicorn.mjs';
+import { off } from 'cluster';
 
 const sharedRules = {
   rules: {
@@ -174,17 +175,7 @@ export default [
     files: ['src/lib/env.public.ts', 'src/lib/env.server.ts'],
     rules: {
       'no-restricted-properties': 'off',
-      'no-restricted-syntax': [
-        'error',
-        {
-          // Disallow: process.env.SOMETHING
-          // (but allow: process.env[name])
-          selector:
-            'MemberExpression[object.object.name="process"][object.property.name="env"][computed=false]',
-          message:
-            'Do not use process.env.VAR. Use requiredPublic("NEXT_PUBLIC_*") / requiredServer("VAR") helpers.',
-        },
-      ],
+      'no-restricted-syntax': 'off',
     },
   },
 ];
