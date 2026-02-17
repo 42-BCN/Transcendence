@@ -2,7 +2,7 @@
 import { FetcherError } from './errors';
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
-import { envServer } from '../env.server';
+import { envServer } from '../config/env.server';
 
 const API_BASE_URL = envServer.apiBaseUrl;
 

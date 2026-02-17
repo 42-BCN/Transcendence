@@ -1,10 +1,6 @@
 import type * as THREE from 'three';
 import React from 'react';
-import {
-  useClonedGltfModel,
-  useTintMainMaterials,
-  usePlayAnimation,
-} from '@/components/threejs/hooks';
+import { useClonedGltfModel, useTintMainMaterials, usePlayAnimation } from '@/lib/threejs/hooks';
 
 export type RobotActionName =
   | 'RobotArmature|Robot_Dance'

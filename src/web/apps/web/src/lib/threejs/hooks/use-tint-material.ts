@@ -33,7 +33,7 @@ function tryTintMaterial(mat: THREE.Material, tint: THREE.Color, match: (name: s
   if (!match(mat.name ?? '')) return;
   if (!materialHasColor(mat)) return;
 
-  mat.color.set(tint);
+  if (mat?.color) mat.color.set(tint);
   mat.needsUpdate = true;
 }
 

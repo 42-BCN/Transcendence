@@ -1,4 +1,4 @@
-import { LoginFeature } from '@/components/features/auth/login-form';
+import { LoginFeature } from '@/features/auth/login-form';
 
 export default function LoginPage() {
   return (

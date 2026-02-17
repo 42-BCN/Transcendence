@@ -7,13 +7,11 @@ declare const messages: {
     "signup": "Sign up",
     "login": "Log in"
   },
-  "auth": {
-    "signup": {
-      "title": "Create account",
-      "email": "Email address",
-      "password": "Password",
-      "submit": "Create account"
-    }
+  "SignupPage": {
+    "title": "Create account",
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Create account"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -31,7 +29,9 @@ declare const messages: {
     "newsArticle": "News article #{articleId}"
   },
   "LocaleSwitcher": {
-    "switchLocale": "Change to {locale, select, es {Spanish} en {English} other {Unknown}}"
+    "ariaLabel": "Language",
+    "en": "EN",
+    "es": "ES"
   }
 };
 export default messages;

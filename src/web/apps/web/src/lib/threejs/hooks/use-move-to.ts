@@ -9,7 +9,11 @@ type Options = {
   faceDirection?: boolean;
 };
 
-export function useMoveTo(ref: RefObject<THREE.Object3D>, target: THREE.Vector3, opts: Options) {
+export function useMoveTo(
+  ref: RefObject<THREE.Object3D | null>,
+  target: THREE.Vector3,
+  opts: Options,
+) {
   const { speed, epsilon = 0.05, faceDirection = true } = opts;
 
   const tmp = useRef(new THREE.Vector3());
@@ -17,7 +21,7 @@ export function useMoveTo(ref: RefObject<THREE.Object3D>, target: THREE.Vector3,
   const [isMoving, setIsMoving] = useState(false);
 
   useFrame((_, dt) => {
-    const obj = ref.current;
+    const obj = ref?.current;
     if (!obj) return;
 
     const pos = obj.position;

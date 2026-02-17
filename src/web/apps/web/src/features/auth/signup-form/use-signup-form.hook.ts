@@ -1,6 +1,6 @@
 import { signupSchema } from './signup-form.schema';
 import type { SignupValues } from './signup-form.schema';
-import type { TextFieldProps } from '@ui/composites/text-field';
+import type { TextFieldProps } from '@components/composites/text-field';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useZodForm } from '@/lib/forms/use-zod-form';
 

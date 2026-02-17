@@ -1,6 +1,7 @@
 'use client';
 
-import { FloorClickToMove, ThreejsScene, CharacterEntity } from '@/components/threejs';
+import { FloorClickToMove, ThreejsScene } from '@/lib/threejs';
+import { CharacterEntity } from './character-entity';
 
 type Character = {
   id: string;

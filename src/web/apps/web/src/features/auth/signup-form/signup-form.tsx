@@ -1,10 +1,10 @@
 'use client';
 
-import { Form } from '@ui/composites/form';
+import { Form } from '@components/composites/form';
 import { useSignupForm } from './use-signup-form.hook';
-import { TextField } from '@ui/composites/text-field';
-import { Button } from '@ui/controls/button';
-// import { Form } from '@ui/composites/form';
+import { TextField } from '@components/composites/text-field';
+import { Button } from '@components/controls/button';
+// import { Form } from '@components/composites/form';
 
 export type SignupFeatureProps = {
   action: (formData: FormData) => void | Promise<void>;

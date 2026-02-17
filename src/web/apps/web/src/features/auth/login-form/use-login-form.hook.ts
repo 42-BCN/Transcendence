@@ -1,6 +1,6 @@
 import { loginSchema } from './login-form.schema';
 import type { LoginValues } from './login-form.schema';
-import type { TextFieldProps } from '@ui/composites/text-field';
+import type { TextFieldProps } from '@components/composites/text-field';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useZodForm } from '@/lib/forms/use-zod-form';
 

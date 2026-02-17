@@ -5,8 +5,8 @@ import type { ReactNode } from 'react';
 import { FieldError, Label, Text, TextField as AriaTextField } from 'react-aria-components';
 import type { TextFieldProps as AriaTextFieldProps } from 'react-aria-components';
 
-import { Input } from '@ui/controls/input';
-import type { InputProps } from '@ui/controls/input';
+import { Input } from '@components/controls/input';
+import type { InputProps } from '@components/controls/input';
 
 import {
   textFieldDescriptionClass,

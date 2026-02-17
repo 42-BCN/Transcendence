@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Robot } from './robot';
 import type { RobotActionName } from './robot';
-import { useMoveTo } from '@/components/threejs/hooks';
+import { useMoveTo } from '@/lib/threejs/hooks';
 
 type Character = {
   id: string;
