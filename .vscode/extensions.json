@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"ms-vscode-remote.remote-containers",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"rhalaly.scope-to-this",
+		"bradlc.vscode-tailwindcss"
+	]
+}

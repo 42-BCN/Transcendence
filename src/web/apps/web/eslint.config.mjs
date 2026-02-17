@@ -8,11 +8,11 @@ import prettierConfig from 'eslint-config-prettier';
 import unicorn from 'eslint-plugin-unicorn';
 import js from '@eslint/js';
 import globals from 'globals';
-import ignores from './.eslint/ignores.mjs';
-import uiArchitectureRules from './.eslint/rules/ui-architecture.mjs';
-import importRules from './.eslint/rules/import.mjs';
-import unusedImportsRules from './.eslint/rules/unused-imports.mjs';
-import unicornRules from './.eslint/rules/unicorn.mjs';
+import ignores from 'eslint.ignores.mjs';
+import uiArchitectureRules from './.eslint/ui-architecture.mjs';
+import importRules from './.eslint/import.mjs';
+import unusedImportsRules from './.eslint/unused-imports.mjs';
+import unicornRules from './.eslint/unicorn.mjs';
 
 const sharedRules = {
   rules: {
