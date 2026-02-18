@@ -2,7 +2,9 @@
   "navigation": {
     "home": "Inicio",
     "signup": "Registrarse",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "UI": "UI",
+    "robots": "Robots"
   },
   "SignupPage": {
     "title": "Crear cuenta",

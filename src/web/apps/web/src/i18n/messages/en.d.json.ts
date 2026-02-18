@@ -5,7 +5,9 @@ declare const messages: {
   "navigation": {
     "home": "Home",
     "signup": "Sign up",
-    "login": "Log in"
+    "login": "Log in",
+    "UI": "UI",
+    "robots": "Robots"
   },
   "SignupPage": {
     "title": "Create account",

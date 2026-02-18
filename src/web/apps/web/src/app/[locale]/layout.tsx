@@ -5,6 +5,8 @@ import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/se
 import { LocaleSwitcher } from '@/features/locale-switcher/locale-switcher';
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
 import { envPublic } from '@/lib/config/env.public';
+import { Providers } from '@/app/providers';
+import { MainNav } from '@/features/main-nav';
 
 export async function generateMetadata({
   _children,
@@ -43,11 +45,17 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <HtmlLangSync />
-      <div className="m-3">
-        <LocaleSwitcher />
-      </div>
-      {children}
+      <Providers locale={locale}>
+        <HtmlLangSync />
+        <header className="border-b">
+          <div className="flex justify-between  px-4 py-3">
+            <LocaleSwitcher />
+            <MainNav locale={locale} />
+          </div>
+        </header>
+        <div className="m-3"></div>
+        {children}
+      </Providers>
     </NextIntlClientProvider>
   );
 }
