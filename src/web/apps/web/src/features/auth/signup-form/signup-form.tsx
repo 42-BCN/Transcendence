@@ -4,7 +4,6 @@ import { Form } from '@components/composites/form';
 import { useSignupForm } from './use-signup-form.hook';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
-// import { Form } from '@components/composites/form';
 
 export type SignupFeatureProps = {
   action: (formData: FormData) => void | Promise<void>;

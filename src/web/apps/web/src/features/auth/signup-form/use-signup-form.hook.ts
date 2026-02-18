@@ -11,7 +11,7 @@ type SignupFieldBase = Omit<TextFieldProps, 'fieldError' | 'value' | 'onChange' 
 };
 
 export const SIGNUP_FIELDS_BASE: readonly SignupFieldBase[] = [
-  { name: 'email', label: 'Email', type: 'email', isRequired: true },
+  { name: 'email', label: 'Email', type: 'email', isRequired: true, autoComplete: 'email' },
   {
     name: 'password',
     label: 'Password',
@@ -19,6 +19,7 @@ export const SIGNUP_FIELDS_BASE: readonly SignupFieldBase[] = [
     isRequired: true,
     minLength: 8,
     description: 'Minimum 8 characters',
+    autoComplete: 'new-password',
   },
   {
     name: 'confirmPassword',
@@ -26,6 +27,7 @@ export const SIGNUP_FIELDS_BASE: readonly SignupFieldBase[] = [
     type: 'password',
     isRequired: true,
     minLength: 8,
+    autoComplete: 'new-password',
   },
 ] as const;
 

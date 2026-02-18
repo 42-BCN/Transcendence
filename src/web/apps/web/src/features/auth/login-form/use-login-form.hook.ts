@@ -11,12 +11,13 @@ type LoginFieldBase = Omit<TextFieldProps, 'fieldError' | 'value' | 'onChange' |
 };
 
 export const LOGIN_FIELDS_BASE: readonly LoginFieldBase[] = [
-  { name: 'email', label: 'Email', type: 'email', isRequired: true },
+  { name: 'email', label: 'Email', type: 'email', isRequired: true, autoComplete: 'email' },
   {
     name: 'password',
     label: 'Password',
     type: 'password',
     isRequired: true,
+    autoComplete: 'password',
   },
 ] as const;
 
