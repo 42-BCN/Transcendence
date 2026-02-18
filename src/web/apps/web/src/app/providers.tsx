@@ -1,9 +1,8 @@
 // app/providers.tsx
-'use client';
 
 import type { ReactNode } from 'react';
-import { SSRProvider } from 'react-aria-components';
+import { ClientProviders } from './providers.client';
 
-export function Providers({ children }: { children: ReactNode }) {
-  return <SSRProvider>{children}</SSRProvider>;
+export function Providers({ locale, children }: { locale: string; children: ReactNode }) {
+  return <ClientProviders locale={locale}>{children}</ClientProviders>;
 }
