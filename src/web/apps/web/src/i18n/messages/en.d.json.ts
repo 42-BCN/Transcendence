@@ -23,13 +23,6 @@ declare const messages: {
     "description": "This is an example of using next-intl in the `app` directory.",
     "title": "next-intl example"
   },
-  "Navigation": {
-    "about": "About (MDX)",
-    "client": "Client page",
-    "home": "Home",
-    "nested": "Nested page",
-    "newsArticle": "News article #{articleId}"
-  },
   "LocaleSwitcher": {
     "ariaLabel": "Language",
     "en": "EN",

@@ -20,13 +20,6 @@
     "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
     "title": "Ejemplo next-intl"
   },
-  "Navigation": {
-    "about": "Acerca de (MDX)",
-    "client": "Página del cliente",
-    "home": "Inicio",
-    "nested": "Página anidada",
-    "newsArticle": "Noticias #{articleId}"
-  },
   "LocaleSwitcher": {
     "ariaLabel": "Idioma",
     "en": "EN",
