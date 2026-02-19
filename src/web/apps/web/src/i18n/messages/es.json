@@ -2,15 +2,15 @@
   "navigation": {
     "home": "Inicio",
     "signup": "Registrarse",
-    "login": "Iniciar sesión"
+    "login": "Iniciar sesión",
+    "UI": "UI",
+    "robots": "Robots"
   },
-  "auth": {
-    "signup": {
-      "title": "Crear cuenta",
-      "email": "Correo electrónico",
-      "password": "Contraseña",
-      "submit": "Crear cuenta"
-    }
+  "SignupPage": {
+    "title": "Crear cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Crear cuenta"
   },
   "home": {
     "title": "Hola desde Next en Docker 👋",
@@ -20,14 +20,9 @@
     "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
     "title": "Ejemplo next-intl"
   },
-  "Navigation": {
-    "about": "Acerca de (MDX)",
-    "client": "Página del cliente",
-    "home": "Inicio",
-    "nested": "Página anidada",
-    "newsArticle": "Noticias #{articleId}"
-  },
   "LocaleSwitcher": {
-    "switchLocale": "Cambiar a {locale, select, es {Español} en {Inglés} other {Desconocido}}"
+    "ariaLabel": "Idioma",
+    "en": "EN",
+    "es": "ES"
   }
 }

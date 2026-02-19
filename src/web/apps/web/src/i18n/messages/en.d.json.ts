@@ -5,15 +5,15 @@ declare const messages: {
   "navigation": {
     "home": "Home",
     "signup": "Sign up",
-    "login": "Log in"
+    "login": "Log in",
+    "UI": "UI",
+    "robots": "Robots"
   },
-  "auth": {
-    "signup": {
-      "title": "Create account",
-      "email": "Email address",
-      "password": "Password",
-      "submit": "Create account"
-    }
+  "SignupPage": {
+    "title": "Create account",
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Create account"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -23,15 +23,10 @@ declare const messages: {
     "description": "This is an example of using next-intl in the `app` directory.",
     "title": "next-intl example"
   },
-  "Navigation": {
-    "about": "About (MDX)",
-    "client": "Client page",
-    "home": "Home",
-    "nested": "Nested page",
-    "newsArticle": "News article #{articleId}"
-  },
   "LocaleSwitcher": {
-    "switchLocale": "Change to {locale, select, es {Spanish} en {English} other {Unknown}}"
+    "ariaLabel": "Language",
+    "en": "EN",
+    "es": "ES"
   }
 };
 export default messages;

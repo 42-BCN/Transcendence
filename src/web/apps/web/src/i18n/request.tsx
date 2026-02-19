@@ -3,7 +3,7 @@ import { type Formats, hasLocale, IntlErrorCode } from 'next-intl';
 import { getRequestConfig } from 'next-intl/server';
 import defaultMessages from './messages/en.json';
 import { routing } from './routing';
-import { envServer } from '@/lib/env.server';
+import { envServer } from '@/lib/config/env.server';
 
 export const formats = {
   dateTime: {

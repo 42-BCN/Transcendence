@@ -16,8 +16,7 @@ const toKebabCase = (str) =>
     .toLowerCase();
 
 const toPascalCase = (str) =>
-  str
-    .replace(/(^\w|-\w)/g, (match) => match.replace('-', '').toUpperCase());
+  str.replace(/(^\w|-\w)/g, (match) => match.replace('-', '').toUpperCase());
 
 const kebabName = toKebabCase(nameArg);
 const componentName = toPascalCase(kebabName);
@@ -32,27 +31,24 @@ if (fs.existsSync(componentDir)) {
 fs.mkdirSync(componentDir, { recursive: true });
 
 // index.ts
-fs.writeFileSync(
-  path.join(componentDir, 'index.ts'),
-  `export * from './${kebabName}';\n`
-);
+fs.writeFileSync(path.join(componentDir, 'index.ts'), `export * from './${kebabName}';\n`);
 
 // component file
 fs.writeFileSync(
-  path.join(componentDir, `${kebabName}.ts`),
-`export type ${componentName}Props = {};
+  path.join(componentDir, `${kebabName}.tsx`),
+  `export type ${componentName}Props = {};
 
 export function ${componentName}(props: ${componentName}Props) {
   return null;
 }
-`
+`,
 );
 
 // styles file
 fs.writeFileSync(
   path.join(componentDir, `${kebabName}.styles.ts`),
-`export const ${componentName}Styles = {};
-`
+  `export const ${componentName}Styles = {};
+`,
 );
 
 console.log(`✅ Component created at: ${componentDir}`);

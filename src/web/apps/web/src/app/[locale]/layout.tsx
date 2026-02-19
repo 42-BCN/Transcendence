@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/server';
-import { Navigation } from '@components/features/navigation/navigation';
+import { LocaleSwitcher } from '@/features/locale-switcher/locale-switcher';
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
-import { envPublic } from '@/lib/env.public';
+import { envPublic } from '@/lib/config/env.public';
+import { Providers } from '@/app/providers';
+import { MainNav } from '@/features/main-nav';
 
 export async function generateMetadata({
   _children,
@@ -43,9 +45,17 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <HtmlLangSync />
-      <Navigation />
-      {children}
+      <Providers locale={locale}>
+        <HtmlLangSync />
+        <header className="border-b">
+          <div className="flex justify-between  px-4 py-3">
+            <LocaleSwitcher />
+            <MainNav locale={locale} />
+          </div>
+        </header>
+        <div className="m-3"></div>
+        {children}
+      </Providers>
     </NextIntlClientProvider>
   );
 }

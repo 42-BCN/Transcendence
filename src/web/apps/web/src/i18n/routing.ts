@@ -1,9 +1,8 @@
 import { defineRouting } from 'next-intl/routing';
-import { envPublic } from '@/lib/env.public';
-
+import { envPublic } from '@/lib/config/env.public';
 
 const localeCookie =
-  envPublic.localeCookieEnabled === 'false'
+  envPublic.localeCookieEnabled === false
     ? false
     : {
         name: envPublic.localeCookieName,
