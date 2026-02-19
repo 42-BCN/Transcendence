@@ -33,7 +33,7 @@ function tryTintMaterial(mat: THREE.Material, tint: THREE.Color, match: (name: s
   if (!match(mat.name ?? '')) return;
   if (!materialHasColor(mat)) return;
 
-  if (mat?.color) mat.color.set(tint);
+  mat.color?.set(tint);
   mat.needsUpdate = true;
 }
 
@@ -87,5 +87,5 @@ export function useTintMainMaterials(
 
       obj.material = cloneAndTintMaterial(original, tint, cache, match);
     });
-  }, [root, color, opts]);
+  }, [root, color, opts?.match]);
 }
