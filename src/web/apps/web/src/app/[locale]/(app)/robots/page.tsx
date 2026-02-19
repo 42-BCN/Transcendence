@@ -11,7 +11,7 @@ type Character = {
   color: string;
 };
 
-export default function threejsPage() {
+export default function ThreejsPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
   return (
     <div className="flex">

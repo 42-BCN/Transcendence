@@ -4,7 +4,7 @@
 
 src  
 |  
-+-- app               # application layout and pages as stated by (Next.js)[https://nextjs.org/docs/app/getting-started/layouts-and-pages]  
++-- app               # application layout and pages as stated by [Next.js](https://nextjs.org/docs/app/getting-started/layouts-and-pages)  
 |   +-- subroutes     # nested routes  
 |   +-- \[locale]     # dynamic route  
 |   +-- (group)       # group -> the folder will be ignored on route construction
