@@ -9,10 +9,8 @@ import { Providers } from '@/app/providers';
 import { MainNav } from '@/features/main-nav';
 
 export async function generateMetadata({
-  _children,
   params,
 }: {
-  _children: ReactNode;
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;

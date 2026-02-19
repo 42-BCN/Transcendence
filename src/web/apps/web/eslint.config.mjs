@@ -13,7 +13,6 @@ import uiArchitectureRules from './.eslint/ui-architecture.mjs';
 import importRules from './.eslint/import.mjs';
 import unusedImportsRules from './.eslint/unused-imports.mjs';
 import unicornRules from './.eslint/unicorn.mjs';
-import { off } from 'cluster';
 
 const sharedRules = {
   rules: {
