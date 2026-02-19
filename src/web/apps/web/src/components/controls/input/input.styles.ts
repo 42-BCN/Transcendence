@@ -1,47 +1,35 @@
 import { cn } from '@/lib/styles/cn';
 
-const inputBase = 'w-full rounded border bg-white px-3 py-2 text-sm outline-none transition';
+const inputBase = [
+  // layout
+  'w-full rounded border bg-white px-3 py-2 text-sm',
+  // behavior
+  'outline-none transition',
+];
 
-const inputPropsStyles = {
-  variant: {
-    default: 'border-gray-300 focus:border-gray-400',
-    subtle: 'border-transparent bg-gray-50 focus:bg-white focus:border-gray-300',
-    danger: 'border-red-500 focus:border-red-600',
-  },
-  size: {
-    sm: 'h-8',
-    md: 'h-10',
-    lg: 'h-12 text-base',
-  },
-};
+const inputVariants = {
+  default: 'border-gray-300',
+  subtle: 'border-transparent bg-gray-50',
+  danger: 'border-red-500',
+} as const;
 
-export type InputVariant = keyof typeof inputPropsStyles.variant;
-export type InputSize = keyof typeof inputPropsStyles.size;
+const inputSizes = {
+  sm: 'h-8',
+  md: 'h-10',
+  lg: 'h-12 text-base',
+} as const;
 
-export type InputRacState = {
-  isDisabled: boolean;
-  isInvalid: boolean;
-  isFocusVisible: boolean;
-};
+// RAC states grouped together
+const inputRacStates = [
+  'data-[focus-visible]:ring-2 data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-blue-500',
+  'data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
+  'data-[invalid]:border-red-500',
+  'data-[focused]:bg-white data-[focused]:border-gray-300',
+];
 
-function inputState(state: InputRacState) {
-  const disabled = state.isDisabled && 'opacity-50 cursor-not-allowed';
-  const focus = state.isFocusVisible && 'ring-2 ring-offset-2 ring-blue-500';
-  const valid = state.isInvalid && 'border-red-500';
-
-  return cn(disabled, focus, valid);
-}
-
-export function inputClass(args: {
-  variant?: InputVariant;
-  size?: InputSize;
-  state: InputRacState;
-}) {
-  const { variant = 'default', size = 'md', state } = args;
-  return cn(
-    inputBase,
-    inputPropsStyles.variant[variant],
-    inputPropsStyles.size[size],
-    inputState(state),
-  );
+export type InputVariant = keyof typeof inputVariants;
+export type InputSize = keyof typeof inputSizes;
+export function inputClass(args?: { variant?: InputVariant; size?: InputSize }) {
+  const { variant = 'default', size = 'md' } = args ?? {};
+  return cn(inputBase, inputVariants[variant], inputSizes[size], inputRacStates);
 }

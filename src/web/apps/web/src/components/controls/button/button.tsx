@@ -12,5 +12,5 @@ export type ButtonProps = Omit<AriaButtonProps, 'className' | 'onClick' | 'style
 };
 
 export function Button({ variant = 'primary', size = 'md', ...props }: ButtonProps) {
-  return <AriaButton {...props} className={(state) => buttonClass({ variant, size, state })} />;
+  return <AriaButton {...props} className={buttonClass({ variant, size })} />;
 }

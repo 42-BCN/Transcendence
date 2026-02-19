@@ -10,7 +10,7 @@ type SignupFieldBase = Omit<TextFieldProps, 'fieldError' | 'value' | 'onChange' 
   name: FieldName;
 };
 
-export const SIGNUP_FIELDS_BASE: readonly SignupFieldBase[] = [
+export const fieldsBase: readonly SignupFieldBase[] = [
   { name: 'email', label: 'Email', type: 'email', isRequired: true, autoComplete: 'email' },
   {
     name: 'password',
@@ -31,16 +31,16 @@ export const SIGNUP_FIELDS_BASE: readonly SignupFieldBase[] = [
   },
 ] as const;
 
-const SIGNUP_FIELD_NAMES = SIGNUP_FIELDS_BASE.map((f) => f.name) as readonly (keyof SignupValues)[];
-const DEFAULT_VALUES = createEmptyValues<SignupValues>(SIGNUP_FIELD_NAMES);
+const fieldNames = fieldsBase.map((f) => f.name) as readonly (keyof SignupValues)[];
+const defaultValues = createEmptyValues<SignupValues>(fieldNames);
 
 export function useSignupForm() {
   return {
-    fieldsBase: SIGNUP_FIELDS_BASE,
+    fieldsBase,
     ...useZodForm<SignupValues>({
       schema: signupSchema,
-      fieldNames: SIGNUP_FIELD_NAMES,
-      defaultValues: DEFAULT_VALUES,
+      fieldNames,
+      defaultValues,
     }),
   };
 }

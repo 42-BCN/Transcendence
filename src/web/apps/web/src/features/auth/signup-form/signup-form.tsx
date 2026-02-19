@@ -21,11 +21,9 @@ export function SignupFeature({ action }: SignupFeatureProps) {
         if (!res.ok) e.preventDefault();
       }}
     >
-      {form.fieldsBase.map((base) => {
-        const name = base.name;
-
-        return <TextField key={String(name)} {...base} {...form.getTextFieldProps(name)} />;
-      })}
+      {form.fieldsBase.map((base) => (
+        <TextField key={String(base.name)} {...base} {...form.getTextFieldProps(base.name)} />
+      ))}
 
       <Button type="submit">Sign up</Button>
     </Form>

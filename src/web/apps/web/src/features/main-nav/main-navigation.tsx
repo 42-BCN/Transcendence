@@ -10,7 +10,7 @@ type TFunc = ReturnType<typeof useTranslations>;
 
 function NavLinkItem(args: { locale: string; navItem: NavItem; pathname: string; t: TFunc }) {
   const { locale, navItem, pathname, t } = args;
-  const href = `/${locale}${navItem.href}`;
+  const href = locale === 'en' ? navItem.href : `/${locale}${navItem.href}`;
   const isCurrent = navItem.exact
     ? pathname === href
     : pathname === href || pathname.startsWith(href + '/');

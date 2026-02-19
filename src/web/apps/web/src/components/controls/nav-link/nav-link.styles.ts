@@ -9,7 +9,7 @@ const navBase = [
   'opacity-80',
 ];
 
-const linkRacRenderProps = [
+const linkRacDataAttrs = [
   'data-[current]:font-semibold data-[current]:opacity-100',
   'data-[hovered]:opacity-100',
   'data-[pressed]:scale-[0.99]',
@@ -18,5 +18,5 @@ const linkRacRenderProps = [
 ];
 
 export function navLinkClass() {
-  return cn(navBase, linkRacRenderProps);
+  return cn(navBase, linkRacDataAttrs);
 }

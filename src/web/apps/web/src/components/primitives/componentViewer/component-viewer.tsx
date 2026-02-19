@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { componentViewerClass } from './component-viewer.styles';
 
 export type ComponentViewerProps = {
   title: string;
@@ -6,9 +7,11 @@ export type ComponentViewerProps = {
 };
 
 export function ComponentViewer({ title, children }: ComponentViewerProps) {
+  const wrapperClass = componentViewerClass.wrapper();
+  const labelClass = componentViewerClass.label();
   return (
-    <div className="border flex flex-col p-2 gap-1 bg-slate-50">
-      <p className="text-xs">{title}</p>
+    <div className={wrapperClass}>
+      <p className={labelClass}>{title}</p>
       {children}
     </div>
   );

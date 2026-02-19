@@ -16,5 +16,5 @@ export type FormProps = Omit<
 };
 
 export function Form({ className, action, method, ...props }: FormProps) {
-  return <form {...props} action={action} method={method} className={formClass({ className })} />;
+  return <form {...props} action={action} method={method} className={formClass()} />;
 }

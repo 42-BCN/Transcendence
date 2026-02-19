@@ -12,5 +12,5 @@ export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | '
 };
 
 export function Input({ variant = 'default', size = 'md', ...props }: InputProps) {
-  return <AriaInput {...props} className={(state) => inputClass({ variant, size, state })} />;
+  return <AriaInput {...props} className={(state) => inputClass({ variant, size })} />;
 }

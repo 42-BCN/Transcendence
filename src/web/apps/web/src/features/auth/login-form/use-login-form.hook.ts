@@ -10,7 +10,7 @@ type LoginFieldBase = Omit<TextFieldProps, 'fieldError' | 'value' | 'onChange' |
   name: FieldName;
 };
 
-export const LOGIN_FIELDS_BASE: readonly LoginFieldBase[] = [
+const fieldsBase: readonly LoginFieldBase[] = [
   { name: 'email', label: 'Email', type: 'email', isRequired: true, autoComplete: 'email' },
   {
     name: 'password',
@@ -21,16 +21,16 @@ export const LOGIN_FIELDS_BASE: readonly LoginFieldBase[] = [
   },
 ] as const;
 
-const LOGIN_FIELD_NAMES = LOGIN_FIELDS_BASE.map((f) => f.name) as readonly (keyof LoginValues)[];
-const DEFAULT_VALUES = createEmptyValues<LoginValues>(LOGIN_FIELD_NAMES);
+const fieldNames = fieldsBase.map((f) => f.name) as readonly (keyof LoginValues)[];
+const defaultValues = createEmptyValues<LoginValues>(fieldNames);
 
 export function useLoginForm() {
   return {
-    fieldsBase: LOGIN_FIELDS_BASE,
+    fieldsBase,
     ...useZodForm<LoginValues>({
       schema: loginSchema,
-      fieldNames: LOGIN_FIELD_NAMES,
-      defaultValues: DEFAULT_VALUES,
+      fieldNames,
+      defaultValues,
     }),
   };
 }

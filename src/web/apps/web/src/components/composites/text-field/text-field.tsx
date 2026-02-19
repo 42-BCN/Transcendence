@@ -34,19 +34,14 @@ export function TextField({
   const isInvalid = props.isInvalid ?? Boolean(fieldError);
   return (
     <AriaTextField {...props} className={textFieldRootClass()} isInvalid={isInvalid}>
-      {(state) => (
-        <>
-          <Label className={textFieldLabelClass({ state })}>{label}</Label>
-
-          <Input {...inputProps} />
-          {description ? (
-            <Text slot="description" className={textFieldDescriptionClass()}>
-              {description}
-            </Text>
-          ) : null}
-          <FieldError className={textFieldErrorClass()}>{fieldError}</FieldError>
-        </>
-      )}
+      <Label className={textFieldLabelClass()}>{label}</Label>
+      <Input {...inputProps} />
+      {description ? (
+        <Text slot="description" className={textFieldDescriptionClass()}>
+          {description}
+        </Text>
+      ) : null}
+      <FieldError className={textFieldErrorClass()}>{fieldError}</FieldError>
     </AriaTextField>
   );
 }
