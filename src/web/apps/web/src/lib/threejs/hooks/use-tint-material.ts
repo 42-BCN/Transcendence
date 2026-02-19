@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect } from 'react';
 
 type MaterialWithColor = THREE.Material & { color?: THREE.Color };
 type SkinnableMaterial = THREE.Material & { skinning?: boolean };
