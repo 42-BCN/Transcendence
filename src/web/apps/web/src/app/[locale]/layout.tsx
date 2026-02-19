@@ -48,12 +48,11 @@ export default async function LocaleLayout({
       <Providers locale={locale}>
         <HtmlLangSync />
         <header className="border-b">
-          <div className="flex justify-between  px-4 py-3">
+          <div className="flex justify-between px-4 py-3">
             <LocaleSwitcher />
             <MainNav locale={locale} />
           </div>
         </header>
-        <div className="m-3"></div>
         {children}
       </Providers>
     </NextIntlClientProvider>

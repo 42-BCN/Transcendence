@@ -1,18 +1,18 @@
 # Frontend Components
 
-## src/struture
+## src/structure
 
 src  
 |  
 +-- app               # application layout and pages as stated by (Next.js)[https://nextjs.org/docs/app/getting-started/layouts-and-pages]  
 |   +-- subroutes     # nested routes  
-|   +-- \[locale]     # dinamic route  
+|   +-- \[locale]     # dynamic route  
 |   +-- (group)       # group -> the folder will be ignored on route construction
 |   +----------------- files  
 |   +-- page.tsx      # a page is UI that is rendered on a specific route.  
 |   +-- layout.tsx    # a layout is UI that is shared between multiple pages. On   navigation, layouts preserve state, remain interactive, and do not rerender.  
 |   +-- error.tsx     # catch errors in their child components and display a fallback UI instead of the component tree that crashed.  
-|		+-- loading.tsx   # react suspense boundary  
+|   +-- loading.tsx   # react suspense boundary  
 |   +-- not-found.tsx # react error boundary for "not found" UI  
 |  
 +-- components        # shared components used across the entire application  

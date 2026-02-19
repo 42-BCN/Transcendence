@@ -23,7 +23,6 @@ export type SegmentedControlGroupProps = {
   defaultSelectedKey?: Key;
   selectedKey?: Key; // controlled
   onSelectionChange?: (key: Key) => void;
-  variant?: 'primary' | 'secondary';
 };
 
 function SegmentedControlItem(props: ToggleButtonProps) {
@@ -44,7 +43,6 @@ export function SegmentedControlGroup({
   defaultSelectedKey,
   selectedKey,
   onSelectionChange,
-  variant = 'secondary',
   ...aria
 }: SegmentedControlGroupProps) {
   const selectionModeProps =
@@ -68,7 +66,6 @@ export function SegmentedControlGroup({
     <ToggleButtonGroup
       {...aria}
       className={segmentedControlGroupStyles.group()}
-      data-variant={variant}
       disallowEmptySelection
       {...selectionModeProps}
     >
