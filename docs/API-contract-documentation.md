@@ -90,7 +90,7 @@ All responses use
 ### 2.2 HTTP Status Codes
 
 HTTP status codes are mapped from error codes on `./http/status.ts`.
-Mapping is centralized and must not be hardcoded in controllers at `endpoint.error`.
+Mapping is centralized and must not be hardcoded in controllers at `endpoint.errors.ts`.
 
 Example mapping:
 
@@ -106,7 +106,7 @@ Example mapping:
 
 ### 2.3 Validation 
 
-Validation is defined in `endpoint.validation` exists at two levels:
+Validation is defined in `endpoint.validation.ts` exists at two levels:
 
 - Backend validation (source of truth)
 - Frontend validation (UX enhancement)
@@ -120,7 +120,7 @@ Frontend validation improves user experience.
 
 Backend validation:
 
-- Uses Zod schemas defined in `.endpoint/endpoint.validation.ts`
+- Uses Zod schemas defined in `endpoint.validation.ts`
 - Emits stable validation codes
 - Returns AUTH_VALIDATION_ERROR with structured field details
 - Never returns user-facing strings
