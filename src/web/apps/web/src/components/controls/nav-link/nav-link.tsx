@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { Link as RacLink } from 'react-aria-components';
 
-import { navLinkClass } from './nav-link.styles';
+import { navLinkStyles } from './nav-link.styles';
 
 export type NavLinkProps = {
   href: string;
@@ -13,7 +13,7 @@ export type NavLinkProps = {
 
 export function NavLink({ href, isCurrent, children }: NavLinkProps) {
   return (
-    <RacLink href={href} aria-current={isCurrent ? 'page' : undefined} className={navLinkClass()}>
+    <RacLink href={href} aria-current={isCurrent ? 'page' : undefined} className={navLinkStyles()}>
       {children}
     </RacLink>
   );

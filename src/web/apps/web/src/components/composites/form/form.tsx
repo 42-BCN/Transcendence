@@ -1,7 +1,7 @@
 'use client';
 
 import type { FormHTMLAttributes } from 'react';
-import { formClass } from './form.styles';
+import { formStyles } from './form.styles';
 
 type ServerAction = (formData: FormData) => void | Promise<void>;
 type FormAction = string | ServerAction;
@@ -16,5 +16,5 @@ export type FormProps = Omit<
 };
 
 export function Form({ className, action, method, ...props }: FormProps) {
-  return <form {...props} action={action} method={method} className={formClass()} />;
+  return <form {...props} action={action} method={method} className={formStyles()} />;
 }

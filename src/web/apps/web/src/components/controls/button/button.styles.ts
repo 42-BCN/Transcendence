@@ -30,7 +30,7 @@ const buttonRacStates = [
 export type ButtonVariant = keyof typeof buttonVariants;
 export type ButtonSize = keyof typeof buttonSizes;
 
-export function buttonClass(args?: { variant?: ButtonVariant; size?: ButtonSize }) {
+export function buttonStyles(args?: { variant?: ButtonVariant; size?: ButtonSize }) {
   const { variant = 'primary', size = 'md' } = args ?? {};
   return cn(buttonBase, buttonVariants[variant], buttonSizes[size], buttonRacStates);
 }
