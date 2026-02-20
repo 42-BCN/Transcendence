@@ -1,0 +1,112 @@
+{
+  "login": {
+    "endpoint": "POST /api/auth/login",
+    "requestExamples": {
+      "byUsername": {
+        "identifier": "john_doe",
+        "password": "SuperSecret123"
+      },
+      "byEmail": {
+        "identifier": "john@mail.com",
+        "password": "SuperSecret123"
+      }
+    },
+    "responses": {
+      "success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "user": {
+              "id": "9f6b4b6e-2d5b-4a6f-8a3a-8d7c9c0b2a1e",
+              "email": "john@mail.com",
+              "username": "john_doe"
+            }
+          }
+        }
+      },
+      "invalidCredentials": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "error": {
+            "code": "AUTH_INVALID_CREDENTIALS"
+          }
+        }
+      },
+      "validationError_required": {
+        "status": 422,
+        "body": {
+          "ok": false,
+          "error": {
+            "code": "AUTH_VALIDATION_ERROR",
+            "details": {
+              "fields": {
+                "identifier": ["REQUIRED"]
+              }
+            }
+          }
+        }
+      },
+      "validationError_usernameTooShort": {
+        "status": 422,
+        "body": {
+          "ok": false,
+          "error": {
+            "code": "AUTH_VALIDATION_ERROR",
+            "details": {
+              "fields": {
+                "identifier": ["FIELD_TOO_SHORT"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "logout": {
+    "endpoint": "POST /api/auth/logout",
+    "requestExamples": {
+      "default": null
+    },
+    "responses": {
+      "success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": null
+        }
+      }
+    }
+  },
+  "me": {
+    "endpoint": "GET /api/auth/me",
+    "requestExamples": {
+      "default": null
+    },
+    "responses": {
+      "success": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "data": {
+            "user": {
+              "id": "9f6b4b6e-2d5b-4a6f-8a3a-8d7c9c0b2a1e",
+              "email": "john@mail.com",
+              "username": "john_doe"
+            }
+          }
+        }
+      },
+      "unauthorized": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "error": {
+            "code": "AUTH_UNAUTHORIZED"
+          }
+        }
+      }
+    }
+  }
+}
