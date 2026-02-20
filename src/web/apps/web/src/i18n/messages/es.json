@@ -24,5 +24,60 @@
     "ariaLabel": "Idioma",
     "en": "EN",
     "es": "ES"
+  },
+  "auth": {
+    "common": {
+      "appTitle": "Autenticación",
+      "identifier": {
+        "label": "Correo o nombre de usuario",
+        "placeholder": "nombre@ejemplo.com o usuario",
+        "description": "Usa el correo o el nombre de usuario con el que te registraste."
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "nombre@ejemplo.com"
+      },
+      "username": {
+        "label": "Nombre de usuario",
+        "placeholder": "tu_usuario"
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Introduce tu contraseña"
+      },
+      "passwordConfirm": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Vuelve a introducir tu contraseña"
+      }
+    },
+    "login": {
+      "title": "Iniciar sesión",
+      "submit": "Iniciar sesión",
+      "forgotPassword": "¿Has olvidado la contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "goToSignup": "Crear una"
+    },
+    "signup": {
+      "title": "Crear cuenta",
+      "submit": "Crear cuenta",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "goToLogin": "Iniciar sesión"
+    },
+    "status": {
+      "success": "Correcto",
+      "error": "Algo salió mal. Inténtalo de nuevo."
+    }
+  },
+  "validation": {
+    "REQUIRED": "Este campo es obligatorio.",
+    "INVALID_EMAIL": "Introduce un correo electrónico válido.",
+    "INVALID_USERNAME": "El nombre de usuario debe tener entre 3 y 30 caracteres y solo puede contener letras, números, guiones bajos (_) o guiones (-).",
+    "INVALID_EMAIL_OR_USERNAME": "Introduce un correo electrónico o nombre de usuario válido.",
+    "INVALID_FORMAT": "Formato no válido.",
+    "USERNAME_TOO_SHORT": "El nombre de usuario debe tener al menos 3 caracteres.",
+    "USERNAME_TOO_LONG": "El nombre de usuario no puede superar los 30 caracteres.",
+    "INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
+    "FIELD_TOO_SHORT": "Demasiado corto.",
+    "FIELD_TOO_LONG": "Demasiado largo."
   }
 }

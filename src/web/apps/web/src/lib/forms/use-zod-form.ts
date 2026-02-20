@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { validate, validateAll } from './validation';
 import type { z } from 'zod';
 import type { FieldErrorsOf, TouchedOf } from './types';
+import { VALIDATION_I18N_KEY } from '@/contracts/http/validation';
 
 type Args<T extends Record<string, unknown>> = {
   schema: z.ZodType<T>;
@@ -40,7 +41,7 @@ export function useZodForm<T extends Record<string, unknown>>({
   const getTextFieldProps = <K extends keyof T>(name: K) => ({
     name: String(name),
     value: String(values[name] ?? ''),
-    fieldError: errors[name],
+    errorKey: errors[name] && `validation.${errors[name]}`,
     onChange: (v: string) => setField(name, v as T[K]),
     onBlur: () => blurField(name),
   });

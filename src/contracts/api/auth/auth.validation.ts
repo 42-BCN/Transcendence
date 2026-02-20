@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { VALIDATION } from "../http/validation";
+import { z } from 'zod';
+import { VALIDATION } from '../http/validation';
 
 export const identifierSchema = z.string().superRefine((val, ctx) => {
   if (!val || val.trim().length === 0) {
@@ -10,7 +10,7 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
     return;
   }
 
-  if (val.includes("@")) {
+  if (val.includes('@')) {
     const emailValid = z.string().email().safeParse(val).success;
     if (!emailValid) {
       ctx.addIssue({
@@ -52,3 +52,5 @@ export const AuthLoginRequestSchema = z.object({
   identifier: identifierSchema,
   password: z.string().min(1, { message: VALIDATION.REQUIRED }),
 });
+
+export type AuthLoginRequest = z.infer<typeof AuthLoginRequestSchema>;

@@ -24,5 +24,61 @@
     "ariaLabel": "Language",
     "en": "EN",
     "es": "ES"
+  },
+
+  "auth": {
+    "common": {
+      "appTitle": "Auth",
+      "identifier": {
+        "label": "Email or username",
+        "placeholder": "name@example.com or username",
+        "description": "Use the email address or username you signed up with."
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "name@example.com"
+      },
+      "username": {
+        "label": "Username",
+        "placeholder": "your_username"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password"
+      },
+      "passwordConfirm": {
+        "label": "Confirm password",
+        "placeholder": "Re-enter your password"
+      }
+    },
+    "login": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don’t have an account?",
+      "goToSignup": "Create one"
+    },
+    "signup": {
+      "title": "Create account",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "goToLogin": "Sign in"
+    },
+    "status": {
+      "success": "Success",
+      "error": "Something went wrong. Please try again."
+    }
+  },
+  "validation": {
+    "REQUIRED": "This field is required.",
+    "INVALID_EMAIL": "Enter a valid email address.",
+    "INVALID_USERNAME": "Username must be 3–30 characters and contain only letters, numbers, underscores (_), or hyphens (-).",
+    "INVALID_EMAIL_OR_USERNAME": "Enter a valid email address or username.",
+    "INVALID_FORMAT": "Invalid format.",
+    "USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
+    "USERNAME_TOO_LONG": "Username must be no more than 30 characters.",
+    "INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
+    "FIELD_TOO_SHORT": "Too short.",
+    "FIELD_TOO_LONG": "Too long."
   }
 }

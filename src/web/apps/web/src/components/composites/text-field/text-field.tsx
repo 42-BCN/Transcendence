@@ -1,7 +1,5 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
 import { FieldError, Label, Text, TextField as AriaTextField } from 'react-aria-components';
 import type { TextFieldProps as AriaTextFieldProps } from 'react-aria-components';
 
@@ -9,34 +7,37 @@ import { Input } from '@components/controls/input';
 import type { InputProps } from '@components/controls/input';
 
 import { textFieldStyles } from './text-field.styles';
+import { useTranslations } from 'next-intl';
 
-type Validation = unknown; // keep simple; you can swap to @react-types/shared ValidationResult if you want
+type I18nKey = string;
 
 export type TextFieldProps = Omit<AriaTextFieldProps, 'children' | 'className'> & {
-  label: ReactNode;
-  description?: ReactNode;
-  fieldError?: ReactNode | ((validation: Validation) => ReactNode);
+  labelKey: I18nKey;
+  descriptionKey?: I18nKey;
+  errorKey?: I18nKey;
   inputProps?: InputProps;
 };
 
 export function TextField({
-  label,
-  description,
-  fieldError,
+  labelKey,
+  descriptionKey,
+  errorKey,
   inputProps,
   ...props
 }: TextFieldProps) {
-  const isInvalid = props.isInvalid ?? Boolean(fieldError);
+  const isInvalid = props.isInvalid ?? Boolean(errorKey);
+  const t = useTranslations();
+  console.log(errorKey);
   return (
     <AriaTextField {...props} className={textFieldStyles.root()} isInvalid={isInvalid}>
-      <Label className={textFieldStyles.label()}>{label}</Label>
+      <Label className={textFieldStyles.label()}> {t(labelKey)}</Label>
       <Input {...inputProps} />
-      {description ? (
+      {descriptionKey && (
         <Text slot="description" className={textFieldStyles.description()}>
-          {description}
+          {t(descriptionKey)}
         </Text>
-      ) : null}
-      <FieldError className={textFieldStyles.error()}>{fieldError}</FieldError>
+      )}
+      {errorKey && <FieldError className={textFieldStyles.error()}>{t(errorKey)}</FieldError>}
     </AriaTextField>
   );
 }
