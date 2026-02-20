@@ -6,15 +6,11 @@ import { formStyles } from './form.styles';
 type ServerAction = (formData: FormData) => void | Promise<void>;
 type FormAction = string | ServerAction;
 
-export type FormProps = Omit<
-  FormHTMLAttributes<HTMLFormElement>,
-  'action' | 'className' | 'method'
-> & {
-  className?: string;
+export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, 'action' | 'method'> & {
   action?: FormAction;
   method?: 'GET' | 'POST';
 };
 
-export function Form({ className, action, method, ...props }: FormProps) {
+export function Form({ action, method, ...props }: FormProps) {
   return <form {...props} action={action} method={method} className={formStyles()} />;
 }

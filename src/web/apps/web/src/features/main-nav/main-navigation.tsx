@@ -13,7 +13,7 @@ function NavLinkItem(args: { locale: string; navItem: NavItem; pathname: string;
   const href = locale === 'en' ? navItem.href : `/${locale}${navItem.href}`;
   const isCurrent = navItem.exact
     ? pathname === href
-    : pathname === href || pathname.startsWith(href + '/');
+    : pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <NavLink href={href} isCurrent={isCurrent}>

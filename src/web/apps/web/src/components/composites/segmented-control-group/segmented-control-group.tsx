@@ -1,5 +1,6 @@
 'use client';
 
+import { ReactNode } from 'react';
 import { segmentedControlGroupStyles } from './segmented-control-group.styles';
 import {
   ToggleButtonGroup,
@@ -13,7 +14,7 @@ import {
 
 type SegmentedOption = {
   id: Key;
-  label: React.ReactNode;
+  label: ReactNode;
   isDisabled?: boolean;
 };
 
@@ -51,14 +52,14 @@ export function SegmentedControlGroup({
           selectedKeys: new Set([selectedKey]),
           onSelectionChange: (keys: Selection) => {
             const key = [...(keys as Set<Key>)][0];
-            if (key != null) onSelectionChange?.(key);
+            if (key !== null) onSelectionChange?.(key);
           },
         } as const)
       : ({
           defaultSelectedKeys: defaultSelectedKey ? new Set([defaultSelectedKey]) : undefined,
           onSelectionChange: (keys: Selection) => {
             const key = [...(keys as Set<Key>)][0];
-            if (key != null) onSelectionChange?.(key);
+            if (key !== null) onSelectionChange?.(key);
           },
         } as const);
 
