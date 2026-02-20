@@ -5,7 +5,7 @@ const navBase = [
   'inline-flex items-center rounded-md px-3 py-2 text-sm',
   // behavior
   'transition outline-none',
-  // default visual - will be overriden
+  // default visual - will be overridden
   'opacity-80',
 ];
 
