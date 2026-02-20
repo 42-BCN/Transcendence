@@ -3,7 +3,7 @@
 import type { InputProps as AriaInputProps } from 'react-aria-components';
 import { Input as AriaInput } from 'react-aria-components';
 
-import { inputClass } from './input.styles';
+import { inputStyles } from './input.styles';
 import type { InputSize as Size, InputVariant as Variant } from './input.styles';
 
 export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | 'onKeyDown'> & {
@@ -12,5 +12,5 @@ export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | '
 };
 
 export function Input({ variant = 'default', size = 'md', ...props }: InputProps) {
-  return <AriaInput {...props} className={(state) => inputClass({ variant, size })} />;
+  return <AriaInput {...props} className={() => inputStyles({ variant, size })} />;
 }

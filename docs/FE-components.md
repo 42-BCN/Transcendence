@@ -1,7 +1,8 @@
 # Frontend Components
 
-## src/structure
+## 1. Folder structure 
 
+```
 src  
 |  
 +-- app               # application layout and pages as stated by [Next.js](https://nextjs.org/docs/app/getting-started/layouts-and-pages)  
@@ -25,12 +26,59 @@ src
 +-- lib               # reusable libraries and exported variables preconfigured for the application
 |
 +-- i18n              # i18n configuration
-|
-+ ------------------- current implementation ends here
-|
-+-- types             # shared types used across the application
-|
-+-- stores            # global state stores
-|
-+-- hooks             # shared hooks used across the entire application
 
+```
+---
+
+## 2.Component 
+
+
+### 2.1 Component overview
+| Layer       | Purpose  | Styling Responsibility | Can Import From |
+|-------------|----------|------------------------|-----------------|
+| Primitives  | Low-level visual + layout building blocks | Layout, spacing, typography, tokens | shared/ui/primitives, shared/lib |
+| Controls (Controllers) | Accessible interactive components wrapping RAC | Variants, sizes, focus, disabled, invalid states | primitives + RAC |
+| Composites  | Reusable combinations of primitives + controls | Layout composition + slot styling | primitives + controls |
+
+---
+
+### 2.2 File Structure
+
+```
+component/[primitive|controls|composites]
+|  
++-- component-name    				# component directory 
+|   +-- component-name.tsx     		# component structure  
+|   +-- component-name.style.ts     # component classes
+|   +-- index.ts					# component export
+```
+
+### 2.3 Component Clases
+``` tsx
+// Base classes
+const componentNameBase = '....'; 
+
+// Dinamic variants classes [variant|size|etc]
+const componentNameVariants = [
+	primary: '...',
+  	secondary: '...',
+];
+
+const componentNameSizes = [
+  sm: '...',
+  md: '...',
+  lg: '...',
+]; 
+
+// React aria data-[state] variations
+const  componentNameRAC = [
+	`data-[disabled]:...`,
+	`data-[disabled]:...`,
+	`data-[focus-visible]:...`,
+	`data-[focus-visible]:...`,
+	// ... etc check base component base
+]
+
+```
+
+When a component is composite export each member style as individual function.

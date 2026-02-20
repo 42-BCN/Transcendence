@@ -8,12 +8,7 @@ import type { TextFieldProps as AriaTextFieldProps } from 'react-aria-components
 import { Input } from '@components/controls/input';
 import type { InputProps } from '@components/controls/input';
 
-import {
-  textFieldDescriptionClass,
-  textFieldErrorClass,
-  textFieldLabelClass,
-  textFieldRootClass,
-} from './text-field.styles';
+import { textFieldStyles } from './text-field.styles';
 
 type Validation = unknown; // keep simple; you can swap to @react-types/shared ValidationResult if you want
 
@@ -33,15 +28,15 @@ export function TextField({
 }: TextFieldProps) {
   const isInvalid = props.isInvalid ?? Boolean(fieldError);
   return (
-    <AriaTextField {...props} className={textFieldRootClass()} isInvalid={isInvalid}>
-      <Label className={textFieldLabelClass()}>{label}</Label>
+    <AriaTextField {...props} className={textFieldStyles.root()} isInvalid={isInvalid}>
+      <Label className={textFieldStyles.label()}>{label}</Label>
       <Input {...inputProps} />
       {description ? (
-        <Text slot="description" className={textFieldDescriptionClass()}>
+        <Text slot="description" className={textFieldStyles.description()}>
           {description}
         </Text>
       ) : null}
-      <FieldError className={textFieldErrorClass()}>{fieldError}</FieldError>
+      <FieldError className={textFieldStyles.error()}>{fieldError}</FieldError>
     </AriaTextField>
   );
 }

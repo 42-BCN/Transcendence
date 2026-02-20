@@ -29,7 +29,7 @@ const inputRacStates = [
 
 export type InputVariant = keyof typeof inputVariants;
 export type InputSize = keyof typeof inputSizes;
-export function inputClass(args?: { variant?: InputVariant; size?: InputSize }) {
+export function inputStyles(args?: { variant?: InputVariant; size?: InputSize }) {
   const { variant = 'default', size = 'md' } = args ?? {};
   return cn(inputBase, inputVariants[variant], inputSizes[size], inputRacStates);
 }

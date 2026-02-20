@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { componentViewerClass } from './component-viewer.styles';
+import { componentViewerStyles } from './component-viewer.styles';
 
 export type ComponentViewerProps = {
   title: string;
@@ -7,8 +7,8 @@ export type ComponentViewerProps = {
 };
 
 export function ComponentViewer({ title, children }: ComponentViewerProps) {
-  const wrapperClass = componentViewerClass.wrapper();
-  const labelClass = componentViewerClass.label();
+  const wrapperClass = componentViewerStyles.wrapper();
+  const labelClass = componentViewerStyles.label();
   return (
     <div className={wrapperClass}>
       <p className={labelClass}>{title}</p>

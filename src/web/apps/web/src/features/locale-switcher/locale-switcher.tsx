@@ -28,7 +28,6 @@ export function LocaleSwitcher() {
   return (
     <SegmentedControlGroup
       aria-label={t('ariaLabel')}
-      variant="secondary"
       selectedKey={locale as Key}
       onSelectionChange={changeLocaleHandler}
       options={options}

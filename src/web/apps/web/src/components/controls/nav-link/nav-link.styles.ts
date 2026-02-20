@@ -17,6 +17,6 @@ const linkRacDataAttrs = [
   'data-[disabled]:opacity-40 data-[disabled]:pointer-events-none',
 ];
 
-export function navLinkClass() {
+export function navLinkStyles() {
   return cn(navBase, linkRacDataAttrs);
 }
