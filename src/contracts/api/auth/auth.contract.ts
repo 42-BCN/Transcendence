@@ -1,8 +1,8 @@
-import type { ApiResponse } from '../http/response';
-import type { ValidationErrorDetails } from '../http/validation';
-import { AUTH_ERRORS } from './auth.errors';
-import type { AuthLoginRequestSchema } from './auth.validation';
-import type { z } from 'zod';
+import type { ApiResponse } from "../http/response";
+import type { ValidationErrorDetails } from "../http/validation";
+import { AUTH_ERRORS } from "./auth.errors";
+import { AuthLoginRequestSchema } from "./auth.validation";
+import type { z } from "zod";
 
 export type AuthUser = {
   id: string; // uuid
@@ -32,7 +32,11 @@ export const AUTH_LOGIN_ERRORS = [
 
 export type AuthLoginError = (typeof AUTH_LOGIN_ERRORS)[number];
 
-export type AuthLoginResponse = ApiResponse<AuthLoginOk, AuthLoginError, ValidationErrorDetails>;
+export type AuthLoginResponse = ApiResponse<
+  AuthLoginOk,
+  AuthLoginError,
+  ValidationErrorDetails
+>;
 
 // ---------------------------------------
 // POST /api/auth/logout
@@ -58,7 +62,10 @@ export type AuthMeOk = {
   user: AuthUser;
 };
 
-export const AUTH_ME_ERRORS = [AUTH_ERRORS.UNAUTHORIZED, AUTH_ERRORS.INTERNAL_ERROR] as const;
+export const AUTH_ME_ERRORS = [
+  AUTH_ERRORS.UNAUTHORIZED,
+  AUTH_ERRORS.INTERNAL_ERROR,
+] as const;
 
 export type AuthMeError = (typeof AUTH_ME_ERRORS)[number];
 

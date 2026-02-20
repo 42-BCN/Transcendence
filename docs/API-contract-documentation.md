@@ -10,7 +10,7 @@ All FE ↔ BE contracts are the single source of truth for the public API surfac
 contracts/api 
 |  
 +-- http                        # http generic definitions.  
-|   +-- index                   # export forlder content.
+|   +-- index                   # export folder content.
 |   +-- response                # API success and error wrappers
 |   +-- status                  # Error status codes mapped to HTTP status. 
 |   +-- validation              # Zod validation logic. 
@@ -54,7 +54,7 @@ export type ApiSuccess<T> = {
 
 #### Errors
 
-Should be mapped at: `endpoint.error.ts`
+Should be mapped at: `endpoint.errors.ts`
 Response:
 ```json
 {
@@ -106,7 +106,7 @@ Example mapping:
 
 ### 2.3 Validation 
 
-Validation is defined in `endpoint.validation.ts` exists at two levels:
+Validation is defined in `endpoint.validation.ts` and exists at two levels:
 
 - Backend validation (source of truth)
 - Frontend validation (UX enhancement)
@@ -134,7 +134,7 @@ Error shape example:
     "details": {
       "fields": {
         "identifier": ["REQUIRED"],
-        "password": ["PASSWORD_TOO_SHORT"]
+        "password": ["FIELD_TOO_SHORT"]
       }
     }
   }
@@ -143,7 +143,7 @@ Error shape example:
 
 Rules:
 
-- Validation codes are defined in src/contracts/http/validation.codes.ts
+- Validation codes are defined in `./http/validation.ts`
 - Zod issues are converted to ValidationErrorDetails
 - No raw Zod messages are returned
 - No English strings are returned

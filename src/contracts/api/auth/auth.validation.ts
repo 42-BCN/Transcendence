@@ -27,6 +27,7 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
       code: z.ZodIssueCode.custom,
       message: VALIDATION.FIELD_TOO_SHORT,
     });
+    return;
   }
 
   if (val.trim().length > 30) {
@@ -34,9 +35,10 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
       code: z.ZodIssueCode.custom,
       message: VALIDATION.FIELD_TOO_LONG,
     });
+    return;
   }
 
-  const usernameRegex = /^\w+$/;
+  const usernameRegex = /^[\w-]+$/;
 
   if (!usernameRegex.test(val)) {
     ctx.addIssue({

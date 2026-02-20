@@ -56,7 +56,7 @@
             "code": "AUTH_VALIDATION_ERROR",
             "details": {
               "fields": {
-                "identifier": ["USERNAME_TOO_SHORT"]
+                "identifier": ["FIELD_TOO_SHORT"]
               }
             }
           }
