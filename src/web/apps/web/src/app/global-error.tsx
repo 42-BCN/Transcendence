@@ -1,13 +1,13 @@
 'use client';
 
 export default function GlobalError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
   return (
+    // eslint-disable-next-line jsx-a11y/html-has-lang
     <html>
       <body>
         <h1>Something went wrong</h1>

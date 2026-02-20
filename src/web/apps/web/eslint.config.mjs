@@ -171,7 +171,7 @@ export default [
   // Allow process.env access ONLY in env modules,
   // but still ban process.env.FOO (member access) specifically
   {
-    files: ['src/lib/env.public.ts', 'src/lib/env.server.ts'],
+    files: ['src/lib/config/env.public.ts', 'src/lib/config/env.server.ts'],
     rules: {
       'no-restricted-properties': 'off',
       'no-restricted-syntax': 'off',
