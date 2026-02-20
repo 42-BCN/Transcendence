@@ -15,18 +15,9 @@ const textFieldBase = {
 
 const textFieldRACStates = ['data-[pressed]:opacity-50 first-letter:uppercase'];
 
-export function textFieldRootClass() {
-  return cn(textFieldBase.root);
-}
-
-export function textFieldLabelClass() {
-  return cn(textFieldBase.label, textFieldRACStates);
-}
-
-export function textFieldDescriptionClass() {
-  return cn(textFieldBase.description);
-}
-
-export function textFieldErrorClass() {
-  return cn(textFieldBase.error);
-}
+export const textFieldStyles = {
+  root: () => cn(textFieldBase.root),
+  label: () => cn(textFieldBase.label, textFieldRACStates),
+  description: () => cn(textFieldBase.description),
+  error: () => cn(textFieldBase.error),
+};
