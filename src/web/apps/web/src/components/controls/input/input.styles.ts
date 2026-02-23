@@ -24,7 +24,8 @@ const inputRacStates = [
   'data-[focus-visible]:ring-2 data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-blue-500',
   'data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
   'data-[invalid]:border-red-500',
-  'data-[focused]:bg-white data-[focused]:border-gray-300',
+  'data-[focused]:bg-white data-[focused]:border-black',
+  'data-[hovered]:border-black',
 ];
 
 export type InputVariant = keyof typeof inputVariants;

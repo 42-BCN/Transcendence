@@ -1,54 +1,38 @@
-import { z } from "zod";
-import { VALIDATION } from "../http/validation";
+import { z } from 'zod';
+import { VALIDATION } from '../http/validation';
+import { safeParseSchema } from '../lib';
 
-export const identifierSchema = z.string().superRefine((val, ctx) => {
-  if (!val || val.trim().length === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: VALIDATION.REQUIRED,
-    });
-    return;
-  }
+export const trimRequiredString = z.string().trim().min(1, { message: VALIDATION.REQUIRED });
 
-  if (val.includes("@")) {
-    const emailValid = z.string().email().safeParse(val).success;
-    if (!emailValid) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: VALIDATION.INVALID_EMAIL,
-      });
-    }
-    return;
-  }
-
-  // Otherwise validate as username
-  if (val.trim().length < 3) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: VALIDATION.FIELD_TOO_SHORT,
-    });
-    return;
-  }
-
-  if (val.trim().length > 30) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: VALIDATION.FIELD_TOO_LONG,
-    });
-    return;
-  }
-
-  const usernameRegex = /^[\w-]+$/;
-
-  if (!usernameRegex.test(val)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: VALIDATION.INVALID_USERNAME,
-    });
-  }
+export const emailSchema = trimRequiredString.email({
+  message: VALIDATION.INVALID_EMAIL,
 });
 
-export const AuthLoginRequestSchema = z.object({
-  identifier: identifierSchema,
-  password: z.string().min(1, { message: VALIDATION.REQUIRED }),
-});
+export const usernameSchema = trimRequiredString
+  .min(3, { message: VALIDATION.FIELD_TOO_SHORT })
+  .max(30, { message: VALIDATION.FIELD_TOO_LONG })
+  .regex(/^[\w-]+$/, { message: VALIDATION.INVALID_USERNAME });
+
+export const identifierSchema = trimRequiredString.superRefine((val, ctx) =>
+  val.includes('@')
+    ? safeParseSchema(emailSchema, val, ctx)
+    : safeParseSchema(usernameSchema, val, ctx),
+);
+
+export const AuthLoginRequestSchema = z
+  .object({
+    identifier: identifierSchema,
+    password: z.string().min(1, { message: VALIDATION.REQUIRED }),
+  })
+  .strict();
+
+export type AuthLoginRequest = z.infer<typeof AuthLoginRequestSchema>;
+
+export const AuthSignupRequestSchema = z
+  .object({
+    email: emailSchema,
+    password: z.string().min(1, { message: VALIDATION.REQUIRED }),
+  })
+  .strict();
+
+export type AuthSignupRequest = z.infer<typeof AuthSignupRequestSchema>;

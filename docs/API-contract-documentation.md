@@ -17,8 +17,7 @@ contracts/api
 |  
 +-- endpoint_group              # folder grouping endpoint 
 |   +-- endpoint.contract.ts    # endpoint request | response types  
-|   +-- endpoint.errors.ts      # all possible error codes and i18n keys   
-|   +-- endpoint.status.ts      # all HTTP status codes used by the API  
+|   +-- endpoint.errors.ts      # all possible error codes mapped in http codes and i18n keys
 |   +-- endpoint.validation.ts  # zod validation error details
 ```
 
@@ -87,24 +86,8 @@ All responses use
       | ApiError<Code, Details>;
 ```
 
-### 2.2 HTTP Status Codes
 
-HTTP status codes are mapped from error codes on `./http/status.ts`.
-Mapping is centralized and must not be hardcoded in controllers at `endpoint.errors.ts`.
-
-Example mapping:
-
-| Error Code                 | HTTP Status|
-|----------------------------|------------|
-| AUTH_INVALID_CREDENTIALS   | 401        |
-| AUTH_UNAUTHORIZED          | 401        |
-| AUTH_FORBIDDEN             | 403        |
-| AUTH_EMAIL_ALREADY_EXISTS  | 409        |
-| AUTH_VALIDATION_ERROR      | 422        |
-| AUTH_INTERNAL_ERROR        | 500        |
-
-
-### 2.3 Validation 
+### 2.2 Validation 
 
 Validation is defined in `endpoint.validation.ts` and exists at two levels:
 
@@ -116,7 +99,7 @@ Frontend validation improves user experience.
 
 ---
 
-#### 2.3.1 Backend Validation (Authoritative)
+#### 2.2.1 Backend Validation (Authoritative)
 
 Backend validation:
 
@@ -153,7 +136,7 @@ Backend validation is the final authority.
 
 ---
 
-#### 2.3.2 Frontend Validation (UX Layer)
+#### 2.2.2 Frontend Validation (UX Layer)
 
 Frontend validation:
 
@@ -192,3 +175,10 @@ It must rely strictly on error code and validation codes.
 5. If invalid → backend returns AUTH_VALIDATION_ERROR.
 6. Frontend maps validation codes to translated messages.
 7. UI displays field-level errors.
+
+
+### Updates
+2026-02-23
+- Add ./lib/validation. It stores generic zod functions. 
+- Add tentative signup validation schema for FE current signup  
+- Simplify errors in only one structure with http code and i18n key. 

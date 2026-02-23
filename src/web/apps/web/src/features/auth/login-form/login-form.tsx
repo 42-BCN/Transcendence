@@ -4,9 +4,11 @@ import { Form } from '@components/composites/form';
 import { useLoginForm } from './use-login-form.hook';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
+import { useTranslations } from 'next-intl';
 
 export function LoginFeature() {
   const form = useLoginForm();
+  const t = useTranslations('auth');
   return (
     <Form
       method="POST"
@@ -21,7 +23,7 @@ export function LoginFeature() {
         return <TextField key={String(name)} {...base} {...form.getTextFieldProps(name)} />;
       })}
 
-      <Button type="submit">Log in</Button>
+      <Button type="submit">{t('login.submit')}</Button>
     </Form>
   );
 }
