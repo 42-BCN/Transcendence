@@ -2,9 +2,8 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "rootDir": "src",
     "outDir": "dist",
 
