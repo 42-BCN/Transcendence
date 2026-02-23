@@ -9,6 +9,28 @@ export type AuthUser = {
 };
 
 // ---------------------------------------
+// POST /api/auth/signup
+// ---------------------------------------
+
+// --------------------------------------------------- Request
+// on valitation export.
+// --------------------------------------------------- Response
+export type AuthSignupOk = {
+  user: AuthUser;
+};
+
+export const AUTH_SIGNUP_ERRORS = [
+  AUTH_ERRORS.VALIDATION_ERROR,
+  AUTH_ERRORS.INTERNAL_ERROR,
+  AUTH_ERRORS.EMAIL_ALREADY_EXISTS,
+  AUTH_ERRORS.EMAIL_NOT_VERIFIED,
+] as const;
+
+export type AuthSignupError = (typeof AUTH_SIGNUP_ERRORS)[number];
+
+export type AuthSignupResponse = ApiResponse<AuthSignupOk, AuthSignupError, ValidationErrorDetails>;
+
+// ---------------------------------------
 // POST /api/auth/login
 // ---------------------------------------
 
