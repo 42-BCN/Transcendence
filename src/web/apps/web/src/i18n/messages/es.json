@@ -43,9 +43,10 @@
       },
       "password": {
         "label": "Contraseña",
-        "placeholder": "Introduce tu contraseña"
+        "placeholder": "Introduce tu contraseña",
+        "description": "Minimo 8 caracteres."
       },
-      "passwordConfirm": {
+      "confirmPassword": {
         "label": "Confirmar contraseña",
         "placeholder": "Vuelve a introducir tu contraseña"
       }
@@ -78,6 +79,7 @@
     "USERNAME_TOO_LONG": "El nombre de usuario no puede superar los 30 caracteres.",
     "INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
     "FIELD_TOO_SHORT": "Demasiado corto.",
-    "FIELD_TOO_LONG": "Demasiado largo."
+    "FIELD_TOO_LONG": "Demasiado largo.",
+    "PASSWORDS_DO_NOT_MATCH": "Contraseñas no coinciden."
   }
 }

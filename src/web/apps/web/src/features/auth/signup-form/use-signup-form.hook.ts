@@ -1,29 +1,40 @@
-import { signupSchema } from './signup-form.schema';
-import type { SignupValues } from './signup-form.schema';
 import type { TextFieldProps } from '@components/composites/text-field';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useZodForm } from '@/lib/forms/use-zod-form';
+import { type SignupFormValues, SignupFormSchema } from './signup-form.schema';
 
-type FieldName = keyof SignupValues;
+type FieldName = keyof SignupFormValues;
+type I18nKey = string;
 
 type SignupFieldBase = Omit<TextFieldProps, 'fieldError' | 'value' | 'onChange' | 'onBlur'> & {
   name: FieldName;
+  labelKey: I18nKey;
+  placeholderKey?: I18nKey;
+  descriptionKey?: I18nKey;
 };
 
 export const fieldsBase: readonly SignupFieldBase[] = [
-  { name: 'email', label: 'Email', type: 'email', isRequired: true, autoComplete: 'email' },
+  {
+    name: 'email',
+    labelKey: 'auth.common.email.label',
+    placeholderKey: 'auth.common.email.placeholder',
+    type: 'email',
+    isRequired: true,
+    autoComplete: 'email',
+  },
   {
     name: 'password',
-    label: 'Password',
+    labelKey: 'auth.common.password.placeholder',
+    placeholderKey: 'auth.common.password.placeholder',
     type: 'password',
     isRequired: true,
     minLength: 8,
-    description: 'Minimum 8 characters',
+    descriptionKey: 'auth.common.password.description',
     autoComplete: 'new-password',
   },
   {
     name: 'confirmPassword',
-    label: 'Confirm password',
+    labelKey: 'auth.common.confirmPassword.placeholder',
     type: 'password',
     isRequired: true,
     minLength: 8,
@@ -31,14 +42,14 @@ export const fieldsBase: readonly SignupFieldBase[] = [
   },
 ] as const;
 
-const fieldNames = fieldsBase.map((f) => f.name) as readonly (keyof SignupValues)[];
-const defaultValues = createEmptyValues<SignupValues>(fieldNames);
+const fieldNames = fieldsBase.map((f) => f.name) as readonly (keyof SignupFormValues)[];
+const defaultValues = createEmptyValues<SignupFormValues>(fieldNames);
 
 export function useSignupForm() {
   return {
     fieldsBase,
-    ...useZodForm<SignupValues>({
-      schema: signupSchema,
+    ...useZodForm<SignupFormValues>({
+      schema: SignupFormSchema,
       fieldNames,
       defaultValues,
     }),

@@ -9,12 +9,6 @@ declare const messages: {
     "UI": "UI",
     "robots": "Robots"
   },
-  "SignupPage": {
-    "title": "Create account",
-    "email": "Email address",
-    "password": "Password",
-    "submit": "Create account"
-  },
   "home": {
     "title": "Hello from Next in Docker 👋",
     "subtitle": "If you can see this, routing + dev server work."
@@ -47,9 +41,10 @@ declare const messages: {
       },
       "password": {
         "label": "Password",
-        "placeholder": "Enter your password"
+        "placeholder": "Enter your password",
+        "description": "Min 8 characters long."
       },
-      "passwordConfirm": {
+      "confirmPassword": {
         "label": "Confirm password",
         "placeholder": "Re-enter your password"
       }
@@ -82,7 +77,8 @@ declare const messages: {
     "USERNAME_TOO_LONG": "Username must be no more than 30 characters.",
     "INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
     "FIELD_TOO_SHORT": "Too short.",
-    "FIELD_TOO_LONG": "Too long."
+    "FIELD_TOO_LONG": "Too long.",
+    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
   }
 };
 export default messages;

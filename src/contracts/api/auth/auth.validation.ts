@@ -19,16 +19,20 @@ export const identifierSchema = trimRequiredString.superRefine((val, ctx) =>
     : safeParseSchema(usernameSchema, val, ctx),
 );
 
-export const AuthLoginRequestSchema = z.object({
-  identifier: identifierSchema,
-  password: z.string().min(1, { message: VALIDATION.REQUIRED }),
-});
+export const AuthLoginRequestSchema = z
+  .object({
+    identifier: identifierSchema,
+    password: z.string().min(1, { message: VALIDATION.REQUIRED }),
+  })
+  .strict();
 
 export type AuthLoginRequest = z.infer<typeof AuthLoginRequestSchema>;
 
-export const AuthSignupRequestSchema = z.object({
-  email: emailSchema,
-  password: z.string().min(1, { message: VALIDATION.REQUIRED }),
-});
+export const AuthSignupRequestSchema = z
+  .object({
+    email: emailSchema,
+    password: z.string().min(1, { message: VALIDATION.REQUIRED }),
+  })
+  .strict();
 
 export type AuthSignupRequest = z.infer<typeof AuthSignupRequestSchema>;

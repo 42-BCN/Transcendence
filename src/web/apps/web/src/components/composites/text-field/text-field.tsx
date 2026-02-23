@@ -27,7 +27,6 @@ export function TextField({
 }: TextFieldProps) {
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
   const t = useTranslations();
-  console.log(errorKey);
   return (
     <AriaTextField {...props} className={textFieldStyles.root()} isInvalid={isInvalid}>
       <Label className={textFieldStyles.label()}> {t(labelKey)}</Label>

@@ -1,18 +1,17 @@
 import { z } from 'zod';
+import { AuthSignupRequestSchema } from '@/contracts/auth/auth.validation';
+import { VALIDATION } from '@/contracts/http';
 
-export const signupSchema = z
-  .object({
-    email: z.string().email('Enter a valid email'),
-    password: z.string().min(8, 'Minimum 8 characters'),
-    confirmPassword: z.string().min(8, 'Minimum 8 characters'),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password.length >= 8 && confirmPassword.length >= 8 && password !== confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['confirmPassword'], // <-- ensures errors.confirmPassword is set
-        message: 'Passwords do not match',
-      });
-    }
-  });
-export type SignupValues = z.infer<typeof signupSchema>;
+export const SignupFormSchema = AuthSignupRequestSchema.extend({
+  confirmPassword: z.string().min(1, { message: VALIDATION.REQUIRED }),
+}).superRefine(({ password, confirmPassword }, ctx) => {
+  if (password !== confirmPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['confirmPassword'],
+      message: VALIDATION.PASSWORDS_DO_NOT_MATCH,
+    });
+  }
+});
+
+export type SignupFormValues = z.infer<typeof SignupFormSchema>;
