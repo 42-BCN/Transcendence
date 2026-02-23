@@ -40,7 +40,7 @@ export function useZodForm<T extends Record<string, unknown>>({
   const getTextFieldProps = <K extends keyof T>(name: K) => ({
     name: String(name),
     value: String(values[name] ?? ''),
-    fieldError: errors[name],
+    errorKey: errors[name] && `validation.${errors[name]}`,
     onChange: (v: string) => setField(name, v as T[K]),
     onBlur: () => blurField(name),
   });

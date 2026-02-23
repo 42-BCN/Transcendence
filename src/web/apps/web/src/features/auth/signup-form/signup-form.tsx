@@ -4,6 +4,7 @@ import { Form } from '@components/composites/form';
 import { useSignupForm } from './use-signup-form.hook';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
+import { useTranslations } from 'next-intl';
 
 export type SignupFeatureProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -11,6 +12,7 @@ export type SignupFeatureProps = {
 
 export function SignupFeature({ action }: SignupFeatureProps) {
   const form = useSignupForm();
+  const t = useTranslations('auth');
 
   return (
     <Form
@@ -25,7 +27,7 @@ export function SignupFeature({ action }: SignupFeatureProps) {
         <TextField key={String(base.name)} {...base} {...form.getTextFieldProps(base.name)} />
       ))}
 
-      <Button type="submit">Sign up</Button>
+      <Button type="submit">{t('signup.submit')}</Button>
     </Form>
   );
 }

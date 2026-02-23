@@ -15,6 +15,25 @@ function mapUserRow(row: UserRow): User {
   };
 }
 
+export async function insertUser(input: {
+  email: string;
+  passwordHash: string;
+}): Promise<User | null> {
+  const res = await pool.query<UserRow>(
+    `
+    insert into public.users (email, password_hash)
+    values ($1, $2)
+    on conflict do nothing
+    returning id, email, created_at;
+    `,
+    [input.email, input.passwordHash],
+  );
+
+  if (!res.rows[0]) return null;
+
+  return mapUserRow(res.rows[0]);
+}
+
 export async function listUsers(
   limit: number,
   offset: number,
