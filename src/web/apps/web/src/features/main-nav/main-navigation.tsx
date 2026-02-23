@@ -1,5 +1,7 @@
 'use client';
 
+import { getPathname } from '@/i18n/navigation';
+
 import { usePathname } from 'next/navigation';
 import { NavLink } from '@components/controls/nav-link';
 import { mainNavItems } from './navigation.config';
@@ -10,7 +12,11 @@ type TFunc = ReturnType<typeof useTranslations>;
 
 function NavLinkItem(args: { locale: string; navItem: NavItem; pathname: string; t: TFunc }) {
   const { locale, navItem, pathname, t } = args;
-  const href = locale === 'en' ? navItem.href : `/${locale}${navItem.href}`;
+
+  const href = getPathname({
+    locale: locale,
+    href: navItem.href,
+  });
   const isCurrent = navItem.exact
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`);

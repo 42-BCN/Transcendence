@@ -22,8 +22,10 @@ export const routing = defineRouting({
     },
     '/login': {
       en: '/login',
-      es: '/iniciar-sesion', // or keep '/login' if you want
+      es: '/iniciar-sesion',
     },
+    '/ui': '/ui',
+    '/robots': '/robots',
   },
   localeCookie,
 });
