@@ -44,7 +44,7 @@
       "password": {
         "label": "Contraseña",
         "placeholder": "Introduce tu contraseña",
-        "description": "Minimo 8 caracteres."
+        "description": "Mínimo 8 caracteres."
       },
       "confirmPassword": {
         "label": "Confirmar contraseña",
@@ -80,6 +80,6 @@
     "INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
     "FIELD_TOO_SHORT": "Demasiado corto.",
     "FIELD_TOO_LONG": "Demasiado largo.",
-    "PASSWORDS_DO_NOT_MATCH": "Contraseñas no coinciden."
+    "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden."
   }
 }

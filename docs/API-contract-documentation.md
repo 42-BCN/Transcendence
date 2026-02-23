@@ -178,7 +178,7 @@ It must rely strictly on error code and validation codes.
 
 
 ### Updates
-23/02/2026
+2026-02-23
 - Add ./lib/validation. It stores generic zod functions. 
 - Add tentative signup validation schema for FE current signup  
 - Simplify errors in only one structure with http code and i18n key. 

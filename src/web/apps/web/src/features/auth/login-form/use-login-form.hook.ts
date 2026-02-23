@@ -1,5 +1,3 @@
-// import { loginSchema } from './login-form.schema';
-// import type { LoginValues } from './login-form.schema';
 import type { TextFieldProps } from '@components/composites/text-field';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useZodForm } from '@/lib/forms/use-zod-form';
@@ -13,7 +11,7 @@ type I18nKey = string;
 
 type LoginFieldBase = Omit<
   TextFieldProps,
-  'fieldError' | 'value' | 'onChange' | 'onBlur' | 'label'
+  'errorKey' | 'value' | 'onChange' | 'onBlur' | 'labelKey'
 > & {
   name: FieldName;
   labelKey: I18nKey;

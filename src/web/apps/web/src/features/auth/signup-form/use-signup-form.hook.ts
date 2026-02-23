@@ -6,7 +6,7 @@ import { type SignupFormValues, SignupFormSchema } from './signup-form.schema';
 type FieldName = keyof SignupFormValues;
 type I18nKey = string;
 
-type SignupFieldBase = Omit<TextFieldProps, 'fieldError' | 'value' | 'onChange' | 'onBlur'> & {
+type SignupFieldBase = Omit<TextFieldProps, 'errorKey' | 'value' | 'onChange' | 'onBlur'> & {
   name: FieldName;
   labelKey: I18nKey;
   placeholderKey?: I18nKey;
@@ -24,7 +24,7 @@ export const fieldsBase: readonly SignupFieldBase[] = [
   },
   {
     name: 'password',
-    labelKey: 'auth.common.password.placeholder',
+    labelKey: 'auth.common.password.label',
     placeholderKey: 'auth.common.password.placeholder',
     type: 'password',
     isRequired: true,
@@ -34,7 +34,7 @@ export const fieldsBase: readonly SignupFieldBase[] = [
   },
   {
     name: 'confirmPassword',
-    labelKey: 'auth.common.confirmPassword.placeholder',
+    labelKey: 'auth.common.confirmPassword.label',
     type: 'password',
     isRequired: true,
     minLength: 8,

@@ -13,7 +13,7 @@ export type SignupFeatureProps = {
 export function SignupFeature({ action }: SignupFeatureProps) {
   const form = useSignupForm();
   const t = useTranslations('auth');
-  console.log(form);
+
   return (
     <Form
       action={action}
