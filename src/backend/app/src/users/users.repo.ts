@@ -1,32 +1,48 @@
 import { pool } from "../shared/db.pool";
 import type { User } from "./users.model";
 
+/**
+ * Raw DB shape (infrastructure only)
+ */
 type UserRow = {
   id: string;
   email: string;
+  username: string;
   created_at: Date;
 };
 
-function mapUserRow(row: UserRow): User {
+/**
+ * Safe domain mapping
+ */
+function mapUserRow(
+  row: Pick<UserRow, "id" | "email" | "username" | "created_at">,
+): User {
   return {
     id: row.id,
     email: row.email,
+    username: row.username,
     createdAt: row.created_at,
   };
 }
 
+/**
+ * Create user
+ */
 export async function insertUser(input: {
   email: string;
+  username: string;
   passwordHash: string;
 }): Promise<User | null> {
-  const res = await pool.query<UserRow>(
+  const res = await pool.query<
+    Pick<UserRow, "id" | "email" | "username" | "created_at">
+  >(
     `
-    insert into public.users (email, password_hash)
-    values ($1, $2)
+    insert into public.users (email, username, password_hash)
+    values ($1, $2, $3)
     on conflict do nothing
-    returning id, email, created_at;
+    returning id, email, username, created_at;
     `,
-    [input.email, input.passwordHash],
+    [input.email, input.username, input.passwordHash],
   );
 
   if (!res.rows[0]) return null;
@@ -34,13 +50,18 @@ export async function insertUser(input: {
   return mapUserRow(res.rows[0]);
 }
 
+/**
+ * List users (safe columns only)
+ */
 export async function listUsers(
   limit: number,
   offset: number,
 ): Promise<User[]> {
-  const res = await pool.query<UserRow>(
+  const res = await pool.query<
+    Pick<UserRow, "id" | "email" | "username" | "created_at">
+  >(
     `
-    select id, email, created_at
+    select id, email, username, created_at
     from public.users
     order by created_at desc
     limit $1 offset $2;
@@ -49,4 +70,37 @@ export async function listUsers(
   );
 
   return res.rows.map(mapUserRow);
+}
+
+/**
+ * Internal use for auth only (includes password_hash)
+ */
+export async function findUserByEmail(email: string): Promise<UserRow | null> {
+  const res = await pool.query<UserRow>(
+    `
+    select id, email, username, password_hash, created_at
+    from public.users
+    where email = $1
+    limit 1;
+    `,
+    [email],
+  );
+
+  return res.rows[0] ?? null;
+}
+
+export async function findUserById(
+  id: string,
+): Promise<Pick<UserRow, "id" | "email" | "username"> | null> {
+  const res = await pool.query<Pick<UserRow, "id" | "email" | "username">>(
+    `
+    select id, email, username
+    from public.users
+    where id = $1
+    limit 1;
+    `,
+    [id],
+  );
+
+  return res.rows[0] ?? null;
 }

@@ -6,6 +6,10 @@
     "moduleResolution": "Node",
     "rootDir": "src",
     "outDir": "dist",
+    "paths": {
+      "@contracts/*": ["./contracts/*"],
+      "@/*": ["./*"]
+    },
 
     "strict": true,
     "noUncheckedIndexedAccess": true,

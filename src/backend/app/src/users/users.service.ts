@@ -8,5 +8,5 @@ export async function getUsers(input?: {
   const limit = Math.min(Math.max(input?.limit ?? 20, 1), 100);
   const offset = Math.max(input?.offset ?? 0, 0);
 
-  return await listUsers(limit, offset);
+  return listUsers(limit, offset);
 }
