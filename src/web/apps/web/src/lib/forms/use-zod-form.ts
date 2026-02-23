@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { validate, validateAll } from './validation';
 import type { z } from 'zod';
 import type { FieldErrorsOf, TouchedOf } from './types';
-import { VALIDATION_I18N_KEY } from '@/contracts/http/validation';
 
 type Args<T extends Record<string, unknown>> = {
   schema: z.ZodType<T>;
