@@ -1,4 +1,21 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: app_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
   socket:
     build:
       context: ./socket
@@ -11,6 +28,8 @@ services:
     volumes:
       - ./socket/app:/app
       - node_modules_socket:/app/node_modules
+    networks:
+      - edge
   web:
     build:
       context: ./web
@@ -26,6 +45,27 @@ services:
       - web_next_cache:/app/.next
       - /app/dev
       - ./contracts:/app/src/contracts:ro
+    networks:
+      - edge
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./docker/Dockerfile
+    working_dir: /app
+    expose:
+      - "4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    volumes:
+      - ./backend/app:/app
+      - node_modules_backend:/app/node_modules
+      - ./contracts:/app/src/contracts:ro
+    networks:
+      - backend
+      - edge
   nginx:
     image: nginx:alpine
     ports:
@@ -38,21 +78,19 @@ services:
     depends_on:
       - web
     restart: unless-stopped
+    networks:
+      - edge
+
+networks:
   backend:
-    build:
-      context: ./backend
-      dockerfile: ./docker/Dockerfile
-    working_dir: /app
-    expose:
-      - "4000"
-    volumes:
-      - ./backend/app:/app
-      - node_modules_backend:/app/node_modules
-      - ./contracts:/app/src/contracts:ro
+    internal: true
+  edge:
+
 volumes:
   node_modules:
   node_modules_backend:
   node_modules_socket:
   web_next_cache:
+  postgres_data:
 # - [ ] not using container-name for services to avoid conflicts when multiple projects are run on the same host
 # networks are not defined to use default bridge network
