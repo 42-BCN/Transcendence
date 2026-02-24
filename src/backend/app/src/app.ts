@@ -2,6 +2,7 @@ import express from "express";
 
 import { usersRouter } from "./users/users.routes";
 import { authRouter } from "./auth/auth.routes";
+import { errorMiddleware } from "./shared/error-middleware";
 
 const app = express();
 app.use(express.json());
@@ -11,5 +12,7 @@ app.get("/health", (_req, res) => {
 });
 app.use("/users", usersRouter);
 app.use("/api/auth", authRouter);
+
+app.use(errorMiddleware);
 
 export default app;
