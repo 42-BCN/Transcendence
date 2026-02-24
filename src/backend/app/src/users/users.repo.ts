@@ -1,5 +1,5 @@
+import type { UserPublic } from "../contracts/api/users/users.contracts";
 import { pool } from "../shared/db.pool";
-import type { User } from "./users.model";
 
 /**
  * Raw DB shape (infrastructure only)
@@ -14,9 +14,7 @@ type UserRow = {
 /**
  * Safe domain mapping
  */
-function mapUserRow(
-  row: Pick<UserRow, "id" | "email" | "username" | "created_at">,
-): User {
+function mapUserRow(row: Pick<UserRow, "id" | "username">): UserPublic {
   return {
     id: row.id,
     username: row.username,
@@ -30,15 +28,13 @@ export async function insertUser(input: {
   email: string;
   username: string;
   passwordHash: string;
-}): Promise<User | null> {
-  const res = await pool.query<
-    Pick<UserRow, "id" | "email" | "username" | "created_at">
-  >(
+}): Promise<UserPublic | null> {
+  const res = await pool.query<Pick<UserRow, "id" | "username">>(
     `
     insert into public.users (email, username, password_hash)
     values ($1, $2, $3)
     on conflict do nothing
-    returning id, email, username, created_at;
+    returning id, username;
     `,
     [input.email, input.username, input.passwordHash],
   );
@@ -54,12 +50,10 @@ export async function insertUser(input: {
 export async function listUsers(
   limit: number,
   offset: number,
-): Promise<User[]> {
-  const res = await pool.query<
-    Pick<UserRow, "id" | "email" | "username" | "created_at">
-  >(
+): Promise<UserPublic[]> {
+  const res = await pool.query<Pick<UserRow, "id" | "username">>(
     `
-    select id, email, username, created_at
+    select id, username,
     from public.users
     order by created_at desc
     limit $1 offset $2;

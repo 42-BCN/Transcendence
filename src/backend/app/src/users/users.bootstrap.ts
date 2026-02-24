@@ -67,8 +67,12 @@ async function ensureUsersTable(): Promise<void> {
   `);
 
   // Ensure uniqueness (if table existed without these constraints)
-  await pool.query(`create unique index if not exists users_email_uidx on public.users (email);`);
-  await pool.query(`create unique index if not exists users_username_uidx on public.users (username);`);
+  await pool.query(
+    `create unique index if not exists users_email_uidx on public.users (email);`,
+  );
+  await pool.query(
+    `create unique index if not exists users_username_uidx on public.users (username);`,
+  );
 }
 
 function makeUsername(): string {
@@ -76,7 +80,7 @@ function makeUsername(): string {
   const base = faker.internet
     .username()
     .toLowerCase()
-    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/[^\d_a-z]/g, "_")
     .slice(0, 20);
 
   const suffix = faker.string.alphanumeric(6).toLowerCase();
