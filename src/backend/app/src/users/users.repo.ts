@@ -22,29 +22,6 @@ function mapUserRow(row: Pick<UserRow, "id" | "username">): UserPublic {
 }
 
 /**
- * Create user
- */
-export async function insertUser(input: {
-  email: string;
-  username: string;
-  passwordHash: string;
-}): Promise<UserPublic | null> {
-  const res = await pool.query<Pick<UserRow, "id" | "username">>(
-    `
-    insert into public.users (email, username, password_hash)
-    values ($1, $2, $3)
-    on conflict do nothing
-    returning id, username;
-    `,
-    [input.email, input.username, input.passwordHash],
-  );
-
-  if (!res.rows[0]) return null;
-
-  return mapUserRow(res.rows[0]);
-}
-
-/**
  * List users (safe columns only)
  */
 export async function listUsers(
@@ -61,37 +38,4 @@ export async function listUsers(
     [limit, offset],
   );
   return res.rows.map(mapUserRow);
-}
-
-/**
- * Internal use for auth only (includes password_hash)
- */
-export async function findUserByEmail(email: string): Promise<UserRow | null> {
-  const res = await pool.query<UserRow>(
-    `
-    select id, email, username, password_hash, created_at
-    from public.users
-    where email = $1
-    limit 1;
-    `,
-    [email],
-  );
-
-  return res.rows[0] ?? null;
-}
-
-export async function findUserById(
-  id: string,
-): Promise<Pick<UserRow, "id" | "email" | "username"> | null> {
-  const res = await pool.query<Pick<UserRow, "id" | "email" | "username">>(
-    `
-    select id, email, username
-    from public.users
-    where id = $1
-    limit 1;
-    `,
-    [id],
-  );
-
-  return res.rows[0] ?? null;
 }
