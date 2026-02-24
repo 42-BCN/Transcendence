@@ -46,7 +46,7 @@ export async function signup(input: {
     const username = generateUsername();
 
     const created = await Repo.insertUser({ email, username, passwordHash });
-    if (created) Ok(toAuthUser(created));
+    if (created) return Ok(toAuthUser(created));
   }
 
   return Err(AUTH_ERRORS.INTERNAL_ERROR);
