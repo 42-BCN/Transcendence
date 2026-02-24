@@ -53,14 +53,13 @@ export async function listUsers(
 ): Promise<UserPublic[]> {
   const res = await pool.query<Pick<UserRow, "id" | "username">>(
     `
-    select id, username,
-    from public.users
-    order by created_at desc
-    limit $1 offset $2;
+    SELECT id, username
+    FROM public.users
+    ORDER BY created_at DESC
+    LIMIT $1 OFFSET $2;
     `,
     [limit, offset],
   );
-
   return res.rows.map(mapUserRow);
 }
 

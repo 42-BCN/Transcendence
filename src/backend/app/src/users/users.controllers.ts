@@ -4,12 +4,13 @@ import type { UsersListResponse } from "../contracts/api/users/users.contracts";
 import { getUsers } from "./users.service";
 import type { GetUsersQuery } from "../contracts/api/users/users.validation";
 
-export async function getUsersController(
-  req: Request<unknown, unknown, unknown, GetUsersQuery>,
-  res: Response,
-): Promise<void> {
-  const result = await getUsers(req.query);
+type Locals = { query: GetUsersQuery };
 
+export async function getUsersController(
+  req: Request,
+  res: Response<UsersListResponse, Locals>,
+): Promise<void> {
+  const result = await getUsers(res.locals.query);
   if (!result.ok) return;
 
   const body: UsersListResponse = {
@@ -17,8 +18,8 @@ export async function getUsersController(
     data: {
       users: result.value,
       meta: {
-        limit: req.query.limit,
-        offset: req.query.offset,
+        limit: res.locals.query.limit,
+        offset: res.locals.query.offset,
         count: result.value.length,
       },
     },

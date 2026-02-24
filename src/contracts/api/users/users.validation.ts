@@ -1,14 +1,22 @@
 import { z } from "zod";
 
-import { VALIDATION } from "../http/validation"; // your codes
+import { VALIDATION } from "../http/validation";
+
+const firstQueryValue = (v: unknown) => {
+  if (Array.isArray(v)) return v[0];
+  return v;
+};
 
 const intFromQuery = (code: string) =>
-  z
-    .string()
-    .trim()
-    .min(1, { message: code })
-    .regex(/^\d+$/, { message: code })
-    .transform((v) => Number(v));
+  z.preprocess(
+    firstQueryValue,
+    z
+      .string()
+      .trim()
+      .min(1, { message: code })
+      .regex(/^\d+$/, { message: code })
+      .transform((v) => Number(v)),
+  );
 
 export const GetUsersQuerySchema = z
   .object({

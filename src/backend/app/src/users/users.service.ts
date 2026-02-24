@@ -5,12 +5,14 @@ import type {
   UsersListError,
 } from "../contracts/api/users/users.contracts";
 
-export async function getUsers(input?: {
-  limit?: number;
-  offset?: number;
+export async function getUsers({
+  limit,
+  offset,
+}: {
+  limit: number;
+  offset: number;
 }): Promise<Result<UserPublic[], UsersListError>> {
-  const limit = Math.min(Math.max(input?.limit ?? 20, 1), 100);
-  const offset = Math.max(input?.offset ?? 0, 0);
-
-  return Ok(await listUsers(limit, offset));
+  const data = await listUsers(limit, offset);
+  const response = Ok(data);
+  return response;
 }

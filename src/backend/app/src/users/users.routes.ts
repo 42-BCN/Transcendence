@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { validateQuery } from "../shared/validation";
-import { getUsers } from "./users.service";
+import { getUsersController } from "./users.controllers";
 import { GetUsersQuerySchema } from "../contracts/api/users/users.validation";
 
 export const usersRouter = Router();
@@ -9,4 +9,4 @@ export const usersRouter = Router();
 // ---------------------------------------
 // GET /api/users?limit=20&offset=0
 // ---------------------------------------
-usersRouter.get("/users", validateQuery(GetUsersQuerySchema), getUsers);
+usersRouter.get("/", validateQuery(GetUsersQuerySchema), getUsersController);
