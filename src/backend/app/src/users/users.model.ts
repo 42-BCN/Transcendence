@@ -2,6 +2,6 @@ export type User = {
   id: string;
   email: string;
   createdAt: Date;
-  username: string | null;
+  username: string;
   passwordHash: string;
 };

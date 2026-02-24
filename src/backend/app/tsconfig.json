@@ -6,9 +6,10 @@
     "moduleResolution": "Node",
     "rootDir": "src",
     "outDir": "dist",
+    "baseUrl": "./",
     "paths": {
-      "@contracts/*": ["./contracts/*"],
-      "@/*": ["./*"]
+      "@contracts/*": ["contracts/*"],
+      "@/*": ["src*"]
     },
 
     "strict": true,

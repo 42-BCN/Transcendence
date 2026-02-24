@@ -19,9 +19,7 @@ function mapUserRow(
 ): User {
   return {
     id: row.id,
-    email: row.email,
     username: row.username,
-    createdAt: row.created_at,
   };
 }
 

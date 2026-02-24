@@ -69,8 +69,26 @@ export function validateBody<TSchema extends ZodType<unknown>>(
       return;
     }
 
-    // keep body as validated data
     req.body = parsed.data as ZodInfer<TSchema>;
+    next();
+  };
+}
+
+export function validateQuery<T>(schema: ZodType<T>) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const parsed = schema.safeParse(req.query);
+    if (!parsed.success) {
+      res.status(VALIDATION_ERROR.status).json({
+        ok: false,
+        error: {
+          code: VALIDATION_ERROR.code,
+          details: toValidationDetails(parsed.error),
+        },
+      });
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    req.query = parsed.data as any; // Express typing limitation
     next();
   };
 }

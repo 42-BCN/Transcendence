@@ -5,19 +5,12 @@ import type {
   AuthLoginError,
   AuthSignupError,
 } from "../contracts/api/auth/auth.contract";
+import { toAuthUser } from "./auth.model";
 import type { AuthLoginRequest } from "../contracts/api/auth/auth.validation";
 import { AUTH_ERRORS } from "../contracts/api/auth/auth.errors";
 import { generateUsername } from "../shared/username-generator";
 import * as Repo from "./auth.repo";
 import { type Result, Err, Ok } from "../shared/result-helpers";
-
-function toAuthUser(row: {
-  id: string;
-  email: string;
-  username: string;
-}): AuthUser {
-  return { id: row.id, email: row.email, username: row.username };
-}
 
 export async function login(
   input: AuthLoginRequest,

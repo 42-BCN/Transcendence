@@ -1,11 +1,5 @@
 import { pool } from "../shared/db.pool";
-
-export type AuthUserRow = {
-  id: string;
-  email: string;
-  username: string;
-  password_hash: string;
-};
+import type { AuthUserRow } from "./auth.model";
 
 export async function findUserByEmail(
   email: string,
