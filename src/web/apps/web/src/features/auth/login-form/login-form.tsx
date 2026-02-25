@@ -5,13 +5,14 @@ import { useLoginForm } from './use-login-form.hook';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
 import { useTranslations } from 'next-intl';
+import { loginAction } from './login.action';
 
 export function LoginFeature() {
   const form = useLoginForm();
   const t = useTranslations('auth');
   return (
     <Form
-      method="POST"
+      action={loginAction}
       onSubmit={(e) => {
         const res = form.validateBeforeSubmit();
         if (!res.ok) e.preventDefault();

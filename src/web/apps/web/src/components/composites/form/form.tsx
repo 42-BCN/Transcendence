@@ -7,7 +7,7 @@ type ServerAction = (formData: FormData) => void | Promise<void>;
 type FormAction = string | ServerAction;
 
 export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, 'action' | 'method'> & {
-  action?: FormAction;
+  action?: FormAction | ServerAction | undefined;
   method?: 'GET' | 'POST';
 };
 

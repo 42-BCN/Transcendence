@@ -1,5 +1,6 @@
-// lib/http/fetcher.server.ts
-import { FetcherError } from './errors';
+'use server';
+
+// import { FetcherError } from './errors';
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 import { envServer } from '../config/env.server';
@@ -30,7 +31,8 @@ export async function fetchServer<T>(
   const json = await res.json();
 
   if (!res.ok) {
-    throw new FetcherError(res.status, json);
+    console.log(res);
+    // throw new FetcherError(res.status, json);
   }
 
   return json as T;
