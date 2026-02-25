@@ -5,19 +5,15 @@ import { useSignupForm } from './use-signup-form.hook';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
 import { useTranslations } from 'next-intl';
+import { signupAction } from './signup.action';
 
-export type SignupFeatureProps = {
-  action: (formData: FormData) => void | Promise<void>;
-};
-
-export function SignupFeature({ action }: SignupFeatureProps) {
+export function SignupFeature() {
   const form = useSignupForm();
   const t = useTranslations('auth');
 
   return (
     <Form
-      action={action}
-      method="POST"
+      action={signupAction}
       onSubmit={(e) => {
         const res = form.validateBeforeSubmit();
         if (!res.ok) e.preventDefault();
