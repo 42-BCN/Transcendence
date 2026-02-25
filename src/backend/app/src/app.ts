@@ -3,6 +3,7 @@ import session from "express-session";
 
 import { usersRouter } from "./users/users.routes";
 import { authRouter } from "./auth/auth.routes";
+import { protectedRouter } from "./protected/protected.route";
 import { errorMiddleware } from "./shared/error-middleware";
 
 export const ONE_DAY_MS = 1000 * 60 * 60 * 24;
@@ -36,6 +37,7 @@ app.get("/health", (_req, res) => {
 });
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
+app.use("/protected", protectedRouter);
 
 app.use(errorMiddleware);
 
