@@ -5,6 +5,8 @@ export function requireAuth(
   res: Response,
   next: NextFunction
 ) {
+  console.log('cookie header:', req.headers.cookie);
+console.log('session:', req.session);
   if (!req.session.userId) {
     return res.status(401).json({
 	  ok: false, 

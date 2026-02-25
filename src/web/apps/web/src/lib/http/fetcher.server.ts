@@ -29,9 +29,9 @@ export async function fetchServer<T>(
 
   const text = await res.text();
   const json = text ? JSON.parse(text) : null;
-
+  console.log(res);
   if (!res.ok) {
-    return;
+    return { data: json as T, headers: res.headers, status: res.status };
   }
 
   return { data: json as T, headers: res.headers, status: res.status };

@@ -2,8 +2,8 @@
 
 import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
-import { AuthLoginRequest, AuthLoginRequestSchema } from '@/contracts/auth/auth.validation';
-import { AuthLoginResponse } from '@/contracts/auth/auth.contract';
+import { AuthLoginRequestSchema } from '@/contracts/auth/auth.validation';
+import { type AuthLoginResponse } from '@/contracts/auth/auth.contract';
 
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 7;
 
@@ -32,13 +32,14 @@ function getAuthCookie(headers: any): string[] {
 async function setAuthCookies(headers: any) {
   const setCookies = getAuthCookie(headers);
   const cookieStore = await cookies();
+
   for (const sc of setCookies) {
     const [pair] = sc.split(';');
     const eq = pair.indexOf('=');
     const name = pair.slice(0, eq);
     const value = pair.slice(eq + 1);
 
-    cookieStore.set(name, value, {
+    cookieStore.set(name, decodeURIComponent(value), {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
@@ -61,5 +62,5 @@ export async function loginAction(formData: FormData) {
   );
 
   if (!data.ok) return;
-  setAuthCookies(headers);
+  await setAuthCookies(headers);
 }
