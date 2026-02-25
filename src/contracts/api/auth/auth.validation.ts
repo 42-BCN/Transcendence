@@ -1,8 +1,12 @@
-import { z } from 'zod';
-import { VALIDATION } from '../http/validation';
-import { safeParseSchema } from '../lib';
+import { z } from "zod";
 
-export const trimRequiredString = z.string().trim().min(1, { message: VALIDATION.REQUIRED });
+import { VALIDATION } from "../http/validation";
+import { safeParseSchema } from "../lib";
+
+export const trimRequiredString = z
+  .string()
+  .trim()
+  .min(1, { message: VALIDATION.REQUIRED });
 
 export const emailSchema = trimRequiredString.email({
   message: VALIDATION.INVALID_EMAIL,
@@ -14,7 +18,7 @@ export const usernameSchema = trimRequiredString
   .regex(/^[\w-]+$/, { message: VALIDATION.INVALID_USERNAME });
 
 export const identifierSchema = trimRequiredString.superRefine((val, ctx) =>
-  val.includes('@')
+  val.includes("@")
     ? safeParseSchema(emailSchema, val, ctx)
     : safeParseSchema(usernameSchema, val, ctx),
 );

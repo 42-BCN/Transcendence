@@ -1,6 +1,6 @@
-import type { ApiResponse } from '../http/response';
-import type { ValidationErrorDetails } from '../http/validation';
-import { AUTH_ERRORS } from './auth.errors';
+import type { ApiResponse } from "../http/response";
+import type { ValidationErrorDetails } from "../http/validation";
+import { AUTH_ERRORS } from "./auth.errors";
 
 export type AuthUser = {
   id: string; // uuid
@@ -20,15 +20,19 @@ export type AuthSignupOk = {
 };
 
 export const AUTH_SIGNUP_ERRORS = [
-  AUTH_ERRORS.VALIDATION_ERROR,
   AUTH_ERRORS.INTERNAL_ERROR,
   AUTH_ERRORS.EMAIL_ALREADY_EXISTS,
   AUTH_ERRORS.EMAIL_NOT_VERIFIED,
+  AUTH_ERRORS.VALIDATION_ERROR,
 ] as const;
 
 export type AuthSignupError = (typeof AUTH_SIGNUP_ERRORS)[number];
 
-export type AuthSignupResponse = ApiResponse<AuthSignupOk, AuthSignupError, ValidationErrorDetails>;
+export type AuthSignupResponse = ApiResponse<
+  AuthSignupOk,
+  AuthSignupError,
+  ValidationErrorDetails
+>;
 
 // ---------------------------------------
 // POST /api/auth/login
@@ -52,7 +56,11 @@ export const AUTH_LOGIN_ERRORS = [
 
 export type AuthLoginError = (typeof AUTH_LOGIN_ERRORS)[number];
 
-export type AuthLoginResponse = ApiResponse<AuthLoginOk, AuthLoginError, ValidationErrorDetails>;
+export type AuthLoginResponse = ApiResponse<
+  AuthLoginOk,
+  AuthLoginError,
+  ValidationErrorDetails
+>;
 
 // ---------------------------------------
 // POST /api/auth/logout
@@ -78,7 +86,10 @@ export type AuthMeOk = {
   user: AuthUser;
 };
 
-export const AUTH_ME_ERRORS = [AUTH_ERRORS.UNAUTHORIZED, AUTH_ERRORS.INTERNAL_ERROR] as const;
+export const AUTH_ME_ERRORS = [
+  AUTH_ERRORS.UNAUTHORIZED,
+  AUTH_ERRORS.INTERNAL_ERROR,
+] as const;
 
 export type AuthMeError = (typeof AUTH_ME_ERRORS)[number];
 

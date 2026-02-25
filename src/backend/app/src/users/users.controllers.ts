@@ -1,15 +1,29 @@
 import type { Request, Response } from "express";
 
+import type { UsersListResponse } from "../contracts/api/users/users.contracts";
 import { getUsers } from "./users.service";
+import type { GetUsersQuery } from "../contracts/api/users/users.validation";
+
+type Locals = { query: GetUsersQuery };
 
 export async function getUsersController(
   req: Request,
-  res: Response,
+  res: Response<UsersListResponse, Locals>,
 ): Promise<void> {
-  const limit = req.query.limit ? Number(req.query.limit) : undefined;
-  const offset = req.query.offset ? Number(req.query.offset) : undefined;
+  const result = await getUsers(res.locals.query);
+  if (!result.ok) return;
 
-  const users = await getUsers({ limit, offset });
-
-  res.json({ users });
+  const body: UsersListResponse = {
+    ok: true,
+    data: {
+      users: result.value,
+      meta: {
+        limit: res.locals.query.limit,
+        offset: res.locals.query.offset,
+        count: result.value.length,
+      },
+    },
+  };
+  res.status(200).json(body);
+  return;
 }

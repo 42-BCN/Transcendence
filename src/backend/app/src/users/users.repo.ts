@@ -1,52 +1,41 @@
+import type { UserPublic } from "../contracts/api/users/users.contracts";
 import { pool } from "../shared/db.pool";
-import type { User } from "./users.model";
 
+/**
+ * Raw DB shape (infrastructure only)
+ */
 type UserRow = {
   id: string;
   email: string;
+  username: string;
   created_at: Date;
 };
 
-function mapUserRow(row: UserRow): User {
+/**
+ * Safe domain mapping
+ */
+function mapUserRow(row: Pick<UserRow, "id" | "username">): UserPublic {
   return {
     id: row.id,
-    email: row.email,
-    createdAt: row.created_at,
+    username: row.username,
   };
 }
 
-export async function insertUser(input: {
-  email: string;
-  passwordHash: string;
-}): Promise<User | null> {
-  const res = await pool.query<UserRow>(
-    `
-    insert into public.users (email, password_hash)
-    values ($1, $2)
-    on conflict do nothing
-    returning id, email, created_at;
-    `,
-    [input.email, input.passwordHash],
-  );
-
-  if (!res.rows[0]) return null;
-
-  return mapUserRow(res.rows[0]);
-}
-
+/**
+ * List users (safe columns only)
+ */
 export async function listUsers(
   limit: number,
   offset: number,
-): Promise<User[]> {
-  const res = await pool.query<UserRow>(
+): Promise<UserPublic[]> {
+  const res = await pool.query<Pick<UserRow, "id" | "username">>(
     `
-    select id, email, created_at
-    from public.users
-    order by created_at desc
-    limit $1 offset $2;
+    SELECT id, username
+    FROM public.users
+    ORDER BY created_at DESC
+    LIMIT $1 OFFSET $2;
     `,
     [limit, offset],
   );
-
   return res.rows.map(mapUserRow);
 }
