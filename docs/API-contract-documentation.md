@@ -21,6 +21,41 @@ contracts/api
 |   +-- endpoint.validation.ts  # zod validation error details
 ```
 
+### 1.1.2 Backend with contracts
+
+```
+REQUEST
+|
+|
++-->  endpoint exist?    -----[no]---------> RESPONSE 404 (contract def)
+|
+..........................................................................
+|  
++---+  MIDLEWARES
+|   |
+|   +--> if auth, auth ok?  -----[no]------> RESPONSE 401 (contract def)
+|   |
+|   |
+|   +--> validation fns     -----[no]------> RESPONSE 422 (contract def)
+|        (contract def)
+|
+..........................................................................
+|
+|
++---+-->  CONTROLLER --- http logic -------> RESPONSE ok|err (contract def) 
+|   |      
+|   +-->  SERVICE    --- app logic  -------> RESULT data | error code (contract def)
+|   |                         
+|   +-->  REPOSITORY --- db logic   -------> ROWS query res
+|
+..........................................................................
+|
++---+  GLOBAL ERROR 
+|   | 
+|   +-->  Unknow throw  ------------------> RESPONSE 500 (contract def)
+|
+```
+
 
 ---
 
