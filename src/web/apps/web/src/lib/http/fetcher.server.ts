@@ -1,6 +1,5 @@
 'use server';
 
-// import { FetcherError } from './errors';
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 import { envServer } from '../config/env.server';
@@ -28,12 +27,12 @@ export async function fetchServer<T>(
     cache: 'no-store',
   });
 
-  const json = await res.json();
+  const text = await res.text();
+  const json = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    console.log(res);
-    // throw new FetcherError(res.status, json);
+    return;
   }
 
-  return json as T;
+  return { data: json as T, headers: res.headers, status: res.status };
 }

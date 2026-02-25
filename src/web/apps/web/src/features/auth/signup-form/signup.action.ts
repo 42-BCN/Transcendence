@@ -1,6 +1,5 @@
 'use server';
 
-// import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
 
 export async function signupAction(formData: FormData) {
@@ -12,11 +11,5 @@ export async function signupAction(formData: FormData) {
     password,
   });
 
-  console.log(res);
-  //   const setCookie = headers.get('set-cookie');
-  //   if (setCookie) {
-  //     const [cookiePair] = setCookie.split(';');
-  //     const [name, ...rest] = cookiePair.split('=');
-  //     cookies().set(name, rest.join('='));
-  //   }
+  if (!res.ok) return;
 }

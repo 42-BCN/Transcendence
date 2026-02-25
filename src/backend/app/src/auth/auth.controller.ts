@@ -48,6 +48,8 @@ export async function postLogin(
     });
     return;
   }
+  
+  req.session.userId = result.value.id;
 
   res.status(200).json({
     ok: true,

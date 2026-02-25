@@ -77,4 +77,6 @@ pnpm-debug.log*
 # ------------------------------
 **/*.tsbuildinfo
 
+src/backend/docker/.env.development
+
 
