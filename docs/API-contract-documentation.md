@@ -24,10 +24,10 @@ contracts/api
 ### 1.1.2 Backend with contracts
 
 ```
-REQ
+REQUEST
 |
 |
-+-->  endpoint exist?    -----[no]------> RESPONSE 404 (contract def)
++-->  endpoint exist?    -----[no]---------> RESPONSE 404 (contract def)
 |
 ..........................................................................
 |  
@@ -42,17 +42,17 @@ REQ
 ..........................................................................
 |
 |
-+---+-->  CONTROLLER --- http logic ---> RESPONSE ok|err (contract def) 
++---+-->  CONTROLLER --- http logic -------> RESPONSE ok|err (contract def) 
 |   |      
-|   +-->  SERVICE    --- app logic  ---> RESULT data | error code (contract def)
+|   +-->  SERVICE    --- app logic  -------> RESULT data | error code (contract def)
 |   |                         
-|   +-->  REPOSITORY --- db logic   ---> ROWS query res
+|   +-->  REPOSITORY --- db logic   -------> ROWS query res
 |
 ..........................................................................
 |
 +---+  GLOBAL ERROR 
 |   | 
-|   +-->  Unknow throw  ---------------> RESPONSE 500 (contract def)
+|   +-->  Unknow throw  ------------------> RESPONSE 500 (contract def)
 |
 ```
 
