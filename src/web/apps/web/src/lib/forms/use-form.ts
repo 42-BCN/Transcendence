@@ -43,7 +43,7 @@ export function useForm<T extends Record<string, unknown>>(args: useFormProps<T>
         setErrors(validate(schema, values, next, fieldNames).errors);
         return next;
       }),
-    [schema, fieldNames],
+    [schema, values, fieldNames],
   );
 
   const validateBeforeSubmit = useCallback(() => {
@@ -55,6 +55,6 @@ export function useForm<T extends Record<string, unknown>>(args: useFormProps<T>
 
   return useMemo(
     () => ({ values, setValue, touched, setTouch, errors, validateBeforeSubmit }),
-    [values, touched, errors, setValue, setTouch, validateBeforeSubmit],
+    [values, setValue, touched, setTouch, errors, validateBeforeSubmit],
   );
 }
