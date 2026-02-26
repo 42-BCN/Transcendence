@@ -52,6 +52,8 @@ services:
       context: ./backend
       dockerfile: ./docker/Dockerfile
     working_dir: /app
+    env_file:
+      - ./backend/docker/.env.development
     expose:
       - "4000"
     depends_on:
