@@ -38,7 +38,11 @@ const fieldsBase = {
   },
 } as const;
 
-const fieldNames = Object.keys(fieldsBase) as (keyof typeof fieldsBase)[];
+const fieldNames = [
+  'email',
+  'password',
+  'confirmPassword',
+] as const satisfies readonly (keyof typeof fieldsBase)[];
 const defaultValues = createEmptyValues<SignupFormValues>(fieldNames);
 
 const formApiReq = {

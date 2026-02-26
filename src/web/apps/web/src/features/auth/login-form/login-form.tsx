@@ -28,7 +28,7 @@ const fieldsBase = {
   },
 } as const;
 
-const fieldNames = Object.keys(fieldsBase) as (keyof typeof fieldsBase)[];
+const fieldNames: (keyof typeof fieldsBase)[] = ['identifier', 'password'];
 const defaultValues = createEmptyValues<AuthLoginRequest>(fieldNames);
 
 const formApiReq = {

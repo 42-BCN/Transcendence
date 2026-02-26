@@ -1,12 +1,9 @@
 'use client';
 
+import type { TouchedOf, FieldErrorsOf } from './types';
 import { useState, useCallback, useMemo } from 'react';
 import { validate, validateAll } from './validation';
 import type { z } from 'zod';
-
-type TouchedOf<T extends Record<string, unknown>> = Partial<Record<keyof T, boolean>>;
-
-type FieldErrorsOf<T extends Record<string, unknown>> = Partial<Record<keyof T, string>>;
 
 type FormApi<T extends Record<string, unknown>> = {
   values: T;
@@ -20,21 +17,23 @@ type FormApi<T extends Record<string, unknown>> = {
   validateBeforeSubmit: () => { ok: true; data: T } | { ok: false };
 };
 
-type useFormProps<T> = {
+type UseFormProps<T> = {
   schema: z.ZodType<T>;
   fieldNames: readonly (keyof T)[];
   defaultValues: T;
 };
 
-export function useForm<T extends Record<string, unknown>>(args: useFormProps<T>): FormApi<T> {
+export function useForm<T extends Record<string, unknown>>(args: UseFormProps<T>): FormApi<T> {
   const { schema, fieldNames, defaultValues } = args;
 
   const [values, setValues] = useState<T>(() => defaultValues);
   const [touched, setTouched] = useState<TouchedOf<T>>(() => ({}));
   const [errors, setErrors] = useState<FieldErrorsOf<T>>(() => ({}));
 
-  const setValue = <K extends keyof T>(name: K, value: T[K]) =>
-    setValues((p) => ({ ...p, [name]: value }));
+  const setValue = useCallback(
+    <K extends keyof T>(name: K, value: T[K]) => setValues((p) => ({ ...p, [name]: value })),
+    [],
+  );
 
   const setTouch = useCallback(
     <K extends keyof T>(name: K) =>
@@ -51,7 +50,7 @@ export function useForm<T extends Record<string, unknown>>(args: useFormProps<T>
     setTouched(res.touched);
     setErrors(res.errors);
     return res;
-  }, [schema, fieldNames]);
+  }, [schema, values, fieldNames]);
 
   return useMemo(
     () => ({ values, setValue, touched, setTouch, errors, validateBeforeSubmit }),
