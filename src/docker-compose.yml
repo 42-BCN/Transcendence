@@ -64,7 +64,7 @@ services:
     volumes:
       - ./backend/app:/app
       - node_modules_backend:/app/node_modules
-      - ./contracts:/app/src/contracts
+      - ./contracts:/app/src/contracts:ro
     networks:
       - backend
       - edge
