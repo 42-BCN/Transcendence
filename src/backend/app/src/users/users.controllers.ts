@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 
 import type { UsersListResponse } from "../contracts/api/users/users.contracts";
-import { getUsers } from "./users.service";
+import { getUsers, findUserById } from "./users.service";
 import type { GetUsersQuery } from "../contracts/api/users/users.validation";
 
 type Locals = { query: GetUsersQuery };
@@ -27,3 +27,6 @@ export async function getUsersController(
   res.status(200).json(body);
   return;
 }
+/*//TO DO
+export asynx function getUserById(req: Request, res: Response): Promise<void> {
+  const result = await findUserById(req.params.) }*/

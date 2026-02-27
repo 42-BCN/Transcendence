@@ -1,4 +1,4 @@
-import { listUsers } from "./users.repo";
+import { listUsers, selectUserData } from "./users.repo";
 import { Ok, type Result } from "../shared/result-helpers";
 import type {
   UserPublic,
@@ -15,4 +15,11 @@ export async function getUsers({
   const data = await listUsers(limit, offset);
   const response = Ok(data);
   return response;
+}
+
+export async function findUserById(
+  id: number,
+): Promise<Result<UserPublic, UsersListError>> {
+  const data = await selectUserData(id);
+  return Ok(data);
 }

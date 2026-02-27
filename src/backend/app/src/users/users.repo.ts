@@ -39,3 +39,14 @@ export async function listUsers(
   );
   return res.rows.map(mapUserRow);
 }
+
+export async function selectUserData(id: number): Promise<UserPublic> {
+  const res = await pool.query(
+    `
+    SELECET id, username
+    FROM public.users
+    WHERE id = $1;`,
+    [id],
+  );
+  return res.rows[0];
+}

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { VALIDATION } from "../http/validation";
+import { usernameSchema } from "../auth/auth.validation";
 
 const firstQueryValue = (v: unknown) => {
   if (Array.isArray(v)) return v[0];
@@ -37,4 +38,7 @@ export const GetUsersQuerySchema = z
     path: ["offset"],
   });
 
+export const  GetUserByIdParamSchema = z.strictObject({ userId: usernameSchema});
+
 export type GetUsersQuery = z.infer<typeof GetUsersQuerySchema>;
+export type getUserByUnameQuery =  z.infer<typeof GetUserByIdParamSchema>;

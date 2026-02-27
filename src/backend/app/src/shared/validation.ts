@@ -91,3 +91,21 @@ export function validateQuery<T>(schema: z.ZodType<T>) {
     next();
   };
 }
+
+export function validateParams<T>(schema: z.ZodType<T>) {
+  return (req: Request<T>, res: Response, next: NextFunction) => {
+    const parsed = schema.safeParse(req.params);
+    if (!parsed.success) {
+      res.status(VALIDATION_ERROR.status).json({
+        ok: false,
+        error: {
+          code: VALIDATION_ERROR.code,
+          details: toValidationDetails(parsed.error),
+        },
+      });
+    }
+
+    req.params = parsed.data as any;
+    next();
+  };
+}
