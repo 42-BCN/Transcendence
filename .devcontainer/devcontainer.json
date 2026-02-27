@@ -1,35 +1,7 @@
-{
-  "name": "Next.js Web (Docker)",
-  "dockerComposeFile": ["../src/docker-compose.yml"],
-  "service": "web",
-  "workspaceFolder": "/app",
-  "shutdownAction": "stopCompose",
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "[typescriptreact]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[javascriptreact]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "terminal.integrated.defaultProfile.linux": "bash"
-      },
-      "extensions": [
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "rhalaly.scope-to-this",
-        "bradlc.vscode-tailwindcss"
-      ]
-    }
-  }
-}
 // {
-//   "name": "Express.js backend (Docker)",
+//   "name": "Next.js Web (Docker)",
 //   "dockerComposeFile": ["../src/docker-compose.yml"],
-//   "service": "backend",
+//   "service": "web",
 //   "workspaceFolder": "/app",
 //   "shutdownAction": "stopCompose",
 //   "customizations": {
@@ -45,7 +17,35 @@
 //         },
 //         "terminal.integrated.defaultProfile.linux": "bash"
 //       },
-//       "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+//       "extensions": [
+//         "dbaeumer.vscode-eslint",
+//         "esbenp.prettier-vscode",
+//         "rhalaly.scope-to-this",
+//         "bradlc.vscode-tailwindcss"
+//       ]
 //     }
 //   }
 // }
+{
+  "name": "Express.js backend (Docker)",
+  "dockerComposeFile": ["../src/docker-compose.yml"],
+  "service": "backend",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}
