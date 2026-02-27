@@ -3,10 +3,8 @@ services:
     image: postgres:16-alpine
     container_name: app_postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: app
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - ./database/docker/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -52,15 +50,13 @@ services:
       context: ./backend
       dockerfile: ./docker/Dockerfile
     working_dir: /app
-    env_file:
-      - ./backend/docker/.env.development
     expose:
       - "4000"
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
+    env_file:
+      - ./backend/docker/.env.development
     volumes:
       - ./backend/app:/app
       - node_modules_backend:/app/node_modules
