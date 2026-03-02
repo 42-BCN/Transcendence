@@ -57,21 +57,22 @@ export async function postLogin(
   });
 }
 
-// export async function postLogout(_req: Request, res: Response): Promise<void> {
-//   // destroy the session
-//   _req.session.destroy((err) => {
-//     if (err) {
-//       const body: AuthLogoutResponse = {
-//         ok: false,
-//         error: { code: AUTH_ERRORS.INTERNAL_ERROR },
-//       };
-//       return send(res, errorStatus(body.error.code), body);
-//     }
+export async function postLogout(_req: Request, res: Response): Promise<void> {
+  // destroy the session
+  _req.session.destroy((err) => {
+    if (err) {
+      const body: AuthLogoutResponse = {
+        ok: false,
+        error: { code: AUTH_ERRORS.INTERNAL_ERROR },
+      };
+      return res.status(body.error.code).json({ok:false})
+    }
 
-//     const body: AuthLogoutResponse = { ok: true, data: null };
-//     return send(res, 200, body);
-//   });
-// }
+    const body: AuthLogoutResponse = { ok: true, data: null };
+    res.clearCookie("connect.sid");
+    return res.status(200).json({ok:true})
+  });
+}
 
 // export async function getMe(req: Request, res: Response): Promise<void> {
 //   const userId = req.session.userId;

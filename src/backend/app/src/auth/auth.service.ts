@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import type { Profile } from "passport";
 
 import type {
   AuthUser,
@@ -50,6 +51,33 @@ export async function signup(input: {
   }
 
   return Err(AUTH_ERRORS.INTERNAL_ERROR);
+}
+
+function getUserProfile(profile: Profile) {
+  const googleId = profile.id;
+  const email = profile.emails?.[0]?.value;
+  const username = generateUsername();
+  return { googleId, email, username };
+}
+
+export async function findOrCreateGoogleUser(
+  profile: Profile,
+): Promise<Result<AuthUser, AuthSignupError>> {
+  const { googleId, email, username } = getUserProfile(profile);
+
+  if (!email) return Err(AUTH_ERRORS.EMAIL_NOT_VERIFIED);
+
+  const byGoogle = await Repo.findUserByGoogleId(googleId);
+  if (byGoogle) return Ok(toAuthUser(byGoogle));
+
+  const byEmail = await Repo.findUserByEmail(email);
+  if (byEmail) {
+    const linked = await Repo.linkGoogleIdToEmailUser({ email, googleId });
+    return Ok(toAuthUser(linked));
+  }
+
+  const created = await Repo.insertGoogleUser({ email, googleId, username });
+  return Ok(toAuthUser(created));
 }
 
 // export async function me(userId: string): Promise<AuthUser> {

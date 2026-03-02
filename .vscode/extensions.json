@@ -1,9 +1,11 @@
 {
-	"recommendations": [
-		"ms-vscode-remote.remote-containers",
-		"dbaeumer.vscode-eslint",
-		"esbenp.prettier-vscode",
-		"rhalaly.scope-to-this",
-		"bradlc.vscode-tailwindcss"
-	]
+  "recommendations": [
+    "ms-vscode-remote.remote-containers",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "rhalaly.scope-to-this",
+    "bradlc.vscode-tailwindcss",
+    "frigus02.vscode-sql-tagged-template-literals",
+    "frigus02.vscode-sql-tagged-template-literals-syntax-only"
+  ]
 }
