@@ -11,12 +11,12 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL!,
       scope: ["profile", "email"],
     },
+    // DONT THROW INSIDE CALLBACKS
     (_accessToken, _refreshToken, profile, done) => {
       void (async () => {
         try {
-          const result = await findOrCreateGoogleUser(profile);
-          if (!result.ok) return done(null, false);
-          return done(null, result.value.id);
+          const user = await findOrCreateGoogleUser(profile);
+          return done(null, user.id);
         } catch (err) {
           return done(err as Error);
         }
