@@ -4,7 +4,7 @@ export async function bootstrapUsers(): Promise<void> {
   // Needed for gen_random_uuid()
   await pool.query(`create extension if not exists "pgcrypto";`);
 
-  await pool.query(/* sql */`
+  await pool.query(/* sql */ `
     CREATE TABLE IF NOT EXISTS public.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -29,7 +29,7 @@ export async function bootstrapUsers(): Promise<void> {
 
   // These are redundant if you already have UNIQUE constraints,
   // but explicit indexes are fine and idempotent.
-  await pool.query( 
+  await pool.query(
     /* sql */ `CREATE unique index if not exists users_email_uidx on public.users (email);`,
   );
   await pool.query(
