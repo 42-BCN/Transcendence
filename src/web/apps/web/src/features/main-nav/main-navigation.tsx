@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { NavLink } from '@components/controls/nav-link';
 import { mainNavItems } from './navigation.config';
 import { useTranslations } from 'next-intl';
+import { OutFeature } from '../auth/logout-form/logout-form';
 
 type NavItem = (typeof mainNavItems)[number];
 type TFunc = ReturnType<typeof useTranslations>;
@@ -38,6 +39,7 @@ export function MainNav({ locale }: { locale: string }) {
         {mainNavItems.map((item) => (
           <NavLinkItem key={item.href} locale={locale} navItem={item} pathname={pathname} t={t} />
         ))}
+        <OutFeature />
       </div>
     </nav>
   );

@@ -1,7 +1,9 @@
 import express from "express";
 import session from "express-session";
+import passport from "passport";
 
 import { usersRouter } from "./users/users.routes";
+import "./auth/auth.passport";
 import { authRouter } from "./auth/auth.routes";
 import { protectedRouter } from "./protected/protected.route";
 import { errorMiddleware } from "./shared/error-middleware";
@@ -31,6 +33,8 @@ app.use(
     },
   }),
 );
+
+app.use(passport.initialize());
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true });

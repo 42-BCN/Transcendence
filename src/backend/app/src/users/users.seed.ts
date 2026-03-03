@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 
 import { pool } from "../shared/db.pool";
 import { bootstrapUsers } from "./users.bootstrap";
+import { sql } from "../shared/sql";
 
 function makeUsername(): string {
   const base = faker.internet
@@ -24,17 +25,25 @@ function makeDevPasswordHash(plain: string): string {
 async function insertSeedUser(): Promise<boolean> {
   const email = faker.internet.email().toLowerCase();
   const username = makeUsername();
-  const plainPassword = "Password123!"; // predictable dev login if you want
+
+  const plainPassword = "Password123!";
   const passwordHash = makeDevPasswordHash(plainPassword);
 
   const res = await pool.query(
-    `
-    insert into public.users (email, username, password_hash)
-    values ($1, $2, $3)
-    on conflict do nothing
-    returning id;
+    sql`
+    INSERT INTO public.users (
+      email,
+      username,
+      password_hash,
+      provider,
+      email_verified_at,
+      is_blocked
+    )
+    VALUES ($1, $2, $3, $4, $5, $6)
+    ON CONFLICT DO NOTHING
+    RETURNING id;
     `,
-    [email, username, passwordHash],
+    [email, username, passwordHash, "local", new Date(), false],
   );
 
   return res.rowCount === 1;

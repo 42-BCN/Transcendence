@@ -45,7 +45,11 @@
         },
         "terminal.integrated.defaultProfile.linux": "bash"
       },
-      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "frigus02.vscode-sql-tagged-template-literals"
+      ]
     }
   }
 }

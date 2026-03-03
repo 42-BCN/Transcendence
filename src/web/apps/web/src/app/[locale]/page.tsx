@@ -1,3 +1,4 @@
+import { OutFeature } from '@/features/auth/logout-form/logout-form';
 import { getTranslations } from 'next-intl/server';
 
 export default async function HomePage() {

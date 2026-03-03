@@ -2,7 +2,7 @@ import { cn } from '@/lib/styles/cn';
 
 const inputBase = [
   // layout
-  'w-full rounded border bg-white px-3 py-2 text-sm',
+  'w-full border bg-white px-3 py-2 text-sm',
   // behavior
   'outline-none transition',
 ];
