@@ -51,7 +51,7 @@ const formApiReq = {
   defaultValues,
 } as const;
 
-export function googleLogo() {
+export function GoogleLogo() {
   return (
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="block">
       <path
@@ -116,7 +116,7 @@ export function SignupFeature() {
       </Form>
       <div className="w-100 mt-6">
         <hr />
-        <Button icon={googleLogo()}>Sign up with google</Button>
+        <Button icon={GoogleLogo()}>Sign up with Google</Button>
       </div>
     </>
   );

@@ -77,11 +77,11 @@ export async function insertGoogleUser(input: {
 }): Promise<UserPublic> {
   const res = await pool.query<UserPublic>(
     sql`
-    INSERT INTO public.users (email, username, google_id)
-    VALUES ($1, $2, $3)
+    INSERT INTO public.users (email, username, google_id, provider)
+    VALUES ($1, $2, $3, $4)
     RETURNING ${USER_PUBLIC_SELECT};
     `,
-    [input.email, input.username, input.googleId],
+    [input.email, input.username, input.googleId, "google"],
   );
 
   const row = res.rows[0];
@@ -98,7 +98,7 @@ export async function insertUser(input: {
     sql`
     INSERT INTO public.users (email, username, password_hash)
     VALUES ($1, $2, $3)
-    ON conflict do nothing
+    ON CONFLICT DO NOTHING
     RETURNING ${USER_PUBLIC_SELECT};
     `,
     [input.email, input.username, input.passwordHash],
