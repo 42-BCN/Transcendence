@@ -69,6 +69,9 @@
       "error": "Algo salió mal. Inténtalo de nuevo."
     }
   },
+  "api": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "el mail ya existe"
+  },
   "validation": {
     "REQUIRED": "Este campo es obligatorio.",
     "INVALID_EMAIL": "Introduce un correo electrónico válido.",

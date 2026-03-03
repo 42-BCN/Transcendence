@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { signupAction } from './signup.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
+import { useActionState } from 'react';
 
 const fieldsBase = {
   email: {
@@ -75,14 +76,24 @@ export function googleLogo() {
   );
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function SignupFeature() {
   const form = useForm<SignupFormValues>(formApiReq);
   const t = useTranslations('auth');
+  const t2 = useTranslations('api');
 
+  const [state, formAction] = useActionState(signupAction, null);
+  console.log(state);
   return (
     <>
+      {state?.ok === false && (
+        <div role="alert" className="mb-4">
+          {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
+          {/* {t(`errors.${state.error.code}`)} */}
+        </div>
+      )}
       <Form
-        action={signupAction}
+        action={formAction}
         onSubmit={(e) => {
           const res = form.validateBeforeSubmit();
           if (!res.ok) e.preventDefault();

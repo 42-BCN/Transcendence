@@ -51,9 +51,7 @@ async function setAuthCookies(headers: any) {
 
 export async function loginAction(formData: FormData) {
   const result = parseInput(formData);
-  if (!result.ok) {
-    return;
-  }
+  if (!result.ok) return;
 
   const { data, headers } = await fetchServer<AuthLoginResponse>(
     '/auth/login',

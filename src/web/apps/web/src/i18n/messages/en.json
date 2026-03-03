@@ -64,6 +64,9 @@
       "error": "Something went wrong. Please try again."
     }
   },
+  "api": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "this email already exist"
+  },
   "validation": {
     "REQUIRED": "This field is required.",
     "INVALID_EMAIL": "Enter a valid email address.",

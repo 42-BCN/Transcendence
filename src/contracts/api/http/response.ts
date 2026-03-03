@@ -1,7 +1,3 @@
-export type ApiMeta = {
-  requestId?: string;
-};
-
 export type ApiSuccess<T> = {
   ok: true;
   data: T;
