@@ -5,6 +5,9 @@ export type AuthUserRow = {
   email: string;
   username: string;
   password_hash: string;
+  provider: "local" | "google";
+  google_id: string | null;
+  is_blocked: boolean;
 };
 
 export function toAuthUser(row: {

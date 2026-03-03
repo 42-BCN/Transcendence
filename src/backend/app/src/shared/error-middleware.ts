@@ -8,6 +8,8 @@ export function errorMiddleware(
 ) {
   console.error(err);
 
+  if (res.headersSent)  return;
+  
   res.status(500).json({
     ok: false,
     error: { code: "INTERNAL_ERROR" },

@@ -1,6 +1,12 @@
 import { Router } from "express";
+import passport from "passport";
 
-import { postLogin, postSignup } from "./auth.controller";
+import {
+  postLogin,
+  postSignup,
+  postLogout,
+  getGoogleCallback,
+} from "./auth.controller";
 import { validateBody } from "../shared/validation";
 import {
   AuthLoginRequestSchema,
@@ -11,5 +17,9 @@ export const authRouter = Router();
 
 authRouter.post("/signup", validateBody(AuthSignupRequestSchema), postSignup);
 authRouter.post("/login", validateBody(AuthLoginRequestSchema), postLogin);
-// authRouter.post("/logout", postLogout);
-// authRouter.get("/me", getMe);
+authRouter.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+);
+authRouter.get("/callback/google", getGoogleCallback);
+authRouter.post("/logout", postLogout);

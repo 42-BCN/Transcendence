@@ -2,7 +2,7 @@ import { cn } from '@/lib/styles/cn';
 
 const buttonBase = [
   // layout
-  'border inline-flex items-center justify-center font-medium text-gray-900',
+  'border inline-flex items-center justify-center font-medium text-gray-900 gap-3',
   // behavior
   'transition outline-none',
 ];
@@ -20,6 +20,11 @@ const buttonSizes = {
   lg: 'h-12 px-6 text-base',
 } as const;
 
+const buttonW = {
+  full: 'w-full',
+  default: '',
+} as const;
+
 const buttonRacStates = [
   'data-[pressed]:translate-y-px',
   'data-[focus-visible]:ring-2 data-[focus-visible]:ring-black',
@@ -29,8 +34,13 @@ const buttonRacStates = [
 
 export type ButtonVariant = keyof typeof buttonVariants;
 export type ButtonSize = keyof typeof buttonSizes;
+export type ButtonW = keyof typeof buttonW;
 
-export function buttonStyles(args?: { variant?: ButtonVariant; size?: ButtonSize }) {
-  const { variant = 'primary', size = 'md' } = args ?? {};
-  return cn(buttonBase, buttonVariants[variant], buttonSizes[size], buttonRacStates);
+export function buttonStyles(args?: { variant?: ButtonVariant; size?: ButtonSize; w?: ButtonW }) {
+  const { variant = 'primary', size = 'md', w = 'full' } = args ?? {};
+  return cn(buttonBase, buttonVariants[variant], buttonSizes[size], buttonW[w], buttonRacStates);
+}
+
+export function iconStyles() {
+  return cn('w-[16px] h-[16px]');
 }
