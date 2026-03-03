@@ -94,8 +94,7 @@ export function validateQuery<T>(schema: z.ZodType<T>) {
 
 export function validateParams<T>(schema: z.ZodType<T>) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const param = { userId: req.params.userId };
-    const parsed = schema.safeParse(param);
+    const parsed = schema.safeParse(req.params);
     if (!parsed.success) {
       res.status(VALIDATION_ERROR.status).json({
         ok: false,
@@ -104,6 +103,7 @@ export function validateParams<T>(schema: z.ZodType<T>) {
           details: toValidationDetails(parsed.error),
         },
       });
+      return;
     }
 
     req.params = parsed.data as any;

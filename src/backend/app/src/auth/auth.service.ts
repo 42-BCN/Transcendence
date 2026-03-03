@@ -12,6 +12,7 @@ import { AUTH_ERRORS } from "../contracts/api/auth/auth.errors";
 import { generateUsername } from "../shared/username-generator";
 import * as Repo from "./auth.repo";
 import { type Result, Err, Ok } from "../shared/result-helpers";
+import { ApiError } from "../shared/error-middleware";
 
 export async function login(
   input: AuthLoginRequest,
@@ -22,8 +23,7 @@ export async function login(
     ? await Repo.findUserByEmail(identifier)
     : await Repo.findUserByUsername(identifier);
 
-  if (!user) return Err(AUTH_ERRORS.INVALID_CREDENTIALS);
-
+  if (!user) throw new ApiError(AUTH_ERRORS.INVALID_CREDENTIALS);
   const ok = await bcrypt.compare(input.password, user.password_hash);
   if (!ok) return Err(AUTH_ERRORS.INVALID_CREDENTIALS);
 

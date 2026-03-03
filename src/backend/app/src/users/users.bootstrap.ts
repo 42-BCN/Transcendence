@@ -2,6 +2,8 @@ import { pool } from "../shared/db.pool";
 
 export async function bootstrapUsers(): Promise<void> {
   // Needed for gen_random_uuid()
+
+  //await pool.query(`DROP TABLE users`);//CAmbiar a un script
   await pool.query(`create extension if not exists "pgcrypto";`);
 
   await pool.query(/* sql */ `
