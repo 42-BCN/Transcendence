@@ -40,10 +40,10 @@ export async function listUsers(
   return res.rows.map(mapUserRow);
 }
 
-export async function selectUserData(id: number): Promise<UserPublic> {
+export async function selectUserData(id: string): Promise<UserPublic> {
   const res = await pool.query(
     `
-    SELECET id, username
+    SELECT id, username
     FROM public.users
     WHERE id = $1;`,
     [id],

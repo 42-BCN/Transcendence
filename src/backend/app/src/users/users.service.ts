@@ -18,7 +18,7 @@ export async function getUsers({
 }
 
 export async function findUserById(
-  id: number,
+  id: string,
 ): Promise<Result<UserPublic, UsersListError>> {
   const data = await selectUserData(id);
   return Ok(data);

@@ -39,3 +39,9 @@ export type UsersListResponse = ApiResponse<
   UsersListError,
   ValidationErrorDetails
 >;
+
+export type UserPublicResponse = ApiResponse<
+  UserPublic,
+  UsersListError,
+  ValidationErrorDetails
+>;
