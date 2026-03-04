@@ -9,6 +9,7 @@ import { signupAction } from './signup.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 import { useActionState } from 'react';
+import { SignupRes } from '@/contracts/auth/auth.contract';
 
 const fieldsBase = {
   email: {
@@ -76,22 +77,35 @@ export function googleLogo() {
   );
 }
 
+type stateActionProps = {
+  state: {
+    ok: boolean;
+    res: {
+      data: SignupRes;
+      headers: Headers;
+      status: number;
+    };
+  } | null;
+};
+function APIError({ state }: stateActionProps) {
+  const t2 = useTranslations('api');
+  return (
+    state?.ok === false && (
+      <div role="alert" className="mb-4">
+        {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
+      </div>
+    )
+  );
+}
+
 // eslint-disable-next-line max-lines-per-function
 export function SignupFeature() {
   const form = useForm<SignupFormValues>(formApiReq);
   const t = useTranslations('auth');
-  const t2 = useTranslations('api');
-
   const [state, formAction] = useActionState(signupAction, null);
-  console.log(state);
   return (
     <>
-      {state?.ok === false && (
-        <div role="alert" className="mb-4">
-          {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
-          {/* {t(`errors.${state.error.code}`)} */}
-        </div>
-      )}
+      <APIError state={state} />
       <Form
         action={formAction}
         onSubmit={(e) => {

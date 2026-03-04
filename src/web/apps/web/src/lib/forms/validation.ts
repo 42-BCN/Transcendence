@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { TouchedOf, FieldErrorsOf } from './validation';
+import type { TouchedOf, FieldErrorsOf } from './types';
 
 export function validate<T extends Record<string, unknown>>(
   schema: z.ZodType<T>,

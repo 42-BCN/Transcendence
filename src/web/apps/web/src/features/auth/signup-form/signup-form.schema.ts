@@ -1,13 +1,13 @@
 import { z } from 'zod';
-import { AuthSignupRequestSchema } from '@/contracts/auth/auth.validation';
+import { SignupReqSchema } from '@/contracts/auth/auth.validation';
 import { VALIDATION } from '@/contracts/http';
 
-export const SignupFormSchema = AuthSignupRequestSchema.extend({
+export const SignupFormSchema = SignupReqSchema.extend({
   confirmPassword: z.string().min(1, { message: VALIDATION.REQUIRED }),
 }).superRefine(({ password, confirmPassword }, ctx) => {
   if (password !== confirmPassword) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       path: ['confirmPassword'],
       message: VALIDATION.PASSWORDS_DO_NOT_MATCH,
     });

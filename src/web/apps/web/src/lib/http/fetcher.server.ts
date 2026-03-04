@@ -20,6 +20,7 @@ export async function fetchServer<T>(
   headers: Headers;
   status: number;
 }> {
+  console.log(API_BASE_URL, endpoint);
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {
@@ -31,6 +32,7 @@ export async function fetchServer<T>(
     cache: 'no-store',
   });
   const text = await res.text();
+  console.log(text);
   const json = text ? JSON.parse(text) : null;
   if (!res.ok) {
     return { data: json as T, headers: res.headers, status: res.status };

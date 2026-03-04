@@ -2,13 +2,13 @@
 
 import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
-import { AuthLoginRequestSchema } from '@/contracts/auth/auth.validation';
-import { type AuthLoginResponse } from '@/contracts/auth/auth.contract';
+import { LoginReqSchema } from '@/contracts/auth/auth.validation';
+import { type LoginRes } from '@/contracts/auth/auth.contract';
 
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 7;
 
 function parseInput(formData: FormData) {
-  const result = AuthLoginRequestSchema.safeParse({
+  const result = LoginReqSchema.safeParse({
     identifier: formData.get('identifier'),
     password: formData.get('password'),
   });
@@ -53,11 +53,7 @@ export async function loginAction(formData: FormData) {
   const result = parseInput(formData);
   if (!result.ok) return;
 
-  const { data, headers } = await fetchServer<AuthLoginResponse>(
-    '/auth/login',
-    'POST',
-    result.data,
-  );
+  const { data, headers } = await fetchServer<LoginRes>('/auth/login', 'POST', result.data);
 
   if (!data.ok) return;
   await setAuthCookies(headers);
