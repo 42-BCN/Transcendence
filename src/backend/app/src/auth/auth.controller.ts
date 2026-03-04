@@ -1,27 +1,21 @@
 import type { NextFunction, Request, Response } from "express";
 import passport from "passport";
+import type { LoginRes, SignupRes } from "@contracts/auth/auth.contract";
+import { AUTH_ERRORS, type AuthErrorName } from "@contracts/auth/auth.errors";
+import type { SignupReq, LoginReq } from "@contracts/auth/auth.validation";
+import { HttpStatus } from "@contracts/http";
 
-import type {
-  AuthLoginResponse,
-  AuthSignupResponse,
-} from "../contracts/api/auth/auth.contract";
-import {
-  AUTH_ERRORS,
-  AUTH_ERROR_STATUS,
-} from "../contracts/api/auth/auth.errors";
-import {
-  type AuthSignupRequest,
-  type AuthLoginRequest,
-} from "../contracts/api/auth/auth.validation";
 import * as Service from "./auth.service";
 
-function errorStatus(code: string): number {
-  return AUTH_ERROR_STATUS[code as keyof typeof AUTH_ERROR_STATUS] ?? 500;
+// TODO this is repeated at error middleware - make a helper
+function errorStatus(code: AuthErrorName): number {
+  return AUTH_ERRORS[code] ?? HttpStatus.INTERNAL_SERVER_ERROR;
 }
 
+// TODO this is repeated at error middleware - make a helper
 export function sendError<TResponse>(
   res: Response<TResponse>,
-  code: string,
+  code: AuthErrorName,
 ): void {
   res.status(errorStatus(code)).json({
     ok: false,
@@ -30,8 +24,8 @@ export function sendError<TResponse>(
 }
 
 export async function postSignup(
-  req: Request<unknown, unknown, AuthSignupRequest>,
-  res: Response<AuthSignupResponse>,
+  req: Request<unknown, unknown, SignupReq>,
+  res: Response<SignupRes>,
 ): Promise<void> {
   const result = await Service.signup(req.body);
 
@@ -42,18 +36,18 @@ export async function postSignup(
 }
 
 export async function postLogin(
-  req: Request<unknown, unknown, AuthLoginRequest>,
-  res: Response<AuthLoginResponse>,
+  req: Request<unknown, unknown, LoginReq>,
+  res: Response<LoginRes>,
 ): Promise<void> {
   const result = await Service.login(req.body);
 
   // this is a callback function, will have another stack so dont throw here!
-  // another option is convert the callback to promise form
+  // TODO another option is convert the callback to promise form
   req.session.regenerate((err) => {
-    if (err) return sendError(res, AUTH_ERRORS.INTERNAL_ERROR);
+    if (err) return sendError(res, "AUTH_INTERNAL_ERROR");
     req.session.userId = result.id;
     req.session.save((saveErr) => {
-      if (saveErr) return sendError(res, AUTH_ERRORS.INTERNAL_ERROR);
+      if (saveErr) return sendError(res, "AUTH_INTERNAL_ERROR");
 
       res.status(200).json({
         ok: true,
@@ -65,9 +59,9 @@ export async function postLogin(
 
 export function postLogout(req: Request, res: Response): void {
   // this is a callback function, will have another stack so dont throw here!
-  // another option is convert the callback to promise form
+  // TODO another option is convert the callback to promise form
   req.session.destroy((err) => {
-    if (err) return sendError(res, AUTH_ERRORS.INTERNAL_ERROR);
+    if (err) return sendError(res, "AUTH_INTERNAL_ERROR");
 
     res.clearCookie("sid", {
       path: "/",
@@ -85,10 +79,10 @@ export function getGoogleCallback(
   next: NextFunction,
 ): void {
   // this is a callback function, will have another stack so dont throw here!
-  // another option is convert the callback to promise form
+  // TODO another option is convert the callback to promise form
   passport.authenticate("google", (err: unknown, userId: string | false) => {
     if (err) return next(err);
-    if (!userId) return sendError(res, AUTH_ERRORS.INTERNAL_ERROR);
+    if (!userId) return sendError(res, "AUTH_INTERNAL_ERROR");
 
     // this could be a middleware? is repeated
     req.session.regenerate((regenErr) => {

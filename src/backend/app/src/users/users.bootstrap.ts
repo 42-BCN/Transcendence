@@ -1,12 +1,11 @@
-import { pool } from "../shared/db.pool";
+import { pool } from "@shared/db.pool";
+import { sql } from "@shared/utils/sql";
 
 export async function bootstrapUsers(): Promise<void> {
-  // Needed for gen_random_uuid()
+  //await pool.query(sql`DROP TABLE users`);// TODO Cambiar a un script
+  await pool.query(sql`CREATE extension IF NOT EXISTS "pgcrypto";`);
 
-  //await pool.query(`DROP TABLE users`);//CAmbiar a un script
-  await pool.query(`create extension if not exists "pgcrypto";`);
-
-  await pool.query(/* sql */ `
+  await pool.query(sql`
     CREATE TABLE IF NOT EXISTS public.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -32,12 +31,12 @@ export async function bootstrapUsers(): Promise<void> {
   // These are redundant if you already have UNIQUE constraints,
   // but explicit indexes are fine and idempotent.
   await pool.query(
-    /* sql */ `CREATE unique index if not exists users_email_uidx on public.users (email);`,
+    sql`CREATE unique index if not exists users_email_uidx on public.users (email);`,
   );
   await pool.query(
-    /* sql */ `CREATE unique index if not exists users_username_uidx on public.users (username);`,
+    sql`CREATE unique index if not exists users_username_uidx on public.users (username);`,
   );
   await pool.query(
-    /* sql */ `CREATE unique index if not exists users_google_id_uidx on public.users (google_id);`,
+    sql`CREATE unique index if not exists users_google_id_uidx on public.users (google_id);`,
   );
 }

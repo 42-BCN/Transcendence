@@ -1,25 +1,19 @@
-import { listUsers, selectUserData } from "./users.repo";
-import { Ok, type Result } from "../shared/result-helpers";
-import type {
-  UserPublic,
-  UsersListError,
-} from "../contracts/api/users/users.contracts";
+import type { UserPublic } from "@contracts/users/users.contracts";
 
-export async function getUsers({
-  limit,
-  offset,
-}: {
+import { listUsers, selectUserData } from "./users.repo";
+
+type getUsersProps = {
   limit: number;
   offset: number;
-}): Promise<Result<UserPublic[], UsersListError>> {
+};
+
+export async function getUsers(args: getUsersProps): Promise<UserPublic[]> {
+  const { limit, offset } = args;
   const data = await listUsers(limit, offset);
-  const response = Ok(data);
-  return response;
+  return data;
 }
 
-export async function findUserById(
-  id: string,
-): Promise<Result<UserPublic, UsersListError>> {
+export async function findUserById(id: string): Promise<UserPublic> {
   const data = await selectUserData(id);
-  return Ok(data);
+  return data;
 }

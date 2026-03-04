@@ -1,24 +1,22 @@
 import bcrypt from "bcrypt";
 import type { Profile } from "passport";
+import type { AuthUser } from "@contracts/auth/auth.contract";
+import type { LoginReq } from "@contracts/auth/auth.validation";
+import { generateUsername, ApiError } from "@shared";
 
-import type { AuthUser } from "../contracts/api/auth/auth.contract";
 import { toAuthUser } from "./auth.model";
-import type { AuthLoginRequest } from "../contracts/api/auth/auth.validation";
-import { AUTH_ERRORS } from "../contracts/api/auth/auth.errors";
-import { generateUsername } from "../shared/username-generator";
 import * as Repo from "./auth.repo";
-import { ApiError } from "../shared/error-middleware";
 
-export async function login(input: AuthLoginRequest): Promise<AuthUser> {
+export async function login(input: LoginReq): Promise<AuthUser> {
   const identifier = input.identifier.trim().toLowerCase();
 
   const user = identifier.includes("@")
     ? await Repo.findUserByEmail(identifier)
     : await Repo.findUserByUsername(identifier);
-  if (!user) throw new ApiError(AUTH_ERRORS.INVALID_CREDENTIALS);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
   const ok = await bcrypt.compare(input.password, user.password_hash);
-  if (!ok) throw new ApiError(AUTH_ERRORS.INVALID_CREDENTIALS);
+  if (!ok) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
   return toAuthUser(user);
 }
@@ -30,7 +28,7 @@ export async function signup(input: {
   const email = input.email.trim().toLowerCase();
 
   const existing = await Repo.findUserByEmail(email);
-  if (existing) throw new ApiError(AUTH_ERRORS.EMAIL_ALREADY_EXISTS);
+  if (existing) throw new ApiError("AUTH_EMAIL_ALREADY_EXISTS");
 
   const passwordHash = await bcrypt.hash(input.password, 12);
 
@@ -41,7 +39,7 @@ export async function signup(input: {
     if (created) return toAuthUser(created);
   }
 
-  throw new ApiError(AUTH_ERRORS.INTERNAL_ERROR);
+  throw new ApiError("INTERNAL_ERROR");
 }
 
 function getUserProfile(profile: Profile) {
@@ -56,7 +54,7 @@ export async function findOrCreateGoogleUser(
 ): Promise<AuthUser> {
   const { googleId, email, username } = getUserProfile(profile);
 
-  if (!email) throw new ApiError(AUTH_ERRORS.EMAIL_NOT_VERIFIED);
+  if (!email) throw new ApiError("AUTH_EMAIL_NOT_VERIFIED");
 
   const byGoogle = await Repo.findUserByGoogleId(googleId);
   if (byGoogle) return toAuthUser(byGoogle);

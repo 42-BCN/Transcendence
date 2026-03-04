@@ -1,4 +1,4 @@
-import type { AuthUser } from "../contracts/api/auth/auth.contract";
+import type { AuthUser } from "@contracts/auth/auth.contract";
 
 export type AuthUserRow = {
   id: string;

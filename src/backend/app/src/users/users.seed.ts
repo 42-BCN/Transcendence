@@ -1,9 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { createHash } from "crypto";
+import { pool, sql } from "@shared";
 
-import { pool } from "../shared/db.pool";
 import { bootstrapUsers } from "./users.bootstrap";
-import { sql } from "../shared/sql";
 
 function makeUsername(): string {
   const base = faker.internet

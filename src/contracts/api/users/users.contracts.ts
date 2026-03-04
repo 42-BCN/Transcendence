@@ -1,9 +1,9 @@
 import type { ApiResponse } from "../http/response";
 import type { ValidationErrorDetails } from "../http/validation";
-import { USERS_ERRORS } from "./users.errors"; // create this like auth.errors
+import type { UsersErrorName } from "./users.errors"; // create this like auth.errors
 
 export type UserPublic = {
-  id: string; // uuid
+  id: string; // uuid zod can check for it on validation
   username: string;
 };
 
@@ -11,13 +11,11 @@ export type UserPublic = {
 // GET /api/users?limit=20&offset=0
 // ---------------------------------------
 
-// --------------------------------------------------- Request
 export type UsersListRequest = {
   limit?: number; // default 20, min 1, max 100
   offset?: number; // default 0, min 0
 };
 
-// --------------------------------------------------- Response
 export type UsersListOk = {
   users: UserPublic[];
   meta: {
@@ -28,9 +26,9 @@ export type UsersListOk = {
 };
 
 export const USERS_LIST_ERRORS = [
-  USERS_ERRORS.INTERNAL_ERROR,
-  USERS_ERRORS.VALIDATION_ERROR,
-] as const;
+  "INTERNAL_ERROR",
+  "VALIDATION_ERROR",
+] as const satisfies readonly UsersErrorName[];
 
 export type UsersListError = (typeof USERS_LIST_ERRORS)[number];
 

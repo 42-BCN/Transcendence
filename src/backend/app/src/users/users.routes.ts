@@ -1,11 +1,11 @@
 import { Router } from "express";
-
-import { validateQuery, validateParams } from "../shared/validation";
-import { getUsersController, getUserById } from "./users.controllers";
+import { validateQuery, validateParams } from "@shared";
 import {
   GetUserByIdParamSchema,
   GetUsersQuerySchema,
-} from "../contracts/api/users/users.validation";
+} from "@contracts/users/users.validation";
+
+import { getUsersController, getUserById } from "./users.controllers";
 
 export const usersRouter = Router();
 
