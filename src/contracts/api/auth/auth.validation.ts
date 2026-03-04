@@ -13,7 +13,8 @@ export const emailSchema = z
   .trim()
   .min(1, { message: V.REQUIRED })
   .max(254, { message: V.FIELD_TOO_LONG })
-  .pipe(z.email({ message: V.INVALID_EMAIL }));
+  .pipe(z.email({ message: V.INVALID_EMAIL }))
+  .transform((val) => val.toLowerCase().trim());
 
 export const usernameSchema = trimRequiredString
   .min(3, { message: V.FIELD_TOO_SHORT })
@@ -30,7 +31,9 @@ export const identifierSchema = trimRequiredString.superRefine((val, ctx) => {
 
 export const LoginReqSchema = z
   .object({
-    identifier: identifierSchema,
+    identifier: identifierSchema.transform((val) =>
+      val.includes("@") ? val.toLowerCase().trim() : val,
+    ),
     password: z.string().min(1, { message: V.REQUIRED }),
   })
   .strict();
@@ -39,7 +42,7 @@ export type LoginReq = z.infer<typeof LoginReqSchema>;
 
 export const SignupReqSchema = z
   .object({
-    email: emailSchema,
+    email: emailSchema.transform((val) => val.toLowerCase().trim()),
     password: z.string().min(1, { message: V.REQUIRED }),
   })
   .strict();

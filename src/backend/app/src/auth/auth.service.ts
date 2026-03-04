@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import type { Profile } from "passport";
+
 import type { AuthUser } from "@contracts/auth/auth.contract";
 import type { LoginReq } from "@contracts/auth/auth.validation";
 import { generateUsername, ApiError } from "@shared";
@@ -25,7 +26,7 @@ export async function signup(input: {
   email: string;
   password: string;
 }): Promise<AuthUser> {
-  const email = input.email.trim().toLowerCase();
+  const email = input.email;
 
   const existing = await Repo.findUserByEmail(email);
   if (existing) throw new ApiError("AUTH_EMAIL_ALREADY_EXISTS");
