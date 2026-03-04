@@ -14,11 +14,6 @@ export const usernameSchema = z
   .pipe(z.email({ message: V.INVALID_EMAIL }))
   .transform((val) => val.toLowerCase().trim());
 
-export const usernameSchema = trimRequiredString
-  .min(3, { message: V.FIELD_TOO_SHORT })
-  .max(30, { message: V.FIELD_TOO_LONG })
-  .regex(/^[\w-]+$/, { message: V.INVALID_USERNAME });
-
 export const identifierSchema = z.string().superRefine((val, ctx) => {
   if (val.includes("@")) {
     safeParseSchema(emailSchema, val, ctx);
@@ -30,7 +25,7 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
 export const LoginReqSchema = z
   .object({
     identifier: identifierSchema.transform((val) =>
-      val.includes("@") ? val.toLowerCase().trim() : val
+      val.includes("@") ? val.toLowerCase().trim() : val,
     ),
     password: z.string().min(1, { message: V.REQUIRED }),
   })
