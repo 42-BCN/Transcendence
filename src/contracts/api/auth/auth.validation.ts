@@ -3,11 +3,6 @@ import { z } from "zod";
 import { VALIDATION as V } from "../http/validation";
 import { safeParseSchema } from "../lib";
 
-// export const trimRequiredString = z
-//   .string()
-//   .trim()
-//   .min(1, { message: V.REQUIRED });
-
 export const emailSchema = z.email({ message: V.INVALID_EMAIL });
 // TODO .transform((val) => val.toLowerCase().trim());
 
