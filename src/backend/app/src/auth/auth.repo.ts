@@ -10,11 +10,13 @@ type UserWithPassword = Pick<
 
 const USER_PUBLIC_SELECT = `id, email, username`;
 const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
+const USER_RECOVER_DATA = `id, email, is_blocked, recover_token, recover_token_expiration`;
 
 export async function findUserByEmail(
   email: string,
 ): Promise<AuthUserRow | null> {
   const res = await pool.query<AuthUserRow>(
+    //Cambiar Query.select.values a una MACRO
     sql`
     SELECT id, email, username, password_hash
     FROM public.users
@@ -123,4 +125,34 @@ export async function linkGoogleIdToEmailUser(input: {
   const row = res.rows[0];
   if (!row) throw new ApiError("AUTH_GOOGLE_LINK_FAILED");
   return row;
+}
+
+export async function findUserForRecovery(
+  email: string,
+  username: string,
+): Promise<AuthUserRow | null> {
+  const res = await pool.query(
+    sql`
+    SELECT ${USER_RECOVER_DATA} FROM public.users 
+    WHERE email = $1 AND username = $2;
+  `,
+    [email, username],
+  );
+  return res.rows[0] || null;
+}
+export async function setRecoveryToken(
+  username: string,
+  token: string,
+): Promise<void> {
+  await pool.query(
+    sql`
+    UPDATE public.users 
+    SET 
+      reset_token = $2, 
+      reset_token_expires = NOW() + INTERVAL '5 minutes',
+      updated_at = NOW()
+    WHERE id = $1;
+  `,
+    [username, token],
+  );
 }

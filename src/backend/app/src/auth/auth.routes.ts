@@ -3,6 +3,7 @@ import passport from "passport";
 import { validateBody } from "@shared/validation.middleware";
 import {
   LoginReqSchema,
+  RecoverReqSchema,
   SignupReqSchema,
 } from "@contracts/auth/auth.validation";
 
@@ -23,3 +24,5 @@ authRouter.get(
 );
 authRouter.get("/callback/google", getGoogleCallback);
 authRouter.post("/logout", postLogout);
+authRouter.post("/recover", validateBody(RecoverReqSchema), recoverAccount);
+//authRouter.put("/recover", validateQuery(Recover)

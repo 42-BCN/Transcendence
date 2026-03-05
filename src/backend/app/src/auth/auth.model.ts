@@ -8,6 +8,8 @@ export type AuthUserRow = {
   provider: "local" | "google";
   google_id: string | null;
   is_blocked: boolean;
+  recover_token: string | null;
+  recover_token_expiration: string | null;
 };
 
 export function toAuthUser(row: {

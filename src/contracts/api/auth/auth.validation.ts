@@ -40,3 +40,10 @@ export const SignupReqSchema = z
   .strict();
 
 export type SignupReq = z.infer<typeof SignupReqSchema>;
+
+export const RecoverReqSchema = z.strictObject({
+  email: emailSchema.transform((val) => val.toLowerCase().trim()),
+  username: usernameSchema.transform((val) => val.trim()),
+});
+
+export type RecoverReq = z.infer<typeof RecoverReqSchema>;

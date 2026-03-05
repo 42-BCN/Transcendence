@@ -2,7 +2,11 @@ import type { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import type { LoginRes, SignupRes } from "@contracts/auth/auth.contract";
 import { AUTH_ERRORS, type AuthErrorName } from "@contracts/auth/auth.errors";
-import type { SignupReq, LoginReq } from "@contracts/auth/auth.validation";
+import type {
+  SignupReq,
+  LoginReq,
+  RecoverReq,
+} from "@contracts/auth/auth.validation";
 import { HttpStatus } from "@contracts/http";
 
 import * as Service from "./auth.service";
@@ -72,6 +76,17 @@ export function postLogout(req: Request, res: Response): void {
     res.status(200).json({ ok: true, data: null });
   });
 }
+export const recoverAccount = async (
+  req: Request<unknown, unknown, RecoverReq>,
+  res: Response,
+): Promise<void> => {
+  const { email, username } = req.body;
+
+  //Tal vez deberiamos no esperar a que termine
+  await Service.processRecovery({ email, username });
+
+  res.status(200).json({ ok: true, data: null });
+};
 
 export function getGoogleCallback(
   req: Request,

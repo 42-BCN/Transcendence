@@ -70,6 +70,30 @@ export async function findOrCreateGoogleUser(
   return toAuthUser(created);
 }
 
+export async function processRecovery(input: {
+  email: string;
+  username: string;
+}): Promise<string | null> {
+  const user = await Repo.findUserForRecovery(input.email, input.username);
+
+  if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
+  if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
+  //if(user.recover_token)?;
+
+  const resetToken = generateRecoveryToken();
+
+  await Repo.setRecoveryToken(user.id, resetToken);
+
+  //Enviar email - tal vez esto deberia estar en el controlador
+  //await sendRecoveryMail(user.email, resetToken);
+  return resetToken;
+}
+
+function generateRecoveryToken(): string {
+  //TODO Gen a token aleatorio
+  return "token_test";
+}
+
 // export async function me(userId: string): Promise<AuthUser> {
 //   const user = await Repo.findUserById(userId);
 //   if (!user) throw new Error(AUTH_ERRORS.UNAUTHORIZED);
