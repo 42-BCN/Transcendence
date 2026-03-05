@@ -23,13 +23,13 @@ function parseInput(formData: FormData) {
   return { ok: true, data: result.data };
 }
 
-function getAuthCookie(headers: any): string[] {
+function getAuthCookie(headers: Headers): string[] {
   if (typeof headers?.getSetCookie === 'function') return headers.getSetCookie();
 
   return headers.get('set-cookie') ? [headers.get('set-cookie')!] : [];
 }
 
-async function setAuthCookies(headers: any) {
+async function setAuthCookies(headers: Headers) {
   const setCookies = getAuthCookie(headers);
   const cookieStore = await cookies();
 

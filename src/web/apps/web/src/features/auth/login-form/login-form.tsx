@@ -10,6 +10,8 @@ import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 
 import { LoginReqSchema, type LoginReq } from '@/contracts/auth/auth.validation';
+import Link from 'next/link';
+import { Oauth } from '../oauth';
 
 const fieldsBase = {
   identifier: {
@@ -41,30 +43,40 @@ export function LoginFeature() {
   const form = useForm<LoginReq>(formApiReq);
   const t = useTranslations('auth');
   return (
-    <Form
-      action={loginAction}
-      onSubmit={(e) => {
-        const res = form.validateBeforeSubmit();
-        if (!res.ok) e.preventDefault();
-      }}
-    >
-      <TextField
-        value={form.values.identifier}
-        errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
-        onChange={(v) => form.setValue('identifier', v)}
-        onBlur={() => form.setTouch('identifier')}
-        {...fieldsBase.identifier}
-      />
+    <>
+      <Form
+        action={loginAction}
+        onSubmit={(e) => {
+          const res = form.validateBeforeSubmit();
+          if (!res.ok) e.preventDefault();
+        }}
+      >
+        <TextField
+          value={form.values.identifier}
+          errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
+          onChange={(v) => form.setValue('identifier', v)}
+          onBlur={() => form.setTouch('identifier')}
+          {...fieldsBase.identifier}
+        />
 
-      <TextField
-        value={form.values.password}
-        errorKey={form.errors.password && `validation.${form.errors.password}`}
-        onChange={(v) => form.setValue('password', v)}
-        onBlur={() => form.setTouch('password')}
-        {...fieldsBase.password}
-      />
+        <TextField
+          value={form.values.password}
+          errorKey={form.errors.password && `validation.${form.errors.password}`}
+          onChange={(v) => form.setValue('password', v)}
+          onBlur={() => form.setTouch('password')}
+          {...fieldsBase.password}
+        />
 
-      <Button type="submit">{t('login.submit')}</Button>
-    </Form>
+        <Button type="submit">{t('login.submit')}</Button>
+      </Form>
+
+      <Oauth />
+      <div className="flex row gap-2 mt-3 justify-center">
+        <p className="text-slate-600 text-sm">Don't have an account?</p>{' '}
+        <Link className="text-blue-500 underline text-sm" href={'/signup'}>
+          Go to register
+        </Link>
+      </div>
+    </>
   );
 }
