@@ -67,6 +67,12 @@
     "status": {
       "success": "Correcto",
       "error": "Algo salió mal. Inténtalo de nuevo."
+    },
+    "recover": {
+      "title": "Recuperar cuenta",
+      "submit": "Enviar email",
+      "resend": "Solicitar otro email",
+      "goToLogin": "Ir a inicio"
     }
   },
   "api": {

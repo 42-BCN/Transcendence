@@ -65,6 +65,12 @@ declare const messages: {
     "status": {
       "success": "Success",
       "error": "Something went wrong. Please try again."
+    },
+    "recover": {
+      "title": "Recover account",
+      "submit": "Send mail",
+      "resend": "Request another mail",
+      "goToLogin": "Go to log in"
     }
   },
   "api": {
