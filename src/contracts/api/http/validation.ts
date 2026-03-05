@@ -13,7 +13,9 @@ export const VALIDATION = {
 } as const;
 
 // FORMAT GENERAL ERRORS
-export const VALIDATION_ERROR = HttpStatus.UNPROCESSABLE_ENTITY;
+export const VALIDATION_ERROR = {
+  VALIDATION_ERROR: HttpStatus.UNPROCESSABLE_ENTITY,
+};
 
 export type ValidationCode = (typeof VALIDATION)[keyof typeof VALIDATION];
 

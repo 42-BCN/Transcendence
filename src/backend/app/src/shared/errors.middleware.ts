@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
+
 import { AUTH_ERRORS } from "@contracts/auth/auth.errors";
+import type { ResErrorsName } from "@contracts/http/errors";
 
 export class ApiError extends Error {
-  code: string;
-  constructor(code: string) {
+  code: ResErrorsName;
+  constructor(code: ResErrorsName) {
     super(code);
     this.code = code;
     Object.setPrototypeOf(this, ApiError.prototype); // Preserve stack traces
@@ -28,6 +30,7 @@ export function errorMiddleware(
   _next: NextFunction,
 ) {
   const errCode = err instanceof ApiError ? err.code : "INTERNAL_ERROR";
-  console.log(err instanceof ApiError ? `API ERROR: ${err.code} ${err}` : err);
+  console.error(err instanceof ApiError ? `API ERROR: ${err.code} ${err}` : err);
+  if (res.headersSent) return;
   sendError(res, errCode);
 }

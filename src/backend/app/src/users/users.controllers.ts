@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+
 import type {
   UserPublicResponse,
   UsersListResponse,
@@ -6,7 +7,8 @@ import type {
 import type {
   GetUserByIdParam,
   GetUsersQuery,
-} from "@contracts//users/users.validation";
+} from "@contracts/users/users.validation";
+import { ApiError } from "@shared";
 
 import { getUsers, findUserById } from "./users.service";
 
@@ -38,6 +40,5 @@ export async function getUserById(
   res: Response<UserPublicResponse>,
 ): Promise<void> {
   const result = await findUserById(req.params.userId);
-
   res.status(200).json({ ok: true, data: result });
 }

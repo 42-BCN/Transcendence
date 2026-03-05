@@ -3,16 +3,16 @@ import { z } from "zod";
 import { VALIDATION as V } from "../http/validation";
 import { safeParseSchema } from "../lib";
 
-export const emailSchema = z.email({ message: V.INVALID_EMAIL });
+export const emailSchema = z
+  .email({ message: V.INVALID_EMAIL })
+  .transform((val) => val.toLowerCase().trim());
 // TODO .transform((val) => val.toLowerCase().trim());
 
 export const usernameSchema = z
   .string()
   .trim()
   .min(1, { message: V.REQUIRED })
-  .max(254, { message: V.FIELD_TOO_LONG })
-  .pipe(z.email({ message: V.INVALID_EMAIL }))
-  .transform((val) => val.toLowerCase().trim());
+  .max(254, { message: V.FIELD_TOO_LONG });
 
 export const identifierSchema = z.string().superRefine((val, ctx) => {
   if (val.includes("@")) {
@@ -25,7 +25,7 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
 export const LoginReqSchema = z
   .object({
     identifier: identifierSchema.transform((val) =>
-      val.includes("@") ? val.toLowerCase().trim() : val,
+      val.includes("@") ? val.toLowerCase().trim() : val
     ),
     password: z.string().min(1, { message: V.REQUIRED }),
   })

@@ -34,7 +34,7 @@ export async function listUsers(
   return res.rows.map(mapUserRow);
 }
 
-export async function selectUserData(id: string): Promise<UserPublic> {
+export async function selectUserData(id: string): Promise<UserPublic | null> {
   const res = await pool.query(
     sql`
     SELECT id, username

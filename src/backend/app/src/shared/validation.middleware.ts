@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import type { ZodType, infer as ZodInfer, z } from "zod";
+
 import {
   type ValidationErrorDetails,
   type ValidationCode,
@@ -36,7 +37,7 @@ function zodErrRes<TSchema>(
   res: Response,
   parsed: z.ZodSafeParseError<ZodInfer<TSchema>>,
 ): void {
-  res.status(VALIDATION_ERROR).json({
+  res.status(VALIDATION_ERROR.VALIDATION_ERROR).json({
     ok: false,
     error: {
       code: "VALIDATION_ERROR",
