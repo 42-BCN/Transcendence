@@ -15,7 +15,11 @@ export async function fetchServer<T>(
   method: HttpMethod,
   data?: unknown,
   opts?: { cookie?: string },
-): Promise<T> {
+): Promise<{
+  data: T;
+  headers: Headers;
+  status: number;
+}> {
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {
@@ -26,10 +30,8 @@ export async function fetchServer<T>(
     body: jsonBody(data),
     cache: 'no-store',
   });
-
   const text = await res.text();
   const json = text ? JSON.parse(text) : null;
-  console.log(res);
   if (!res.ok) {
     return { data: json as T, headers: res.headers, status: res.status };
   }

@@ -1,8 +1,11 @@
 import { Router } from "express";
+import { validateQuery, validateParams } from "@shared";
+import {
+  GetUserByIdParamSchema,
+  GetUsersQuerySchema,
+} from "@contracts/users/users.validation";
 
-import { validateQuery } from "../shared/validation";
-import { getUsersController } from "./users.controllers";
-import { GetUsersQuerySchema } from "../contracts/api/users/users.validation";
+import { getUsersController, getUserById } from "./users.controllers";
 
 export const usersRouter = Router();
 
@@ -10,3 +13,8 @@ export const usersRouter = Router();
 // GET /api/users?limit=20&offset=0
 // ---------------------------------------
 usersRouter.get("/", validateQuery(GetUsersQuerySchema), getUsersController);
+usersRouter.get(
+  "/:userId",
+  validateParams(GetUserByIdParamSchema),
+  getUserById,
+);

@@ -1,5 +1,5 @@
-import { pool } from "../shared/db.pool";
-import { sql } from "../shared/sql";
+import { pool, sql, ApiError } from "@shared";
+
 import type { AuthUserRow } from "./auth.model";
 
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
@@ -85,7 +85,7 @@ export async function insertGoogleUser(input: {
   );
 
   const row = res.rows[0];
-  if (!row) throw new Error("insertGoogleUser: no row returned");
+  if (!row) throw new ApiError("AUTH_GOOGLE_USER_INSERT_FAILED");
   return row;
 }
 
@@ -121,6 +121,6 @@ export async function linkGoogleIdToEmailUser(input: {
   );
 
   const row = res.rows[0];
-  if (!row) throw new Error("linkGoogleIdToEmailUser: no row returned");
+  if (!row) throw new ApiError("AUTH_GOOGLE_LINK_FAILED");
   return row;
 }

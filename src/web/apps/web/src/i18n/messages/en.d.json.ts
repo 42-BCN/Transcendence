@@ -67,6 +67,9 @@ declare const messages: {
       "error": "Something went wrong. Please try again."
     }
   },
+  "api": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists"
+  },
   "validation": {
     "REQUIRED": "This field is required.",
     "INVALID_EMAIL": "Enter a valid email address.",

@@ -9,7 +9,7 @@ import { loginAction } from './login.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 
-import { AuthLoginRequestSchema, type AuthLoginRequest } from '@/contracts/auth/auth.validation';
+import { LoginReqSchema, type LoginReq } from '@/contracts/auth/auth.validation';
 
 const fieldsBase = {
   identifier: {
@@ -29,16 +29,16 @@ const fieldsBase = {
 } as const;
 
 const fieldNames: (keyof typeof fieldsBase)[] = ['identifier', 'password'];
-const defaultValues = createEmptyValues<AuthLoginRequest>(fieldNames);
+const defaultValues = createEmptyValues<LoginReq>(fieldNames);
 
 const formApiReq = {
-  schema: AuthLoginRequestSchema,
+  schema: LoginReqSchema,
   fieldNames,
   defaultValues,
 } as const;
 
 export function LoginFeature() {
-  const form = useForm<AuthLoginRequest>(formApiReq);
+  const form = useForm<LoginReq>(formApiReq);
   const t = useTranslations('auth');
   return (
     <Form

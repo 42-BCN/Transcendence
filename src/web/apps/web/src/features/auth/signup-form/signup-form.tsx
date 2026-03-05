@@ -8,6 +8,8 @@ import { useTranslations } from 'next-intl';
 import { signupAction } from './signup.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
+import { useActionState } from 'react';
+import type { SignupRes } from '@/contracts/auth/auth.contract';
 
 const fieldsBase = {
   email: {
@@ -75,14 +77,37 @@ export function GoogleLogo() {
   );
 }
 
+type StateActionProps = {
+  state: {
+    ok: boolean;
+    res: {
+      data: SignupRes;
+      headers: Headers;
+      status: number;
+    };
+  } | null;
+};
+function APIError({ state }: StateActionProps) {
+  const t2 = useTranslations('api');
+  return (
+    state?.ok === false ? (
+      <div role="alert" className="mb-4">
+        {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
+      </div>
+    ) : null
+  );
+}
+
+// eslint-disable-next-line max-lines-per-function
 export function SignupFeature() {
   const form = useForm<SignupFormValues>(formApiReq);
   const t = useTranslations('auth');
-
+  const [state, formAction] = useActionState(signupAction, null);
   return (
     <>
+      <APIError state={state} />
       <Form
-        action={signupAction}
+        action={formAction}
         onSubmit={(e) => {
           const res = form.validateBeforeSubmit();
           if (!res.ok) e.preventDefault();
