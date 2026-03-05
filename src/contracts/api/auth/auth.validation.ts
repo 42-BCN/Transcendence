@@ -6,7 +6,6 @@ import { safeParseSchema } from "../lib";
 export const emailSchema = z
   .email({ message: V.INVALID_EMAIL })
   .transform((val) => val.toLowerCase().trim());
-// TODO .transform((val) => val.toLowerCase().trim());
 
 export const usernameSchema = z
   .string()
@@ -25,7 +24,7 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
 export const LoginReqSchema = z
   .object({
     identifier: identifierSchema.transform((val) =>
-      val.includes("@") ? val.toLowerCase().trim() : val
+      val.includes("@") ? val.toLowerCase().trim() : val,
     ),
     password: z.string().min(1, { message: V.REQUIRED }),
   })

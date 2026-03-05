@@ -20,7 +20,6 @@ export async function fetchServer<T>(
   headers: Headers;
   status: number;
 }> {
-  console.log(API_BASE_URL, endpoint);
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {

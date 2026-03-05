@@ -14,7 +14,7 @@ export const RES_ERRORS = {
 } as const;
 
 /* "AUTH_UNAUTHORIZED" | "AUTH_FORBIDDEN" | ... - code used for internationalization*/
-export type ResErrorsName = keyof typeof AUTH_ERRORS;
+export type ResErrorsName = keyof typeof RES_ERRORS;
 
 /* 404 | 403 | 409 | ... etc */
-export type ResErrorsCode = (typeof AUTH_ERRORS)[ResErrorsName];
+export type ResErrorsCode = (typeof RES_ERRORS)[ResErrorsName];

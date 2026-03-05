@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
-import { AUTH_ERRORS } from "@contracts/auth/auth.errors";
-import type { ResErrorsName } from "@contracts/http/errors";
+import { RES_ERRORS, type ResErrorsName } from "@contracts/http/errors";
 
 export class ApiError extends Error {
   code: ResErrorsName;
@@ -12,11 +11,11 @@ export class ApiError extends Error {
   }
 }
 // TODO this is repeated at auth.controller - make a helper
-export function errorStatus(code: string): number {
-  return AUTH_ERRORS[code as keyof typeof AUTH_ERRORS] ?? 500;
+export function errorStatus(code: ResErrorsName): number {
+  return RES_ERRORS[code as keyof typeof RES_ERRORS] ?? 500;
 }
 // TODO this is repeated at auth.controller - make a helper
-export function sendError(res: Response, code: string): void {
+export function sendError(res: Response, code: ResErrorsName): void {
   res.status(errorStatus(code)).json({
     ok: false,
     error: { code },
@@ -30,7 +29,9 @@ export function errorMiddleware(
   _next: NextFunction,
 ) {
   const errCode = err instanceof ApiError ? err.code : "INTERNAL_ERROR";
-  console.error(err instanceof ApiError ? `API ERROR: ${err.code} ${err}` : err);
+  console.error(
+    err instanceof ApiError ? `API ERROR: ${err.code} ${err}` : err,
+  );
   if (res.headersSent) return;
   sendError(res, errCode);
 }

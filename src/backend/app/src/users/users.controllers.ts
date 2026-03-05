@@ -8,7 +8,6 @@ import type {
   GetUserByIdParam,
   GetUsersQuery,
 } from "@contracts/users/users.validation";
-import { ApiError } from "@shared";
 
 import { getUsers, findUserById } from "./users.service";
 
