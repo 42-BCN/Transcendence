@@ -9,7 +9,7 @@ import { signupAction } from './signup.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 import { useActionState } from 'react';
-import { SignupRes } from '@/contracts/auth/auth.contract';
+import type { SignupRes } from '@/contracts/auth/auth.contract';
 
 const fieldsBase = {
   email: {
@@ -77,7 +77,7 @@ export function googleLogo() {
   );
 }
 
-type stateActionProps = {
+type StateActionProps = {
   state: {
     ok: boolean;
     res: {
@@ -87,14 +87,14 @@ type stateActionProps = {
     };
   } | null;
 };
-function APIError({ state }: stateActionProps) {
+function APIError({ state }: StateActionProps) {
   const t2 = useTranslations('api');
   return (
-    state?.ok === false && (
+    state?.ok === false ? (
       <div role="alert" className="mb-4">
         {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
       </div>
-    )
+    ) : null
   );
 }
 

@@ -11,7 +11,7 @@ export async function signupAction(_prevState: unknown, formData: FormData) {
     email,
     password,
   });
-  console.log(res);
+
   if (!res.data.ok) return { ok: false, res };
   return { ok: true, res };
 }
