@@ -1,4 +1,4 @@
-import { LoginFeature } from '@/features/auth/login-form';
+import { Login } from '@/features/auth/login';
 import { getTranslations } from 'next-intl/server';
 
 export default async function LoginPage() {
@@ -6,7 +6,7 @@ export default async function LoginPage() {
   return (
     <main className="mx-auto max-w-md p-6">
       <h1 className="mb-6 text-xl font-semibold">{t('login.title')}</h1>
-      <LoginFeature />
+      <Login />
     </main>
   );
 }
