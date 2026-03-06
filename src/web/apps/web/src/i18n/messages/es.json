@@ -1,10 +1,12 @@
 {
   "navigation": {
     "home": "Inicio",
-    "signup": "Registrarse",
+    "createAccount": "Crear cuenta",
     "login": "Iniciar sesión",
     "UI": "UI",
-    "robots": "Robots"
+    "robots": "Robots",
+    "profile": "Perfil",
+    "logout": "Cerrar sesión"
   },
   "SignupPage": {
     "title": "Crear cuenta",
@@ -56,13 +58,15 @@
       "submit": "Iniciar sesión",
       "forgotPassword": "¿Has olvidado la contraseña?",
       "noAccount": "¿No tienes cuenta?",
-      "goToSignup": "Crear una"
+      "goToSignup": "Crear una",
+      "withGoogle": "Ingresa con Google"
     },
-    "signup": {
+    "createAccount": {
       "title": "Crear cuenta",
       "submit": "Crear cuenta",
       "haveAccount": "¿Ya tienes cuenta?",
-      "goToLogin": "Iniciar sesión"
+      "goToLogin": "Iniciar sesión",
+      "withGoogle": "Crear con Google"
     },
     "status": {
       "success": "Correcto",

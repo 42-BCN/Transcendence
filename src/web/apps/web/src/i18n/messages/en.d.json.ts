@@ -4,10 +4,12 @@
 declare const messages: {
   "navigation": {
     "home": "Home",
-    "signup": "Sign up",
+    "createAccount": "Create account",
     "login": "Log in",
     "UI": "UI",
-    "robots": "Robots"
+    "robots": "Robots",
+    "profile": "Profile",
+    "logout": "Logout"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -50,17 +52,19 @@ declare const messages: {
       }
     },
     "login": {
-      "title": "Sign in",
-      "submit": "Sign in",
+      "title": "Log in",
+      "submit": "Log in",
       "forgotPassword": "Forgot password?",
       "noAccount": "Don’t have an account?",
-      "goToSignup": "Create one"
+      "goToSignup": "Create one",
+      "withGoogle": "login with Google"
     },
-    "signup": {
+    "createAccount": {
       "title": "Create account",
       "submit": "Create account",
       "haveAccount": "Already have an account?",
-      "goToLogin": "Sign in"
+      "goToLogin": "Log in",
+      "withGoogle": "create with Google"
     },
     "status": {
       "success": "Success",
