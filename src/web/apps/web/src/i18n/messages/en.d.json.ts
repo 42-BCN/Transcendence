@@ -78,7 +78,8 @@ declare const messages: {
     }
   },
   "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists"
+    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
   },
   "validation": {
     "REQUIRED": "This field is required.",

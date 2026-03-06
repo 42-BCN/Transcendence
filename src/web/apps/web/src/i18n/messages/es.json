@@ -80,7 +80,8 @@
     }
   },
   "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "el mail ya existe"
+    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales invalidas"
   },
   "validation": {
     "REQUIRED": "Este campo es obligatorio.",
