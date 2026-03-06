@@ -1,10 +1,12 @@
 {
   "navigation": {
     "home": "Inicio",
-    "signup": "Registrarse",
+    "createAccount": "Crear cuenta",
     "login": "Iniciar sesión",
     "UI": "UI",
-    "robots": "Robots"
+    "robots": "Robots",
+    "profile": "Perfil",
+    "logout": "Cerrar sesión"
   },
   "SignupPage": {
     "title": "Crear cuenta",
@@ -56,21 +58,30 @@
       "submit": "Iniciar sesión",
       "forgotPassword": "¿Has olvidado la contraseña?",
       "noAccount": "¿No tienes cuenta?",
-      "goToSignup": "Crear una"
+      "goToSignup": "Crear una",
+      "withGoogle": "Ingresa con Google"
     },
-    "signup": {
+    "createAccount": {
       "title": "Crear cuenta",
       "submit": "Crear cuenta",
       "haveAccount": "¿Ya tienes cuenta?",
-      "goToLogin": "Iniciar sesión"
+      "goToLogin": "Iniciar sesión",
+      "withGoogle": "Crear con Google"
     },
     "status": {
       "success": "Correcto",
       "error": "Algo salió mal. Inténtalo de nuevo."
+    },
+    "recover": {
+      "title": "Recuperar cuenta",
+      "submit": "Enviar email",
+      "resend": "Solicitar otro email",
+      "goToLogin": "Ir a inicio"
     }
   },
   "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "el mail ya existe"
+    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales invalidas"
   },
   "validation": {
     "REQUIRED": "Este campo es obligatorio.",

@@ -5,8 +5,7 @@ import { useRouter, usePathname } from '@/i18n/navigation';
 import { SegmentedControlGroup } from '@/components/composites/segmented-control-group';
 import type { Key } from 'react-aria-components';
 
-const LOCALES = ['en', 'es'] as const;
-type LocaleKey = (typeof LOCALES)[number];
+type LocaleKey = 'en' | 'es';
 
 export function LocaleSwitcher() {
   const locale = useLocale() as LocaleKey;
