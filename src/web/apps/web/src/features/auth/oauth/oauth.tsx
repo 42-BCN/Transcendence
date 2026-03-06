@@ -1,6 +1,5 @@
-import { Button } from '@components/controls/button';
-import { Form } from '@components/composites/form';
-import { oauthAction } from './oauth.action';
+import { ExternalLink } from '@components/controls/link/link';
+import type { ReactNode } from 'react';
 
 export function GoogleLogo() {
   return (
@@ -26,14 +25,12 @@ export function GoogleLogo() {
   );
 }
 
-export function Oauth() {
+export function Oauth({ children }: { children: ReactNode }) {
   return (
     <div className="w-100 mt-6">
-      <Form action={oauthAction}>
-        <Button type="submit" icon={<GoogleLogo />}>
-          Sign up or login with Google
-        </Button>
-      </Form>
+      <ExternalLink icon={<GoogleLogo />} href={'/api/auth/google'}>
+        {children}
+      </ExternalLink>
     </div>
   );
 }
