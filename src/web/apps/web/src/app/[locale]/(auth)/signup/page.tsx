@@ -6,7 +6,7 @@ export default async function SignupPage() {
   const t = await getTranslations('auth');
 
   return (
-    <AuthPageLayout title={t('signup.title')}>
+    <AuthPageLayout title={t('createAccount.title')}>
       <CreateAccount />
     </AuthPageLayout>
   );
