@@ -37,4 +37,9 @@ export const GetUsersQuerySchema = z
     path: ["offset"],
   });
 
+export const GetUserByIdParamSchema = z.strictObject({
+  userId: z.uuid({ message: VALIDATION.INVALID_FORMAT }),
+});
+
 export type GetUsersQuery = z.infer<typeof GetUsersQuerySchema>;
+export type GetUserByIdParam = z.infer<typeof GetUserByIdParamSchema>;

@@ -1,10 +1,13 @@
-import type { AuthUser } from "../contracts/api/auth/auth.contract";
+import type { AuthUser } from "@contracts/auth/auth.contract";
 
 export type AuthUserRow = {
   id: string;
   email: string;
   username: string;
-  password_hash: string;
+  password_hash: string | null;
+  provider: "local" | "google";
+  google_id: string | null;
+  is_blocked: boolean;
 };
 
 export function toAuthUser(row: {

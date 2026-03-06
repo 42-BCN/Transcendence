@@ -35,6 +35,7 @@ $RECYCLE.BIN/
 # -------------------
 .env
 .env.local
+.env.development
 
 secrets/
 .private/
@@ -76,7 +77,3 @@ pnpm-debug.log*
 # TypeScript
 # ------------------------------
 **/*.tsbuildinfo
-
-src/backend/docker/.env.development
-
-

@@ -1,44 +1,35 @@
 import bcrypt from "bcrypt";
+import type { Profile } from "passport";
 
-import type {
-  AuthUser,
-  AuthLoginError,
-  AuthSignupError,
-} from "../contracts/api/auth/auth.contract";
+import type { AuthUser } from "@contracts/auth/auth.contract";
+import type { LoginReq } from "@contracts/auth/auth.validation";
+import { generateUsername, ApiError } from "@shared";
+
 import { toAuthUser } from "./auth.model";
-import type { AuthLoginRequest } from "../contracts/api/auth/auth.validation";
-import { AUTH_ERRORS } from "../contracts/api/auth/auth.errors";
-import { generateUsername } from "../shared/username-generator";
 import * as Repo from "./auth.repo";
-import { type Result, Err, Ok } from "../shared/result-helpers";
 
-export async function login(
-  input: AuthLoginRequest,
-): Promise<Result<AuthUser, AuthLoginError>> {
+export async function login(input: LoginReq): Promise<AuthUser> {
   const identifier = input.identifier.trim().toLowerCase();
 
   const user = identifier.includes("@")
     ? await Repo.findUserByEmail(identifier)
     : await Repo.findUserByUsername(identifier);
-
-  if (!user) return Err(AUTH_ERRORS.INVALID_CREDENTIALS);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
   const ok = await bcrypt.compare(input.password, user.password_hash);
-  if (!ok) return Err(AUTH_ERRORS.INVALID_CREDENTIALS);
+  if (!ok) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
-  return Ok(toAuthUser(user));
+  return toAuthUser(user);
 }
 
 export async function signup(input: {
   email: string;
   password: string;
-}): Promise<Result<AuthUser, AuthSignupError>> {
-  const email = input.email.trim().toLowerCase();
+}): Promise<AuthUser> {
+  const email = input.email;
 
   const existing = await Repo.findUserByEmail(email);
-  if (existing) {
-    return Err(AUTH_ERRORS.EMAIL_ALREADY_EXISTS);
-  }
+  if (existing) throw new ApiError("AUTH_EMAIL_ALREADY_EXISTS");
 
   const passwordHash = await bcrypt.hash(input.password, 12);
 
@@ -46,10 +37,37 @@ export async function signup(input: {
     const username = generateUsername();
 
     const created = await Repo.insertUser({ email, username, passwordHash });
-    if (created) return Ok(toAuthUser(created));
+    if (created) return toAuthUser(created);
   }
 
-  return Err(AUTH_ERRORS.INTERNAL_ERROR);
+  throw new ApiError("INTERNAL_ERROR");
+}
+
+function getUserProfile(profile: Profile) {
+  const googleId = profile.id;
+  const email = profile.emails?.[0]?.value;
+  const username = generateUsername();
+  return { googleId, email, username };
+}
+
+export async function findOrCreateGoogleUser(
+  profile: Profile,
+): Promise<AuthUser> {
+  const { googleId, email, username } = getUserProfile(profile);
+
+  if (!email) throw new ApiError("AUTH_EMAIL_NOT_VERIFIED");
+
+  const byGoogle = await Repo.findUserByGoogleId(googleId);
+  if (byGoogle) return toAuthUser(byGoogle);
+
+  const byEmail = await Repo.findUserByEmail(email);
+  if (byEmail) {
+    const linked = await Repo.linkGoogleIdToEmailUser({ email, googleId });
+    return toAuthUser(linked);
+  }
+
+  const created = await Repo.insertGoogleUser({ email, googleId, username });
+  return toAuthUser(created);
 }
 
 // export async function me(userId: string): Promise<AuthUser> {

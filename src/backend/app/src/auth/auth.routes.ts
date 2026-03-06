@@ -1,15 +1,25 @@
 import { Router } from "express";
-
-import { postLogin, postSignup } from "./auth.controller";
-import { validateBody } from "../shared/validation";
+import passport from "passport";
+import { validateBody } from "@shared/validation.middleware";
 import {
-  AuthLoginRequestSchema,
-  AuthSignupRequestSchema,
-} from "../contracts/api/auth/auth.validation";
+  LoginReqSchema,
+  SignupReqSchema,
+} from "@contracts/auth/auth.validation";
+
+import {
+  postLogin,
+  postSignup,
+  postLogout,
+  getGoogleCallback,
+} from "./auth.controller";
 
 export const authRouter = Router();
 
-authRouter.post("/signup", validateBody(AuthSignupRequestSchema), postSignup);
-authRouter.post("/login", validateBody(AuthLoginRequestSchema), postLogin);
-// authRouter.post("/logout", postLogout);
-// authRouter.get("/me", getMe);
+authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
+authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
+authRouter.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+);
+authRouter.get("/callback/google", getGoogleCallback);
+authRouter.post("/logout", postLogout);
