@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { protectedMeAction } from './protected-test.action';
+import { protectedMeAction } from './protected.action';
 import { Button } from '@components/controls/button';
 
-export function ProtectedTestButton() {
+export function ProtectedButton() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<unknown>(null);
 

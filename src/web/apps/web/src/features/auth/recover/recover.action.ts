@@ -5,7 +5,7 @@ import { RecoverReqSchema, type RecoverRes } from '@/contracts/auth/auth.recover
 
 function parseInput(formData: FormData) {
   const result = RecoverReqSchema.safeParse({
-    email: formData.get('email'),
+    identifiel: formData.get('identifier'),
   });
 
   if (!result.success) {
@@ -18,6 +18,7 @@ function parseInput(formData: FormData) {
   return { ok: true, data: result.data };
 }
 
+// TODO Endpoint WIP
 export async function recoverAction(formData: FormData) {
   const result = parseInput(formData);
   if (!result.ok) return;

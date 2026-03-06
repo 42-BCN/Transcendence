@@ -1,7 +1,7 @@
 'use client';
 
 import { Link as AriaLink } from 'react-aria-components';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 import { buttonStyles, iconStyles } from '../button/button.styles';
 import type {
@@ -31,12 +31,12 @@ export function ExternalLink(args: LinkProps) {
   );
 }
 
-export type InternalLinksProps = {
+export type InternalLinkProps = {
   children: ReactNode;
   href: string;
 };
 
-export function InternalLink(args: InternalLinksProps) {
+export function InternalLink(args: InternalLinkProps) {
   const { children, href } = args;
   return (
     <Link className={LinkStyles()} href={href}>

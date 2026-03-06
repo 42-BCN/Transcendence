@@ -57,14 +57,14 @@ declare const messages: {
       "forgotPassword": "Forgot password?",
       "noAccount": "Don’t have an account?",
       "goToSignup": "Create one",
-      "withGoogle": "login with Google"
+      "withGoogle": "Log in with Google"
     },
     "createAccount": {
       "title": "Create account",
       "submit": "Create account",
       "haveAccount": "Already have an account?",
       "goToLogin": "Log in",
-      "withGoogle": "create with Google"
+      "withGoogle": "Create account with Google"
     },
     "status": {
       "success": "Success",
@@ -72,8 +72,8 @@ declare const messages: {
     },
     "recover": {
       "title": "Recover account",
-      "submit": "Send mail",
-      "resend": "Request another mail",
+      "submit": "Send email",
+      "resend": "Request another email",
       "goToLogin": "Go to log in"
     }
   },

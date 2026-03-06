@@ -1,4 +1,4 @@
-import { protectedMeAction } from '../auth/me/protected-test.action';
+import { protectedMeAction } from '../auth/me/protected.action';
 import { getMainNavItems } from './navigation.config';
 import { NavigationClient } from './navigation.client';
 

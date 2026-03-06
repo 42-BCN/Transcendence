@@ -1,6 +1,6 @@
 import { protectedMeProfileAction } from './profile.action';
 
-// This page is for debug, ill style type and fix latter
+// TODO WIP
 export async function Profile() {
   const data = await protectedMeProfileAction();
   return !data.ok ? (

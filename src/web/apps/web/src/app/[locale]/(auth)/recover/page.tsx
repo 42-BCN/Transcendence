@@ -1,7 +1,7 @@
 import { RecoverFeature } from '@/features/auth/recover';
 import { getTranslations } from 'next-intl/server';
 
-export default async function SignupPage() {
+export default async function RecoverPage() {
   const t = await getTranslations('auth');
 
   return (

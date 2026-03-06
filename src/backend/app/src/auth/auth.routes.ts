@@ -19,7 +19,7 @@ authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
 authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
 authRouter.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"], prompt: "consent select_account", }),
+  passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account", }),
 );
 authRouter.get("/callback/google", getGoogleCallback);
 authRouter.post("/logout", postLogout);
