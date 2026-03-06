@@ -4,11 +4,10 @@ import { getPathname } from '@/i18n/navigation';
 
 import { usePathname } from 'next/navigation';
 import { NavLink } from '@components/controls/nav-link';
-import { mainNavItems } from './navigation.config';
+import { type NavItem } from './navigation.config';
 import { useTranslations } from 'next-intl';
 import { OutFeature } from '../auth/logout-form/logout-form';
 
-type NavItem = (typeof mainNavItems)[number];
 type TFunc = ReturnType<typeof useTranslations>;
 
 function NavLinkItem(args: { locale: string; navItem: NavItem; pathname: string; t: TFunc }) {
@@ -29,17 +28,23 @@ function NavLinkItem(args: { locale: string; navItem: NavItem; pathname: string;
   );
 }
 
-export function MainNav({ locale }: { locale: string }) {
+type NavigationClientProps = {
+  locale: string;
+  mainNavItems: NavItem[];
+  isAuthenticated: boolean;
+};
+
+export function NavigationClient(args: NavigationClientProps) {
+  const { locale, mainNavItems, isAuthenticated = false } = args;
   const pathname = usePathname();
   const t = useTranslations('navigation');
-
   return (
     <nav aria-label="Main">
       <div className="flex gap-2">
         {mainNavItems.map((item) => (
           <NavLinkItem key={item.href} locale={locale} navItem={item} pathname={pathname} t={t} />
         ))}
-        <OutFeature />
+        {isAuthenticated ? <OutFeature /> : null}
       </div>
     </nav>
   );

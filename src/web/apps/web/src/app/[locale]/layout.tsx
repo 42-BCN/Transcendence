@@ -6,7 +6,7 @@ import { LocaleSwitcher } from '@/features/locale-switcher/locale-switcher';
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
 import { envPublic } from '@/lib/config/env.public';
 import { Providers } from '@/app/providers';
-import { MainNav } from '@/features/main-nav';
+import { NavigationServer } from '@/features/main-nav';
 
 export async function generateMetadata({
   params,
@@ -48,7 +48,7 @@ export default async function LocaleLayout({
         <header className="border-b">
           <div className="flex justify-between px-4 py-3">
             <LocaleSwitcher />
-            <MainNav locale={locale} />
+            <NavigationServer locale={locale} />
           </div>
         </header>
         {children}
