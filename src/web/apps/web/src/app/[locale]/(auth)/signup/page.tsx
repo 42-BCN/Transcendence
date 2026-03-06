@@ -1,13 +1,13 @@
 import { CreateAccount } from '@/features/auth/create-account';
 import { getTranslations } from 'next-intl/server';
+import { AuthPageLayout } from '@components/primitives/auth-page-layout';
 
 export default async function SignupPage() {
   const t = await getTranslations('auth');
 
   return (
-    <main className="mx-auto max-w-md p-6">
-      <h1 className="mb-6 text-xl font-semibold">{t('createAccount.title')}</h1>
+    <AuthPageLayout title={t('signup.title')}>
       <CreateAccount />
-    </main>
+    </AuthPageLayout>
   );
 }
