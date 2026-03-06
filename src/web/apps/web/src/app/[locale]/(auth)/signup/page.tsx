@@ -1,4 +1,4 @@
-import { SignupFeature } from '@/features/auth/signup-form';
+import { CreateAccount } from '@/features/auth/create-account';
 import { getTranslations } from 'next-intl/server';
 
 export default async function SignupPage() {
@@ -6,8 +6,8 @@ export default async function SignupPage() {
 
   return (
     <main className="mx-auto max-w-md p-6">
-      <h1 className="mb-6 text-xl font-semibold">{t('signup.title')}</h1>
-      <SignupFeature />
+      <h1 className="mb-6 text-xl font-semibold">{t('createAccount.title')}</h1>
+      <CreateAccount />
     </main>
   );
 }
