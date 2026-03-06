@@ -26,6 +26,10 @@ export const routing = defineRouting({
     },
     '/ui': '/ui',
     '/robots': '/robots',
+    '/profile': {
+      en: '/profile',
+      es: '/perfil',
+    },
   },
   localeCookie,
 });
