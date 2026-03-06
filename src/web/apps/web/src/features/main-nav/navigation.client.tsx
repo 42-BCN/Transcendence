@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { NavLink } from '@components/controls/nav-link';
 import { type NavItem } from './navigation.config';
 import { useTranslations } from 'next-intl';
-import { OutFeature } from '../auth/logout-form/logout-form';
+import { Logout } from '../auth/logout';
 
 type TFunc = ReturnType<typeof useTranslations>;
 
@@ -44,7 +44,7 @@ export function NavigationClient(args: NavigationClientProps) {
         {mainNavItems.map((item) => (
           <NavLinkItem key={item.href} locale={locale} navItem={item} pathname={pathname} t={t} />
         ))}
-        {isAuthenticated ? <OutFeature /> : null}
+        {isAuthenticated ? <Logout /> : null}
       </div>
     </nav>
   );
