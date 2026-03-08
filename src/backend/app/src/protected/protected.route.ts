@@ -8,7 +8,7 @@ protectedRouter.get("/me", requireAuth, (req, res) => {
   res.status(200).json({
     ok: true,
     data: {
-      userIs: req.session.userId,
+      userId: req.session.userId,
     },
   });
 });
