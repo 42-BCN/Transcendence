@@ -90,7 +90,7 @@ export function getGoogleCallback(
       req.session.userId = userId;
       req.session.save((saveErr) => {
         if (saveErr) return next(saveErr);
-        return res.status(200).redirect("/profile");
+        return res.status(302).redirect("/profile");
       });
     });
   })(req, res, next);

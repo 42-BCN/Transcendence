@@ -70,7 +70,7 @@ export type LogoutRes = ApiResponse<LogoutOk, LogoutError>;
 // ---------------------------------------
 
 export type AuthMeOk = {
-  user: AuthUser;
+  userId: string;
 };
 
 export const AUTH_ME_ERRORS = [

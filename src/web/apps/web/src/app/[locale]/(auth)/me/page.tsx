@@ -1,4 +1,4 @@
-import { ProtectedButton } from '@/features/auth/me/protected-test-button';
+import { ProtectedButton } from '@/features/auth/me/protected-button';
 
 export default function MePage() {
   return (
