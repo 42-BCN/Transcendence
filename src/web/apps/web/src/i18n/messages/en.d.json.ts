@@ -4,10 +4,12 @@
 declare const messages: {
   "navigation": {
     "home": "Home",
-    "signup": "Sign up",
+    "createAccount": "Create account",
     "login": "Log in",
     "UI": "UI",
-    "robots": "Robots"
+    "robots": "Robots",
+    "profile": "Profile",
+    "logout": "Logout"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -50,25 +52,34 @@ declare const messages: {
       }
     },
     "login": {
-      "title": "Sign in",
-      "submit": "Sign in",
+      "title": "Log in",
+      "submit": "Log in",
       "forgotPassword": "Forgot password?",
       "noAccount": "Don’t have an account?",
-      "goToSignup": "Create one"
+      "goToSignup": "Create one",
+      "withGoogle": "Log in with Google"
     },
-    "signup": {
+    "createAccount": {
       "title": "Create account",
       "submit": "Create account",
       "haveAccount": "Already have an account?",
-      "goToLogin": "Sign in"
+      "goToLogin": "Log in",
+      "withGoogle": "Create account with Google"
     },
     "status": {
       "success": "Success",
       "error": "Something went wrong. Please try again."
+    },
+    "recover": {
+      "title": "Recover account",
+      "submit": "Send email",
+      "resend": "Request another email",
+      "goToLogin": "Go to log in"
     }
   },
   "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists"
+    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
   },
   "validation": {
     "REQUIRED": "This field is required.",
