@@ -1,5 +1,33 @@
 COMPOSE = docker compose -f src/docker-compose.yml
 
+SETUP_SCRIPT = scripts/env/setup-env.sh
+
+.PHONY: all up down clean fclean re \
+	logs logs-web logs-api logs-nginx logs-db logs-last logs-web-last logs-split \
+	ps restart shell-web shell-api shell-db setup stop
+
+#---- Default ----
+
+all: up
+
+setup:
+	@sh $(SETUP_SCRIPT)
+
+up: setup
+	$(COMPOSE) up -d
+
+down:
+	$(COMPOSE) down
+
+clean:
+	$(COMPOSE) down
+
+fclean:
+	$(COMPOSE) down -v --remove-orphans
+	docker image prune -f
+
+re: fclean all
+
 #---- Logs ----
 
 logs:
@@ -36,6 +64,9 @@ logs-split:
 
 ps:
 	$(COMPOSE) ps
+
+stop:
+	$(COMPOSE) stop
 
 restart:
 	$(COMPOSE) restart
