@@ -10,7 +10,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -46,9 +46,10 @@ services:
       - /app/dev
       - ./contracts/api:/app/src/contracts:ro
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -88,10 +89,12 @@ services:
       - ./nginx/.env.development
     volumes:
       - ./nginx:/etc/nginx
-      - ./${CERT_DIR:-../certs}:/etc/nginx/certs:ro
+      - ${CERT_DIR:-../certs}:/etc/nginx/certs:ro
     depends_on:
-      - web
-      - backend
+      web:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - edge

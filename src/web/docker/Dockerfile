@@ -2,7 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache bash tree coreutils
+RUN apk add --no-cache bash tree coreutils curl
 
 COPY docker/.bashrc /root/.bashrc
 
