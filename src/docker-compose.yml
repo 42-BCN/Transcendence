@@ -12,8 +12,10 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U app -d app"]
       interval: 5s
-      timeout: 3s
-      retries: 20
+      timeout: 5s
+      retries: 5
+    profiles: ["backend", "full"]
+
   socket:
     build:
       context: ./socket
@@ -28,6 +30,8 @@ services:
       - node_modules_socket:/app/node_modules
     networks:
       - edge
+    profiles: ["full"]
+
   web:
     build:
       context: ./web
@@ -43,8 +47,17 @@ services:
       - web_next_cache:/app/.next
       - /app/dev
       - ./contracts/api:/app/src/contracts:ro
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
     networks:
       - edge
+    profiles: ["full"]
+
   backend:
     build:
       context: ./backend
@@ -64,6 +77,13 @@ services:
     networks:
       - backend
       - edge
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles: ["backend", "full"]
+
   nginx:
     image: nginx:alpine
     ports:
@@ -75,9 +95,11 @@ services:
       - ./${CERT_DIR:-../certs}:/etc/nginx/certs:ro
     depends_on:
       - web
+      - backend
     restart: unless-stopped
     networks:
       - edge
+    profiles: ["full"]
 
 networks:
   backend:
