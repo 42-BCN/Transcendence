@@ -12,7 +12,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Copy manifests for cache
 COPY apps/web/package.json apps/web/package-lock.json* ./
 
-RUN npm ci || true
+RUN npm ci || npm install
 
 # Copy app source into image (will be overridden by bind mount in dev)
 COPY apps/web ./
