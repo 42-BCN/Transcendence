@@ -1,7 +1,7 @@
 import { ExternalLink } from '@components/controls/link/link';
 import type { ReactNode } from 'react';
 
-export function GoogleLogo() {
+function GoogleLogo() {
   return (
     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="block">
       <path
