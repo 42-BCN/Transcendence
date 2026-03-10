@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body className="flex flex-col h-screen">{children}</body>
     </html>
   );
 }
