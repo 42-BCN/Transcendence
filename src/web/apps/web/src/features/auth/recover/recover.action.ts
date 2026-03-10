@@ -5,7 +5,7 @@ import { RecoverReqSchema, type RecoverRes } from '@/contracts/auth/auth.recover
 
 function parseInput(formData: FormData) {
   const result = RecoverReqSchema.safeParse({
-    identifiel: formData.get('identifier'),
+    identifier: formData.get('identifier'),
   });
 
   if (!result.success) {
