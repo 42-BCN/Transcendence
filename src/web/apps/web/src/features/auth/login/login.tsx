@@ -9,7 +9,7 @@ export function Login() {
   return (
     <>
       <LoginForm />
-      <Oauth children={t('login.withGoogle')} />
+      <Oauth>{t('login.withGoogle')}</Oauth>
       <div className="flex row gap-2 mt-3 justify-center">
         <p className="text-slate-600 text-sm">{t('login.noAccount')}</p>{' '}
         <InternalLink href={'/signup'}>{t('login.goToSignup')}</InternalLink>
