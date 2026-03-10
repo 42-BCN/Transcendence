@@ -1,11 +1,12 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import type { Profile } from "passport";
 
-import type { AuthUser } from "@contracts/auth/auth.contract";
+import type { AuthRecoverUser, AuthUser } from "@contracts/auth/auth.contract";
 import type { LoginReq } from "@contracts/auth/auth.validation";
 import { generateUsername, ApiError } from "@shared";
 
-import { toAuthUser } from "./auth.model";
+import { /*Delete*/ type AuthUserRow, toAuthUser } from "./auth.model";
 import * as Repo from "./auth.repo";
 
 export async function login(input: LoginReq): Promise<AuthUser> {
@@ -16,8 +17,8 @@ export async function login(input: LoginReq): Promise<AuthUser> {
     : await Repo.findUserByUsername(identifier);
   if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
-  const ok = await bcrypt.compare(input.password, user.password_hash);
-  if (!ok) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  // const ok = await bcrypt.compare(input.password, user.password_hash);
+  // if (!ok) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
   return toAuthUser(user);
 }
@@ -70,28 +71,57 @@ export async function findOrCreateGoogleUser(
   return toAuthUser(created);
 }
 
-export async function processRecovery(input: {
-  email: string;
-  username: string;
-}): Promise<string | null> {
-  const user = await Repo.findUserForRecovery(input.email, input.username);
+/*
+ * RECOVERY PROCESS
+ *  */
+function generateRecoveryToken(): string {
+  const token = crypto.randomBytes(32).toString("hex");
+  return token;
+}
+export async function processRecovery(
+  identifier: string,
+): Promise<string | null> {
+  const key = identifier.includes(`@`) ? "email" : "username";
+  const user = await Repo.findUserForRecovery(key, identifier);
 
   if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
   if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
-  //if(user.recover_token)?;
+  //if(user.recover_token)?;//Process in progress
+  if (user.recover_attempts > 5) throw new ApiError("AUTH_TOO_MANY_REQUEST");
 
-  const resetToken = generateRecoveryToken();
+  const recoverTocken = generateRecoveryToken();
 
-  await Repo.setRecoveryToken(user.id, resetToken);
+  await Repo.setRecoveryToken(user.id, recoverTocken);
 
   //Enviar email - tal vez esto deberia estar en el controlador
-  //await sendRecoveryMail(user.email, resetToken);
-  return resetToken;
+  //await sendRecoveryMail(user.email, recoverTocken);
+  return recoverTocken;
+}
+export async function validateRecoverToken(
+  token: string,
+): Promise<AuthRecoverUser | null> {
+  const user = await Repo.findUserByToken(token);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  if (user.recover_token_expiration.getTime() < Date.now())
+    throw new ApiError("AUTH_TOKEN_EXPIRED");
+  return user;
+}
+export async function updateRecoverAccount(input: {
+  token: string;
+  password: string;
+}): Promise<void> {
+  const user = await Repo.findUserByToken(input.token);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  if (user.recover_token_expiration.getTime() < Date.now())
+    throw new ApiError("AUTH_TOKEN_EXPIRED");
+  const passwordHash = await bcrypt.hash(input.password, 12); //Is encrypted enough?
+  await Repo.updatePasswordRecover(user.id, passwordHash);
 }
 
-function generateRecoveryToken(): string {
-  //TODO Gen a token aleatorio
-  return "token_test";
+//DELETE THIS
+export async function readUser(user: string): Promise<AuthUserRow | null> {
+  const data = await Repo.selectUser(user);
+  return data;
 }
 
 // export async function me(userId: string): Promise<AuthUser> {

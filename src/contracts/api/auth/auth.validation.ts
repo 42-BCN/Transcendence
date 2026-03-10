@@ -42,8 +42,24 @@ export const SignupReqSchema = z
 export type SignupReq = z.infer<typeof SignupReqSchema>;
 
 export const RecoverReqSchema = z.strictObject({
-  email: emailSchema.transform((val) => val.toLowerCase().trim()),
-  username: usernameSchema.transform((val) => val.trim()),
+  identifier: identifierSchema.transform((val) =>
+    val.includes("@") ? val.toLowerCase().trim() : val,
+  ),
 });
-
 export type RecoverReq = z.infer<typeof RecoverReqSchema>;
+
+export const RecoverParamSchema = z.strictObject({
+  token: z.string().min(1, { message: V.REQUIRED }),
+});
+export type RecoverParam = z.infer<typeof RecoverParamSchema>;
+
+export const RecoverUpdateSchema = z.strictObject({
+  token: z.string().min(1, { message: V.REQUIRED }),
+  password: z.string().min(1, { message: V.REQUIRED }),
+});
+export type RecoverUpdate = z.infer<typeof RecoverUpdateSchema>;
+
+export const FullUserSchema = z.strictObject({
+  user: z.string().min(1, { message: V.REQUIRED }),
+});
+export type FullUser = z.infer<typeof FullUserSchema>;

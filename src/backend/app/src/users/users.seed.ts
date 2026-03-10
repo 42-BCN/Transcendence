@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { createHash } from "crypto";
+
 import { pool, sql } from "@shared";
 
 import { bootstrapUsers } from "./users.bootstrap";
@@ -22,6 +23,16 @@ function makeDevPasswordHash(plain: string): string {
 }
 
 async function insertSeedUser(): Promise<boolean> {
+  await pool.query(
+    sql`
+    INSERT INTO public.users (
+      email,
+      username,
+      password_hash)
+    VALUES ('ziermax@fakemail.com', 'ziermax', 'contraseña')
+    ON CONFLICT (email) DO NOTHING`,
+  );
+
   const email = faker.internet.email().toLowerCase();
   const username = makeUsername();
 
@@ -54,12 +65,13 @@ export async function seed() {
   // }
 
   const requested = Number(process.argv[2] ?? 20);
-  const safeCount = Math.min(Math.max(requested, 1), 500);
+  let safeCount = Math.min(Math.max(requested, 1), 500);
 
   await bootstrapUsers();
 
   let inserted = 0;
   let attempts = 0;
+  safeCount = 0;
 
   // Retry loop to deal with rare email/username collisions
   while (inserted < safeCount && attempts < safeCount * 5) {

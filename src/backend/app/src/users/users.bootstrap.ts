@@ -25,6 +25,7 @@ export async function bootstrapUsers(): Promise<void> {
 
     recover_token TEXT DEFAULT NULL,
     recover_token_expiration TIMESTAMPTZ DEFAULT NULL,
+    recover_attempts INT DEFAULT 0,
 
     CONSTRAINT users_auth_provider_chk
       CHECK (provider IN ('local', 'google'))

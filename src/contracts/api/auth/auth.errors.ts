@@ -16,6 +16,7 @@ export const AUTH_ERRORS = {
   AUTH_GOOGLE_LINK_FAILED: HttpStatus.INTERNAL_SERVER_ERROR,
   INTERNAL_ERROR: HttpStatus.INTERNAL_SERVER_ERROR,
   AUTH_ACCOUNT_NOT_FOUND: HttpStatus.NOT_FOUND, //Add to contract
+  AUTH_TOO_MANY_REQUEST: HttpStatus.TOO_MANY_REQUEST, //Add to contract
 
   // Global errors
   ...VALIDATION_ERROR,

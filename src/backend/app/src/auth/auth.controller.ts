@@ -1,11 +1,15 @@
 import type { NextFunction, Request, Response } from "express";
 import passport from "passport";
+
 import type { LoginRes, SignupRes } from "@contracts/auth/auth.contract";
 import { AUTH_ERRORS, type AuthErrorName } from "@contracts/auth/auth.errors";
 import type {
   SignupReq,
   LoginReq,
   RecoverReq,
+  RecoverUpdate,
+  RecoverParam,
+  FullUser,
 } from "@contracts/auth/auth.validation";
 import { HttpStatus } from "@contracts/http";
 
@@ -76,17 +80,6 @@ export function postLogout(req: Request, res: Response): void {
     res.status(200).json({ ok: true, data: null });
   });
 }
-export const recoverAccount = async (
-  req: Request<unknown, unknown, RecoverReq>,
-  res: Response,
-): Promise<void> => {
-  const { email, username } = req.body;
-
-  //Tal vez deberiamos no esperar a que termine
-  await Service.processRecovery({ email, username });
-
-  res.status(200).json({ ok: true, data: null });
-};
 
 export function getGoogleCallback(
   req: Request,
@@ -109,4 +102,41 @@ export function getGoogleCallback(
       });
     });
   })(req, res, next);
+}
+
+/*
+ * RECOVERY PROCESS
+ *  */
+export async function postRecovery(
+  req: Request<unknown, unknown, RecoverReq>,
+  res: Response,
+): Promise<void> {
+  const identifier = req.body.identifier;
+  await Service.processRecovery(identifier); //Maybe should't wait till it finishes
+  res.status(200).json({ ok: true, data: null });
+}
+export async function getRecovery(
+  req: Request<RecoverParam>,
+  res: Response,
+): Promise<void> {
+  const user = await Service.validateRecoverToken(req.params.token);
+  res.status(200).json({ ok: true, data: user });
+}
+export async function putRecovery(
+  req: Request<unknown, RecoverUpdate>,
+  res: Response,
+): Promise<void> {
+  await Service.updateRecoverAccount(req.body);
+  res.status(200).json({ ok: true, data: null });
+}
+
+//DELETE THIS
+export async function getUser(req: Request<FullUser>, res: Response) {
+  if (process.env.NODE_ENV !== "development") {
+    res.status(403).json({ ok: false, data: null });
+    return;
+  }
+  console.log(req.params);
+  const response = await Service.readUser(req.params.user);
+  res.status(200).json({ ok: true, data: response });
 }

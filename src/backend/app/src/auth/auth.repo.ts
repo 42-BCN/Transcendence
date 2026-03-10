@@ -1,6 +1,8 @@
 import { pool, sql, ApiError } from "@shared";
 
 import type { AuthUserRow } from "./auth.model";
+import { FullUser } from "@contracts/auth/auth.validation";
+import { AuthRecoverUser } from "@contracts/auth/auth.contract";
 
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
 type UserWithPassword = Pick<
@@ -10,7 +12,7 @@ type UserWithPassword = Pick<
 
 const USER_PUBLIC_SELECT = `id, email, username`;
 const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
-const USER_RECOVER_DATA = `id, email, is_blocked, recover_token, recover_token_expiration`;
+const USER_RECOVER_DATA = `id, email, username, is_blocked, recover_token, recover_token_expiration, recover_attempts`;
 
 export async function findUserByEmail(
   email: string,
@@ -127,16 +129,19 @@ export async function linkGoogleIdToEmailUser(input: {
   return row;
 }
 
+/*
+ * RECOVERY PROCESS
+ *  */
 export async function findUserForRecovery(
-  email: string,
-  username: string,
-): Promise<AuthUserRow | null> {
+  key: "email" | "username",
+  identifier: string,
+): Promise<AuthRecoverUser | null> {
   const res = await pool.query(
     sql`
     SELECT ${USER_RECOVER_DATA} FROM public.users 
-    WHERE email = $1 AND username = $2;
+    WHERE ${key} = $1;
   `,
-    [email, username],
+    [identifier],
   );
   return res.rows[0] || null;
 }
@@ -148,11 +153,61 @@ export async function setRecoveryToken(
     sql`
     UPDATE public.users 
     SET 
-      reset_token = $2, 
-      reset_token_expires = NOW() + INTERVAL '5 minutes',
-      updated_at = NOW()
+      updated_at = NOW(),
+      recover_token = $2, 
+      recover_token_expiration = NOW() + INTERVAL '5 minutes',
+      recover_attempts = recover_attempts + 1
     WHERE id = $1;
   `,
     [username, token],
   );
+}
+export async function findUserByToken(
+  token: string,
+): Promise<AuthRecoverUser | null> {
+  const res = await pool.query(
+    sql`SELECT ${USER_RECOVER_DATA} FROM public.users
+    WHERE recover_token = $1/* AND recover_token_expiration > NOW()*/`,
+    [token],
+  );
+  return res.rows[0];
+}
+export async function updatePasswordRecover(
+  userId: string,
+  password: string,
+): Promise<void> {
+  await pool.query(
+    sql`
+    UPDATE public.users 
+    SET
+      updated_at = NOW(),
+      password_hash = $2,
+      recover_token = NULL,
+      recover_token_expiration = NULL,
+      recover_attempts = 0
+    WHERE id = $1`,
+    [userId, password],
+  );
+}
+export async function resetRecover(userId: string): Promise<void> {
+  await pool.query(
+    sql`UPDATE public.users
+    SET
+      updated_at = NOW(),
+      recover_token = NULL,
+      recover_token_expiration = NULL,
+      recover_attempts = 0
+    WHERE id = $1`,
+    [userId],
+  );
+}
+
+export async function selectUser(
+  username: string,
+): Promise<AuthUserRow | null> {
+  const res = await pool.query<AuthUserRow>(
+    `SELECT * FROM public.users WHERE username = $1`,
+    [username],
+  );
+  return res.rows[0] || null;
 }
