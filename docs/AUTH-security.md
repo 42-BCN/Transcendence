@@ -68,7 +68,7 @@ Because reverse proxies cannot reliably enforce **account-target protections**, 
 
 Behavior:
 
-- Accounts are **temporarily locked for 10 minutes after 3 failed login attempts**.
+- Accounts are **temporarily locked for 15 minutes after 3 failed login attempts**.
 - Password reset requests are limited to **3 per account within a 15-minute window**.
 - Signup attempts are limited to **3 per email within a 15-minute window**.
 - Reset tokens expire after **15 minutes** and are **single-use**.
@@ -97,7 +97,7 @@ Behavior:
 | Special characters | allowed       |
 | Spaces             | allowed       |
 
-Hashed with agon2.
+Hashed with argon2.
 
 ---
 
