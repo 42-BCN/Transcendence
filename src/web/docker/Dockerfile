@@ -10,7 +10,7 @@ COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Copy manifests for cache
-COPY apps/web/package.json apps/web/package-lock.json* ./
+COPY apps/web/package.json apps/web/package-lock.json ./
 
 RUN npm ci
 
