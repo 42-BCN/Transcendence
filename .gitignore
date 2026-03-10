@@ -49,6 +49,7 @@ secrets/
 *.crt
 *.p12
 *.keystore
+*.bak
 
 # ------------------------------
 # Dependencies
