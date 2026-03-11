@@ -53,7 +53,7 @@ export async function seed() {
   //   throw new Error("Seeding is only allowed in development.");
   // }
 
-  const requested = Number(process.argv[2] ?? 20);
+  const requested = Number(process.argv[2] ?? 10);
   const safeCount = Math.min(Math.max(requested, 1), 500);
 
   await bootstrapUsers();
