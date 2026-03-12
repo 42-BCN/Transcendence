@@ -164,10 +164,7 @@
   color: var(--color-text-primary);
 }
 
-/* .text-body {
-  font-size: 16px;
-  line-height: 24px;
-} */
+/* TODO add firefox safeguard for text-box-trim */
 
 @supports (text-box-trim: trim-both) {
   .text-body,
