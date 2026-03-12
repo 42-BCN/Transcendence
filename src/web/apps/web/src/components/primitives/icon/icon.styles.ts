@@ -6,5 +6,5 @@ const iconBase = `
 `;
 
 export const iconStyles = {
-  icon: cn(iconBase),
+  icon: (className?: string) => cn(iconBase, className),
 };

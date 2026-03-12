@@ -1,24 +1,13 @@
-import type { LucideIcon } from 'lucide-react';
-
 import { icons, type IconName } from './icons';
 import { iconStyles } from './icon.styles';
 
-type IconProps =
-  | {
-      name: IconName;
-      icon?: never;
-    }
-  | {
-      name?: never;
-      icon: LucideIcon;
-    };
-
-type Props = IconProps & {
+type IconProps = {
+  name: IconName;
+  className?: string;
   size?: number;
 };
 
-export function Icon({ name, icon, size = 16 }: Props) {
-  const IconComponent = icon ?? icons[name!];
-
-  return <IconComponent size={size} className={iconStyles.icon} aria-hidden="true" />;
+export function Icon({ name, size = 16, className }: IconProps) {
+  const IconComponent = icons[name];
+  return <IconComponent size={size} className={iconStyles.icon(className)} aria-hidden="true" />;
 }
