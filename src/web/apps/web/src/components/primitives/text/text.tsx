@@ -1,16 +1,5 @@
 import type { ReactNode } from 'react';
-
-type TextVariant =
-  | 'caption'
-  | 'body-xs'
-  | 'body-sm'
-  | 'body'
-  | 'body-lg'
-  | 'heading-sm'
-  | 'heading-md'
-  | 'heading-lg'
-  | 'heading-xl'
-  | 'code';
+import { type TextVariant, textStyles } from './text.styles';
 
 type TextTag =
   | 'span'
@@ -35,22 +24,8 @@ type TextProps = {
   className?: string;
 };
 
-const classes: Record<TextVariant, string> = {
-  caption: 'text-caption',
-  'body-xs': 'text-body-xs',
-  'body-sm': 'text-body-sm',
-  body: 'text-body',
-  'body-lg': 'text-body-lg',
-  'heading-sm': 'text-heading-sm',
-  'heading-md': 'text-heading-md',
-  'heading-lg': 'text-heading-lg',
-  'heading-xl': 'text-heading-xl',
-  code: 'text-code',
-};
-
 export function Text({ as = 'span', variant = 'body', children, className }: TextProps) {
   const Component = as;
-  const mergedClassName = [classes[variant], className].filter(Boolean).join(' ');
 
-  return <Component className={mergedClassName}>{children}</Component>;
+  return <Component className={textStyles(variant, className)}>{children}</Component>;
 }
