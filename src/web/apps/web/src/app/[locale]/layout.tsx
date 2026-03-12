@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/server';
-import { LocaleSwitcher } from '@/features/locale-switcher/locale-switcher';
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
 import { envPublic } from '@/lib/config/env.public';
 import { Providers } from '@/app/providers';
@@ -47,12 +46,8 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale}>
       <Providers locale={locale}>
         <HtmlLangSync />
-        <header className="border-b">
-          <div className="flex justify-between px-4 py-3">
-            <LocaleSwitcher />
-            <NavigationServer locale={locale} />
-          </div>
-        </header>
+
+        <NavigationServer locale={locale} />
         {children}
       </Providers>
     </NextIntlClientProvider>

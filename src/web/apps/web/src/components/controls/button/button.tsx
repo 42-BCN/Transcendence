@@ -13,6 +13,7 @@ export type ButtonProps = Omit<AriaButtonProps, 'className' | 'onClick' | 'style
   w?: W;
   icon?: ReactNode;
   children?: ReactNode;
+  className?: string;
 };
 
 export function Button({
@@ -21,10 +22,11 @@ export function Button({
   w = 'full',
   children,
   icon,
+  className,
   ...props
 }: ButtonProps) {
   return (
-    <AriaButton {...props} className={buttonStyles({ variant, size, w })}>
+    <AriaButton {...props} className={buttonStyles({ variant, size, w, className })}>
       {icon && <span className={iconStyles()}>{icon}</span>}
       {children}
     </AriaButton>
