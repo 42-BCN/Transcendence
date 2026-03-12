@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { Quicksand } from 'next/font/google';
-import { JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono } from 'next/font/google';
 import { getLocale } from 'next-intl/server';
 import './globals.css';
 
 const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+  subsets: ['latin'],
+  variable: '--font-mono',
 });
 
 export const quicksand = Quicksand({
