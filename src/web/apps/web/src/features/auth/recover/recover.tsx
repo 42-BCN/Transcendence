@@ -10,6 +10,8 @@ import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 
 import { RecoverReqSchema, type RecoverReq } from '@/contracts/auth/auth.recover.caro';
+import { Text } from '@components/primitives/text';
+import { Stack } from '@components/primitives/stack';
 
 const fieldsBase = {
   identifier: {
@@ -33,22 +35,28 @@ export function RecoverFeature() {
   const form = useForm<RecoverReq>(formApiReq);
   const t = useTranslations('auth');
   return (
-    <Form
-      action={recoverAction}
-      onSubmit={(e) => {
-        const res = form.validateBeforeSubmit();
-        if (!res.ok) e.preventDefault();
-      }}
-    >
-      <TextField
-        value={form.values.identifier}
-        errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
-        onChange={(v) => form.setValue('identifier', v)}
-        onBlur={() => form.setTouch('identifier')}
-        {...fieldsBase.identifier}
-      />
+    <Stack justify="center">
+      <Text as="h1" variant="heading-md">
+        {t('recover.title')}
+      </Text>
 
-      <Button type="submit">{t('recover.submit')}</Button>
-    </Form>
+      <Form
+        action={recoverAction}
+        onSubmit={(e) => {
+          const res = form.validateBeforeSubmit();
+          if (!res.ok) e.preventDefault();
+        }}
+      >
+        <TextField
+          value={form.values.identifier}
+          errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
+          onChange={(v) => form.setValue('identifier', v)}
+          onBlur={() => form.setTouch('identifier')}
+          {...fieldsBase.identifier}
+        />
+
+        <Button type="submit">{t('recover.submit')}</Button>
+      </Form>
+    </Stack>
   );
 }

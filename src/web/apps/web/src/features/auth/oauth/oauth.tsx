@@ -27,10 +27,8 @@ function GoogleLogo() {
 
 export function Oauth({ children }: { children: ReactNode }) {
   return (
-    <div className="w-100 mt-6">
-      <ExternalLink icon={<GoogleLogo />} href={'/api/auth/google'}>
-        {children}
-      </ExternalLink>
-    </div>
+    <ExternalLink icon={<GoogleLogo />} href={'/api/auth/google'}>
+      {children}
+    </ExternalLink>
   );
 }

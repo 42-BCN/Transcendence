@@ -14,6 +14,7 @@ import { type LoginRes } from '@/contracts/auth/auth.contract';
 import { type ApiResponse } from '@/contracts/http';
 
 import { loginAction } from './login.action';
+import { Text } from '@components/primitives/text';
 
 type StateActionProps = {
   err: ApiResponse<LoginRes> | null | undefined;
@@ -60,8 +61,12 @@ export function LoginForm() {
           onBlur={() => form.setTouch('password')}
           {...fieldsBase.password}
         />
-        <div className="flex row gap-2 mt-3 justify-center">
-          <InternalLink href={'/recover'}>{t('login.forgotPassword')}</InternalLink>
+        <div className="flex row gap-2  justify-center">
+          <InternalLink href={'/recover'}>
+            <Text as="span" variant="caption">
+              {t('login.forgotPassword')}
+            </Text>
+          </InternalLink>
         </div>
         <Button type="submit">{t('login.submit')}</Button>
       </Form>
