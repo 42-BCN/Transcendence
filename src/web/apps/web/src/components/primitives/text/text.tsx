@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import { type TextVariant, textStyles } from './text.styles';
 
 type TextTag =
@@ -7,7 +7,6 @@ type TextTag =
   | 'strong'
   | 'em'
   | 'small'
-  | 'label'
   | 'code'
   | 'h1'
   | 'h2'
@@ -17,15 +16,19 @@ type TextTag =
   | 'h6'
   | 'div';
 
-type TextProps = {
-  as?: TextTag;
+type TextOwnProps<T extends TextTag> = {
+  as?: T;
   variant?: TextVariant;
-  children?: ReactNode;
-  className?: string;
 };
 
-export function Text({ as = 'span', variant = 'body', children, className }: TextProps) {
-  const Component = as;
+type TextProps<T extends TextTag> = TextOwnProps<T> &
+  Omit<ComponentPropsWithoutRef<T>, keyof TextOwnProps<T>>;
 
-  return <Component className={textStyles(variant, className)}>{children}</Component>;
+export function Text<T extends TextTag = 'span'>(props: TextProps<T>) {
+  const { as, variant = 'body', ...restProps } = props;
+  const Component = as || 'span';
+
+  return (
+    <Component {...(restProps as ComponentPropsWithoutRef<T>)} className={textStyles(variant)} />
+  );
 }

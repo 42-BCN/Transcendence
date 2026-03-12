@@ -25,6 +25,6 @@ const variantClasses: Record<TextVariant, string> = {
   code: 'text-code',
 };
 
-export function textStyles(variant: TextVariant = 'body', className?: string) {
-  return cn(variantClasses[variant], className);
+export function textStyles(variant: TextVariant = 'body') {
+  return cn(variantClasses[variant]);
 }
