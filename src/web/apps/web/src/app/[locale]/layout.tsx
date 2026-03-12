@@ -14,10 +14,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
 
-  const t = await getTranslations({ locale, namespace: 'LocaleLayout' });
-  const formatter = await getFormatter({ locale });
-  const now = await getNow({ locale });
-  const timeZone = await getTimeZone({ locale });
+  const [t, formatter, now, timeZone] = await Promise.all([
+    getTranslations({ locale, namespace: 'LocaleLayout' }),
+    getFormatter({ locale }),
+    getNow({ locale }),
+    getTimeZone({ locale }),
+  ]);
 
   const base = new URL(envPublic.appUrl);
   return {

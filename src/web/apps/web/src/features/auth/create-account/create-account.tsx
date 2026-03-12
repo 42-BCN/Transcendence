@@ -9,7 +9,7 @@ export function CreateAccount() {
   return (
     <>
       <CreateAccountForm />
-      <Oauth children={t('createAccount.withGoogle')} />
+      <Oauth>{t('createAccount.withGoogle')}</Oauth>
       <div className="flex row gap-2 mt-3 justify-center">
         <p className="text-slate-600 text-sm">{t('createAccount.haveAccount')}</p>{' '}
         <InternalLink href={'/login'}>{t('createAccount.goToLogin')}</InternalLink>

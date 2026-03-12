@@ -10,7 +10,6 @@ const io = new Server(httpServer, {
 type Vec3 = [number, number, number];
 
 type Character = {
-  
   id: string;
   position: Vec3;
   target?: Vec3;
@@ -32,7 +31,9 @@ const generateRandomPosition = (): Vec3 => {
 };
 
 const generateRandomHexColor = () =>
-  '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+  `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, '0')}`;
 
 const characters: Character[] = [];
 
@@ -57,8 +58,7 @@ io.on('connection', (socket) => {
     c.target = [clamp(snap(x, CELL_SIZE), -half, half), y, clamp(snap(z, CELL_SIZE), -half, half)];
 
     io.emit('characters', characters);
-    if (c.target)
-      c.position = [... c.target];
+    if (c.target) c.position = [...c.target];
   });
 
   socket.on('disconnect', () => {
