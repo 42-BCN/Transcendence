@@ -1,1 +1,1 @@
-export * from './navigation.server';
+export { NavigationServer } from './navigation.server';

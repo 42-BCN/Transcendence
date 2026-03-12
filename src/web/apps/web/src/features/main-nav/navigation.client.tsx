@@ -1,42 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { getPathname } from '@/i18n/navigation';
-
-import { usePathname } from 'next/navigation';
-import { NavLink } from '@components/controls/nav-link';
+import { useState, useMemo } from 'react';
 import { type NavItem } from './navigation.config';
-import { useTranslations } from 'next-intl';
-import { Logout } from '../auth/logout';
-import { Drawer } from '@components/composites/drawer';
-import { Button, DialogTrigger } from 'react-aria-components';
-import { LocaleSwitcher } from '../locale-switcher';
+import { NavigationProvider } from './navigation.context';
+import { NavigationHeader } from './navigation-header';
+import { NavigationMain } from './navigation-main';
+import { NavigationFooter } from './navigation-footer';
+import { Stack } from '@components/primitives/stack';
 
-type TFunc = ReturnType<typeof useTranslations>;
-
-function NavLinkItem(args: {
-  locale: string;
-  navItem: NavItem;
-  pathname: string;
-  t: TFunc;
-  onPress: () => void;
-}) {
-  const { locale, navItem, pathname, t, onPress } = args;
-
-  const href = getPathname({
-    locale: locale,
-    href: navItem.href,
-  });
-  const isCurrent = navItem.exact
-    ? pathname === href
-    : pathname === href || pathname.startsWith(`${href}/`);
-
-  return (
-    <NavLink href={href} isCurrent={isCurrent} onPress={onPress}>
-      {t(navItem.key)}
-    </NavLink>
-  );
-}
+// TODO Translate aria-labels
 
 type NavigationClientProps = {
   locale: string;
@@ -44,51 +16,77 @@ type NavigationClientProps = {
   isAuthenticated: boolean;
 };
 
-function NavigationContent(
-  args: NavigationClientProps & { className?: string; onNavigate?: () => void },
-) {
-  const { locale, mainNavItems, isAuthenticated = false, className, onNavigate } = args;
-  const pathname = usePathname();
-  const t = useTranslations('navigation');
-  return (
-    <div className={className}>
-      <LocaleSwitcher />
-      {mainNavItems.map((item) => (
-        <NavLinkItem
-          key={item.href}
-          locale={locale}
-          navItem={item}
-          pathname={pathname}
-          t={t}
-          onPress={() => {
-            onNavigate?.();
-          }}
-        />
-      ))}
-      {isAuthenticated ? <Logout /> : null}
-    </div>
-  );
-}
-
 export function NavigationClient(args: NavigationClientProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { locale } = args;
 
+  const [isExpanded, setIsExpanded] = useState(false);
+  const toggleExpanded = () => setIsExpanded((prev) => !prev);
+
+  const value = useMemo(
+    () => ({
+      locale,
+      isExpanded,
+      toggleExpanded,
+    }),
+    [locale, isExpanded, toggleExpanded],
+  );
   return (
-    <nav aria-label="Main" className="flex flex-col md:flex-row gap-4">
-      <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <Button className="md:hidden">Menu</Button>
-        <Drawer>
-          <NavigationContent
-            {...args}
-            className="flex flex-col gap-2"
-            onNavigate={() => setIsOpen(false)}
-          />
-          <Button className="mt-4" slot="close">
-            Close
-          </Button>
-        </Drawer>
-      </DialogTrigger>
-      <NavigationContent {...args} className="hidden md:flex md:flex-row md:gap-2" />
-    </nav>
+    <NavigationProvider value={value}>
+      <Stack as="nav" aria-label="main" className="group py-4" align="start">
+        <NavigationHeader />
+        <NavigationMain {...args} />
+        <NavigationFooter />
+      </Stack>
+    </NavigationProvider>
   );
 }
+
+// function MobileNavigation(args: NavigationClientProps) {
+//   const [isOpen, setIsOpen] = useState(false);
+//   return (
+//     <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+//       <Button className="md:hidden">Menu</Button>
+//       <Drawer>
+//         <NavigationContent
+//           {...args}
+//           className="flex flex-col gap-2"
+//           onNavigate={() => setIsOpen(false)}
+//         />
+//         <Button className="mt-4" slot="close">
+//           Close
+//         </Button>
+//       </Drawer>
+//     </DialogTrigger>
+//   );
+// }
+
+// function NavigationContent(
+//   args: NavigationClientProps & { className?: string; onNavigate?: () => void },
+// ) {
+//   const { locale, mainNavItems, isAuthenticated = false, className, onNavigate } = args;
+//   const pathname = usePathname();
+//   const t = useTranslations('navigation');
+//   return (
+//     <div className={className}>
+//       <LocaleSwitcher />
+
+//       {mainNavItems.map((item) => (
+//         <NavLinkItem
+//           key={item.href}
+//           locale={locale}
+//           navItem={item}
+//           pathname={pathname}
+//           t={t}
+//           onPress={() => {
+//             onNavigate?.();
+//           }}
+//         />
+//       ))}
+//       {isAuthenticated ? <Logout /> : null}
+//     </div>
+//   );
+// }
+
+// import { Drawer } from '@components/composites/drawer';
+// import { Button, DialogTrigger } from 'react-aria-components';
+// import { LocaleSwitcher } from '../locale-switcher';

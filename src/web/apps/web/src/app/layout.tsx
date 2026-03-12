@@ -33,7 +33,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={locale} className={`${quicksand.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body className="h-screen flex">{children}</body>
     </html>
   );
 }

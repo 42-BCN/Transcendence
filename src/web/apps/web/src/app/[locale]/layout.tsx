@@ -46,9 +46,8 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale}>
       <Providers locale={locale}>
         <HtmlLangSync />
-        <header className="border-b">
-          <NavigationServer locale={locale} />
-        </header>
+
+        <NavigationServer locale={locale} />
         {children}
       </Providers>
     </NextIntlClientProvider>
