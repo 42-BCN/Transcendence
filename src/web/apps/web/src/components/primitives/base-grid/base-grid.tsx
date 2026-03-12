@@ -10,23 +10,13 @@ export function Grid4Overlay() {
 
 const columns = Array.from({ length: 12 });
 
-export function ColumnsOverlay() {
+export function Columns12Overlay() {
   return (
     <div aria-hidden="true" className={baseGridStyles.gridBase}>
       <div className={baseGridStyles.gridCols}>
         {columns.map((_, index) => (
           <div key={index} className={baseGridStyles.colsResponsive(index)} />
         ))}
-      </div>
-    </div>
-  );
-}
-
-export function Columns12Overlay() {
-  return (
-    <div aria-hidden="true" className={baseGridStyles.gridBase}>
-      <div className={baseGridStyles.gridCols}>
-        <ColumnsOverlay />
       </div>
     </div>
   );
