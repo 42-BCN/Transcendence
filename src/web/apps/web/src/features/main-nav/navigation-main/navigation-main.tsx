@@ -27,7 +27,7 @@ function isNavItemCurrent(pathname: string, href: string, exact?: boolean) {
 function renderNavLinkContent(icon: NavItem['icon'], label: string, isExpanded: boolean) {
   return (
     <>
-      <Icon name={icon} />
+      <Icon name={icon} size={20} />
       {isExpanded ? <span>{label}</span> : null}
     </>
   );

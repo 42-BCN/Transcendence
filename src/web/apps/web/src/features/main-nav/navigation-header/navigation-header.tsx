@@ -9,11 +9,12 @@ export function NavigationHeader() {
   const { isExpanded, toggleExpanded } = useNavigationContext();
   return (
     <Button className={headerStyles.wrapper} variant="ghost" onPress={toggleExpanded}>
-      <Icon name="app" className={headerStyles.app} />
+      <Icon name="app" className={headerStyles.app} size={20} />
       <Icon
         name={isExpanded ? 'collapse' : 'expand'}
         aria-label={isExpanded ? 'expand' : 'collapse'}
         className={headerStyles.expand}
+        size={20}
       />
     </Button>
   );
