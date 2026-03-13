@@ -64,7 +64,19 @@ declare const messages: {
       "submit": "Create account",
       "haveAccount": "Already have an account?",
       "goToLogin": "Log in",
-      "withGoogle": "Create account with Google"
+      "withGoogle": "Create account with Google",
+      "success": {
+        "title": "Check your email",
+        "sent": "We've sent you an email to confirm your account.",
+        "check": "Check your inbox and follow the instructions to activate your account.",
+        "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
+        "resend": "Resend email",
+        "resending": "Sending...",
+        "resent": "Email sent!",
+        "resendSuccess": "✓ Email sent. Wait before trying again.",
+        "resendError": "✗ Could not send email. Please try again.",
+        "backToLogin": "Already confirmed? Sign in"
+      }
     },
     "status": {
       "success": "Success",
