@@ -1,24 +1,30 @@
 import { getTranslations } from 'next-intl/server';
-import { AuthPageLayout } from '@components/primitives/auth-page-layout';
 import { ResendVerification } from '@/features/auth/resend-verification';
 import { InternalLink } from '@components/controls/link/link';
+import { Text } from '@components/primitives/text';
+import { Stack } from '@components/primitives/stack/stack';
 
 export default async function SignupSuccessPage() {
   const t = await getTranslations('auth');
 
   return (
-    <AuthPageLayout title={t('createAccount.success.title')}>
-      <div className="flex flex-col gap-4 text-center">
-        <p className="text-slate-600">{t('createAccount.success.sent')}</p>
-        <p className="text-slate-600">{t('createAccount.success.check')}</p>
-        <p className="text-slate-600">{t('createAccount.success.checkSpam')}</p>
-
-        <ResendVerification />
-
-        <div className="mt-6 pt-6 border-t border-slate-100">
-          <InternalLink href="/login">{t('createAccount.success.backToLogin')}</InternalLink>
-        </div>
-      </div>
-    </AuthPageLayout>
+    <Stack>
+      <Text as="h1" variant="heading-md">
+        {t('createAccount.success.title')}
+      </Text>
+      <Stack gap="sm">
+        <Text as="p" variant="body-sm">
+          {t('createAccount.success.sent')}
+        </Text>
+        <Text as="p" variant="body-sm">
+          {t('createAccount.success.check')}
+        </Text>
+        <Text as="p" variant="body-sm">
+          {t('createAccount.success.checkSpam')}
+        </Text>
+      </Stack>
+      <ResendVerification />
+      <InternalLink href="/login">{t('createAccount.success.backToLogin')}</InternalLink>
+    </Stack>
   );
 }

@@ -6,6 +6,7 @@ import { Button } from '@components/controls/button';
 import { resendVerificationAction } from './resend-verification.action';
 
 import { resendStyles, feedbackStyles } from './resend-verification.styles';
+import { Stack } from '@components/primitives/stack';
 
 type ResendState = 'idle' | 'sending' | 'cooldown';
 type Feedback = 'success' | 'error' | null;
@@ -51,13 +52,13 @@ export function ResendVerification() {
   };
 
   return (
-    <div className={resendStyles()}>
+    <Stack gap="xs">
       <Button onPress={handleResend} isDisabled={state !== 'idle'} variant="secondary">
         {buttonTexts[state]}
       </Button>
       {feedback === 'success' && <p className={feedbackStyles('success')}>{t('resendSuccess')}</p>}
       {feedback === 'error' && <p className={feedbackStyles('error')}>{t('resendError')}</p>}
-    </div>
+    </Stack>
   );
 }
 
