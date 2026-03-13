@@ -30,24 +30,48 @@ if (fs.existsSync(componentDir)) {
 
 fs.mkdirSync(componentDir, { recursive: true });
 
-// index.ts
-fs.writeFileSync(path.join(componentDir, 'index.ts'), `export * from './${kebabName}';\n`);
+/* ---------------- index.ts ---------------- */
 
-// component file
+fs.writeFileSync(
+  path.join(componentDir, 'index.ts'),
+  `export { ${componentName} } from './${kebabName}';
+export type { ${componentName}Props } from './${kebabName}';
+`,
+);
+
+/* ---------------- component ---------------- */
+
 fs.writeFileSync(
   path.join(componentDir, `${kebabName}.tsx`),
-  `export type ${componentName}Props = {};
+  `import { cn } from '@/lib/cn';
 
-export function ${componentName}(props: ${componentName}Props) {
-  return null;
+import type { ReactNode } from './react';
+import { ${componentName}Styles } from './${kebabName}.styles';
+
+export type ${componentName}Props = {
+  className?: string;
+  children?: ReactNode;
+};
+
+export function ${componentName}({ className, children }: ${componentName}Props) {
+  return (
+    <div className={cn(${componentName}Styles.base, className)}>
+      {children}
+    </div>
+  );
 }
 `,
 );
 
-// styles file
+/* ---------------- styles ---------------- */
+
 fs.writeFileSync(
   path.join(componentDir, `${kebabName}.styles.ts`),
-  `export const ${componentName}Styles = {};
+  `import { cn } from '@/lib/styles/cn';
+
+export const ${componentName}Styles = {
+  base: cn(),
+};
 `,
 );
 
