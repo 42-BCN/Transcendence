@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-import { Quicksand } from 'next/font/google';
-import { JetBrains_Mono } from 'next/font/google';
+import { Atkinson_Hyperlegible_Next, JetBrains_Mono } from 'next/font/google';
 import { getLocale } from 'next-intl/server';
 import './globals.css';
 
@@ -9,7 +8,7 @@ const mono = JetBrains_Mono({
   variable: '--font-mono',
 });
 
-export const quicksand = Quicksand({
+export const primary = Atkinson_Hyperlegible_Next({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-primary',
@@ -32,7 +31,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const locale = await getLocale();
 
   return (
-    <html lang={locale} className={`${quicksand.variable} ${mono.variable}`}>
+    <html lang={locale} className={`${primary.variable} ${mono.variable}`}>
       <body className="h-screen flex">{children}</body>
     </html>
   );
