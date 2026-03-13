@@ -1,12 +1,9 @@
 import { CreateAccount } from '@/features/auth/create-account';
-import { getTranslations } from 'next-intl/server';
 import { AuthPageLayout } from '@components/primitives/auth-page-layout';
 
-export default async function SignupPage() {
-  const t = await getTranslations('auth');
-
+export default function SignupPage() {
   return (
-    <AuthPageLayout title={t('createAccount.title')}>
+    <AuthPageLayout title="">
       <CreateAccount />
     </AuthPageLayout>
   );

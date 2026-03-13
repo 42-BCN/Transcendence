@@ -1,8 +1,9 @@
 import { cn } from '@/lib/styles/cn';
 
 const inputBase = [
+  'text-body-sm',
   // layout
-  'w-full border bg-white px-3 py-2 text-sm',
+  'w-full border bg-white px-2 py-2',
   // behavior
   'outline-none transition',
 ];
@@ -14,9 +15,9 @@ const inputVariants = {
 } as const;
 
 const inputSizes = {
-  sm: 'h-8',
-  md: 'h-10',
-  lg: 'h-12 text-base',
+  sm: 'h-5',
+  md: 'h-6',
+  lg: 'h-7 text-base',
 } as const;
 
 // RAC states grouped together

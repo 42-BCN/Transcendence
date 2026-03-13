@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const wrapperBase = 'mx-auto max-w-md p-6';
+const wrapperBase = 'mx-auto min-w-[320px] p-3';
 const titleBase = 'mb-6 text-xl font-semibold';
 
 export const authPageLayoutStyles = {

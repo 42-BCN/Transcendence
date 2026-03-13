@@ -2,7 +2,7 @@ import { cn } from '@/lib/styles/cn';
 
 const buttonBase = [
   // layout
-  'border inline-flex items-center justify-center font-medium text-gray-900 gap-3',
+  'border inline-flex items-center justify-center font-medium text-gray-900 gap-3 min-h-6 min-w-6',
   // behavior
   'transition outline-none',
 ];
@@ -15,9 +15,9 @@ const buttonVariants = {
 } as const;
 
 const buttonSizes = {
-  sm: 'h-8 px-3 text-sm',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-base',
+  sm: 'h-5 text-sm',
+  md: 'h-6 px-3 text-sm',
+  lg: 'h-7 px-4 text-base',
 } as const;
 
 const buttonW = {
@@ -36,9 +36,23 @@ export type ButtonVariant = keyof typeof buttonVariants;
 export type ButtonSize = keyof typeof buttonSizes;
 export type ButtonW = keyof typeof buttonW;
 
-export function buttonStyles(args?: { variant?: ButtonVariant; size?: ButtonSize; w?: ButtonW }) {
-  const { variant = 'primary', size = 'md', w = 'full' } = args ?? {};
-  return cn(buttonBase, buttonVariants[variant], buttonSizes[size], buttonW[w], buttonRacStates);
+type buttonStyleProps = {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  w?: ButtonW;
+  className?: string;
+};
+
+export function buttonStyles(args?: buttonStyleProps) {
+  const { variant = 'primary', size = 'md', w = 'full', className } = args ?? {};
+  return cn(
+    buttonBase,
+    buttonVariants[variant],
+    buttonSizes[size],
+    buttonW[w],
+    buttonRacStates,
+    className,
+  );
 }
 
 export function iconStyles() {
