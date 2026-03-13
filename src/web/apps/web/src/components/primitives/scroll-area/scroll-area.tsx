@@ -1,10 +1,13 @@
-import type { ReactNode } from 'react';
+import type { HTMLAttributes } from 'react';
+
 import { scrollAreaStyles } from './scroll-area.styles';
 
-export type ScrollAreaProps = {
-  children?: ReactNode;
-};
+export type ScrollAreaProps = Omit<HTMLAttributes<HTMLDivElement>, 'className'>;
 
-export function ScrollArea({ children }: ScrollAreaProps) {
-  return <div className={scrollAreaStyles()}>{children}</div>;
+export function ScrollArea({ children, ...rest }: ScrollAreaProps) {
+  return (
+    <div className={scrollAreaStyles()} {...rest}>
+      {children}
+    </div>
+  );
 }
