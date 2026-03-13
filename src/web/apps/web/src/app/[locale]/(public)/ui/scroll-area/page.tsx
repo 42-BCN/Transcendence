@@ -23,7 +23,7 @@ export default function ScrollAreaPage() {
         Example
       </Text>
 
-      <div className="h-[400px] w-[400px] ">
+      <div className="h-[400px] w-[400px]">
         <ScrollArea>
           <Stack gap="sm">
             {Array.from({ length: 30 }, (_, index) => (
