@@ -1,32 +1,14 @@
 'use client';
 
-import { getPathname } from '@/i18n/navigation';
-
-import { usePathname } from 'next/navigation';
-import { NavLink } from '@components/controls/nav-link';
+import { useState, useMemo } from 'react';
 import { type NavItem } from './navigation.config';
-import { useTranslations } from 'next-intl';
-import { Logout } from '../auth/logout';
+import { NavigationProvider } from './navigation.context';
+import { NavigationHeader } from './navigation-header';
+import { NavigationMain } from './navigation-main';
+import { NavigationFooter } from './navigation-footer';
+import { Stack } from '@components/primitives/stack';
 
-type TFunc = ReturnType<typeof useTranslations>;
-
-function NavLinkItem(args: { locale: string; navItem: NavItem; pathname: string; t: TFunc }) {
-  const { locale, navItem, pathname, t } = args;
-
-  const href = getPathname({
-    locale: locale,
-    href: navItem.href,
-  });
-  const isCurrent = navItem.exact
-    ? pathname === href
-    : pathname === href || pathname.startsWith(`${href}/`);
-
-  return (
-    <NavLink href={href} isCurrent={isCurrent}>
-      {t(navItem.key)}
-    </NavLink>
-  );
-}
+// TODO Translate aria-labels
 
 type NavigationClientProps = {
   locale: string;
@@ -35,17 +17,76 @@ type NavigationClientProps = {
 };
 
 export function NavigationClient(args: NavigationClientProps) {
-  const { locale, mainNavItems, isAuthenticated = false } = args;
-  const pathname = usePathname();
-  const t = useTranslations('navigation');
+  const { locale } = args;
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const toggleExpanded = () => setIsExpanded((prev) => !prev);
+
+  const value = useMemo(
+    () => ({
+      locale,
+      isExpanded,
+      toggleExpanded,
+    }),
+    [locale, isExpanded, toggleExpanded],
+  );
   return (
-    <nav aria-label="Main">
-      <div className="flex gap-2">
-        {mainNavItems.map((item) => (
-          <NavLinkItem key={item.href} locale={locale} navItem={item} pathname={pathname} t={t} />
-        ))}
-        {isAuthenticated ? <Logout /> : null}
-      </div>
-    </nav>
+    <NavigationProvider value={value}>
+      <Stack as="nav" aria-label="main" className="group py-4" align="start">
+        <NavigationHeader />
+        <NavigationMain {...args} />
+        <NavigationFooter />
+      </Stack>
+    </NavigationProvider>
   );
 }
+
+// function MobileNavigation(args: NavigationClientProps) {
+//   const [isOpen, setIsOpen] = useState(false);
+//   return (
+//     <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+//       <Button className="md:hidden">Menu</Button>
+//       <Drawer>
+//         <NavigationContent
+//           {...args}
+//           className="flex flex-col gap-2"
+//           onNavigate={() => setIsOpen(false)}
+//         />
+//         <Button className="mt-4" slot="close">
+//           Close
+//         </Button>
+//       </Drawer>
+//     </DialogTrigger>
+//   );
+// }
+
+// function NavigationContent(
+//   args: NavigationClientProps & { className?: string; onNavigate?: () => void },
+// ) {
+//   const { locale, mainNavItems, isAuthenticated = false, className, onNavigate } = args;
+//   const pathname = usePathname();
+//   const t = useTranslations('navigation');
+//   return (
+//     <div className={className}>
+//       <LocaleSwitcher />
+
+//       {mainNavItems.map((item) => (
+//         <NavLinkItem
+//           key={item.href}
+//           locale={locale}
+//           navItem={item}
+//           pathname={pathname}
+//           t={t}
+//           onPress={() => {
+//             onNavigate?.();
+//           }}
+//         />
+//       ))}
+//       {isAuthenticated ? <Logout /> : null}
+//     </div>
+//   );
+// }
+
+// import { Drawer } from '@components/composites/drawer';
+// import { Button, DialogTrigger } from 'react-aria-components';
+// import { LocaleSwitcher } from '../locale-switcher';

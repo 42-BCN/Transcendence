@@ -20,6 +20,7 @@ const toPascalCase = (str) =>
 
 const kebabName = toKebabCase(nameArg);
 const componentName = toPascalCase(kebabName);
+const stylesName = `${componentName.charAt(0).toLowerCase()}${componentName.slice(1)}Styles`;
 
 const componentDir = path.join(process.cwd(), targetPathArg, kebabName);
 
@@ -30,24 +31,45 @@ if (fs.existsSync(componentDir)) {
 
 fs.mkdirSync(componentDir, { recursive: true });
 
-// index.ts
-fs.writeFileSync(path.join(componentDir, 'index.ts'), `export * from './${kebabName}';\n`);
+/* ---------------- index.ts ---------------- */
 
-// component file
+fs.writeFileSync(
+  path.join(componentDir, 'index.ts'),
+  `export { ${componentName} } from './${kebabName}';
+export type { ${componentName}Props } from './${kebabName}';
+`,
+);
+
+/* ---------------- component ---------------- */
+
 fs.writeFileSync(
   path.join(componentDir, `${kebabName}.tsx`),
-  `export type ${componentName}Props = {};
+  `import type { ReactNode } from 'react';
+ import { ${stylesName} } from './${kebabName}.styles';
 
-export function ${componentName}(props: ${componentName}Props) {
-  return null;
+export type ${componentName}Props = {
+  children?: ReactNode;
+};
+
+export function ${componentName}({ children }: ${componentName}Props) {
+  return (
+    <div className={${stylesName}()}>
+      {children}
+    </div>
+  );
 }
 `,
 );
 
-// styles file
+/* ---------------- styles ---------------- */
+
 fs.writeFileSync(
   path.join(componentDir, `${kebabName}.styles.ts`),
-  `export const ${componentName}Styles = {};
+  `import { cn } from '@/lib/styles/cn';
+
+ export function ${stylesName} () {
+   return cn()
+ };
 `,
 );
 
