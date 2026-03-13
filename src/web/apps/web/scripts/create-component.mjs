@@ -44,19 +44,16 @@ export type { ${componentName}Props } from './${kebabName}';
 
 fs.writeFileSync(
   path.join(componentDir, `${kebabName}.tsx`),
-  `import { cn } from '@/lib/cn';
-
-import type { ReactNode } from 'react';
+  `import type { ReactNode } from 'react';
  import { ${stylesName} } from './${kebabName}.styles';
 
 export type ${componentName}Props = {
-  className?: string;
   children?: ReactNode;
 };
 
-export function ${componentName}({ className, children }: ${componentName}Props) {
+export function ${componentName}({ children }: ${componentName}Props) {
   return (
-    <div className={cn(${stylesName}.base, className)}>
+    <div className={${stylesName}()}>
       {children}
     </div>
   );
@@ -70,8 +67,8 @@ fs.writeFileSync(
   path.join(componentDir, `${kebabName}.styles.ts`),
   `import { cn } from '@/lib/styles/cn';
 
- export const ${stylesName} = {
-   base: cn(),
+ export function ${stylesName} () {
+   return cn()
  };
 `,
 );
