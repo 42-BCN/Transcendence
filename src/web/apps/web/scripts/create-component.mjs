@@ -20,6 +20,7 @@ const toPascalCase = (str) =>
 
 const kebabName = toKebabCase(nameArg);
 const componentName = toPascalCase(kebabName);
+const stylesName = `${componentName.charAt(0).toLowerCase()}${componentName.slice(1)}Styles`;
 
 const componentDir = path.join(process.cwd(), targetPathArg, kebabName);
 
@@ -45,8 +46,8 @@ fs.writeFileSync(
   path.join(componentDir, `${kebabName}.tsx`),
   `import { cn } from '@/lib/cn';
 
-import type { ReactNode } from './react';
-import { ${componentName}Styles } from './${kebabName}.styles';
+import type { ReactNode } from 'react';
+ import { ${stylesName} } from './${kebabName}.styles';
 
 export type ${componentName}Props = {
   className?: string;
@@ -55,7 +56,7 @@ export type ${componentName}Props = {
 
 export function ${componentName}({ className, children }: ${componentName}Props) {
   return (
-    <div className={cn(${componentName}Styles.base, className)}>
+    <div className={cn(${stylesName}.base, className)}>
       {children}
     </div>
   );
@@ -69,9 +70,9 @@ fs.writeFileSync(
   path.join(componentDir, `${kebabName}.styles.ts`),
   `import { cn } from '@/lib/styles/cn';
 
-export const ${componentName}Styles = {
-  base: cn(),
-};
+ export const ${stylesName} = {
+   base: cn(),
+ };
 `,
 );
 
