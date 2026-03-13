@@ -12,7 +12,7 @@ export default async function SignupSuccessPage() {
       <Text as="h1" variant="heading-md">
         {t('createAccount.success.title')}
       </Text>
-      <Stack gap="sm">
+      <Stack>
         <Text as="p" variant="body-sm">
           {t('createAccount.success.sent')}
         </Text>
