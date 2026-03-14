@@ -12,21 +12,31 @@ import { useTranslations } from 'next-intl';
 
 type I18nKey = string;
 
-export type TextAreaFieldProps = Omit<AriaTextFieldProps, 'children' | 'className'> &
-  Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange'> & {
-    errorKey?: I18nKey;
-    maxLength?: number;
-    value?: string;
-    defaultValue?: string;
-    onChange?: (value: string) => void;
-  };
+export type TextAreaFieldProps = Omit<AriaTextFieldProps, 'children' | 'className'> & {
+  textAreaProps?: Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'maxLength'>;
+  errorKey?: I18nKey;
+  value?: string;
+  defaultValue?: string;
+  ariaLabel: string;
+  onChange?: (value: string) => void;
+};
 
 export function TextAreaField(props: TextAreaFieldProps) {
-  const { errorKey, maxLength, value, defaultValue = '', onChange, ...rest } = props;
+  const {
+    errorKey,
+    value,
+    defaultValue = '',
+    onChange,
+    textAreaProps,
+    labelKey,
+    ariaLabel
+    ...textFieldProps
+  } = props;
   const t = useTranslations();
 
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState(defaultValue);
+  const isInvalid = props.isInvalid ?? Boolean(errorKey);
 
   const currentValue = isControlled ? value : internalValue;
 
@@ -37,12 +47,14 @@ export function TextAreaField(props: TextAreaFieldProps) {
 
   return (
     <AriaTextField
-      {...rest}
+      {...textFieldProps}
       value={currentValue}
       onChange={handleChange}
       className={textAreaFieldStyles.root()}
+      isInvalid={isInvalid}
+      ariaLabel={ariaLabel}
     >
-      <TextArea maxLength={maxLength} />
+      <TextArea {...textAreaProps} />
 
       {maxLength !== undefined && (
         <div className={textAreaFieldStyles.counter()}>

@@ -4,7 +4,7 @@ import { cn } from '@/lib/styles/cn';
 const rootBase = 'grid gap-1.5';
 const labelBase = 'text-body';
 const descriptionBase = 'text-body-xs';
-const errorBase = 'text-body-xs';
+const errorBase = 'text-body-xs text-red-600';
 
 const textFieldBase = {
   root: rootBase,
