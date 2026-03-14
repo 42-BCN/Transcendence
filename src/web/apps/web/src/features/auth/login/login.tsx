@@ -9,7 +9,7 @@ import { Stack } from '@components/primitives/stack';
 export function Login() {
   const t = useTranslations('auth');
   return (
-    <Stack justify="center">
+    <Stack>
       <Text as="h1" variant="heading-md">
         {t('login.title')}
       </Text>

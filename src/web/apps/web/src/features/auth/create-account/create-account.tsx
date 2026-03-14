@@ -9,7 +9,7 @@ import { Text } from '@components/primitives/text';
 export function CreateAccount() {
   const t = useTranslations('auth');
   return (
-    <Stack justify="center">
+    <Stack>
       <Text as="h1" variant="heading-md">
         {t('createAccount.title')}
       </Text>
