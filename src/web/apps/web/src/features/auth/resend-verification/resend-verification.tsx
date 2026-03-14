@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { resendVerificationAction } from './resend-verification.action';
 
-import { resendStyles, feedbackStyles } from './resend-verification.styles';
+import { feedbackStyles } from './resend-verification.styles';
 import { Stack } from '@components/primitives/stack';
 
 type ResendState = 'idle' | 'sending' | 'cooldown';
@@ -18,15 +18,14 @@ export function ResendVerification() {
   const [feedback, setFeedback] = useState<Feedback>(null);
 
   useEffect(() => {
-    let timer: ReturnType<typeof setInterval>;
     if (state === 'cooldown' && countdown > 0) {
-      timer = setInterval(() => {
+      const timer = setInterval(() => {
         setCountdown((prev) => prev - 1);
       }, 1000);
+      return () => clearInterval(timer);
     } else if (countdown === 0 && state === 'cooldown') {
       setState('idle');
     }
-    return () => clearInterval(timer);
   }, [state, countdown]);
 
   const handleResend = async () => {
@@ -61,13 +60,3 @@ export function ResendVerification() {
     </Stack>
   );
 }
-
-//gestionar que si no se puede mandar mail, que ponga un mensaje de error en rojo debajo del boton y que se pueda volver a intentar
-
-//gestionar que si se puede mandar mail, que ponga un mensaje de exito en verde debajo del boton y que se pueda volver a intentar
-
-//se traquea cuantas veces se ha mandado mail? si se ha mandado x veces, no se puede volver a mandar??
-
-//si el usuario no ha verificado su cuenta, no se puede loguear
-
-//en crear cuenta, el mensaje de el email ya existe que sea en rojo y que marque en rojo el campo correo electronico, lo borre y deje el de contraseña?

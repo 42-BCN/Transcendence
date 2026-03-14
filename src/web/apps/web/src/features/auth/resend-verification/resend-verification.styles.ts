@@ -1,9 +1,5 @@
 import { cn } from '@/lib/styles/cn';
 
-// export function resendStyles() {
-//   return cn('mt-8');
-// }
-
 export function feedbackStyles(variant: 'success' | 'error') {
   return cn(
     'text-sm',
