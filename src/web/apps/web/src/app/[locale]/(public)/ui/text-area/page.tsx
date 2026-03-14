@@ -18,7 +18,7 @@ export default function TextAreaPage() {
       <Text as="h2" variant="heading-sm">
         Text field component
       </Text>
-      <TextAreaField />
+      <TextAreaField maxLength={300} />
     </Stack>
   );
 }
