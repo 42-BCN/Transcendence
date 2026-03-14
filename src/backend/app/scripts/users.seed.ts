@@ -22,6 +22,17 @@ function makeDevPasswordHash(plain: string): string {
 }
 
 async function insertSeedUser(): Promise<boolean> {
+  //Special ziermax user
+  await pool.query(
+    sql`
+    INSERT INTO public.users (
+      email,
+      username,
+      password_hash)
+    VALUES ('ziermax@fakemail.com', 'ziermax', 'contraseña')
+    ON CONFLICT (email) DO NOTHING`,
+  );
+
   const email = faker.internet.email().toLowerCase();
   const username = makeUsername();
 
@@ -53,7 +64,7 @@ export async function seed() {
   //   throw new Error("Seeding is only allowed in development.");
   // }
 
-  const requested = Number(process.argv[2] ?? 20);
+  const requested = Number(process.argv[2] ?? 10);
   const safeCount = Math.min(Math.max(requested, 1), 500);
 
   await bootstrapUsers();

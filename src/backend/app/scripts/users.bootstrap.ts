@@ -2,7 +2,6 @@ import { pool } from "@shared/db.pool";
 import { sql } from "@shared/utils/sql";
 
 export async function bootstrapUsers(): Promise<void> {
-  //await pool.query(sql`DROP TABLE users`);// TODO Cambiar a un script
   await pool.query(sql`CREATE extension IF NOT EXISTS "pgcrypto";`);
 
   await pool.query(sql`
