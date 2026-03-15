@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import type { Profile } from "passport";
+import { DatabaseError } from "pg";
 
 import type { AuthRecoverUser, AuthUser } from "@contracts/auth/auth.contract";
 import type { LoginReq } from "@contracts/auth/auth.validation";
@@ -8,6 +9,8 @@ import { generateUsername, ApiError } from "@shared";
 
 import { /*Delete*/ type AuthUserRow, toAuthUser } from "./auth.model";
 import * as Repo from "./auth.repo";
+
+const RECOVER_ALLOW_ATTEMPTS = 5;
 
 export async function login(input: LoginReq): Promise<AuthUser> {
   const identifier = input.identifier.trim().toLowerCase();
@@ -72,30 +75,53 @@ export async function findOrCreateGoogleUser(
 }
 
 /*
- * RECOVERY PROCESS
+ * RECOVERY utils
  *  */
 function generateRecoveryToken(): string {
   const token = crypto.randomBytes(32).toString("hex");
   return token;
 }
+async function setRecoveryToken(id: string): Promise<string | null> {
+  let recoverToken = null;
+
+  for (let not_done = 1; not_done <= 5; ++not_done) {
+    try {
+      recoverToken = generateRecoveryToken();
+      await Repo.setRecoveryToken(id, recoverToken);
+      break;
+    } catch (err) {
+      if (!(err instanceof DatabaseError) || err.code !== "23505") throw err;
+      recoverToken = null;
+    }
+  }
+  return recoverToken;
+}
+//FIXING COMPLEXITY PROBLEM MAY BE A PROBLEM
+function identifyIntentifier(identifier: string): "email" | "username" {
+  return identifier.includes(`@`) ? "email" : "username";
+}
+
+/*
+ * RECOVERY PROCESS
+ *  */
 export async function processRecovery(
   identifier: string,
 ): Promise<string | null> {
-  const key = identifier.includes(`@`) ? "email" : "username";
+  const key = identifyIntentifier(identifier);
   const user = await Repo.findUserForRecovery(key, identifier);
 
   if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
   if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
-  //if(user.recover_token)?;//Process in progress
-  if (user.recover_attempts > 5) throw new ApiError("AUTH_TOO_MANY_REQUEST");
+  //if(user.recover_token) throw new ApiError("already in proces or somthign");
+  if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
+    throw new ApiError("AUTH_TOO_MANY_REQUEST");
 
-  const recoverTocken = generateRecoveryToken();
-
-  await Repo.setRecoveryToken(user.id, recoverTocken);
-
+  const recoverToken = await setRecoveryToken(user.id);
+  if (!recoverToken) throw new ApiError("INTERNAL_ERROR");
   //Enviar email - tal vez esto deberia estar en el controlador
-  //await sendRecoveryMail(user.email, recoverTocken);
-  return recoverTocken;
+  //await sendRecoveryMail(user.email, recoverToken);
+
+  return recoverToken;
 }
 export async function validateRecoverToken(
   token: string,
