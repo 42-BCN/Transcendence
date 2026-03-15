@@ -1,65 +1,54 @@
 'use client';
 
-import { useState } from 'react';
-import { FieldError, TextField as AriaTextField } from 'react-aria-components';
+import { FieldError, Text, TextField as AriaTextField } from 'react-aria-components';
 import type { TextFieldProps as AriaTextFieldProps } from 'react-aria-components';
-
-import { TextArea } from '@components/controls/text-area';
-import type { TextAreaProps } from '@components/controls/text-area';
-
-import { textAreaFieldStyles } from './text-area-field.styles';
 import { useTranslations } from 'next-intl';
+import { TextArea, type TextAreaProps } from '@components/controls/text-area';
+import { textAreaFieldStyles } from './text-area-field.styles';
 
 type I18nKey = string;
 
-export type TextAreaFieldProps = Omit<AriaTextFieldProps, 'children' | 'className'> & {
-  textAreaProps?: Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'maxLength'>;
+export type TextAreaFieldProps = Omit<
+  AriaTextFieldProps,
+  'children' | 'className' | 'value' | 'defaultValue' | 'onChange'
+> & {
+  'aria-label': string;
   errorKey?: I18nKey;
-  value?: string;
-  defaultValue?: string;
-  ariaLabel: string;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
+  textAreaProps?: Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'maxLength'>;
+  value: string;
 };
 
 export function TextAreaField(props: TextAreaFieldProps) {
   const {
+    'aria-label': ariaLabel,
     errorKey,
-    value,
-    defaultValue = '',
     onChange,
     textAreaProps,
-    labelKey,
-    ariaLabel
+    value,
+    maxLength,
     ...textFieldProps
   } = props;
+
   const t = useTranslations();
-
-  const isControlled = value !== undefined;
-  const [internalValue, setInternalValue] = useState(defaultValue);
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
-
-  const currentValue = isControlled ? value : internalValue;
-
-  const handleChange = (nextValue: string) => {
-    if (!isControlled) setInternalValue(nextValue);
-    onChange?.(nextValue);
-  };
 
   return (
     <AriaTextField
       {...textFieldProps}
-      value={currentValue}
-      onChange={handleChange}
-      className={textAreaFieldStyles.root()}
+      aria-label={ariaLabel}
+      value={value}
+      onChange={onChange}
+      maxLength={maxLength}
       isInvalid={isInvalid}
-      ariaLabel={ariaLabel}
+      className={textAreaFieldStyles.root()}
     >
       <TextArea {...textAreaProps} />
 
       {maxLength !== undefined && (
-        <div className={textAreaFieldStyles.counter()}>
-          {currentValue.length}/{maxLength}
-        </div>
+        <Text slot="description" className={textAreaFieldStyles.counter()}>
+          {value.length}/{maxLength}
+        </Text>
       )}
 
       {errorKey && <FieldError className={textAreaFieldStyles.error()}>{t(errorKey)}</FieldError>}
