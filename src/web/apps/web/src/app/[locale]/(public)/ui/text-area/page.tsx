@@ -10,7 +10,7 @@ export default function TextAreaPage() {
   return (
     <Stack className="p-6 w-[400px]">
       <Text as="h1" variant="heading-lg">
-        Text field component
+        Text area component
       </Text>
       <TextAreaField value={value} onChange={handleChange} aria-label="message" maxLength={300} />
     </Stack>

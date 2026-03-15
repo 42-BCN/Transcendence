@@ -1,17 +1,7 @@
-import { cn } from '@/lib/styles/cn';
-
-const root = 'grid gap-1.5 relative';
-const label = 'text-body-sm';
-const description = 'text-body-xs';
+const root = 'grid gap-1.5';
 const error = 'text-body-xs text-destructive';
-const counter = 'pointer-events-none absolute bottom-2 right-3 text-caption ';
+const counter =
+  'pointer-events-none text-caption col-start-1 row-start-1 self-end justify-self-end p-2';
+const input = 'col-start-1 row-start-1';
 
-const textAreaFieldRACStates = ['data-[pressed]:opacity-50 first-letter:uppercase'];
-
-export const textAreaFieldStyles = {
-  root: () => cn(root),
-  label: () => cn(label, textAreaFieldRACStates),
-  description: () => cn(description),
-  error: () => cn(error),
-  counter: () => cn(counter),
-};
+export const textAreaFieldStyles = { root, input, error, counter };

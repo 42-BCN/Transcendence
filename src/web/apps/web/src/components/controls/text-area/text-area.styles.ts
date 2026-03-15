@@ -16,6 +16,6 @@ const textAreaRacStates = [
   'data-[hovered]:border-black',
 ];
 
-export function textAreaStyles() {
-  return cn(textAreaBase, textAreaRacStates);
+export function textAreaStyles(className: string) {
+  return cn(textAreaBase, textAreaRacStates, className);
 }

@@ -41,17 +41,25 @@ export function TextAreaField(props: TextAreaFieldProps) {
       onChange={onChange}
       maxLength={maxLength}
       isInvalid={isInvalid}
-      className={textAreaFieldStyles.root()}
+      className={textAreaFieldStyles.root}
     >
-      <TextArea {...textAreaProps} />
+      <TextArea {...textAreaProps} className={textAreaFieldStyles.input} />
 
       {maxLength !== undefined && (
-        <Text slot="description" className={textAreaFieldStyles.counter()}>
-          {value.length}/{maxLength}
+        <Text
+          slot="description"
+          className={textAreaFieldStyles.counter}
+          aria-live="polite"
+          aria-label={t('TextAreaField.counter', {
+            current: value.length,
+            max: maxLength,
+          })}
+        >
+          {`${value.length}/${maxLength}`}
         </Text>
       )}
 
-      {errorKey && <FieldError className={textAreaFieldStyles.error()}>{t(errorKey)}</FieldError>}
+      {errorKey && <FieldError className={textAreaFieldStyles.error}>{t(errorKey)}</FieldError>}
     </AriaTextField>
   );
 }

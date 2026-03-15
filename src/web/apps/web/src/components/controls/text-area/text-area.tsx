@@ -6,10 +6,9 @@ import type { TextAreaProps as AriaTextAreaProps } from 'react-aria-components';
 import { TextArea as AriaTextArea } from 'react-aria-components';
 import { textAreaStyles } from './text-area.styles';
 
-export type TextAreaProps = Omit<
-  AriaTextAreaProps,
-  'className' | 'size' | 'style' | 'onKeyDown' | 'onInput'
->;
+export type TextAreaProps = Omit<AriaTextAreaProps, 'size' | 'style' | 'onKeyDown' | 'onInput'> & {
+  className: string;
+};
 
 const handleInput: InputEventHandler<HTMLTextAreaElement> = (e) => {
   const el = e.currentTarget;
@@ -19,5 +18,7 @@ const handleInput: InputEventHandler<HTMLTextAreaElement> = (e) => {
 };
 
 export function TextArea({ ...props }: TextAreaProps) {
-  return <AriaTextArea {...props} onInput={handleInput} className={textAreaStyles()} />;
+  return (
+    <AriaTextArea {...props} onInput={handleInput} className={textAreaStyles(props.className)} />
+  );
 }

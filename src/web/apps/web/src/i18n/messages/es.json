@@ -27,6 +27,7 @@
     "en": "EN",
     "es": "ES"
   },
+  "TextAreaField": { "counter": "{current} de {max} caracteres" },
   "auth": {
     "common": {
       "appTitle": "Autenticación",
