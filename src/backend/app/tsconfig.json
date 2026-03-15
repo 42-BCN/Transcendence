@@ -11,6 +11,7 @@
       "@contracts/*": ["src/contracts/api/*"],
       "@shared": ["src/shared/index.ts"],
       "@shared/*": ["src/shared/*"],
+      "@utils/*": ["src/shared/utils/*"],
       "@/*": ["src/*"]
     },
 

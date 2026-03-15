@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 
+import { recoverLimiter } from "@shared/utils/rate-limiter";
 import { validateBody, validateParams } from "@shared/validation.middleware";
 import {
   LoginReqSchema,
@@ -24,6 +25,8 @@ import {
 
 export const authRouter = Router();
 
+authRouter.use("/recover", recoverLimiter);
+
 authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
 authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
 authRouter.get(
@@ -32,6 +35,10 @@ authRouter.get(
 );
 authRouter.get("/callback/google", getGoogleCallback);
 authRouter.post("/logout", postLogout);
+
+/* *
+ * Recover endpoints
+ */
 authRouter.post("/recover", validateBody(RecoverReqSchema), postRecovery);
 authRouter.get(
   "/recover/:token",
@@ -40,4 +47,7 @@ authRouter.get(
 );
 authRouter.put("/recover", validateBody(RecoverUpdateSchema), putRecovery);
 
+/* *
+ * DELETE testing porpoise only (purpose)
+ */
 authRouter.get("/admin/:user", validateParams(FullUserSchema), getUser);

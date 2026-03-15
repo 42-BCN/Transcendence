@@ -1,6 +1,8 @@
 import express from "express";
 import session from "express-session";
 import passport from "passport";
+import { limiter } from "@utils/rate-limiter";
+
 import { errorMiddleware } from "@shared";
 
 import { usersRouter } from "./users/users.routes";
@@ -16,6 +18,8 @@ const app = express();
 app.set("trust proxy", 1);
 
 app.use(express.json());
+
+app.use(limiter);
 
 app.use(
   session({

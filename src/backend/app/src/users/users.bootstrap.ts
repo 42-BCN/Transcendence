@@ -23,7 +23,7 @@ export async function bootstrapUsers(): Promise<void> {
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    recover_token TEXT DEFAULT NULL,
+    recover_token TEXT UNIQUE DEFAULT NULL,
     recover_token_expiration TIMESTAMPTZ DEFAULT NULL,
     recover_attempts INT DEFAULT 0,
 
