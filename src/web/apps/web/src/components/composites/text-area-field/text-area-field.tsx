@@ -15,7 +15,7 @@ export type TextAreaFieldProps = Omit<
   'aria-label': string;
   errorKey?: I18nKey;
   onChange: (value: string) => void;
-  textAreaProps?: Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'maxLength'>;
+  textAreaProps?: Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'className'>;
   value: string;
 };
 

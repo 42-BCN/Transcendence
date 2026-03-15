@@ -7,7 +7,7 @@ import { TextArea as AriaTextArea } from 'react-aria-components';
 import { textAreaStyles } from './text-area.styles';
 
 export type TextAreaProps = Omit<AriaTextAreaProps, 'size' | 'style' | 'onKeyDown' | 'onInput'> & {
-  className: string;
+  className?: string;
 };
 
 const handleInput: InputEventHandler<HTMLTextAreaElement> = (e) => {
@@ -17,7 +17,7 @@ const handleInput: InputEventHandler<HTMLTextAreaElement> = (e) => {
   el.style.height = `${el.scrollHeight + 4}px`;
 };
 
-export function TextArea({ ...props }: TextAreaProps) {
+export function TextArea(props: TextAreaProps) {
   return (
     <AriaTextArea {...props} onInput={handleInput} className={textAreaStyles(props.className)} />
   );
