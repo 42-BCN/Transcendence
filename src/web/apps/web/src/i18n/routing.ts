@@ -24,6 +24,10 @@ export const routing = defineRouting({
       en: '/login',
       es: '/iniciar-sesion',
     },
+    '/signup/success': {
+      en: '/signup/success',
+      es: '/registro/exito',
+    },
     '/ui': '/ui',
     '/robots': '/robots',
     '/profile': {

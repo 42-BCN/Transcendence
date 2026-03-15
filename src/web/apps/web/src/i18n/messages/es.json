@@ -66,7 +66,19 @@
       "submit": "Crear cuenta",
       "haveAccount": "¿Ya tienes cuenta?",
       "goToLogin": "Iniciar sesión",
-      "withGoogle": "Crear con Google"
+      "withGoogle": "Crear con Google",
+      "success": {
+        "title": "Verifica tu email",
+        "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
+        "check": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
+        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
+        "resend": "Volver a enviar",
+        "resending": "Enviando...",
+        "resent": "¡Enviado!",
+        "resendSuccess": "✓ Email enviado. Espera para volver a intentarlo.",
+        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo.",
+        "backToLogin": "¿Ya confirmaste? Iniciar sesión"
+      }
     },
     "status": {
       "success": "Correcto",
