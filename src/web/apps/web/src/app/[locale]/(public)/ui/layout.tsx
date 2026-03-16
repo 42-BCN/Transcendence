@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 
-import { Columns12Overlay, Grid4Overlay, Grid8Overlay } from '@components/primitives/base-grid';
+// import { Columns12Overlay, Grid4Overlay, Grid8Overlay } from '@components/primitives/base-grid';
 
 export default function UiLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <Grid4Overlay />
+      {/* <Grid4Overlay />
       <Grid8Overlay />
-      <Columns12Overlay />
+      <Columns12Overlay /> */}
       {children}
     </>
   );
