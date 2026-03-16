@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Atkinson_Hyperlegible_Next, JetBrains_Mono } from 'next/font/google';
+import { Montserrat, JetBrains_Mono } from 'next/font/google';
 import { getLocale } from 'next-intl/server';
 import './globals.css';
 
@@ -8,7 +8,7 @@ const mono = JetBrains_Mono({
   variable: '--font-mono',
 });
 
-export const primary = Atkinson_Hyperlegible_Next({
+export const primary = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-primary',
