@@ -61,14 +61,14 @@
       "forgotPassword": "¿Has olvidado la contraseña?",
       "noAccount": "¿No tienes cuenta?",
       "goToSignup": "Crear una",
-      "withGoogle": "Entrar con Google"
+      "withGoogle": "Continuar con Google"
     },
     "createAccount": {
       "title": "Crear cuenta",
       "submit": "Crear cuenta",
       "haveAccount": "¿Ya tienes cuenta?",
       "goToLogin": "Iniciar sesión",
-      "withGoogle": "Crear con Google",
+      "withGoogle": "Continuar con Google",
       "success": {
         "title": "Verifica tu email",
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",

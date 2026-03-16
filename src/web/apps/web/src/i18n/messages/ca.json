@@ -61,14 +61,14 @@
       "forgotPassword": "Has oblidat la contrasenya?",
       "noAccount": "No tens compte?",
       "goToSignup": "Crear-ne un",
-      "withGoogle": "Entrar amb Google"
+      "withGoogle": "Continuar amb Google"
     },
     "createAccount": {
       "title": "Crear compte",
       "submit": "Crear compte",
       "haveAccount": "Ja tens compte?",
       "goToLogin": "Iniciar sessió",
-      "withGoogle": "Crear amb Google",
+      "withGoogle": "Continuar amb Google",
       "success": {
         "title": "Verifica el teu email",
         "sent": "T'hem enviat un correu per confirmar el teu compte.",
