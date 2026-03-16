@@ -129,6 +129,14 @@ export async function putRecovery(
   await Service.updateRecoverAccount(req.body);
   res.status(200).json({ ok: true, data: null });
 }
+export async function postRecResend(
+  req: Request<unknown, unknown, RecoverReq>,
+  res: Response,
+): Promise<void> {
+  const identifier = req.body.identifier;
+  await Service.resendRecMail(identifier); //Maybe should't wait till it finishes
+  res.status(200).json({ ok: true, data: `Done` /* TESTING DEV null*/ });
+}
 
 //DELETE THIS
 export async function getUser(req: Request<FullUser>, res: Response) {

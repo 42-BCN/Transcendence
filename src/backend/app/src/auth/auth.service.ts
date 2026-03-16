@@ -143,6 +143,24 @@ export async function updateRecoverAccount(input: {
   const passwordHash = await bcrypt.hash(input.password, 12); //Is encrypted enough?
   await Repo.updatePasswordRecover(user.id, passwordHash);
 }
+export async function resendRecMail(
+  identifier: string,
+): Promise<string | null> {
+  const key = identifyIntentifier(identifier);
+  const user = await Repo.findUserForRecovery(key, identifier);
+  if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
+  if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
+  //if(user.recover_token) throw new ApiError("already in proces or somthign");
+  if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
+    throw new ApiError("AUTH_TOO_MANY_REQUEST");
+  if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
+  if (user.recover_token_expiration.getTime() < Date.now())
+    throw new ApiError("AUTH_TOKEN_EXPIRED");
+
+  //Enviar email - tal vez esto deberia estar en el controlador
+  //await sendRecoveryMail(user.email, recoverToken);
+  return user.recover_token;
+}
 
 //DELETE THIS
 export async function readUser(user: string): Promise<AuthUserRow | null> {

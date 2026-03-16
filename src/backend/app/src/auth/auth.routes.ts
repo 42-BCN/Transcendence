@@ -21,6 +21,7 @@ import {
   putRecovery,
   getRecovery,
   getUser,
+  postRecResend,
 } from "./auth.controller";
 
 export const authRouter = Router();
@@ -46,6 +47,11 @@ authRouter.get(
   getRecovery,
 );
 authRouter.put("/recover", validateBody(RecoverUpdateSchema), putRecovery);
+authRouter.post(
+  "/recover/resend",
+  validateBody(RecoverReqSchema),
+  postRecResend,
+);
 
 /* *
  * DELETE testing porpoise only (purpose)
