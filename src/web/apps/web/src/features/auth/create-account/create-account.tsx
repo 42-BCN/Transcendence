@@ -20,11 +20,7 @@ export function CreateAccount() {
         <Text as="span" variant="caption">
           {t('createAccount.haveAccount')}
         </Text>
-        <InternalLink href={'/login'}>
-          <Text as="span" variant="caption">
-            {t('createAccount.goToLogin')}
-          </Text>
-        </InternalLink>
+        <InternalLink href={'/login'}>{t('createAccount.goToLogin')}</InternalLink>
       </Stack>
     </Stack>
   );

@@ -62,11 +62,7 @@ export function LoginForm() {
           {...fieldsBase.password}
         />
         <div className="flex row gap-2  justify-center">
-          <InternalLink href={'/recover'}>
-            <Text as="span" variant="caption">
-              {t('login.forgotPassword')}
-            </Text>
-          </InternalLink>
+          <InternalLink href={'/recover'}>{t('login.forgotPassword')}</InternalLink>
         </div>
         <Button type="submit">{t('login.submit')}</Button>
       </Form>
