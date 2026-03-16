@@ -1,10 +1,10 @@
 # Frontend documentation
 
 ## 1. Project structure 
-*root at: /containers/web*
+*root at: /containers/frontend*
 
 - apps | *where fe apps live*
-	- web | *frontend web with next.js*
+	- frontend | *frontend web with next.js*
 		- .next | *nextjs build output. git ignore*
 		- app | section 2.1
 		- components | section 2.2
@@ -51,7 +51,7 @@
 README.md | *this documentation*  
 .dockerignore | *files docker should ignore when working on the directory*  
 
-# 2. section apps/web/
+# 2. section web/
 ## 2.1. ./app
 Is the routing and composition layer.
 It wires features together but owns no business logic itself.
