@@ -28,11 +28,8 @@ type TextProps<T extends TextTag> = TextOwnProps<T> &
 export function Text<T extends TextTag = 'span'>(props: TextProps<T>) {
   const { as, variant = 'body', color = 'primary', ...restProps } = props;
   const Component = as || 'span';
-
-  return (
-    <Component
-      {...(restProps as ComponentPropsWithoutRef<T>)}
-      className={textStyles(variant, color)}
-    />
-  );
+  const className = [textStyles(variant, color), (restProps as { className?: string }).className]
+    .filter(Boolean)
+    .join(' ');
+  return <Component {...(restProps as ComponentPropsWithoutRef<T>)} className={className} />;
 }
