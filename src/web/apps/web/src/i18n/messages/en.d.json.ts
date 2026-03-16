@@ -22,12 +22,14 @@ declare const messages: {
   "LocaleSwitcher": {
     "ariaLabel": "Language",
     "en": "EN",
-    "es": "ES"
+    "es": "ES",
+    "ca": "CA"
   },
 
   "auth": {
     "common": {
       "appTitle": "Auth",
+      "or": "OR",
       "identifier": {
         "label": "Email or username",
         "placeholder": "name@example.com or username",
@@ -57,14 +59,14 @@ declare const messages: {
       "forgotPassword": "Forgot password?",
       "noAccount": "Don’t have an account?",
       "goToSignup": "Create one",
-      "withGoogle": "Log in with Google"
+      "withGoogle": "Continue with Google"
     },
     "createAccount": {
       "title": "Create account",
       "submit": "Create account",
       "haveAccount": "Already have an account?",
       "goToLogin": "Log in",
-      "withGoogle": "Create account with Google",
+      "withGoogle": "Continue with Google",
       "success": {
         "title": "Check your email",
         "sent": "We've sent you an email to confirm your account.",

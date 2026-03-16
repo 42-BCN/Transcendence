@@ -5,7 +5,7 @@ import { useRouter, usePathname } from '@/i18n/navigation';
 import { SegmentedControlGroup } from '@/components/composites/segmented-control-group';
 import type { Key } from 'react-aria-components';
 
-type LocaleKey = 'en' | 'es';
+type LocaleKey = 'en' | 'es' | 'ca';
 
 export function LocaleSwitcher() {
   const locale = useLocale() as LocaleKey;
@@ -16,13 +16,14 @@ export function LocaleSwitcher() {
   const changeLocaleHandler = (key: Key) => {
     const next = String(key) as LocaleKey;
     if (next === locale) return;
-    if (next !== 'en' && next !== 'es') return;
+    if (next !== 'en' && next !== 'es' && next !== 'ca') return;
     router.replace(pathname, { locale: next });
   };
 
   const options = [
     { id: 'en', label: t('en') },
     { id: 'es', label: t('es') },
+    { id: 'ca', label: t('ca') },
   ] as const;
   return (
     <SegmentedControlGroup

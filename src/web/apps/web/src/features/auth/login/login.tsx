@@ -14,7 +14,9 @@ export function Login() {
         {t('login.title')}
       </Text>
       <LoginForm />
-      <Text variant="caption">OR</Text>
+      <div className="flex items-center gap-4 before:h-px before:flex-1 before:bg-slate-300 after:h-px after:flex-1 after:bg-slate-300">
+        <Text variant="caption">{t('common.or')}</Text>
+      </div>
       <Oauth>{t('login.withGoogle')}</Oauth>
       <Stack direction="horizontal" justify="center" align="baseline" gap="sm">
         <Text as="span" variant="caption">
