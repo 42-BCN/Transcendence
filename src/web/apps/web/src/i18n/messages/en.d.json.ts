@@ -22,12 +22,14 @@ declare const messages: {
   "LocaleSwitcher": {
     "ariaLabel": "Language",
     "en": "EN",
-    "es": "ES"
+    "es": "ES",
+    "ca": "CA"
   },
 
   "auth": {
     "common": {
       "appTitle": "Auth",
+      "or": "OR",
       "identifier": {
         "label": "Email or username",
         "placeholder": "name@example.com or username",

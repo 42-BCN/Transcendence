@@ -25,11 +25,13 @@
   "LocaleSwitcher": {
     "ariaLabel": "Idioma",
     "en": "EN",
-    "es": "ES"
+    "es": "ES",
+    "ca": "CA"
   },
   "auth": {
     "common": {
       "appTitle": "Autenticación",
+      "or": "O",
       "identifier": {
         "label": "Correo o nombre de usuario",
         "placeholder": "nombre@ejemplo.com o usuario",
@@ -59,7 +61,7 @@
       "forgotPassword": "¿Has olvidado la contraseña?",
       "noAccount": "¿No tienes cuenta?",
       "goToSignup": "Crear una",
-      "withGoogle": "Ingresa con Google"
+      "withGoogle": "Entrar con Google"
     },
     "createAccount": {
       "title": "Crear cuenta",
