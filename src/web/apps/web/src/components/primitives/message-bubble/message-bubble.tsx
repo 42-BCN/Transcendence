@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react';
-import { messageBubbleStyles } from './message-bubble.styles';
+import { messageBubbleStyles, type messageVariantType } from './message-bubble.styles';
 
 export type MessageBubbleProps = {
   children?: ReactNode;
+  variant?: messageVariantType;
 };
 
-export function MessageBubble({ children }: MessageBubbleProps) {
-  return <div className={messageBubbleStyles}>{children}</div>;
+export function MessageBubble({ children, variant }: MessageBubbleProps) {
+  return <div className={messageBubbleStyles({ variant })}>{children}</div>;
 }
