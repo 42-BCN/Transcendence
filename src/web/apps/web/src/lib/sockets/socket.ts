@@ -1,5 +1,22 @@
-import { io } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 
-export const socket = io('http://localhost:3100', {
-  autoConnect: false,
-});
+export type Robot = {
+  id: string;
+  position: [number, number, number];
+  color: string;
+};
+
+type ServerToClientEvents = {
+  robots: (robots: Robot[]) => void;
+};
+
+type ClientToServerEvents = {
+  moveTo: (target: [number, number, number]) => void;
+};
+
+export const robotsSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+  'http://localhost:3100/robots',
+  {
+    autoConnect: false,
+  },
+);
