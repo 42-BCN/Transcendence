@@ -177,7 +177,6 @@
   .text-body-sm,
   .text-body-xs,
   .text-caption {
-    text-box-trim: trim-both;
     text-box-edge: cap alphabetic;
   }
 }
