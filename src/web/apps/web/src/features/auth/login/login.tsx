@@ -19,12 +19,8 @@ export function Login() {
       <Stack direction="horizontal" justify="center" align="baseline" gap="sm">
         <Text as="span" variant="caption">
           {t('login.noAccount')}
-        </Text>{' '}
-        <InternalLink href={'/signup'}>
-          <Text as="span" variant="caption">
-            {t('login.goToSignup')}
-          </Text>
-        </InternalLink>
+        </Text>
+        <InternalLink href={'/signup'}>{t('login.goToSignup')}</InternalLink>
       </Stack>
     </Stack>
   );
