@@ -1,7 +1,7 @@
 # Frontend documentation
 
 ## 1. Project structure 
-*root at: /src/web*
+*root at: /containers/web*
 
 - apps | *where fe apps live*
 	- web | *frontend web with next.js*

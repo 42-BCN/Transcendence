@@ -1,4 +1,4 @@
-COMPOSE = docker compose -f src/docker-compose.yml
+COMPOSE = docker compose -f containers/docker-compose.yml
 
 SETUP_SCRIPT = scripts/env/setup-env.sh
 

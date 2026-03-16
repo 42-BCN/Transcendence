@@ -7,10 +7,10 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CERT_DIR="$ROOT_DIR/certs"
 CERT_SCRIPT="$ROOT_DIR/scripts/certs/dev-certs.sh"
 
-NGINX_ENV="$ROOT_DIR/src/nginx/.env.development"
-BACKEND_ENV="$ROOT_DIR/src/backend/docker/.env.development"
-WEB_ENV="$ROOT_DIR/src/web/docker/.env.development"
-DB_ENV="$ROOT_DIR/src/database/docker/.env.development"
+NGINX_ENV="$ROOT_DIR/containers/nginx/.env.development"
+BACKEND_ENV="$ROOT_DIR/containers/backend/docker/.env.development"
+WEB_ENV="$ROOT_DIR/containers/web/docker/.env.development"
+DB_ENV="$ROOT_DIR/containers/database/docker/.env.development"
 
 # -----------------------------
 # Helpers
