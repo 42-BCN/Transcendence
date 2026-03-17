@@ -1,9 +1,11 @@
 import { defineRouting } from 'next-intl/routing';
 import { envPublic } from '@/lib/config/env.public';
 
+export const LOCALE_COOKIE_MAX_AGE = 200 * 24 * 60 * 60;
+
 const localeCookie = {
   name: envPublic.localeCookieName,
-  maxAge: 200 * 24 * 60 * 60,
+  maxAge: LOCALE_COOKIE_MAX_AGE,
 };
 
 export const routing = defineRouting({
