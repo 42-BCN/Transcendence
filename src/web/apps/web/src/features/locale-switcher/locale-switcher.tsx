@@ -17,6 +17,7 @@ export function LocaleSwitcher() {
     const next = String(key) as LocaleKey;
     if (next === locale) return;
     if (next !== 'en' && next !== 'es' && next !== 'ca') return;
+    document.cookie = `locale=${next};path=/;max-age=${200 * 24 * 60 * 60}`;
     router.replace(pathname, { locale: next });
   };
 
