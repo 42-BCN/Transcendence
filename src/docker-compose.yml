@@ -28,7 +28,7 @@ services:
       - ./socket/app:/app
       - node_modules_socket:/app/node_modules
       - ./contracts/sockets:/app/src/contracts
-      - ./contracts/api/http:/app/src/contracts/http
+      - ./contracts/api/http/validation.ts:/app/src/contracts/http/vaidation.ts:ro
     networks:
       - edge
 

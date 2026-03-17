@@ -76,7 +76,7 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
 
-      '@typescript-eslint/no-unused-expressions': 'error',
+      '@typescript-eslint/no-unused-expressions': ['error', { allowTernary: true }],
 
       /* ----------------------- Complexity & readability ------------------------ */
       'no-unused-expressions': 'off',

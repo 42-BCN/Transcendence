@@ -25,7 +25,7 @@ socket.on('connect_error', (err) => {
 });
 
 socket.on('chat:error', (err) => {
-  console.error('chat:error:', err.code, err.message);
+  console.error('chat:error:', err.code, err.details);
 });
 
 socket.on('chat:system', (msg) => {

@@ -10,7 +10,7 @@ import type {
 import type { ValidationCode } from '@contracts/http/validation';
 
 type ClientToServerEvents = {
-  'chat:send': (payload: ChatSend) => void;
+  'chat:send': (payload: unknown) => void;
 };
 
 type ServerToClientEvents = {
@@ -42,12 +42,12 @@ const chatMessage: (username: string, text: string) => ChatMessage = (username, 
 });
 
 export function registerChatSocket(nsp: Namespace<ClientToServerEvents, ServerToClientEvents>) {
-  nsp.on('connection', (socket: Socket) => {
+  nsp.on('connection', (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
     console.log('[Chat Socket] User connected:', socket.id);
     const username = `User-${socket.id.slice(0, 5)}`;
     socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', username));
 
-    socket.on('chat:send', (payload: unknown) => {
+    socket.on('chat:send', (payload) => {
       const res = ChatSendSchema.safeParse(payload);
       !res.success
         ? socket.emit('chat:error', errorMessage(res.error))

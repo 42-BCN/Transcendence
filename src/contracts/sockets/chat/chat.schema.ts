@@ -7,8 +7,8 @@ export const ChatSendSchema = z.object({
   text: z
     .string()
     .trim()
-    .min(1, VALIDATION.REQUIRED)
-    .max(300, VALIDATION.FIELD_TOO_LONG)
+    .min(1, { message: VALIDATION.REQUIRED })
+    .max(300, { message: VALIDATION.FIELD_TOO_LONG })
     .transform((val: string) => val.trim()),
 });
 
