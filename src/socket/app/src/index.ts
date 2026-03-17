@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { registerSockets } from './sockets/register-sockets';
+
+import { registerSockets } from './sockets/socket.register';
 
 const httpServer = createServer();
 
