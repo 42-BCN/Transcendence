@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 export default function middleware(request: NextRequest) {
   const handleI18nRouting = createMiddleware(routing);
-  let response = handleI18nRouting(request);
+  const response = handleI18nRouting(request);
 
   const url = request.nextUrl;
   const [_, maybeLocale, ...rest] = url.pathname.split('/');

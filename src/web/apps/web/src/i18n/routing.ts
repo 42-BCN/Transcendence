@@ -1,13 +1,12 @@
 import { defineRouting } from 'next-intl/routing';
 import { envPublic } from '@/lib/config/env.public';
 
-const localeCookie =
-  envPublic.localeCookieEnabled === false
-    ? false
-    : {
-        name: envPublic.localeCookieName,
-        maxAge: 200 * 24 * 60 * 60,
-      };
+import { LOCALE_COOKIE_MAX_AGE } from './constants';
+
+const localeCookie = {
+  name: envPublic.localeCookieName,
+  maxAge: LOCALE_COOKIE_MAX_AGE,
+};
 
 export const routing = defineRouting({
   locales: ['en', 'es', 'ca'],

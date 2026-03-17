@@ -5,6 +5,9 @@ import { useRouter, usePathname } from '@/i18n/navigation';
 import { SegmentedControlGroup } from '@/components/composites/segmented-control-group';
 import type { Key } from 'react-aria-components';
 
+import { envPublic } from '@/lib/config/env.public';
+import { LOCALE_COOKIE_MAX_AGE } from '@/i18n/constants';
+
 type LocaleKey = 'en' | 'es' | 'ca';
 
 export function LocaleSwitcher() {
@@ -17,6 +20,7 @@ export function LocaleSwitcher() {
     const next = String(key) as LocaleKey;
     if (next === locale) return;
     if (next !== 'en' && next !== 'es' && next !== 'ca') return;
+    document.cookie = `${envPublic.localeCookieName}=${next};path=/;max-age=${LOCALE_COOKIE_MAX_AGE}`;
     router.replace(pathname, { locale: next });
   };
 
