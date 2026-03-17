@@ -1,5 +1,7 @@
 import { io, type Socket } from 'socket.io-client';
 
+// TODO socket url as env variable
+
 export type Robot = {
   id: string;
   position: [number, number, number];
