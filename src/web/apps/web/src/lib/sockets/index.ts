@@ -1,2 +1,2 @@
-export { SocketManager } from './socket-manager';
-export { socket } from './socket';
+export { RobotsSocketManager } from './socket-manager';
+export { robotsSocket } from './socket';

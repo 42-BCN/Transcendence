@@ -1,43 +1,37 @@
 import { useEffect } from 'react';
-import { socket } from './socket';
-
-type Character = {
-  id: string;
-  position: [number, number, number];
-  color: string;
-};
+import { robotsSocket, type Robot } from './socket';
 
 type Props = {
-  onCharacters: (chars: Character[]) => void;
+  onRobots: (robots: Robot[]) => void;
 };
 
-export const SocketManager = ({ onCharacters }: Props) => {
+export const RobotsSocketManager = ({ onRobots }: Props) => {
   useEffect(() => {
     const handleConnect = () => {
-      console.log('Connected to Socket.IO server', socket.id);
+      console.log('Connected to robots socket server', robotsSocket.id);
     };
 
-    const handleCharacters = (data: Character[]) => {
-      console.log('Updated characters:', data);
-      onCharacters(data);
+    const handleRobots = (robots: Robot[]) => {
+      onRobots(robots);
     };
+
     const handleDisconnect = () => {
-      console.log('Disconnected from Socket.IO server');
+      console.log('Disconnected from robots socket server');
     };
 
-    socket.on('connect', handleConnect);
-    socket.on('disconnect', handleDisconnect);
-    socket.on('characters', handleCharacters);
+    robotsSocket.on('connect', handleConnect);
+    robotsSocket.on('disconnect', handleDisconnect);
+    robotsSocket.on('robots', handleRobots);
 
-    socket.connect();
+    robotsSocket.connect();
 
     return () => {
-      socket.off('connect', handleConnect);
-      socket.off('disconnect', handleDisconnect);
-      socket.off('characters', handleCharacters);
-      socket.disconnect();
+      robotsSocket.off('connect', handleConnect);
+      robotsSocket.off('disconnect', handleDisconnect);
+      robotsSocket.off('robots', handleRobots);
+      robotsSocket.disconnect();
     };
-  }, []);
+  }, [onRobots]);
 
   return null;
 };

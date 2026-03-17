@@ -27,6 +27,7 @@ services:
     volumes:
       - ./socket/app:/app
       - node_modules_socket:/app/node_modules
+      - ./contracts:/app/src/contracts
     networks:
       - edge
 
