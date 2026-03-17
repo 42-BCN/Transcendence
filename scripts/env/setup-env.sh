@@ -9,7 +9,7 @@ CERT_SCRIPT="$ROOT_DIR/scripts/certs/dev-certs.sh"
 
 NGINX_ENV="$ROOT_DIR/containers/nginx/.env.development"
 BACKEND_ENV="$ROOT_DIR/containers/backend/docker/.env.development"
-WEB_ENV="$ROOT_DIR/containers/web/docker/.env.development"
+FRONTEND_ENV="$ROOT_DIR/containers/frontend/docker/.env.development"
 DB_ENV="$ROOT_DIR/containers/database/docker/.env.development"
 
 # -----------------------------
@@ -125,7 +125,7 @@ fi
 ensure_file "$NGINX_ENV"
 ensure_file "$BACKEND_ENV"
 ensure_file "$DB_ENV"
-ensure_file "$WEB_ENV"
+ensure_file "$FRONTEND_ENV"
 
 echo
 
@@ -262,14 +262,14 @@ echo
 # Frontend env
 # -----------------------------
 
-print_section_if_empty "$WEB_ENV" "Frontend environment"
+print_section_if_empty "$FRONTEND_ENV" "Frontend environment"
 
-set_env_var "$WEB_ENV" "NEXT_PUBLIC_APP_URL" "https://localhost:8443"
-set_env_var "$WEB_ENV" "NEXT_PUBLIC_API_BASE_URL" "/api"
-set_env_var "$WEB_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_ENABLED" "false"
-set_env_var "$WEB_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_NAME" "locale"
-set_env_var "$WEB_ENV" "NODE_ENV" "development"
-set_env_var "$WEB_ENV" "API_BASE_URL" "http://backend:4000"
+set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_APP_URL" "https://localhost:8443"
+set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_API_BASE_URL" "/api"
+set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_ENABLED" "false"
+set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_NAME" "locale"
+set_env_var "$FRONTEND_ENV" "NODE_ENV" "development"
+set_env_var "$FRONTEND_ENV" "API_BASE_URL" "http://backend:4000"
 
 echo
 echo "✅ Environment setup complete."

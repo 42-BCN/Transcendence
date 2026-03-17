@@ -20,11 +20,12 @@ down:
 	$(COMPOSE) down
 
 clean:
-	$(COMPOSE) down
-
-fclean:
 	$(COMPOSE) down -v --remove-orphans
-	docker image prune -f
+
+fclean: clean
+	docker image prune -af
+	docker volume prune -af
+	docker system prune -af --volumes
 
 re: fclean all
 
