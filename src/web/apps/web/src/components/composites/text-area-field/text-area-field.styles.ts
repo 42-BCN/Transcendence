@@ -1,0 +1,7 @@
+const root = 'grid gap-1.5';
+const error = 'text-body-xs text-destructive';
+const counter =
+  'pointer-events-none text-caption col-start-1 row-start-1 self-end justify-self-end p-2';
+const input = 'col-start-1 row-start-1';
+
+export const textAreaFieldStyles = { root, input, error, counter };
