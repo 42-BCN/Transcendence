@@ -146,7 +146,7 @@
   letter-spacing: var(--letter-spacing-tight);
 }
 
-.text-code {
+.font-code {
   font-family: var(--font-family-mono);
   font-weight: var(--font-weight-regular);
   font-size: var(--font-size-sm);
@@ -157,16 +157,16 @@
 /* TODO add firefox safeguard for text-box-trim */
 
 @supports (text-box-trim: trim-both) {
-  .font-code,
-  .text-heading-xl,
-  .text-code,
-  .text-heading-lg,
-  .text-heading-sm,
-  .text-heading-md,
-  .font-code-lg,
-  .font-sm,
-  .font-xl,
-  .font-xl {
+  .font-caption,
+  .font-body-xs,
+  .font-body-sm,
+  .font-body,
+  .font-body-lg,
+  .font-heading-sm,
+  .font-heading-md,
+  .font-heading-lg,
+  .font-heading-xl,
+  .font-code {
     text-box-edge: cap alphabetic;
   }
 }
