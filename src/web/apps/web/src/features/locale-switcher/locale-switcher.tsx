@@ -6,7 +6,7 @@ import { SegmentedControlGroup } from '@/components/composites/segmented-control
 import type { Key } from 'react-aria-components';
 
 import { envPublic } from '@/lib/config/env.public';
-import { LOCALE_COOKIE_MAX_AGE } from '@/i18n/routing';
+import { LOCALE_COOKIE_MAX_AGE } from '@/i18n/constants';
 
 type LocaleKey = 'en' | 'es' | 'ca';
 
