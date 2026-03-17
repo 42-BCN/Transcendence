@@ -11,7 +11,6 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "crypto": "^1.0.1",
     "socket.io": "^4.7.5",
     "zod": "^4.3.6"
   },
