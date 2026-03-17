@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const linkBase = ['text-blue-500 underline text-sm'];
+const linkBase = ['font-caption text-blue-500 underline'];
 
 export function LinkStyles() {
   return cn(linkBase);

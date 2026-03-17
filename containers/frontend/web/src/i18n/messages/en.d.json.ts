@@ -25,7 +25,7 @@ declare const messages: {
     "es": "ES",
     "ca": "CA"
   },
-
+  "TextAreaField": { "counter": "{current} of {max} characters" },
   "auth": {
     "common": {
       "appTitle": "Auth",

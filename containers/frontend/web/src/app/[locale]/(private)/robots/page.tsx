@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SocketManager } from '@/lib/sockets';
+import { RobotsSocketManager } from '@/lib/sockets';
 import { RobotsScene } from '@/features/robots';
 
 type Character = {
@@ -16,7 +16,7 @@ export default function ThreejsPage() {
   return (
     <div className="flex">
       <div className="h-screen flex-grow">
-        <SocketManager onCharacters={setCharacters} />
+        <RobotsSocketManager onRobots={setCharacters} />
         <RobotsScene characters={characters} />
       </div>
     </div>

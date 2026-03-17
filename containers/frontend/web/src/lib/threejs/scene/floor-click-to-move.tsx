@@ -1,4 +1,4 @@
-import { socket } from '@/lib/sockets';
+import { robotsSocket } from '@/lib/sockets';
 
 export function FloorClickToMove({
   mapSize = 10,
@@ -22,7 +22,7 @@ export function FloorClickToMove({
         const snappedX = Math.round(clampedX / cellSize) * cellSize;
         const snappedZ = Math.round(clampedZ / cellSize) * cellSize;
 
-        socket.emit('moveTo', [snappedX, 0, snappedZ]);
+        robotsSocket.emit('moveTo', [snappedX, 0, snappedZ]);
       }}
     >
       <planeGeometry args={[mapSize, mapSize]} />

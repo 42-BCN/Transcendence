@@ -1,7 +1,7 @@
 import { cn } from '@/lib/styles/cn';
 
 const inputBase = [
-  'text-body-sm',
+  'font-body-sm',
   // layout
   'w-full border bg-white px-2 py-2',
   // behavior
