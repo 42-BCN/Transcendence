@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import type { Namespace, Socket } from 'socket.io';
 
-import { ChatSendSchema } from '@contracts/sockets/chat/chat.schema';
+import { ChatSendSchema } from '../contracts/sockets/chat/chat.schema';
 import type {
   ChatError,
   ChatMessage,
   ChatSystemMessage,
-} from '@contracts/sockets/chat/chat.schema';
-import type { ValidationCode } from '@contracts/api/http/validation';
+} from '../contracts/sockets/chat/chat.schema';
+import type { ValidationCode } from '../contracts/api/http/validation';
 
 type ClientToServerEvents = {
   'chat:send': (payload: unknown) => void;

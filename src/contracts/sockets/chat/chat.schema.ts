@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { VALIDATION, type ValidationCode } from '@contracts/api/http/validation';
+import { VALIDATION, type ValidationCode } from '../../api/http/validation';
 
 // ---------------------------------------------------------------- Client to Server Schema start
 export const ChatSendSchema = z.object({
