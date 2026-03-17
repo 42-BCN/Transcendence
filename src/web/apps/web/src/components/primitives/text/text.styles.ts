@@ -29,6 +29,7 @@ const colorVariant = {
   primary: 'text-black',
   info: 'text-blue-400',
   danger: 'text-red-700',
+  success: 'text-green-700',
 };
 
 export type TextColor = keyof typeof colorVariant;
