@@ -22,7 +22,7 @@
 
 Frontend environment variables are defined in:
 
-`./web/docker/.env.development`
+`./frontend/docker/.env.development`
 
 ```sh
 NEXT_PUBLIC_APP_URL=https://localhost:8443
@@ -45,12 +45,12 @@ Secrets (database credentials, API keys, JWT secrets, etc.) must never exist in 
 In `docker-compose.yml`:
 
 ```yaml
-web:
+frontend:
   env_file:
-    - ./web/docker/.env.development
+    - ./frontend/docker/.env.development
 ```
 
-When Docker starts the `web` container, each line in the file is injected as an environment variable into the container process.
+When Docker starts the `frontend` container, each line in the file is injected as an environment variable into the container process.
 
 ---
 
