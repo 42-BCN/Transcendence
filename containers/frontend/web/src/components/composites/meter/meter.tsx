@@ -7,7 +7,7 @@ import { meterStyles } from './meter.styles';
 
 export interface MeterProps extends AriaMeterProps {
   label?: string;
-  className: string;
+  className?: string;
 }
 
 export function Meter({ label, ...props }: MeterProps) {
