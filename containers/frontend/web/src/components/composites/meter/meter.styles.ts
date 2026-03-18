@@ -12,7 +12,6 @@ const barPercentColor = (percentage: number) => {
   if (percentage > 25) return 'bg-orange-500';
   return 'bg-red-600';
 };
-const barPercentWidth = (percentage: number) => `w-[${percentage}%]`;
 
 const progressTextBase = 'font-body-xs';
 const progressTextColor = (percentage: number) =>
