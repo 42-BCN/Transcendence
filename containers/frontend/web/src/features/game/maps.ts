@@ -15,32 +15,32 @@ wwowwwwoww
 wooowwooow
 ooooooooow
 oooooooooo
-oooooooooo
+oooowwoooo
 ooooooooow
 woooooooow
 wwooooooww
-wwwopoowww,
+wwwapmswww,
 
 wwwwwwwwww
-owoowwoowo
+wwoowwooww
+woooooooow
+woooooooow
 oooooooooo
 oooooooooo
-oooooooooo
-oooooooooo
-oooooooooo
+oowwoowwoo
 oooooooooo
 owoooooowo
 wwooooooww,
 
-wwwwwwwwww
-wwooeoooww
+wwwwoowwww
+owooeooowo
+oooooooooo
+oooooooooo
 woooooooow
-woooooooow
-woooooooow
-wwwwwwwwww
-owwoooowwo
-owwoooowwo
-owwwwwwwwo
+wwwoooooww
+oowooooowo
+oowooooowo
+oowwwwwwwo
 oooooooooo
 `
 
@@ -49,12 +49,12 @@ wwwooeooww
 oooooooooo
 oooooooooo
 oooowwooow
-owowpwwooo
+owowawwooo
 ooowwwwoow
 oooowwoooo
 woooowooow
 owooowoooo
-oooopwoooo
+ooooawoooo
 `
 
 export const emptyMap = ``
@@ -111,11 +111,35 @@ export const parseMap = (map: string) => {
               position
             })
             break
+          case 'a':
+            ++info.planum;
+            info.entities.push({
+              id: 'assassin',
+              type: 'assassin',
+              position
+            });
+            break;
           case 'p':
             ++info.planum;
             info.entities.push({
+              id: 'paladin',
+              type: 'paladin',
+              position
+            });
+            break;
+          case 'm':
+            ++info.planum;
+            info.entities.push({
+              id: 'mage',
+              type: 'mage',
+              position
+            });
+            break;
+          case 's':
+            ++info.planum;
+            info.entities.push({
               id: `player_${info.planum}`,
-              type: 'player',
+              type: 'scientist',
               position
             });
             break;

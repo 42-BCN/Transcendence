@@ -6,6 +6,8 @@ import type { parse_entity, pos, tile } from "./maps";
 type player = parse_entity & {
   hp: number;
   maxHp: number;
+  status: string | null;
+  facing: string;
   abilities: string[];
   dice: number[];
 };
@@ -148,7 +150,7 @@ export const useGame = create<gameState>()((set, get) => ({
       if (action.who !== newHistory[i].who)
         continue;
       if (action.type === "abilities") {
-        newHistory[i].abilities = action.abilities;
+        newHistory[i].ability = action.ability;
         return { history: newHistory };
       }
       newHistory.splice(i, 1);
@@ -232,18 +234,51 @@ export const useGame = create<gameState>()((set, get) => ({
       worldMap[obstacle.id] = true;
     });
     entities.forEach((entity) => {
-      if (entity.type === "player") {
-        playEnt[entity.id] = {
-          ...entity, type: "player", hp: 13, maxHp: 13,
-          abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
-          dice: [4, 4, 4, 4, 8]
-        }
+      switch (entity.type) {
+        case "assassin":
+          playEnt[entity.id] = {
+            ...entity, type: "player", hp: 13, maxHp: 13,
+            abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
+            dice: [4, 4, 4, 4, 8],
+            facing: "center",
+            status: null,
+          }
+          break;
+        case "paladin":
+          playEnt[entity.id] = {
+            ...entity, type: "player", hp: 16, maxHp: 16,
+            abilities: ["Thrust", "Defend", "Shield Bash", "Vertical Slash"],
+            dice: [6, 6, 6, 6],
+            facing: "center",
+            status: null,
+          }
+          break;
+        case "mage":
+          playEnt[entity.id] = {
+            ...entity, type: "player", hp: 8, maxHp: 8,
+            abilities: ["Fire Breath", "Azure Comet", "Small Meteor", "Rising Thorns"],
+            dice: [4, 8, 12],
+            facing: "center",
+            status: null,
+          }
+          break;
+        case "scientist":
+          playEnt[entity.id] = {
+            abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],
+            ...entity, type: "player", hp: 10, maxHp: 10,
+            dice: [6, 8, 10],
+            facing: "center",
+            status: null,
+          }
+          break;
       }
       if (entity.type === "enemy") {
         enemEnt[entity.id] = {
           ...entity, type: "enemy", hp: 13, maxHp: 13,
-          abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
-          dice: [4]
+          abilities: ["Claw"],
+          dice: [4],
+          facing: "center",
+          status: null
         }
       }
     });
@@ -572,6 +607,138 @@ export const useGame = create<gameState>()((set, get) => ({
           cd: 0,
           self: false,
         }
+      case "Thrust":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Defend":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Shield Bash":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Vertical Slash":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Fire Breath":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Azure Comet":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Small Meteor":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Rising Thorns":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Stimulant":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Vacuum Flask":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Bombastic Flask":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Oxidation":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
       default:
         return {
           name: "error",
@@ -607,5 +774,6 @@ export const useGame = create<gameState>()((set, get) => ({
         highlights: {},
         selectables: state.paint(pos, type, range, self),
       });
+    console.log(get().selectables);
   },
 }));

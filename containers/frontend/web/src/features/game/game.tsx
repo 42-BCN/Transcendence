@@ -1,12 +1,14 @@
 'use client'
 
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { MapControls, OrthographicCamera } from "@react-three/drei";
 import type { pos, parse_entity, tile } from "./maps";
 import { testMap, parseMap } from "./maps";
 import { useGame } from "./store";
 import { Button } from "@components/controls/button"
+import { Meter } from "@components/composites/meter"
+import { Stack } from "@components/primitives/stack";
 
 const s = 0.975;
 
@@ -18,7 +20,7 @@ function AbButtons() {
   const selectAbility = useGame((state) => state.selectAbility);
 
   return (
-    <div className="absolute bottom-[70px] left-[20%] z-10 flex gap-4">
+    <div className="z-10 bottom-[90px] left-[20%] flex gap-4">
       {ent?.abilities.map(ability => (
         <Button
           key={ability}
@@ -36,7 +38,7 @@ function DiceButtons() {
   const ent = getSel();
   const movDice = useGame((state) => state.movDice);
   return (
-    <div className="absolute bottom-[45px] left-[20%] z-10 flex gap-4">
+    <div className="z-10 bottom-[45px] left-[20%] flex gap-4">
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
@@ -52,11 +54,21 @@ function DiceButtons() {
 function HUD() {
   const typeEnt = useGame((state) => state.typeEnt);
   const canSelect = useGame((state) => state.selectedEnt);
+  const getSel = useGame((state) => state.getSel);
+  const ent = getSel();
+  if (!ent)
+    return;
   return (typeEnt !== 'player' || !canSelect ? null :
-    <>
+    <Stack className="absolute bottom-4 left-4">
       <AbButtons />
+      <div>
+        <Meter label="HP" value={ent.hp - 8}
+          maxValue={ent.maxHp}
+          max={ent.maxHp}
+          formatOptions={{ style: "decimal" }} />
+      </div>
       <DiceButtons />
-    </>
+    </Stack>
   )
 }
 
@@ -65,15 +77,27 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
   const isHighlighted = useGame(state => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id])
+  const [isHovered, setHover] = useState(false);
   let color = 'orange';
   if (isHighlighted && !selectedAb)
     color = 'hotpink';
   else if (isSelectable)
     color = 'red';
-
+  else if (isHovered)
+    color = "lightgray";
+  if (color === 'hotpink' && isHovered)
+    color = 'lightpink';
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHover(true);
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        setHover(false);
+      }}
       onClick={(event) => {
         event.stopPropagation();
         moveTo(id).catch(console.error);
@@ -113,10 +137,27 @@ function Player({ id, pos }: { id: string, pos: pos }) {
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
+  const isTarget = useGame(state => state.selectables[id]);
+  const [isHovered, setHover] = useState(false);
+
+  let color = (selected === id ? "white" : "blue");
+  if (isTarget)
+    color = "red";
+  else if (isHovered)
+    color = "lightblue";
+
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}
       ref={pRef}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHover(true);
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        setHover(false);
+      }}
       onClick={(event) => {
         event.stopPropagation();
         if (canSelect)
@@ -124,59 +165,58 @@ function Player({ id, pos }: { id: string, pos: pos }) {
       }}
     >
       <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={
-        selected === id ? "white" : "blue"} />
-    </mesh>
-  );
-}
-
-function Floor({ id, pos }: { id: string, pos: pos }) {
-  const moveTo = useGame(state => state.moveTo)
-  const isHighlighted = useGame((state) => state.highlights[id]);
-  const selectedAb = useGame((state) => state.selectedAb);
-  const isSelectable = useGame((state) => state.selectables[id])
-  let color = 'green';
-  if (isHighlighted && !selectedAb)
-    color = 'hotpink';
-  else if (isSelectable)
-    color = 'red';
-
-  return (
-    <mesh
-      position={[pos.x, pos.y, pos.z]}
-      receiveShadow
-      onClick={(event) => {
-        event.stopPropagation()
-        moveTo(id).catch(console.error)
-      }
-      }>
-      <boxGeometry args={[s, 0.5 * s, s]} />
       <meshStandardMaterial color={color} />
     </mesh>
   );
 }
 
-function GridFloor() {
-  const tiles = [];
+// function Floor({ id, pos }: { id: string, pos: pos }) {
+//   const moveTo = useGame(state => state.moveTo)
+//   const isHighlighted = useGame((state) => state.highlights[id]);
+//   const selectedAb = useGame((state) => state.selectedAb);
+//   const isSelectable = useGame((state) => state.selectables[id])
+//   let color = 'green';
+//   if (isHighlighted && !selectedAb)
+//     color = 'hotpink';
+//   else if (isSelectable)
+//     color = 'red';
+//
+//   return (
+//     <mesh
+//       position={[pos.x, pos.y, pos.z]}
+//       receiveShadow
+//       onClick={(event) => {
+//         event.stopPropagation()
+//         moveTo(id).catch(console.error)
+//       }
+//       }>
+//       <boxGeometry args={[s, 0.5 * s, s]} />
+//       <meshStandardMaterial color={color} />
+//     </mesh>
+//   );
+// }
 
-  for (let z = 0; z < 10; ++z) {
-    for (let x = 0; x < 10; ++x) {
-      const key = `${x},${-1},${z}`
-      tiles.push(
-        <Floor
-          key={key}
-          id={key}
-          pos={{ x: x - 5, y: -0.25, z: z - 5 }}
-        />
-      );
-    }
-  }
-  return (
-    <group>
-      {tiles}
-    </group>
-  )
-}
+// function GridFloor() {
+//   const tiles = [];
+//
+//   for (let z = 0; z < 10; ++z) {
+//     for (let x = 0; x < 10; ++x) {
+//       const key = `${x},${-1},${z}`
+//       tiles.push(
+//         <Floor
+//           key={key}
+//           id={key}
+//           pos={{ x: x - 5, y: -0.25, z: z - 5 }}
+//         />
+//       );
+//     }
+//   }
+//   return (
+//     <group>
+//       {tiles}
+//     </group>
+//   )
+// }
 
 
 function Scene() {
@@ -243,7 +283,7 @@ function Scene() {
           }}
         />
       ))}
-      <GridFloor />
+      {/* <GridFloor /> */}
     </>
   );
 }
@@ -258,11 +298,11 @@ export function Game() {
   //     overflow: "hidden"
   //   }}
   return (
-    <div className="h-[98vh] w-[95vw] bg-black relative overflow-hidden">
+    <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
+      <HUD />
       <Canvas>
         <Scene />
       </Canvas>
-      <HUD />
     </div>
   )
 }

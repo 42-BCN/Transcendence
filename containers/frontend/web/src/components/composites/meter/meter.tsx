@@ -1,6 +1,5 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
 import { Meter as AriaMeter, type MeterProps as AriaMeterProps } from 'react-aria-components';
 import { Label } from 'react-aria-components';
 import { meterStyles } from './meter.styles';
@@ -8,9 +7,10 @@ import { meterStyles } from './meter.styles';
 export interface MeterProps extends AriaMeterProps {
   label?: string;
   className?: string;
+  max: number;
 }
 
-export function Meter({ label, ...props }: MeterProps) {
+export function Meter({ label, max, ...props }: MeterProps) {
   return (
     <AriaMeter {...props} className={meterStyles.main(props.className)}>
       {({ percentage, valueText }) => (
@@ -18,10 +18,7 @@ export function Meter({ label, ...props }: MeterProps) {
           <div className={meterStyles.header}>
             <Label className={meterStyles.label}>{label}</Label>
             <span className={meterStyles.progressText(percentage)}>
-              {percentage >= 80 && (
-                <AlertTriangle aria-label="Alert" className={meterStyles.triangle} />
-              )}
-              {` ${valueText}`}
+              {` ${valueText}/${max}`}
             </span>
           </div>
           <div className={meterStyles.bar}>
