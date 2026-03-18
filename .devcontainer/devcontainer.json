@@ -1,7 +1,7 @@
 {
   "name": "Next.js Web (Docker)",
-  "dockerComposeFile": ["../src/docker-compose.yml"],
-  "service": "web",
+  "dockerComposeFile": ["../containers/docker-compose.yml"],
+  "service": "frontend",
   "workspaceFolder": "/app",
   "shutdownAction": "stopCompose",
   "customizations": {
@@ -39,11 +39,11 @@
 }
 // {
 //   "name": "Express.js backend (Docker)",
-//   "dockerComposeFile": ["../src/docker-compose.yml"],
+//   "dockerComposeFile": ["../containers/docker-compose.yml"],
 //   "service": "backend",
 //   "workspaceFolder": "/app",
 //   "shutdownAction": "stopCompose",
-//   "runServices": ["api", "db"],
+//   "runServices": ["postgres"],
 //   "customizations": {
 //     "vscode": {
 //       "settings": {
@@ -70,7 +70,7 @@
 // }
 // {
 //   "name": "Sockets (Docker)",
-//   "dockerComposeFile": ["../src/docker-compose.yml"],
+//   "dockerComposeFile": ["../containers/docker-compose.yml"],
 //   "service": "socket",
 //   "workspaceFolder": "/app",
 //   "shutdownAction": "stopCompose",
