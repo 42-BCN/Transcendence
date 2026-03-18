@@ -6,11 +6,11 @@ const sql = String.raw;
 
 export async function reset(): Promise<void> {
   //Delete
-  console.log(`Reseting Database`);
+  console.log(`Resetting Database`);
   const pool = new Pool();
   await pool.query(sql`DROP TABLE IF EXISTS public.users`);
   await pool.end();
   //Bootstrap
   await bootstrap();
-  console.log(`Reseted`);
+  console.log(`Reset`);
 }
