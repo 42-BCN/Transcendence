@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 
-export const sql = String.raw;
+const sql = String.raw;
 
 export async function bootstrap(): Promise<void> {
   console.log(`Bootstraping Database`);

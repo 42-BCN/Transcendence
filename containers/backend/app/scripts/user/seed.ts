@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { faker } from "@faker-js/faker";
 import { createHash } from "crypto";
 
-export const sql = String.raw;
+const sql = String.raw;
 
 function makeUsername(): string {
   const base = faker.internet
