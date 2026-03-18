@@ -82,7 +82,7 @@ shell-api:
 shell-db:
 	$(COMPOSE) exec postgres sh
 
-#---- Database managment ----
+#---- Database management ----
 
 db-bootstrap:
 	$(COMPOSE) exec backend npm run bootstrap
