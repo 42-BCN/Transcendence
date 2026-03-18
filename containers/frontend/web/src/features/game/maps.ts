@@ -71,12 +71,12 @@ export type tile = {
   position: pos
 }
 
-export type entity = {
+export type parse_entity = {
   id: string,
   type: string,
   position: pos
-
 }
+
 
 type info = {
   width: number; //x
@@ -84,7 +84,7 @@ type info = {
   depth: number; //z
   planum: number;
   enenum: number;
-  entities: entity[];
+  entities: parse_entity[];
   tiles: tile[];
 }
 
