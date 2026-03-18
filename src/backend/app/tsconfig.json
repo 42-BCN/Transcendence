@@ -20,10 +20,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": [
-    "src",
-    "scripts/users.bootstrap.ts",
-    "scripts/bootstrap.ts",
-    "scripts/users.seed.ts"
-  ]
+  "include": ["src", "scripts"]
 }

@@ -1,7 +1,10 @@
-import { pool } from "@shared/db.pool";
-import { sql } from "@shared/utils/sql";
+import { Pool } from "pg";
 
-export async function bootstrapUsers(): Promise<void> {
+export const sql = String.raw;
+
+export async function bootstrap(): Promise<void> {
+  console.log(`Bootstraping Database`);
+  const pool = new Pool();
   await pool.query(sql`CREATE extension IF NOT EXISTS "pgcrypto";`);
 
   await pool.query(sql`
@@ -38,4 +41,6 @@ export async function bootstrapUsers(): Promise<void> {
   await pool.query(
     sql`CREATE unique index if not exists users_google_id_uidx on public.users (google_id);`,
   );
+  await pool.end();
+  console.log(`Bootstraped`);
 }

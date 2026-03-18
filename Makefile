@@ -84,8 +84,11 @@ shell-db:
 
 #---- Database managment ----
 
-db-reset:
-	$(COMPOSE) exec backend npm run reset
-
 db-bootstrap:
 	$(COMPOSE) exec backend npm run bootstrap
+
+db-seed:
+	$(COMPOSE) exec backend npm run seed
+
+db-reset:
+	$(COMPOSE) exec backend npm run reset

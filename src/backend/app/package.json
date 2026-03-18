@@ -10,8 +10,9 @@
     "lint": "eslint .",
     "format": "prettier . --write",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "bootstrap": "tsx scripts/index.ts",
-    "reset": "tsx scripts/reset.database.ts"
+    "bootstrap": "tsx scripts/bootstrap.index.ts",
+    "seed": "tsx scripts/seed.index.ts",
+    "reset": "tsx scripts/reset.index.ts"
   },
   "keywords": [],
   "author": "",
