@@ -9,11 +9,13 @@ export type ChatHeaderProps = {
 export function ChatHeader(props: ChatHeaderProps) {
   const { room, participants } = props;
   return (
-    <Stack>
-      <Text as="h2" variant="heading-md">
+    <Stack gap="sm" className="px-4 py-3 rounded-xl rounded-b-none shadow-md">
+      <Text as="h2" variant="heading-sm">
         {room}
       </Text>
-      <Text as="p">{participants.join(', ')}</Text>
+      <Text as="p" variant="body-xs">
+        {participants.join(', ')}
+      </Text>
     </Stack>
   );
 }
