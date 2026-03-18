@@ -1,5 +1,6 @@
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { chatStyles } from './chat.styles';
 
 export type ChatHeaderProps = {
   room: string;
@@ -9,7 +10,7 @@ export type ChatHeaderProps = {
 export function ChatHeader(props: ChatHeaderProps) {
   const { room, participants } = props;
   return (
-    <Stack gap="sm" className="px-4 py-3 rounded-xl rounded-b-none shadow-md">
+    <Stack gap="sm" className={chatStyles.header.wrapper}>
       <Text as="h2" variant="heading-sm">
         {room}
       </Text>
