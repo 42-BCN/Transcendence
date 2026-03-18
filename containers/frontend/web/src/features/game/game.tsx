@@ -12,98 +12,46 @@ const s = 0.975;
 
 // no hace falta reiniciar active,
 // active se destruye cuando ret null
-function AbButton({ name }: { name: string }) {
-  const selectAbility = useGame((state) => state.selectAbility);
-  return (
-    <Button
-      onPress={() => {
-        selectAbility(name)
-      }}>
-      {name}
-    </Button>
-  )
-}
-
 function AbButtons() {
-  const getSel =
-    useGame((state) =>
-      state.getSel);
+  const getSel = useGame((state) => state.getSel);
   const ent = getSel();
-  // const btns = [];
-  // const len = ent.abilities.length;
-  // for (let i = 0; i < len; ++i) { const h = `${20 + i * 10}%`;
-  //   btns.push(
-  //     <div
-  //       key={`${ent.abilities[i]}`}
-  //       style={{
-  //         position: "absolute",
-  //         bottom: "80px",
-  //         left: `${h}`,
-  //         zIndex: 10
-  //       }}>
-  //       <AbButton
-  //         name={`${ent.abilities[i]}`} />
-  //     </div>
-  //   );
-  // }
+  const selectAbility = useGame((state) => state.selectAbility);
+
   return (
-    <div className="flex gap-3 absolute bottom-8s">
-      {ent?.abilities.map(ability => <AbButton key={ability} name={ability} />)}
+    <div className="absolute bottom-[70px] left-[20%] z-10 flex gap-4">
+      {ent?.abilities.map(ability => (
+        <Button
+          key={ability}
+          onPress={() => selectAbility(ability)}
+        >
+          {ability}
+        </Button>
+      ))}
     </div>
   )
-}
-
-function DiceButton({ name, value }: { name: string, value: number }) {
-  const movDice =
-    useGame((state) => state.movDice);
-  return (
-    <button
-      onClick={() => movDice(value)
-      }>
-      {name}
-    </button>
-  );
 }
 
 function DiceButtons() {
   const getSel = useGame((state) => state.getSel);
   const ent = getSel();
-  if (!ent)
-    return;
-  const btns = [];
-  const len = ent.dice.length;
-  for (let i = 0; i < len; ++i) {
-    const h = `${20 + i * 10}%`;
-    btns.push(
-      // <div
-      //   key={`d${ent.dice[i]}`}
-      //   style={{
-      //     position: "absolute",
-      //     bottom: "45px",
-      //     left: `${h}`,
-      //     zIndex: 10
-      //   }}>
-      <div className={`absolute bottom-[45px] z-10 left-[${h}]`}>
-        <DiceButton
-          name={`d${ent.dice[i]}`}
-          value={ent.dice[i]} />
-      </div>
-    );
-  }
+  const movDice = useGame((state) => state.movDice);
   return (
-    <>
-      {btns}
-    </>
+    <div className="absolute bottom-[45px] left-[20%] z-10 flex gap-4">
+      {ent?.dice.map((diceNum, i) => (
+        <Button
+          key={i}
+          onPress={() => movDice(diceNum)}
+        >
+          {`d${diceNum}`}
+        </Button>
+      ))}
+    </div>
   )
 }
 
 function HUD() {
-  const typeEnt =
-    useGame((state) =>
-      state.typeEnt);
-  const canSelect =
-    useGame((state) =>
-      state.selectedEnt);
+  const typeEnt = useGame((state) => state.typeEnt);
+  const canSelect = useGame((state) => state.selectedEnt);
   return (typeEnt !== 'player' || !canSelect ? null :
     <>
       <AbButtons />
@@ -171,10 +119,8 @@ function Player({ id, pos }: { id: string, pos: pos }) {
       ref={pRef}
       onClick={(event) => {
         event.stopPropagation();
-        {
-          if (canSelect)
-            selectEntity(id);
-        };
+        if (canSelect)
+          selectEntity(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -240,13 +186,13 @@ function Scene() {
     tiles: tile[],
     entities: parse_entity[], width: number, height: number, depth: number
   } = info;
-  const mapInfo = { width, height, depth };
 
   const init = useGame((state) => state.init);
   const players = useGame((state) => state.players);
   const enemies = useGame((state) => state.enemies);
 
-  useEffect(() => init(entities, tiles, mapInfo), [entities, mapInfo, tiles]);
+  useEffect(() => { init(entities, tiles, { width, height, depth }) },
+    [entities, tiles, width, height, depth]);
   return (
     <>
       <ambientLight intensity={Math.PI / 4} />

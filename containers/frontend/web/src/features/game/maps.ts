@@ -89,7 +89,10 @@ type info = {
 }
 
 export const parseMap = (map: string) => {
-  const info: info = { width: 0, height: 0, depth: 0, planum: 1, enenum: 1, entities: [], tiles: [] };
+  const info: info = {
+    width: 0, height: 0, depth: 0, planum: 1,
+    enenum: 1, entities: [], tiles: []
+  };
   const levels = map.trim().split(',');
   info.height = levels.length;
   levels.forEach((level: string, y: number) => {

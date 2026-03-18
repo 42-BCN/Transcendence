@@ -30,24 +30,35 @@ type mapInfo = {
 type historyAction = {
   who: string;
   type: string;
-  abilities: string;
+  ability: string;
+}
+
+type abilityInfo = {
+  name: string;
+  type: string;
+  cond: (x: number) => boolean;
+  range: number;
+  dmg: number;
+  cd: number;
+  self: boolean;
+  effect?: string;
 }
 
 type gameState = {
   turn: number;
-  executeTurn: boolean;
-  canSelect: boolean;
-  typeEnt: string | null;
-  selectedAb: string | null;
-  selectedEnt: string | null;
   players: Record<string, entity>;
   enemies: Record<string, entity>;
+  history: historyAction[];
+  typeEnt: string | null;
+  mapBounds: mapInfo;
+
+  executeTurn: boolean;
+  canSelect: boolean;
+  selectedAb: string | null;
+  selectedEnt: string | null;
   obstacles: Record<string, boolean>;
   highlights: Record<string, boolean>;
   selectables: Record<string, boolean>;
-  history: historyAction[];
-  mapBounds: mapInfo;
-
 
   nextTurn: () => void;
   selectEntity: (Id: string) => void;
@@ -63,11 +74,12 @@ type gameState = {
   hasFloor: (x: number, y: number, z: number) => boolean;
   dijkstra: (pos: pos, maxCost: number) => string[];
   Astar: (src: pos, dest: pos) => string[] | undefined;
-  euclidTiles: (pos: pos, range: number, is3D: boolean, self: boolean) => void;
   isValid: (x: number, y: number, z: number) => boolean;
-  crossTiles: (pos: pos, range: number, self: boolean) => void;
-  paint: (pos: pos, type: string, range: number, self: boolean) => void;
+  euclidTiles: (pos: pos, range: number, is3D: boolean, self: boolean) => Record<string, boolean>;
+  crossTiles: (pos: pos, range: number, self: boolean) => Record<string, boolean>;
+  paint: (pos: pos, type: string, range: number, self: boolean) => Record<string, boolean>;
   selectAbility: (name: string) => void;
+  getAbility: (name: string) => abilityInfo
 }
 
 export const useGame = create<gameState>()((set, get) => ({
@@ -459,13 +471,13 @@ export const useGame = create<gameState>()((set, get) => ({
     }
     if (self && state.selectedEnt)
       valid[state.selectedEnt] = true;
-    set({ selectables: valid });
+    return (valid);
   },
 
   isValid: (x, y, z) => {
     const state = get()
     return (x >= state.mapBounds.width || y >= state.mapBounds.height + 1
-      || z >= state.mapBounds.depth || x < 0 || y < 0 || z < 0 ? true : false)
+      || z >= state.mapBounds.depth || x < 0 || y < 0 || z < 0 ? false : true)
   },
 
   crossTiles: (pos, range, self) => {
@@ -492,36 +504,108 @@ export const useGame = create<gameState>()((set, get) => ({
     }
     if (state.selectedEnt && self)
       valid[state.selectedEnt] = true;
-    set({ selectables: valid });
+    return (valid);
   },
 
   paint: (pos, type, range, self) => {
     const state = get()
+    let valid: Record<string, boolean>;
     switch (type) {
       case 'cross':
-        state.crossTiles(pos, range, self);
+        valid = state.crossTiles(pos, range, self);
         break;
       case 'circle':
-        state.euclidTiles(pos, range, false, self);
+        valid = state.euclidTiles(pos, range, false, self);
         break;
       case 'sphere':
-        state.euclidTiles(pos, range, true, self);
+        valid = state.euclidTiles(pos, range, true, self);
         break;
+      default:
+        valid = {};
+    }
+    return (valid);
+  },
+
+  getAbility: (name) => {
+    switch (name) {
+      case "Stab":
+        return {
+          name: name,
+          type: "cross",
+          cond: (x: number) => x > 2,
+          range: 1,
+          dmg: 1,
+          cd: 0,
+          self: false,
+          effect: "bleed",
+        }
+      case "Dagger Throw":
+        return {
+          name: name,
+          type: "cross",
+          effect: "bleed",
+          cond: (x: number) => x > 3,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Kick":
+        return {
+          name: name,
+          type: "cross",
+          effect: "push",
+          cond: (x: number) => x > 2,
+          range: 1,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Restrain":
+        return {
+          name: name,
+          type: "circle",
+          effect: "restrain",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      default:
+        return {
+          name: "error",
+          type: "sphere",
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: true,
+        }
     }
   },
 
   selectAbility: (name) => {
     const state = get()
+    if (state.selectedAb === name) {
+      set(
+        {
+          selectedAb: null,
+          highlights: {},
+          selectables: {},
+        });
+      return;
+    }
+    const entid = state.selectedEnt;
+    if (!entid)
+      return;
+    const pos = state.players[entid].position;
+    const { type, range, self } = state.getAbility(name);
     set(
       {
         selectedAb: name,
-        highlights: {}
+        highlights: {},
+        selectables: state.paint(pos, type, range, self),
       });
-    const pos = state.players['player_1'].position;
-    state.paint(pos, 'cross', 3, true);
   },
-
-  unselectAbility: () => {
-    set({ selectedAb: null, selectables: {} })
-  }
 }));
