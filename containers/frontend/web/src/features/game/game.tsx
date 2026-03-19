@@ -16,8 +16,7 @@ const s = 0.975;
 // no hace falta reiniciar active,
 // active se destruye cuando ret null
 function AbButtons() {
-  const getSel = useGame((state) => state.getSel);
-  const ent = getSel();
+  const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
 
   return (
@@ -35,9 +34,8 @@ function AbButtons() {
 }
 
 function DiceButtons() {
-  const getSel = useGame((state) => state.getSel);
+  const ent = useGame((state) => state.getSel());
   const canSelect = useGame((state) => state.canSelect);
-  const ent = getSel();
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectAbDice);
@@ -78,8 +76,7 @@ function DiceInfo() {
 function HUD() {
   const typeEnt = useGame((state) => state.typeEnt);
   const canSelect = useGame((state) => state.selectedEnt);
-  const getSel = useGame((state) => state.getSel);
-  const ent = getSel();
+  const ent = useGame((state) => state.getSel());
   if (!ent)
     return;
   return (typeEnt !== 'player' || !canSelect ? null :
@@ -144,7 +141,7 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
 
 function Enemy({ id, pos }: { id: string, pos: pos }) {
   const eRef = useRef(null);
-  const selectEntity = useGame(state => state.selectEntity)
+  const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
   const isTarget = useGame(state => state.selectables[id]);

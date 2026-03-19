@@ -242,7 +242,6 @@ export const useGame = create<gameState>()((set, get) => ({
     const playEnt: Record<string, player> = {};
     const enemEnt: Record<string, enemy> = {};
     const worldMap: Record<string, boolean> = {};
-    const mapBounds = {};
 
     tiles.forEach((obstacle) => {
       worldMap[obstacle.id] = true;
@@ -816,7 +815,8 @@ export const useGame = create<gameState>()((set, get) => ({
       set(
         {
           selectedAb: null,
-          selectedDice: null,
+          selectedDice: 0,
+          selectedAbDice: null,
           highlights: {},
           selectables: {},
           canSelect: true,
@@ -841,7 +841,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
   takeAb: (id, type, ab, roll) => {
     const state = get();
-    const target = type === "enemy" ? state.enemies[id] : state.players[id];
+    const target = type === "enemy" ? { ...state.enemies[id] } : { ...state.players[id] };
 
     target.hp = target.hp - (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);;
     if (target.hp < 0)
@@ -863,6 +863,7 @@ export const useGame = create<gameState>()((set, get) => ({
         selectedEnt: null,
         selectedDice: 0,
         canSelect: true,
+        selectedAbDice: null,
         typeEnt: null,
         selectedAb: null,
         highlights: {},
@@ -891,6 +892,7 @@ export const useGame = create<gameState>()((set, get) => ({
       selectedEnt: null,
       selectedDice: 0,
       canSelect: true,
+      selectedAbDice: null,
       typeEnt: null,
       selectedAb: null,
       highlights: {},
