@@ -8,7 +8,7 @@ export default function MeterPage() {
       <Text as="h1" variant="heading-md">
         Meter
       </Text>
-      <Meter label="hp" value={25} />
+      <Meter label="hp" value={25} max={100} />
     </Stack>
   );
 }
