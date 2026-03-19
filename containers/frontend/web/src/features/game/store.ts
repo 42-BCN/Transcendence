@@ -61,11 +61,13 @@ type gameState = {
   obstacles: Record<string, boolean>;
   highlights: Record<string, boolean>;
   selectables: Record<string, boolean>;
+  selectedAbDice: number | null;
 
   nextTurn: () => void;
   selectEntity: (Id: string) => void;
   getSel: () => entity | undefined;
   movDice: (maxNum: number) => void;
+  selectAbDice: (dice: number) => void;
   addHistory: (action: historyAction) => void;
   moveTo: (tileId: string) => Promise<void>;
   changeMode: () => void;
@@ -91,6 +93,7 @@ export const useGame = create<gameState>()((set, get) => ({
   canSelect: true,
   typeEnt: null,
   selectedAb: null,
+  selectedAbDice: null,
   selectedEnt: null,
   players: {},
   enemies: {},
@@ -784,6 +787,19 @@ export const useGame = create<gameState>()((set, get) => ({
     }
   },
 
+  selectAbDice: (dice) => {
+    const state = get()
+    if (state.selectedAbDice === dice) {
+      set({ selectedAbDice: null });
+      return;
+    }
+    const entid = state.selectedEnt;
+    if (!entid)
+      return;
+    set({ selectedAbDice: dice });
+    console.log(get().selectedAbDice);
+  },
+
   selectAbility: (name) => {
     const state = get()
     if (state.selectedAb === name) {
@@ -806,6 +822,7 @@ export const useGame = create<gameState>()((set, get) => ({
         highlights: {},
         selectables: state.paint(pos, type, range, self),
       });
+    console.log(get().selectedAb);
     console.log(get().selectables);
   },
 }));

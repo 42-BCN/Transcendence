@@ -37,12 +37,14 @@ function DiceButtons() {
   const getSel = useGame((state) => state.getSel);
   const ent = getSel();
   const movDice = useGame((state) => state.movDice);
+  const ability = useGame((state) => state.selectedAb);
+  const selectDice = useGame((state) => state.selectAbDice);
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
-          onPress={() => movDice(diceNum)}
+          onPress={() => ability ? selectDice(diceNum) : movDice(diceNum)}
         >
           {`d${diceNum}`}
         </Button>
@@ -78,7 +80,11 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id])
   const [isHovered, setHover] = useState(false);
-  let color = id.split(',')[1] === "0" ? 'green' : 'orange';
+  let color = 'orange';
+  if (id.split(',')[1] === "0")
+    color = 'green';
+  else if (id.split(',')[1] === "3")
+    color = 'slategray'
   if (isHighlighted && !selectedAb)
     color = 'hotpink';
   else if (isSelectable)
@@ -116,10 +122,25 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
   const selectEntity = useGame(state => state.selectEntity)
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
+  const [isHovered, setHover] = useState(false);
+  let color = "violet";
+  if (selected)
+    color = "lightpink";
+  else if (isHovered)
+    color = "lightgray";
+
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}
       ref={eRef}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHover(true);
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        setHover(false);
+      }}
       onClick={(event) => {
         event.stopPropagation();
         if (canSelect)
@@ -127,7 +148,7 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
       }}
     >
       <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={selected === id ? "gray" : "violet"} />
+      <meshStandardMaterial color={color} />
     </mesh>
   );
 }
@@ -169,55 +190,6 @@ function Player({ id, pos }: { id: string, pos: pos }) {
     </mesh>
   );
 }
-
-// function Floor({ id, pos }: { id: string, pos: pos }) {
-//   const moveTo = useGame(state => state.moveTo)
-//   const isHighlighted = useGame((state) => state.highlights[id]);
-//   const selectedAb = useGame((state) => state.selectedAb);
-//   const isSelectable = useGame((state) => state.selectables[id])
-//   let color = 'green';
-//   if (isHighlighted && !selectedAb)
-//     color = 'hotpink';
-//   else if (isSelectable)
-//     color = 'red';
-//
-//   return (
-//     <mesh
-//       position={[pos.x, pos.y, pos.z]}
-//       receiveShadow
-//       onClick={(event) => {
-//         event.stopPropagation()
-//         moveTo(id).catch(console.error)
-//       }
-//       }>
-//       <boxGeometry args={[s, 0.5 * s, s]} />
-//       <meshStandardMaterial color={color} />
-//     </mesh>
-//   );
-// }
-
-// function GridFloor() {
-//   const tiles = [];
-//
-//   for (let z = 0; z < 10; ++z) {
-//     for (let x = 0; x < 10; ++x) {
-//       const key = `${x},${-1},${z}`
-//       tiles.push(
-//         <Floor
-//           key={key}
-//           id={key}
-//           pos={{ x: x - 5, y: -0.25, z: z - 5 }}
-//         />
-//       );
-//     }
-//   }
-//   return (
-//     <group>
-//       {tiles}
-//     </group>
-//   )
-// }
-
 
 function Scene() {
   const map = testMap;
@@ -283,7 +255,6 @@ function Scene() {
           }}
         />
       ))}
-      {/* <GridFloor /> */}
     </>
   );
 }
