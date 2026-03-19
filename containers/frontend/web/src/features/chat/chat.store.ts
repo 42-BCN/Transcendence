@@ -8,7 +8,7 @@ export const CHAT_MESSAGES = [
   },
   {
     id: '2',
-    username: 'cmanica',
+    username: 'cmanica-',
     content: { text: 'Hey! ready for the demo later?' },
     createdAt: '2026-03-18T10:01:00Z',
   },
@@ -39,7 +39,7 @@ export const CHAT_MESSAGES = [
   },
   {
     id: '6',
-    username: 'cmanica',
+    username: 'cmanica-',
     content: {
       text: 'Are we handling message grouping? Like same user consecutive messages?',
     },
@@ -81,7 +81,7 @@ export const CHAT_MESSAGES = [
   },
   {
     id: '11',
-    username: 'cmanica',
+    username: 'cmanica-',
     content: {
       text: 'For now, UI-wise, we should handle long messages too. This one is intentionally long to test wrapping behavior inside the message bubble component and ensure it does not break layout or overflow incorrectly.',
     },

@@ -28,9 +28,15 @@ export function ChatFeature() {
 
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
-      <ChatHeader room="chatTest" participants={['capapes', 'cmanica', 'mfontser', 'mvelazqu']} />
+      <ChatHeader room="chatTest" participants={['capapes', 'cmanica-', 'mfontser', 'mvelazqu']} />
       <ChatMain messages={messages} />
-      <TextAreaField value={value} onChange={handleChange} aria-label="message" maxLength={300} />
+      <TextAreaField
+        value={value}
+        onChange={handleChange}
+        className={chatStyles.footer.input}
+        aria-label="message"
+        maxLength={300}
+      />
     </Stack>
   );
 }

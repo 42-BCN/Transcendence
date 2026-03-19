@@ -10,7 +10,7 @@ export type ChatHeaderProps = {
 export function ChatHeader(props: ChatHeaderProps) {
   const { room, participants } = props;
   return (
-    <Stack gap="sm" className={chatStyles.header.wrapper}>
+    <Stack gap="xs" className={chatStyles.header.wrapper}>
       <Text as="h2" variant="heading-sm">
         {room}
       </Text>
