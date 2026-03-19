@@ -78,7 +78,7 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id])
   const [isHovered, setHover] = useState(false);
-  let color = 'orange';
+  let color = id.split(',')[1] === "0" ? 'green' : 'orange';
   if (isHighlighted && !selectedAb)
     color = 'hotpink';
   else if (isSelectable)
@@ -240,7 +240,7 @@ function Scene() {
       <OrthographicCamera
         makeDefault
         position={[5, 5, 5]}
-        zoom={25}
+        zoom={50}
         near={-50}
         far={100}
       />
@@ -256,7 +256,7 @@ function Scene() {
           id={t.id}
           pos={{
             x: t.position.x - 5,
-            y: t.position.y + 0.5,
+            y: t.position.y - 1,
             z: t.position.z - 5
           }}
         />
@@ -267,7 +267,7 @@ function Scene() {
           id={p.id}
           pos={{
             x: p.position.x - 5,
-            y: p.position.y + 0.5,
+            y: p.position.y - 1,
             z: p.position.z - 5
           }}
         />
@@ -278,7 +278,7 @@ function Scene() {
           id={e.id}
           pos={{
             x: e.position.x - 5,
-            y: e.position.y + 0.5,
+            y: e.position.y - 1,
             z: e.position.z - 5
           }}
         />
