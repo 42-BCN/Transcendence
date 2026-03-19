@@ -78,10 +78,11 @@ type gameState = {
   Astar: (src: pos, dest: pos) => string[] | undefined;
   isValid: (x: number, y: number, z: number) => boolean;
   euclidTiles: (pos: pos, range: number, is3D: boolean, self: boolean) => Record<string, boolean>;
+  hasLoS: (pos: pos, x: number, y: number, z: number) => number;
   crossTiles: (pos: pos, range: number, self: boolean) => Record<string, boolean>;
   paint: (pos: pos, type: string, range: number, self: boolean) => Record<string, boolean>;
   selectAbility: (name: string) => void;
-  getAbility: (name: string) => abilityInfo
+  getAbility: (name: string) => abilityInfo;
 }
 
 export const useGame = create<gameState>()((set, get) => ({
@@ -479,6 +480,34 @@ export const useGame = create<gameState>()((set, get) => ({
     return [];
   },
 
+  hasLoS: (pos, x, y, z) => {
+    const dx = x - pos.x;
+    const dy = y - pos.y;
+    const dz = z - pos.z;
+    const state = get();
+    const steps = Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
+    if (steps < 1)
+      return 1;
+    let cx = pos.x;
+    let cy = pos.y;
+    let cz = pos.z;
+    for (let i = 1; i < steps; i++) {
+      cx += dx / steps;;
+      cy += dy / steps;;
+      cz += dz / steps;;
+      const rx = Math.round(cx);
+      const ry = Math.round(cy);
+      const rz = Math.round(cz);
+      if (state.isBlocked(rx, ry, rz))
+        return -1;
+    }
+    if (state.checkEnt(x, y, z))
+      return 0;
+    if (state.isBlocked(x, y, z))
+      return -1;
+    return 1;
+  },
+
   euclidTiles: (pos, range, is3D, self) => {
     const state = get();
     const hmax = is3D ? range : 0;
@@ -494,13 +523,16 @@ export const useGame = create<gameState>()((set, get) => ({
             || (dx === 0 && dy === 0 && dz === 0)
             || (range * range < dx * dx + dy * dy + dz * dz))
             continue;
-          const ent = state.checkEnt(x, y, z);
-          if (ent) {
-            valid[ent.id] = true;
+          const resLoS = state.hasLoS(pos, x, y, z);
+          if (resLoS === -1)
+            continue;
+          if (resLoS === 0) {
+            const entid = state.checkEnt(x, y, z)?.id;
+            if (entid)
+              valid[entid] = true;
             continue;
           }
-          valid[
-            `${x},${y - 1},${z}`] = true;
+          valid[`${x},${y - 1},${z}`] = true;
         }
       }
     }
@@ -522,17 +554,17 @@ export const useGame = create<gameState>()((set, get) => ({
       [0, 0, 1], [0, 0, -1]
     ];
     const valid: Record<string, boolean> = {};
-    for (let n = 1; n <= range; ++n) {
-      for (const [dx, dy, dz] of CROSS) {
+    for (const [dx, dy, dz] of CROSS) {
+      for (let n = 1; n <= range; ++n) {
         const x = pos.x + n * dx;
         const y = pos.y + n * dy;
         const z = pos.z + n * dz;
         if (!state.isValid(x, y, z) || state.obstacles[`${x},${y},${z}`])
-          continue;
+          break;
         const ent = state.checkEnt(x, y, z);
         if (ent) {
           valid[ent.id] = true;
-          continue;
+          break;
         }
         valid[`${x},${y - 1},${z}`] = true;
       }

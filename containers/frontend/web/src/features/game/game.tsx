@@ -20,7 +20,7 @@ function AbButtons() {
   const selectAbility = useGame((state) => state.selectAbility);
 
   return (
-    <div className="z-10 bottom-[90px] left-[20%] flex gap-4">
+    <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map(ability => (
         <Button
           key={ability}
@@ -38,7 +38,7 @@ function DiceButtons() {
   const ent = getSel();
   const movDice = useGame((state) => state.movDice);
   return (
-    <div className="z-10 bottom-[45px] left-[20%] flex gap-4">
+    <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
