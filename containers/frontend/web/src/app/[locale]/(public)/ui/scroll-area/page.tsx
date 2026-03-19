@@ -25,7 +25,7 @@ export default function ScrollAreaPage() {
 
       <div className="h-[400px] w-[400px]">
         <ScrollArea>
-          <Stack gap="sm">
+          <Stack gap="sm" className="p-2">
             {Array.from({ length: 30 }, (_, index) => (
               <Item key={index} index={index + 1} />
             ))}
