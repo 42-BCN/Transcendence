@@ -9,6 +9,7 @@ import { useGame } from "./store";
 import { Button } from "@components/controls/button"
 import { Meter } from "@components/composites/meter"
 import { Stack } from "@components/primitives/stack";
+import { Text } from "@components/primitives/text";
 
 const s = 0.975;
 
@@ -35,22 +36,43 @@ function AbButtons() {
 
 function DiceButtons() {
   const getSel = useGame((state) => state.getSel);
+  const canSelect = useGame((state) => state.canSelect);
   const ent = getSel();
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectAbDice);
   return (
-    <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
+    <div className='z-10 bottom-[10%] left-[20%] flex gap-4'
+    >
+
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
-          onPress={() => ability ? selectDice(diceNum) : movDice(diceNum)}
+          onPress={
+            () => ability ? selectDice(diceNum) : movDice(diceNum)
+          }
+          className={`px-4 py-2 bg-blue-500 text-white transition-all
+    ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : ''}`}
         >
           {`d${diceNum}`}
         </Button>
       ))}
     </div>
   )
+}
+
+function DiceInfo() {
+  const selectedDice = useGame((state) => state.selectedDice);
+  return (
+    selectedDice ?
+      <div className='z-10 top-[10%] left-[10%] flex gap-4'
+      >
+        <Button
+          className={'px-4 py-2 bg-red-500 text-white transition-all'}
+        >
+        </Button>
+      </div>
+      : null)
 }
 
 function HUD() {
@@ -64,12 +86,13 @@ function HUD() {
     <Stack className="absolute bottom-4 left-4">
       <AbButtons />
       <div>
-        <Meter label="HP" value={ent.hp - 8}
+        <Meter label="HP" value={ent.hp}
           maxValue={ent.maxHp}
           max={ent.maxHp}
           formatOptions={{ style: "decimal" }} />
       </div>
       <DiceButtons />
+      <DiceInfo />
     </Stack>
   )
 }
@@ -92,6 +115,8 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
   else if (isHovered)
     color = "lightgray";
   if (color === 'hotpink' && isHovered)
+    color = 'lightpink';
+  if (color === 'red' && isHovered)
     color = 'lightpink';
   return (
     <mesh
@@ -122,12 +147,15 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
   const selectEntity = useGame(state => state.selectEntity)
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
+  const isTarget = useGame(state => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
-  let color = "violet";
-  if (selected)
-    color = "lightpink";
+  let color = (selected === id ? "lightpink" : "violet");
+  if (isTarget)
+    color = "red";
   else if (isHovered)
     color = "lightgray";
+  if (color === 'red' && isHovered)
+    color = 'lightpink';
 
   return (
     <mesh
@@ -158,6 +186,7 @@ function Player({ id, pos }: { id: string, pos: pos }) {
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
+  const executeAbility = useGame(state => state.executeAbility);
   const isTarget = useGame(state => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
 
@@ -166,6 +195,8 @@ function Player({ id, pos }: { id: string, pos: pos }) {
     color = "red";
   else if (isHovered)
     color = "lightblue";
+  if (color === 'red' && isHovered)
+    color = 'lightpink';
 
   return (
     <mesh
@@ -183,6 +214,8 @@ function Player({ id, pos }: { id: string, pos: pos }) {
         event.stopPropagation();
         if (canSelect)
           selectEntity(id);
+        else if (isTarget)
+          executeAbility(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -268,8 +301,15 @@ export function Game() {
   //     position: "relative",
   //     overflow: "hidden"
   //   }}
+  const selectedDice = useGame((state) => state.selectedAbDice);
+  console.log(selectedDice);
   return (
     <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
+      {selectedDice && <Text
+        className='absolute z-10 top-[10%] left-[10%] flex gap-4'
+      >
+        {`d${selectedDice}`}
+      </Text>}
       <HUD />
       <Canvas>
         <Scene />

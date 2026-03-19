@@ -40,9 +40,11 @@ type abilityInfo = {
   type: string;
   cond: (x: number) => boolean;
   range: number;
-  dmg: number;
+  dmg: number | ((x: number) => number);
   cd: number;
   self: boolean;
+  AoE?: string;
+  AoErange?: string;
   effect?: string;
 }
 
@@ -61,6 +63,8 @@ type gameState = {
   obstacles: Record<string, boolean>;
   highlights: Record<string, boolean>;
   selectables: Record<string, boolean>;
+  affected: Record<string, boolean>;
+  selectedDice: number;
   selectedAbDice: number | null;
 
   nextTurn: () => void;
@@ -79,12 +83,14 @@ type gameState = {
   dijkstra: (pos: pos, maxCost: number) => string[];
   Astar: (src: pos, dest: pos) => string[] | undefined;
   isValid: (x: number, y: number, z: number) => boolean;
-  euclidTiles: (pos: pos, range: number, is3D: boolean, self: boolean) => Record<string, boolean>;
+  euclidTiles: (pos: pos, range: number, is3D: boolean) => Record<string, boolean>;
   hasLoS: (pos: pos, x: number, y: number, z: number) => number;
-  crossTiles: (pos: pos, range: number, self: boolean) => Record<string, boolean>;
+  crossTiles: (pos: pos, range: number) => Record<string, boolean>;
   paint: (pos: pos, type: string, range: number, self: boolean) => Record<string, boolean>;
   selectAbility: (name: string) => void;
   getAbility: (name: string) => abilityInfo;
+  executeAbility: (id: string) => void;
+  takeAb: (id: string, type: string, ab: abilityInfo, roll: number) => player | enemy;
 }
 
 export const useGame = create<gameState>()((set, get) => ({
@@ -95,11 +101,13 @@ export const useGame = create<gameState>()((set, get) => ({
   selectedAb: null,
   selectedAbDice: null,
   selectedEnt: null,
+  selectedDice: 0,
   players: {},
   enemies: {},
   obstacles: {},
   highlights: {},
   selectables: {},
+  affected: {},
   history: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
 
@@ -112,6 +120,7 @@ export const useGame = create<gameState>()((set, get) => ({
       if (Id === state.selectedEnt) {
         return {
           selectedEnt: null,
+          selectedDice: 0,
           typeEnt: null,
           selectedAb: null,
           highlights: {},
@@ -187,6 +196,7 @@ export const useGame = create<gameState>()((set, get) => ({
     set({
       highlights: {},
       selectedEnt: null,
+      selectedDice: 0,
       canSelect: false
     })
     for (let i = 1; i < path.length; ++i) {
@@ -511,7 +521,7 @@ export const useGame = create<gameState>()((set, get) => ({
     return 1;
   },
 
-  euclidTiles: (pos, range, is3D, self) => {
+  euclidTiles: (pos, range, is3D) => {
     const state = get();
     const hmax = is3D ? range : 0;
     const hmin = is3D ? -range : 0;
@@ -523,7 +533,6 @@ export const useGame = create<gameState>()((set, get) => ({
           const y = pos.y + dy;
           const z = pos.z + dz;
           if (!state.isValid(x, y, z) || state.obstacles[`${x},${y},${z}`]
-            || (dx === 0 && dy === 0 && dz === 0)
             || (range * range < dx * dx + dy * dy + dz * dz))
             continue;
           const resLoS = state.hasLoS(pos, x, y, z);
@@ -539,8 +548,6 @@ export const useGame = create<gameState>()((set, get) => ({
         }
       }
     }
-    if (self && state.selectedEnt)
-      valid[state.selectedEnt] = true;
     return (valid);
   },
 
@@ -550,7 +557,7 @@ export const useGame = create<gameState>()((set, get) => ({
       || z >= state.mapBounds.depth || x < 0 || y < 0 || z < 0 ? false : true)
   },
 
-  crossTiles: (pos, range, self) => {
+  crossTiles: (pos, range) => {
     const state = get();
     const CROSS = [
       [1, 0, 0], [-1, 0, 0],
@@ -572,37 +579,40 @@ export const useGame = create<gameState>()((set, get) => ({
         valid[`${x},${y - 1},${z}`] = true;
       }
     }
-    if (state.selectedEnt && self)
-      valid[state.selectedEnt] = true;
     return (valid);
   },
 
   paint: (pos, type, range, self) => {
     const state = get()
+    if (!state.selectedEnt)
+      return {};
     let valid: Record<string, boolean>;
     switch (type) {
       case 'cross':
-        valid = state.crossTiles(pos, range, self);
+        valid = state.crossTiles(pos, range);
         break;
       case 'circle':
-        valid = state.euclidTiles(pos, range, false, self);
+        valid = state.euclidTiles(pos, range, false);
         break;
       case 'sphere':
-        valid = state.euclidTiles(pos, range, true, self);
+        valid = state.euclidTiles(pos, range, true);
         break;
       default:
         valid = {};
     }
+    valid[state.selectedEnt] = false;
+    if (self)
+      valid[state.selectedEnt] = true;
     return (valid);
   },
 
-  getAbility: (name) => {
+  getAbility: (name): abilityInfo => {
     switch (name) {
       case "Stab":
         return {
           name: name,
           type: "cross",
-          cond: (x: number) => x > 2,
+          cond: (x: number) => (x % 2) !== 0,
           range: 1,
           dmg: 1,
           cd: 0,
@@ -642,138 +652,138 @@ export const useGame = create<gameState>()((set, get) => ({
           cd: 0,
           self: false,
         }
-      case "Thrust":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Defend":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Shield Bash":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Vertical Slash":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Fire Breath":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Azure Comet":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Small Meteor":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Rising Thorns":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Stimulant":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Vacuum Flask":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Bombastic Flask":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Oxidation":
-        return {
-          name: name,
-          type: "circle",
-          effect: "restrain",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
+      // case "Thrust":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Defend":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Shield Bash":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Vertical Slash":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Fire Breath":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Azure Comet":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Small Meteor":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Rising Thorns":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Stimulant":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Vacuum Flask":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Bombastic Flask":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
+      // case "Oxidation":
+      //   return {
+      //     name: name,
+      //     type: "circle",
+      //     effect: "restrain",
+      //     cond: (x: number) => x > 2,
+      //     range: 3,
+      //     dmg: 1,
+      //     cd: 0,
+      //     self: false,
+      //   }
       default:
         return {
           name: "error",
@@ -806,8 +816,10 @@ export const useGame = create<gameState>()((set, get) => ({
       set(
         {
           selectedAb: null,
+          selectedDice: null,
           highlights: {},
           selectables: {},
+          canSelect: true,
         });
       return;
     }
@@ -821,8 +833,71 @@ export const useGame = create<gameState>()((set, get) => ({
         selectedAb: name,
         highlights: {},
         selectables: state.paint(pos, type, range, self),
+        canSelect: false
       });
     console.log(get().selectedAb);
     console.log(get().selectables);
   },
-}));
+
+  takeAb: (id, type, ab, roll) => {
+    const state = get();
+    const target = type === "enemy" ? state.enemies[id] : state.players[id];
+
+    target.hp = target.hp - (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);;
+    if (target.hp < 0)
+      target.hp = 0;
+    if (!target.status && ab.effect)
+      target.status = ab.effect;
+    return (target);
+  },
+
+  executeAbility: (target) => {
+    const state = get();
+    const name = state.selectedAb;
+    if (!state.selectedAb || !name || !state.selectedAbDice)
+      return;
+    const ab = state.getAbility(name);
+    const roll = Math.ceil(Math.random() * state.selectedAbDice);
+    if (!ab.cond(roll)) {
+      set({
+        selectedEnt: null,
+        selectedDice: 0,
+        canSelect: true,
+        typeEnt: null,
+        selectedAb: null,
+        highlights: {},
+        selectables: {},
+      });
+      return;
+    }
+    const targets = [target];
+    // if (ab.AoE)
+    //   targets.push(...state.getAoE(pos, ab.AoEtype, AoErange));
+    const changedPlayers: player[] = [];
+    const changedEnemies: enemy[] = [];
+    targets.forEach((id) => {
+      let type = null;
+      if (state.enemies[id]) {
+        type = "enemy";
+        changedEnemies.push(state.takeAb(id, type, ab, roll))
+      }
+      else if (state.players[id]) {
+        type = "player";
+        changedPlayers.push(state.takeAb(id, type, ab, roll))
+      }
+    })
+
+    set({
+      selectedEnt: null,
+      selectedDice: 0,
+      canSelect: true,
+      typeEnt: null,
+      selectedAb: null,
+      highlights: {},
+      selectables: {},
+      players: { ...state.players, ...Object.fromEntries(changedPlayers.map(p => [p.id, p])) },
+      enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map(e => [e.id, e])) },
+    })
+  }
+}
+));
