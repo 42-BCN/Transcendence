@@ -35,7 +35,7 @@ export function NavigationClient(args: NavigationClientProps) {
       <Stack
         as="nav"
         aria-label="main"
-        // TODO: This style here will be removed once the navigation is fully implemented. Theres another issue for this component developing on parallel.
+        // TODO: This style here will be removed once the navigation is fully implemented. There's another issue for this component developing on parallel.
         className="group py-4 z-10 backdrop-blur-sm border-b border-gray-200 bg-white/50"
         align="start"
       >

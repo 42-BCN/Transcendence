@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { splitScreenGridStyles } from './split-screen-grid.styles';
 
-type SplitScreenGridProps = {
+export type SplitScreenGridProps = {
   full: ReactNode;
   side?: ReactNode;
 };
