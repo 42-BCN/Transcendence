@@ -42,7 +42,7 @@ export function glassCardStyles(opts: GlassStylesOpts = {}) {
   return cn(
     blur[opts.blur ?? 'sm2'],
     intensity[opts.intensity ?? 'medium'],
-    opts.saturate && 'backdrop-saturate-[150%]',
+    opts.saturate !== false && 'backdrop-saturate-[150%]',
     border[opts.border ?? 'medium'],
     'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
     'rounded-3xl p-8',
