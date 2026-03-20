@@ -74,14 +74,18 @@ export async function seed() {
   let inserted = 0;
   let attempts = 0;
 
-  await insertSpecificUser(pool, "ziermax");
-  await insertSpecificUser(pool, "fernan");
-  // Retry loop to deal with rare email/username collisions
-  while (inserted < safeCount && attempts < safeCount * 5) {
-    attempts++;
-    if (await insertSeedUser(pool)) inserted++;
+  try {
+    await insertSpecificUser(pool, "ziermax");
+    await insertSpecificUser(pool, "fernan");
+    // Retry loop to deal with rare email/username collisions
+    while (inserted < safeCount && attempts < safeCount * 5) {
+      attempts++;
+      if (await insertSeedUser(pool)) inserted++;
+    }
+  } catch (err) {
+    await pool.end();
+    throw err;
   }
-
   console.log({ requested: safeCount, inserted, attempts });
   await pool.end();
   console.log(`Seeded`);

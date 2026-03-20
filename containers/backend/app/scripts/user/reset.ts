@@ -11,7 +11,12 @@ export async function reset(): Promise<void> {
     throw new Error("Seeding is only allowed in development.");
   }
   const pool = new Pool();
-  await pool.query(sql`DROP TABLE IF EXISTS public.users`);
+  try {
+    await pool.query(sql`DROP TABLE IF EXISTS public.users`);
+  } catch (err) {
+    await pool.end();
+    throw err;
+  }
   await pool.end();
   //Bootstrap
   await bootstrap();
