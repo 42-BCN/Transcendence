@@ -7,6 +7,9 @@ const sql = String.raw;
 export async function reset(): Promise<void> {
   //Delete
   console.log(`Resetting Database`);
+  if (process.env.NODE_ENV !== "development") {
+    throw new Error("Seeding is only allowed in development.");
+  }
   const pool = new Pool();
   await pool.query(sql`DROP TABLE IF EXISTS public.users`);
   await pool.end();

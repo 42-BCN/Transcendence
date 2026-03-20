@@ -62,9 +62,9 @@ async function insertSpecificUser(pool: Pool, user: string) {
 
 export async function seed() {
   console.log(`Seeding Database`);
-  // if (process.env.NODE_ENV !== "development") {
-  //   throw new Error("Seeding is only allowed in development.");
-  // }
+  if (process.env.NODE_ENV !== "development") {
+    throw new Error("Seeding is only allowed in development.");
+  }
 
   const pool = new Pool();
 
