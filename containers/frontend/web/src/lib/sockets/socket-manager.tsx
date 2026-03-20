@@ -1,5 +1,12 @@
 import { useEffect } from 'react';
 import { chatSocket, robotsSocket, type Robot } from './socket';
+import type {
+  ChatError,
+  ChatMe,
+  ChatMessage,
+  ChatMessageUnion,
+  ChatSystemMessage,
+} from '@/contracts/sockets/chat/chat.schema';
 
 type Props = {
   onRobots: (robots: Robot[]) => void;
@@ -37,47 +44,32 @@ export const RobotsSocketManager = ({ onRobots }: Props) => {
 };
 
 type ChatSocketManagerProps = {
-  onChatMessage: (message: any) => void;
-  onChatSystemMessage: (message: any) => void;
-  onChatError: (message: any) => void;
+  onChatMessage: (message: ChatMessage | ChatMe) => void;
+  onChatSystemMessage: (message: ChatSystemMessage) => void;
+  onChatError: (message: ChatError) => void;
+  onChatHistory: (history: ChatMessageUnion[]) => void;
 };
 
-// eslint-disable-next-line max-lines-per-function
 export const ChatSocketManager = ({
   onChatMessage,
   onChatSystemMessage,
   onChatError,
+  onChatHistory,
 }: ChatSocketManagerProps) => {
-  // eslint-disable-next-line max-lines-per-function
   useEffect(() => {
-    const handleConnect = () => {
-      console.log('Connected to chat socket server', chatSocket.id);
-    };
-
-    const handleDisconnect = () => {
-      console.log('Disconnected from chat socket server');
-    };
-
-    const handleChatMessage = (payload: any) => {
-      console.log('Received chat message', payload);
-      onChatMessage(payload);
-    };
-
-    const handleChatSystemMessage = (payload: any) => {
-      console.log('Received chat system message', payload);
-      onChatSystemMessage(payload);
-    };
-
-    const handleChatError = (payload: any) => {
-      console.error('Received chat error message', payload);
-      onChatError(payload);
-    };
+    const handleConnect = () => console.log('Connected to chat socket server', chatSocket.id);
+    const handleDisconnect = () => console.log('Disconnected from chat socket server');
+    const handleChatMessage = (payload: ChatMessage | ChatMe) => onChatMessage(payload);
+    const handleChatSystemMessage = (payload: ChatSystemMessage) => onChatSystemMessage(payload);
+    const handleChatError = (payload: ChatError) => onChatError(payload);
+    const handleChatHistory = (payload: ChatMessageUnion[]) => onChatHistory(payload);
 
     chatSocket.on('connect', handleConnect);
     chatSocket.on('chat:message', handleChatMessage);
     chatSocket.on('chat:system', handleChatSystemMessage);
     chatSocket.on('chat:error', handleChatError);
     chatSocket.on('disconnect', handleDisconnect);
+    chatSocket.on('chat:history', handleChatHistory);
 
     chatSocket.connect();
 
@@ -87,6 +79,7 @@ export const ChatSocketManager = ({
       chatSocket.off('chat:system', handleChatSystemMessage);
       chatSocket.off('chat:error', handleChatError);
       chatSocket.off('disconnect', handleDisconnect);
+      chatSocket.off('chat:history', handleChatHistory);
       chatSocket.disconnect();
     };
   }, []);

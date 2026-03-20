@@ -32,6 +32,7 @@ type ServerToClientChatEvents = {
   'chat:message': (payload: ChatMessage) => void;
   'chat:system': (payload: ChatSystemMessage) => void;
   'chat:error': (payload: ChatError) => void;
+  'chat:history': (payload: ChatMessage[]) => void;
 };
 
 type ClientToServerChatEvents = {

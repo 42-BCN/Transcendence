@@ -4,17 +4,10 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 
 import { chatSocket } from '@/lib/sockets/socket';
 import { ChatSocketManager } from '@/lib/sockets/socket-manager';
-
-export type Message = {
-  id: string;
-  username: string;
-  content: {
-    text: string;
-  };
-};
+import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
 
 type ChatContextValue = {
-  messages: Message[];
+  messages: ChatMessageUnion[];
   value: string;
   setValue: (value: string) => void;
   sendMessage: () => void;
@@ -28,7 +21,7 @@ type ChatProviderProps = {
 
 // eslint-disable-next-line max-lines-per-function
 export function ChatProvider({ children }: ChatProviderProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessageUnion[]>([]);
   const [value, setValue] = useState('');
 
   const sendMessage = useCallback(() => {
@@ -41,9 +34,10 @@ export function ChatProvider({ children }: ChatProviderProps) {
       ...prev,
       {
         id: `temp-${Date.now()}`,
-        username: 'capapes',
+        username: 'me',
+        type: 'me',
         content: { text },
-      },
+      } as ChatMessageUnion,
     ]);
 
     setValue('');
@@ -63,13 +57,21 @@ export function ChatProvider({ children }: ChatProviderProps) {
     <ChatContext.Provider value={contextValue}>
       <ChatSocketManager
         onChatMessage={(message) => {
+          message.type = message.username === 'me' ? 'me' : 'user';
           setMessages((prev) => [...prev, message]);
         }}
         onChatSystemMessage={(message) => {
-          console.log('System message:', message);
+          setMessages((prev) => [...prev, message]);
+        }}
+        onChatHistory={(history) => {
+          const formattedHistory = history.map((message) => ({
+            ...message,
+            type: message?.username === 'me' ? 'me' : message.type,
+          })) as ChatMessageUnion[];
+          setMessages(formattedHistory);
         }}
         onChatError={(message) => {
-          console.error('Chat error:', message);
+          setMessages((prev) => [...prev, message]);
         }}
       />
       {children}

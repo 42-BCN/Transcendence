@@ -12,7 +12,7 @@ export default function GameSidePage() {
       <Button onPress={() => setChatVisible((v) => !v)} className={gamePageButton} w="default">
         {chatVisible ? 'Hide Chat' : 'Show Chat'}
       </Button>
-      {chatVisible && <ChatFeature />}
+      <ChatFeature isVisible={chatVisible} />
     </>
   );
 }

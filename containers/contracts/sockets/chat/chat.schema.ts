@@ -18,10 +18,12 @@ export type ChatSend = z.infer<typeof ChatSendSchema>;
 // ---------------------------------------------------------------- Message Schema start
 export const ChatMessageSchema = z.object({
   username: z.string(),
+  type: z.literal('user'),
   content: z.object({
     text: z.string(),
   }),
   createdAt: z.number(),
+  id: z.string(),
 });
 
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
@@ -37,22 +39,51 @@ type ZodValidationError = {
 };
 
 export type ChatError = {
-  code: ChatErrorCode;
-  details?: ZodValidationError[];
+  type: 'error';
+  username?: string;
+  content: {
+    text: ChatErrorCode;
+    details: ZodValidationError[];
+  };
+  createdAt: number;
+  id: string;
 };
 
 // ---------------------------------------------------------------- Error Handling end
 
 export const ChatSystemMessageSchema = z.object({
-  type: z.enum(['USER_JOINED', 'USER_LEFT']),
+  type: z.literal('system'),
+  content: z.object({
+    text: z.enum(['USER_JOINED', 'USER_LEFT']),
+  }),
   username: z.string().optional(),
   createdAt: z.number(),
+  id: z.string(),
 });
+export type ChatSystemMessage = z.infer<typeof ChatSystemMessageSchema>;
+
+export const ChatMeSchema = z.object({
+  username: z.string(),
+  type: z.literal('me'),
+  content: z.object({
+    text: z.string(),
+  }),
+  createdAt: z.number(),
+  id: z.string(),
+});
+export type ChatMe = z.infer<typeof ChatMeSchema>;
+
+export const ChatMessageUnionSchema = z.union([
+  ChatMessageSchema,
+  ChatSystemMessageSchema,
+  ChatMeSchema,
+]);
+
+export type ChatMessageUnion = ChatMessage | ChatSystemMessage | ChatError | ChatMe;
 
 export const ChatHistorySchema = z.object({
-  messages: z.array(ChatMessageSchema),
+  messages: z.array(ChatMessageUnionSchema),
 });
-
-export type ChatSystemMessage = z.infer<typeof ChatSystemMessageSchema>;
 export type ChatHistory = z.infer<typeof ChatHistorySchema>;
+
 // ---------------------------------------------------------------- Server to Client Schema end

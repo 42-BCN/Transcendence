@@ -16,7 +16,7 @@ export default function MessageBubblePage() {
           </Text>
           <Text as="p">Hello! My name is ...</Text>
         </MessageBubble>
-        <MessageBubble variant="reverse">
+        <MessageBubble variant="me">
           <Text as="h2" variant="caption">
             Jane Doe
           </Text>

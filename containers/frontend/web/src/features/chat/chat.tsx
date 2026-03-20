@@ -7,7 +7,7 @@ import { TextAreaField } from '@components/composites/text-area-field';
 import { ChatHeader } from './chat.header';
 import { ChatMain } from './chat.main';
 import { chatStyles } from './chat.styles';
-import { ChatProvider, useChat } from './chat.provider';
+import { useChat } from './chat.provider';
 
 function ChatContent() {
   const { messages, value, setValue, sendMessage } = useChat();
@@ -42,10 +42,6 @@ function ChatContent() {
   );
 }
 
-export function ChatFeature() {
-  return (
-    <ChatProvider>
-      <ChatContent />
-    </ChatProvider>
-  );
+export function ChatFeature({ isVisible }: { isVisible: boolean }) {
+  return isVisible && <ChatContent />;
 }
