@@ -86,7 +86,7 @@
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-regular);
   font-size: var(--font-size-xs);
-  line-height: var(--line-height-sm);
+  line-height: var(--line-height-xs);
   letter-spacing: var(--letter-spacing-normal);
 }
 

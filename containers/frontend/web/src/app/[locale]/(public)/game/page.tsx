@@ -1,11 +1,5 @@
-'use client'
-
-import { Game } from "@/features/game"
+import { Game } from '@/features/game';
 
 export default function GamePage() {
-  return (
-    <div >
-      <Game />
-    </div>
-  )
+  return <Game />;
 }
