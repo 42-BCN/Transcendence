@@ -3,7 +3,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { glassCardStyles } from './glass-card.styles';
 import type { GlassBlur, GlassIntensity, GlassBorder } from './glass-card.styles';
 
-type GlassCardProps = Omit<HTMLAttributes<HTMLDivElement>, 'className'> & {
+export type GlassCardProps = Omit<HTMLAttributes<HTMLDivElement>, 'className'> & {
   children?: ReactNode;
   className?: string;
   blur?: GlassBlur;

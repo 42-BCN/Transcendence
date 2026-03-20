@@ -20,7 +20,7 @@ export default function GlassCardAnimatedV3Page() {
         }
       `}</style>
 
-      {/* Esferas SÓLIDAS con MOVIMIENTO REAL (Sin Blur previo) */}
+      {/* SOLID Spheres with REAL MOTION (No Pre-blur) */}
       <div
         className="absolute w-[180px] h-[180px] bg-red-500 rounded-full opacity-90 shadow-lg"
         style={{ animation: 'floatBall1 10s infinite alternate ease-in-out' }}
@@ -34,17 +34,17 @@ export default function GlassCardAnimatedV3Page() {
         style={{ animation: 'floatBall3 8s infinite alternate ease-in-out' }}
       />
 
-      {/* Grid sutil para dar textura al fondo */}
+      {/* Subtle grid to give texture to the background */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       <GlassCard className="w-96 z-10" saturate={true} intensity="medium" blur="xl">
         <h3 className="text-2xl font-bold text-white mb-2">Esferas Sólidas</h3>
-        <p className="text-white/80 text-sm leading-relaxed mb-4">
+        <div className="text-white/80 text-sm leading-relaxed mb-4">
           Aquí las esferas son <span className="text-yellow-400 font-semibold">100% sólidas</span>.
           Toda la distorsión es obra exclusiva del cristal.
           <br />
           Ejemplo de componente de cristal anidado: <GlassCard />
-        </p>
+        </div>
         <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-2xl">
           Activar
         </Button>

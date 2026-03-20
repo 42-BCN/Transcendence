@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-//Back blur level
+// Backdrop blur level
 const blur = {
   none: '',
   sm: 'backdrop-blur-sm',
@@ -11,7 +11,7 @@ const blur = {
   '2xl': 'backdrop-blur-2xl',
 } as const;
 
-//Light opacity level
+// Light opacity level
 const intensity = {
   low: 'bg-gradient-to-br from-white/[0.06] to-white/[0.01] dark:from-white/[0.03] dark:to-transparent',
   medium:
@@ -19,7 +19,7 @@ const intensity = {
   high: 'bg-gradient-to-br from-white/[0.35] to-white/[0.10] dark:from-white/[0.16] dark:to-transparent',
 } as const;
 
-//Border opacity level
+// Border opacity level
 const border = {
   low: 'border border-white/[0.08] dark:border-white/[0.04]',
   medium: 'border border-white/[0.22] dark:border-white/[0.08]',
