@@ -1,12 +1,10 @@
-import { ScrollArea } from "@components/primitives/scroll-area";
-import { Stack } from "@components/primitives/stack";
-import { Text } from "@components/primitives/text";
+import { ScrollArea } from '@components/primitives/scroll-area';
+import { Stack } from '@components/primitives/stack';
+import { Text } from '@components/primitives/text';
 
 function Item({ index }: { index: number }) {
   return (
-    <div className="min-h-6 min-w-6 rounded-sm bg-slate-500 px-2 py-1 text-white">
-      Item {index}
-    </div>
+    <div className="min-h-6 min-w-6 rounded-sm bg-slate-500 px-2 py-1 text-white">Item {index}</div>
   );
 }
 
@@ -18,8 +16,7 @@ export default function ScrollAreaPage() {
       </Text>
 
       <Text as="p">
-        This component is a div that takes a height of 100% and creates a
-        scrollable area.
+        This component is a div that takes a height of 100% and creates a scrollable area.
       </Text>
 
       <Text as="h2" variant="heading-md">
