@@ -1,4 +1,4 @@
-import { LoginReqSchema, type LoginReq } from '@/contracts/auth/auth.validation';
+import { LoginReqSchema, type LoginReq } from '@/contracts/api/auth/auth.validation';
 import { createEmptyValues } from '@/lib/forms/defaults';
 
 export const fieldsBase = {

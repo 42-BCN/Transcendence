@@ -1,6 +1,6 @@
 'use server';
 
-import { type UserPublicResponse } from '@/contracts/users/users.contracts';
+import { type UserPublicResponse } from '@/contracts/api/users/users.contracts';
 
 import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
