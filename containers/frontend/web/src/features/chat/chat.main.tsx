@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import { ScrollArea } from '@components/primitives/scroll-area';
 import { MessageBubble } from '@components/primitives/message-bubble';
 import { Text } from '@components/primitives/text';
@@ -6,6 +8,13 @@ import type { Message } from './chat';
 import { chatStyles } from './chat.styles';
 
 export function ChatMain({ messages }: { messages: Message[] }) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
   return (
     <ScrollArea>
       <Stack className={chatStyles.main.wrapper}>
@@ -19,6 +28,7 @@ export function ChatMain({ messages }: { messages: Message[] }) {
             </Text>
           </MessageBubble>
         ))}
+        <div ref={bottomRef} />
       </Stack>
     </ScrollArea>
   );
