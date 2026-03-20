@@ -1,4 +1,4 @@
-import { GlassCard } from '@components/composites/glass-card/glass-card';
+import { GlassCard } from '@components/primitives/glass-card';
 import { Button } from '@components/controls/button';
 
 export default function GlassCardAnimatedPage() {
