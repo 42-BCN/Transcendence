@@ -1,4 +1,4 @@
-import { GlassCard } from '@components/composites/glass-card/glass-card';
+import { GlassCard } from '@components/primitives/glass-card';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { Button } from '@components/controls/button';
