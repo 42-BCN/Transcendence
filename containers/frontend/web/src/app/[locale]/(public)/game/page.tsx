@@ -1,13 +1,5 @@
 import { Game } from '@/features/game';
+
 export default function GamePage() {
-  return (
-    <>
-      <div className="bg-slate-200 h-full block">
-        <Game />
-      </div>
-      <div className="bg-slate-50 h-full">
-        <p>chat area</p>
-      </div>
-    </>
-  );
+  return <Game />;
 }

@@ -14,7 +14,6 @@ import { Icon } from '@components/primitives/icon';
 
 import { useNavigationContext } from '../navigation.context';
 import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
 
 type NavLinkItemProps = {
   navItem: NavItem;
