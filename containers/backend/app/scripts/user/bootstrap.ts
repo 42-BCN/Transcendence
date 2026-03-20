@@ -3,7 +3,7 @@ import { Pool } from "pg";
 const sql = String.raw;
 
 export async function bootstrap(): Promise<void> {
-  console.log(`Bootstraping Database`);
+  console.log(`Bootstrapping Database`);
   const pool = new Pool();
   try {
     await pool.query(sql`CREATE extension IF NOT EXISTS "pgcrypto";`);
@@ -47,5 +47,5 @@ export async function bootstrap(): Promise<void> {
     throw err;
   }
   await pool.end();
-  console.log(`Bootstraped`);
+  console.log(`Bootstrapped`);
 }
