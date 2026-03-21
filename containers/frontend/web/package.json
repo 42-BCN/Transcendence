@@ -16,6 +16,7 @@
     "component": "node scripts/create-component.mjs"
   },
   "dependencies": {
+    "@react-spring/three": "^10.0.3",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "lucide-react": "^0.577.0",
