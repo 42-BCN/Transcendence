@@ -2,7 +2,7 @@ import { cn } from '@/lib/styles/cn';
 
 export function footerStyles(className?: string) {
   return cn(
-    'relative w-full border-t border-white/[0.06] bg-slate-950/30 backdrop-blur-sm py-5 mt-auto',
+    'relative w-full border-t border-white/[0.06] bg-slate-950/30 backdrop-blur-sm py-2 mt-auto',
     className,
   );
 }

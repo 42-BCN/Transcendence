@@ -37,6 +37,8 @@ export const routing = defineRouting({
       es: '/perfil',
       ca: '/perfil',
     },
+    '/privacy': '/privacy',
+    '/terms': '/terms',
   },
   localeCookie,
 });

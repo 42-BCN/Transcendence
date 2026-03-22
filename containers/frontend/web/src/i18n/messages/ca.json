@@ -111,6 +111,7 @@
     "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen."
   },
   "Footer": {
+    "appName": "Transcendence",
     "privacy": "Política de Privacitat",
     "terms": "Termes de Servei",
     "copyright": "Tots els drets reservats"

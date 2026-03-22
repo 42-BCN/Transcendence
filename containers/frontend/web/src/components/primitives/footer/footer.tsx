@@ -20,18 +20,18 @@ export function Footer({ className }: FooterProps) {
   const links = [
     { key: 'privacy', href: '/privacy' },
     { key: 'terms', href: '/terms' },
-  ];
+  ] as const;
 
   return (
     <footer className={footerStyles(className)}>
       <div className={footerContainerStyles()}>
         <div className={footerCopyrightStyles()}>
-          © {new Date().getFullYear()} {'App Name'}. {t('copyright')}
+          © {new Date().getFullYear()} {t('appName')}. {t('copyright')}
         </div>
 
         <div className={footerLinksGroupStyles()}>
           {links.map((link) => (
-            <Link key={link.key} href={link.href as any} className={footerLinkItemStyles()}>
+            <Link key={link.key} href={link.href} className={footerLinkItemStyles()}>
               {t(link.key)}
             </Link>
           ))}

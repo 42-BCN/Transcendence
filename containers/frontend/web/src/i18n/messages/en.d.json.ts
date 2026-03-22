@@ -109,6 +109,7 @@ declare const messages: {
     "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
   },
   "Footer": {
+    "appName": "Transcendence",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "copyright": "All rights reserved"
