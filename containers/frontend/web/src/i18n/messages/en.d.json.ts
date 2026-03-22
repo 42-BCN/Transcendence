@@ -107,6 +107,11 @@ declare const messages: {
     "FIELD_TOO_SHORT": "Too short.",
     "FIELD_TOO_LONG": "Too long.",
     "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+  },
+  "Footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "All rights reserved"
   }
 };
 export default messages;
