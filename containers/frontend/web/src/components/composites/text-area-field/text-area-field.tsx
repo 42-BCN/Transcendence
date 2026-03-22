@@ -15,8 +15,12 @@ export type TextAreaFieldProps = Omit<
   'aria-label': string;
   errorKey?: I18nKey;
   onChange: (value: string) => void;
-  textAreaProps?: Omit<TextAreaProps, 'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'className'>;
+  textAreaProps?: Omit<
+    TextAreaProps,
+    'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'className'
+  >;
   value: string;
+  className?: string;
 };
 
 export function TextAreaField(props: TextAreaFieldProps) {
@@ -25,6 +29,7 @@ export function TextAreaField(props: TextAreaFieldProps) {
     errorKey,
     onChange,
     textAreaProps,
+    className,
     value,
     maxLength,
     ...textFieldProps
@@ -43,7 +48,7 @@ export function TextAreaField(props: TextAreaFieldProps) {
       isInvalid={isInvalid}
       className={textAreaFieldStyles.root}
     >
-      <TextArea {...textAreaProps} className={textAreaFieldStyles.input} />
+      <TextArea {...textAreaProps} className={textAreaFieldStyles.input(className)} />
 
       {maxLength !== undefined && (
         <Text

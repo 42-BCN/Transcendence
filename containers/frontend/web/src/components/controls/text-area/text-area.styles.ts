@@ -3,7 +3,7 @@ import { cn } from '@/lib/styles/cn';
 const textAreaBase = [
   'font-body-sm',
   'w-full px-2 py-2 min-h-6 max-h-[160px]',
-  'border border-gray-300 rounded-md',
+  'border rounded-md',
   'bg-white',
   'outline-none transition resize-none',
 ];
