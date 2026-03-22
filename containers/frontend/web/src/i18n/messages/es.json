@@ -110,5 +110,11 @@
     "FIELD_TOO_SHORT": "Demasiado corto.",
     "FIELD_TOO_LONG": "Demasiado largo.",
     "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden."
+  },
+  "Footer": {
+    "appName": "Transcendence",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "copyright": "Todos los derechos reservados"
   }
 }
