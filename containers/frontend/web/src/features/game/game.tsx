@@ -66,7 +66,7 @@ function DiceInfo() {
       <div className='z-10 top-[10%] left-[10%] flex gap-4'
       >
         <Button
-          className={'px-4 py-2 bg-red-500 text-white transition-all'}
+          className={'px-4 left-8 py-2 bg-red-500 text-white transition-all'}
         >
         </Button>
       </div>
@@ -301,7 +301,8 @@ export function Game() {
   const selectedDice = useGame((state) => state.selectedAbDice);
   console.log(selectedDice);
   return (
-    <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
+    // <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
+    <>
       {selectedDice && <Text
         className='absolute z-10 top-[10%] left-[10%] flex gap-4'
       >
@@ -311,6 +312,6 @@ export function Game() {
       <Canvas>
         <Scene />
       </Canvas>
-    </div>
+    </>
   )
 }

@@ -14,7 +14,6 @@ import { type LoginRes } from '@/contracts/auth/auth.contract';
 import { type ApiResponse } from '@/contracts/http';
 
 import { loginAction } from './login.action';
-import { Text } from '@components/primitives/text';
 
 type StateActionProps = {
   err: ApiResponse<LoginRes> | null | undefined;
