@@ -73,7 +73,6 @@ export async function seed() {
 
   let inserted = 0;
   let attempts = 0;
-  safeCount = 0;
 
   try {
     await insertSpecificUser(pool, "ziermax");
