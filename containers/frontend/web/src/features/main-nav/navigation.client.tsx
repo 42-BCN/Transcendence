@@ -7,6 +7,7 @@ import { NavigationHeader } from './navigation-header';
 import { NavigationMain } from './navigation-main';
 import { NavigationFooter } from './navigation-footer';
 import { Stack } from '@components/primitives/stack';
+import { cn } from '@/lib/styles/cn';
 
 // TODO Translate aria-labels
 
@@ -32,7 +33,15 @@ export function NavigationClient(args: NavigationClientProps) {
   );
   return (
     <NavigationProvider value={value}>
-      <Stack as="nav" aria-label="main" className="group py-4" align="start">
+      <Stack
+        as="nav"
+        aria-label="main"
+        className={cn(
+          'group py-4 relative h-full transition-all duration-300',
+          isExpanded ? 'w-72' : 'w-16',
+        )}
+        align="start"
+      >
         <NavigationHeader />
         <NavigationMain {...args} />
         <NavigationFooter />

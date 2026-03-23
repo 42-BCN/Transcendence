@@ -37,8 +37,16 @@ export const routing = defineRouting({
       es: '/perfil',
       ca: '/perfil',
     },
-    '/privacy': '/privacy',
-    '/terms': '/terms',
+    '/privacy': {
+      en: '/privacy',
+      es: '/privacidad',
+      ca: '/privacitat',
+    },
+    '/terms': {
+      en: '/terms',
+      es: '/terminos',
+      ca: '/termes',
+    },
   },
   localeCookie,
 });

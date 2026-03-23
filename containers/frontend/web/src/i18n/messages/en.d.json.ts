@@ -112,6 +112,7 @@ declare const messages: {
     "appName": "Transcendence",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
+    "github": "GitHub",
     "copyright": "All rights reserved"
   }
 };
