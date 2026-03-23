@@ -4,6 +4,7 @@ SETUP_SCRIPT = scripts/env/setup-env.sh
 
 .PHONY: all up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
+	db-reset db-seed db-bootstrap \
 	ps restart shell-frontend shell-api shell-db setup stop
 
 #---- Default ----
@@ -82,3 +83,14 @@ shell-api:
 
 shell-db:
 	$(COMPOSE) exec postgres sh
+
+#---- Database management ----
+
+db-bootstrap:
+	$(COMPOSE) exec backend npm run bootstrap
+
+db-seed: db-bootstrap
+	$(COMPOSE) exec backend npm run seed
+
+db-reset:
+	$(COMPOSE) exec backend npm run reset
