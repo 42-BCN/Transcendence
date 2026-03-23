@@ -1,18 +1,19 @@
 import { useEffect } from 'react';
+
 import { chatSocket, robotsSocket, type Robot } from './socket';
 import type {
   ChatError,
-  ChatMe,
+  ChatGameEvent,
+  ChatHistoryType,
   ChatMessage,
-  ChatMessageUnion,
   ChatSystemMessage,
 } from '@/contracts/sockets/chat/chat.schema';
 
-type Props = {
+type RobotsSocketManagerProps = {
   onRobots: (robots: Robot[]) => void;
 };
 
-export const RobotsSocketManager = ({ onRobots }: Props) => {
+export const RobotsSocketManager = ({ onRobots }: RobotsSocketManagerProps) => {
   useEffect(() => {
     const handleConnect = () => {
       console.log('Connected to robots socket server', robotsSocket.id);
@@ -26,16 +27,23 @@ export const RobotsSocketManager = ({ onRobots }: Props) => {
       console.log('Disconnected from robots socket server');
     };
 
-    robotsSocket.on('connect', handleConnect);
-    robotsSocket.on('disconnect', handleDisconnect);
-    robotsSocket.on('robots', handleRobots);
+    const listeners = [
+      ['connect', handleConnect],
+      ['disconnect', handleDisconnect],
+      ['robots', handleRobots],
+    ] as const;
+
+    listeners.forEach(([event, handler]) => {
+      robotsSocket.on(event, handler);
+    });
 
     robotsSocket.connect();
 
     return () => {
-      robotsSocket.off('connect', handleConnect);
-      robotsSocket.off('disconnect', handleDisconnect);
-      robotsSocket.off('robots', handleRobots);
+      listeners.forEach(([event, handler]) => {
+        robotsSocket.off(event, handler);
+      });
+
       robotsSocket.disconnect();
     };
   }, [onRobots]);
@@ -44,10 +52,11 @@ export const RobotsSocketManager = ({ onRobots }: Props) => {
 };
 
 type ChatSocketManagerProps = {
-  onChatMessage: (message: ChatMessage | ChatMe) => void;
+  onChatMessage: (message: ChatMessage) => void;
   onChatSystemMessage: (message: ChatSystemMessage) => void;
   onChatError: (message: ChatError) => void;
-  onChatHistory: (history: ChatMessageUnion[]) => void;
+  onChatHistory: (history: ChatHistoryType) => void;
+  onGameEvent: (event: ChatGameEvent) => void;
 };
 
 export const ChatSocketManager = ({
@@ -55,34 +64,41 @@ export const ChatSocketManager = ({
   onChatSystemMessage,
   onChatError,
   onChatHistory,
+  onGameEvent,
 }: ChatSocketManagerProps) => {
   useEffect(() => {
     const handleConnect = () => console.log('Connected to chat socket server', chatSocket.id);
     const handleDisconnect = () => console.log('Disconnected from chat socket server');
-    const handleChatMessage = (payload: ChatMessage | ChatMe) => onChatMessage(payload);
+    const handleChatMessage = (payload: ChatMessage) => onChatMessage(payload);
     const handleChatSystemMessage = (payload: ChatSystemMessage) => onChatSystemMessage(payload);
     const handleChatError = (payload: ChatError) => onChatError(payload);
-    const handleChatHistory = (payload: ChatMessageUnion[]) => onChatHistory(payload);
+    const handleChatHistory = (payload: ChatHistoryType) => onChatHistory(payload);
+    const handleGameEvent = (payload: ChatGameEvent) => onGameEvent(payload);
 
-    chatSocket.on('connect', handleConnect);
-    chatSocket.on('chat:message', handleChatMessage);
-    chatSocket.on('chat:system', handleChatSystemMessage);
-    chatSocket.on('chat:error', handleChatError);
-    chatSocket.on('disconnect', handleDisconnect);
-    chatSocket.on('chat:history', handleChatHistory);
+    const reservedListeners = [
+      ['connect', handleConnect],
+      ['disconnect', handleDisconnect],
+    ] as const;
+
+    const chatListeners = [
+      ['chat:message', handleChatMessage],
+      ['chat:system', handleChatSystemMessage],
+      ['chat:error', handleChatError],
+      ['chat:history', handleChatHistory],
+      ['chat:game-event', handleGameEvent],
+    ] as const;
+
+    reservedListeners.forEach(([event, handler]) => chatSocket.on(event, handler));
+    chatListeners.forEach(([event, handler]) => chatSocket.on(event, handler));
 
     chatSocket.connect();
 
     return () => {
-      chatSocket.off('connect', handleConnect);
-      chatSocket.off('chat:message', handleChatMessage);
-      chatSocket.off('chat:system', handleChatSystemMessage);
-      chatSocket.off('chat:error', handleChatError);
-      chatSocket.off('disconnect', handleDisconnect);
-      chatSocket.off('chat:history', handleChatHistory);
+      reservedListeners.forEach(([event, handler]) => chatSocket.off(event, handler));
+      chatListeners.forEach(([event, handler]) => chatSocket.off(event, handler));
       chatSocket.disconnect();
     };
-  }, []);
+  }, [onChatMessage, onChatSystemMessage, onChatError, onChatHistory, onGameEvent]);
 
   return null;
 };

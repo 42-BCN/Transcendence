@@ -1,9 +1,8 @@
 import { io, type Socket } from 'socket.io-client';
 
 import type {
-  ChatError,
-  ChatMessage,
-  ChatSystemMessage,
+  ServerToClientChatEvents,
+  ClientToServerChatEvents,
 } from '@/contracts/sockets/chat/chat.schema';
 // TODO socket url as env variable
 
@@ -27,17 +26,6 @@ export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobo
     autoConnect: false,
   },
 );
-
-type ServerToClientChatEvents = {
-  'chat:message': (payload: ChatMessage) => void;
-  'chat:system': (payload: ChatSystemMessage) => void;
-  'chat:error': (payload: ChatError) => void;
-  'chat:history': (payload: ChatMessage[]) => void;
-};
-
-type ClientToServerChatEvents = {
-  'chat:send': (payload: unknown) => void;
-};
 
 export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEvents> = io(
   'http://localhost:3100/chat',

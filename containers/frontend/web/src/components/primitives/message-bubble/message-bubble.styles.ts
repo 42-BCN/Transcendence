@@ -7,6 +7,7 @@ const messageVariant = {
   user: 'rounded-bl-none bg-slate-100',
   system: 'bg-yellow-400',
   error: 'bg-red-400 text-white',
+  'game-event': 'bg-green-400 text-white',
 };
 
 export type messageVariantType = keyof typeof messageVariant;
