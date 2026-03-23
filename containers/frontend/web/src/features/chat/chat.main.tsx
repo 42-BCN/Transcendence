@@ -25,7 +25,7 @@ export function ChatMain({ messages }: { messages: ChatMessageUnion[] }) {
                 {username}
               </Text>
             )}
-            <Text as="p" variant="body-xs">
+            <Text as="p" variant="body-xs" className="whitespace-pre-wrap">
               {content.text}
             </Text>
           </MessageBubble>
