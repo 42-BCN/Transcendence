@@ -7,8 +7,6 @@ import { envPublic } from '@/lib/config/env.public';
 import { Providers } from '@/app/providers';
 import { NavigationServer } from '@/features/main-nav';
 
-import { Footer } from '@/components/primitives/footer';
-
 export async function generateMetadata({
   params,
 }: {
@@ -49,14 +47,9 @@ export default async function LocaleLayout({
       <Providers locale={locale}>
         <HtmlLangSync />
 
-        <div className="flex h-screen w-full overflow-hidden">
-          <NavigationServer locale={locale} />
+        <NavigationServer locale={locale} />
 
-          <div className="flex-grow flex flex-col overflow-y-auto">
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </div>
+        <div className="flex-grow">{children}</div>
       </Providers>
     </NextIntlClientProvider>
   );

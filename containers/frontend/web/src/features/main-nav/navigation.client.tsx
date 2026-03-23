@@ -7,6 +7,7 @@ import { NavigationHeader } from './navigation-header';
 import { NavigationMain } from './navigation-main';
 import { NavigationFooter } from './navigation-footer';
 import { Stack } from '@components/primitives/stack';
+import { cn } from '@/lib/styles/cn';
 
 // TODO Translate aria-labels
 
@@ -37,6 +38,10 @@ export function NavigationClient(args: NavigationClientProps) {
         aria-label="main"
         // TODO: This style here will be removed once the navigation is fully implemented. There's another issue for this component developing on parallel.
         className="group py-4 z-10 backdrop-blur-sm border-b border-gray-200 bg-white/50"
+        // className={cn(
+        //   'group py-4 relative h-full transition-all duration-300',
+        //   isExpanded ? 'w-72' : 'w-16',
+        // )}
         align="start"
       >
         <NavigationHeader />

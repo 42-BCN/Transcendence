@@ -1,24 +1,27 @@
 import { cn } from '@/lib/styles/cn';
 
 export function footerStyles(className?: string) {
-  return cn(
-    'relative w-full border-t border-white/[0.06] bg-slate-950/30 backdrop-blur-sm py-5 mt-auto',
-    className,
-  );
+  return cn('relative w-full pt-3 border-t border-white/10', className);
 }
 
 export function footerContainerStyles() {
-  return cn('mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4');
+  return cn('flex flex-col items-start px-4 gap-1 w-full');
 }
 
 export function footerLinksGroupStyles() {
-  return cn('flex items-center gap-6');
+  return cn('flex flex-col items-start gap-1 w-full');
 }
 
 export function footerLinkItemStyles() {
-  return cn('text-white/60 hover:text-white text-sm transition-colors');
+  return cn(
+    'inline-flex items-center whitespace-nowrap text-slate-500 hover:text-slate-800 text-[11px] transition-colors',
+    // TODO: Restablecer cuando haya soporte dark: 'dark:text-white/50 dark:hover:text-white'
+  );
 }
 
 export function footerCopyrightStyles() {
-  return cn('text-white/40 text-sm');
+  return cn(
+    'text-slate-400 text-[10px] text-left mt-1.5 whitespace-nowrap',
+    // TODO: Restablecer cuando haya soporte dark: 'dark:text-white/30'
+  );
 }

@@ -27,7 +27,7 @@ function renderNavLinkContent(icon: NavItem['icon'], label: string, isExpanded: 
   return (
     <>
       <Icon name={icon} size={20} />
-      {isExpanded ? <span>{label}</span> : null}
+      {isExpanded ? <span className="whitespace-nowrap">{label}</span> : null}
     </>
   );
 }
@@ -65,7 +65,7 @@ export function NavigationMain(args: NavigationMainProps) {
   const { mainNavItems, isAuthenticated = false } = args;
 
   return (
-    <Stack className="flex-1 list" gap="sm" align="start" role="list">
+    <Stack className="list" gap="sm" align="start" role="list">
       {mainNavItems.map((item) => (
         <NavLinkItem key={item.href} navItem={item} />
       ))}
