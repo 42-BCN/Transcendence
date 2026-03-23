@@ -8,7 +8,7 @@ export async function reset(): Promise<void> {
   //Delete
   console.log(`Resetting Database`);
   if (process.env.NODE_ENV !== "development") {
-    throw new Error("Seeding is only allowed in development.");
+    throw new Error("Resetting is only allowed in development.");
   }
   const pool = new Pool();
   try {

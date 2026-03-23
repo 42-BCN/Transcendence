@@ -89,7 +89,7 @@ shell-db:
 db-bootstrap:
 	$(COMPOSE) exec backend npm run bootstrap
 
-db-seed:
+db-seed: db-bootstrap
 	$(COMPOSE) exec backend npm run seed
 
 db-reset:

@@ -7,17 +7,8 @@ export async function getMeProfile(
   req: Request,
   res: Response<UserPublicResponse>,
 ): Promise<void> {
-  if (!req.session.userId) {
-    res.status(401).json({
-      ok: false,
-      error: {
-        code: "VALIDATION_ERROR",
-        details: undefined,
-      },
-    });
-    return;
-  }
-  const me = await findUserById(req.session.userId);
+  const userId = req.session.userId as string; // guaranteed by requireAuth
+  const me = await findUserById(userId);
   res.status(200).json({
     ok: true,
     data: me,
