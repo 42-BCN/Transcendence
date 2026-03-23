@@ -1,6 +1,6 @@
 'use server';
 
-import type { MeRes } from '@/contracts/auth/auth.contract';
+import type { MeRes } from '@/contracts/api/auth/auth.contract';
 import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
 
