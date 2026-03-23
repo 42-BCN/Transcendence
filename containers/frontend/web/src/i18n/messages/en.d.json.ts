@@ -107,6 +107,13 @@ declare const messages: {
     "FIELD_TOO_SHORT": "Too short.",
     "FIELD_TOO_LONG": "Too long.",
     "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+  },
+  "Footer": {
+    "appName": "Transcendence",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "github": "GitHub",
+    "copyright": "All rights reserved"
   }
 };
 export default messages;

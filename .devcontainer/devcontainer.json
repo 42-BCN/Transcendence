@@ -43,7 +43,7 @@
 //   "service": "backend",
 //   "workspaceFolder": "/app",
 //   "shutdownAction": "stopCompose",
-//   "runServices": ["api", "db"],
+//   "runServices": ["postgres"],
 //   "customizations": {
 //     "vscode": {
 //       "settings": {
