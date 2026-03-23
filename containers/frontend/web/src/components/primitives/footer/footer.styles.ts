@@ -15,13 +15,13 @@ export function footerLinksGroupStyles() {
 export function footerLinkItemStyles() {
   return cn(
     'inline-flex items-center whitespace-nowrap text-slate-500 hover:text-slate-800 text-[11px] transition-colors',
-    // TODO: Restablecer cuando haya soporte dark: 'dark:text-white/50 dark:hover:text-white'
+    // TODO: When dark support is on: 'dark:text-white/50 dark:hover:text-white'
   );
 }
 
 export function footerCopyrightStyles() {
   return cn(
     'text-slate-400 text-[10px] text-left mt-1.5 whitespace-nowrap',
-    // TODO: Restablecer cuando haya soporte dark: 'dark:text-white/30'
+    // TODO: When dark support is on: 'dark:text-white/30'
   );
 }

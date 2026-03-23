@@ -65,7 +65,7 @@ export function NavigationMain(args: NavigationMainProps) {
   const { mainNavItems, isAuthenticated = false } = args;
 
   return (
-    <Stack className="list" gap="sm" align="start" role="list">
+    <Stack className="flex-1 list" gap="sm" align="start" role="list">
       {mainNavItems.map((item) => (
         <NavLinkItem key={item.href} navItem={item} />
       ))}

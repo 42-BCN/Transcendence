@@ -49,7 +49,7 @@ export default async function LocaleLayout({
 
         <NavigationServer locale={locale} />
 
-        <div className="flex-grow">{children}</div>
+        {children}
       </Providers>
     </NextIntlClientProvider>
   );

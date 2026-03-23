@@ -4,7 +4,7 @@ const groupBase = ['inline-flex items-stretch flex-col', 'border border-black'];
 
 const itemBase = [
   'relative inline-flex items-center justify-center min-w-6 min-h-6 text-sm font-medium',
-  'border-r border-black last:border-r-0',
+  'border border-black',
   'text-black bg-white',
   'transition-colors',
   'focus-visible:outline-none',
