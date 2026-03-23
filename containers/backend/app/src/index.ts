@@ -1,12 +1,14 @@
 import app from "./app";
-import { bootstrap } from "./bootstrap";
 
 const PORT = Number(process.env.PORT ?? 4000);
 
-async function start(): Promise<void> {
-  await bootstrap();
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+async function start() {
+  await new Promise<void>((resolve, reject) => {
+    const server = app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      resolve();
+    });
+    server.on("error", reject);
   });
 }
 

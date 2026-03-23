@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import passport from "passport";
+
 import type { LoginRes, SignupRes } from "@contracts/auth/auth.contract";
 import { AUTH_ERRORS, type AuthErrorName } from "@contracts/auth/auth.errors";
 import type { SignupReq, LoginReq } from "@contracts/auth/auth.validation";

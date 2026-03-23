@@ -1,4 +1,4 @@
-import type { UserPublic, UserPublicResponse } from "@contracts/users/users.contracts";
+import type { UserPublic } from "@contracts/users/users.contracts";
 import { ApiError } from "@shared";
 
 import { listUsers, selectUserData } from "./users.repo";
@@ -14,7 +14,7 @@ export async function getUsers(args: getUsersProps): Promise<UserPublic[]> {
   return data;
 }
 
-export async function findUserById(id: string): Promise<UserPublicResponse> {
+export async function findUserById(id: string): Promise<UserPublic> {
   const data = await selectUserData(id);
   if (!data) throw new ApiError("USER_NOT_FOUND");
   return data;

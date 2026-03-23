@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import { validateQuery, validateParams } from "@shared";
 import {
   GetUserByIdParamSchema,
