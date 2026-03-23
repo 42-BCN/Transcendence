@@ -1,6 +1,5 @@
 import { AUTH_ERRORS } from "../auth/auth.errors";
 import { USERS_ERRORS } from "../users/users.errors";
-
 import { HttpStatus } from "./status";
 import { VALIDATION_ERROR } from "./validation";
 

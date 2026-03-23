@@ -1,8 +1,8 @@
+import { Pool } from "pg";
 import { faker } from "@faker-js/faker";
 import { createHash } from "crypto";
-import { pool, sql } from "@shared";
 
-import { bootstrapUsers } from "./users.bootstrap";
+const sql = String.raw;
 
 function makeUsername(): string {
   const base = faker.internet
@@ -21,7 +21,7 @@ function makeDevPasswordHash(plain: string): string {
   return createHash("sha256").update(plain).digest("hex");
 }
 
-async function insertSeedUser(): Promise<boolean> {
+async function insertSeedUser(pool: Pool): Promise<boolean> {
   const email = faker.internet.email().toLowerCase();
   const username = makeUsername();
 
@@ -48,26 +48,47 @@ async function insertSeedUser(): Promise<boolean> {
   return res.rowCount === 1;
 }
 
+async function insertSpecificUser(pool: Pool, user: string) {
+  await pool.query(
+    sql`
+    INSERT INTO public.users (
+      email,
+      username,
+      password_hash)
+    VALUES ('${user}@fakemail.com', '${user}', 'contraseña')
+    ON CONFLICT (email) DO NOTHING`,
+  );
+}
+
 export async function seed() {
-  // if (process.env.NODE_ENV !== "development") {
-  //   throw new Error("Seeding is only allowed in development.");
-  // }
+  console.log(`Seeding Database`);
+  if (process.env.NODE_ENV !== "development") {
+    throw new Error("Seeding is only allowed in development.");
+  }
 
-  const requested = Number(process.argv[2] ?? 20);
+  const pool = new Pool();
+
+  const requested = Number(process.argv[2] ?? 10);
   const safeCount = Math.min(Math.max(requested, 1), 500);
-
-  await bootstrapUsers();
 
   let inserted = 0;
   let attempts = 0;
 
-  // Retry loop to deal with rare email/username collisions
-  while (inserted < safeCount && attempts < safeCount * 5) {
-    attempts++;
-    if (await insertSeedUser()) inserted++;
+  try {
+    await insertSpecificUser(pool, "ziermax");
+    await insertSpecificUser(pool, "fernan");
+    // Retry loop to deal with rare email/username collisions
+    while (inserted < safeCount && attempts < safeCount * 5) {
+      attempts++;
+      if (await insertSeedUser(pool)) inserted++;
+    }
+  } catch (err) {
+    await pool.end();
+    throw err;
   }
-
   console.log({ requested: safeCount, inserted, attempts });
+  await pool.end();
+  console.log(`Seeded`);
 }
 
 // eslint-disable-next-line promise/catch-or-return

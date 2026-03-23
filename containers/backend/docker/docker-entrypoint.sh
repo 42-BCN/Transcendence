@@ -20,5 +20,8 @@ else
   echo "✅ Dependencies already installed."
 fi
 
+npm run bootstrap
+echo ""
+
 echo "▶️ Starting Express.js..."
 exec "$@"
