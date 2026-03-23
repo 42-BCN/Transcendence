@@ -15,6 +15,14 @@ import type { ValidationCode } from '../contracts/api/http/validation';
 const MAX_HISTORY = 50;
 const chatHistory: ChatHistoryType = [];
 
+const pushChatHistory = (message: ChatHistoryType[number]) => {
+  chatHistory.push(message);
+
+  if (chatHistory.length > MAX_HISTORY) {
+    chatHistory.shift();
+  }
+};
+
 // ---------------------------------------------------------------
 // Message Creation Helpers START
 // ---------------------------------------------------------------
@@ -30,13 +38,6 @@ const errorMessage = (error: z.ZodError): ChatError => ({
   type: 'error',
   content: {
     text: 'INVALID_CHAT_MESSAGE',
-    details: error.issues.map((issue) => ({
-      fieldName: issue.path.filter(
-        (segment): segment is string | number =>
-          typeof segment === 'string' || typeof segment === 'number',
-      ),
-      errCode: issue.code as ValidationCode,
-    })),
   },
 });
 
@@ -51,7 +52,7 @@ const systemMessage = (text: 'USER_JOINED' | 'USER_LEFT', username: string): Cha
     `[Chat Socket] System message: ${username} ${text === 'USER_JOINED' ? 'joined' : 'left'} the chat.`,
   );
 
-  chatHistory.push(message);
+  pushChatHistory(message);
   return message;
 };
 
@@ -63,7 +64,7 @@ const chatMessage = (username: string, text: string): ChatMessage => {
     content: { text },
   };
 
-  chatHistory.push(message);
+  pushChatHistory(message);
   return message;
 };
 

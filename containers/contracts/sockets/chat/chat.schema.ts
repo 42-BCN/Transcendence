@@ -1,9 +1,9 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { VALIDATION, type ValidationCode } from "../../api/http/validation";
+import { VALIDATION, type ValidationCode } from '../../api/http/validation';
 
 export type ClientToServerChatEvents = {
-  "chat:send": (payload: unknown) => void;
+  'chat:send': (payload: ChatSend) => void;
 };
 
 export const GameEventPayloadSchema = z.object({
@@ -14,11 +14,11 @@ export const GameEventPayloadSchema = z.object({
 export type GameEventPayload = z.infer<typeof GameEventPayloadSchema>;
 
 export type ServerToClientChatEvents = {
-  "chat:message": (payload: ChatMessage) => void;
-  "chat:system": (payload: ChatSystemMessage) => void;
-  "chat:error": (payload: ChatError) => void;
-  "chat:history": (payload: ChatHistoryType) => void;
-  "chat:game-event": (payload: ChatGameEvent) => void;
+  'chat:message': (payload: ChatMessage) => void;
+  'chat:system': (payload: ChatSystemMessage) => void;
+  'chat:error': (payload: ChatError) => void;
+  'chat:history': (payload: ChatHistoryType) => void;
+  'chat:game-event': (payload: ChatGameEvent) => void;
 };
 
 // ---------------------------------------------------------------
@@ -58,7 +58,7 @@ export type ChatSend = z.infer<typeof ChatSendSchema>;
 // ---------------------------------------------------------------
 
 export const ChatMessageSchema = BaseMessageSchema.extend({
-  type: z.literal("user"),
+  type: z.literal('user'),
   username: z.string(),
   content: TextContentSchema,
 });
@@ -66,7 +66,7 @@ export const ChatMessageSchema = BaseMessageSchema.extend({
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export const ChatMeSchema = BaseMessageSchema.extend({
-  type: z.literal("me"),
+  type: z.literal('me'),
   username: z.string(),
   content: TextContentSchema,
 });
@@ -74,9 +74,9 @@ export const ChatMeSchema = BaseMessageSchema.extend({
 export type ChatMe = z.infer<typeof ChatMeSchema>;
 
 export const ChatSystemMessageSchema = BaseMessageSchema.extend({
-  type: z.literal("system"),
+  type: z.literal('system'),
   content: z.object({
-    text: z.enum(["USER_JOINED", "USER_LEFT"]),
+    text: z.enum(['USER_JOINED', 'USER_LEFT']),
   }),
 });
 
@@ -86,28 +86,20 @@ export type ChatSystemMessage = z.infer<typeof ChatSystemMessageSchema>;
 // error
 // ---------------------------------------------------------------
 
-export const CHAT_ERRORS = ["INVALID_CHAT_MESSAGE"] as const;
+export const CHAT_ERRORS = ['INVALID_CHAT_MESSAGE'] as const;
 export type ChatErrorCode = (typeof CHAT_ERRORS)[number];
 
-export const ZodValidationErrorSchema = z.object({
-  fieldName: z.array(z.union([z.string(), z.number()])),
-  errCode: z.custom<ValidationCode>(),
-});
-
-export type ZodValidationError = z.infer<typeof ZodValidationErrorSchema>;
-
 export const ChatErrorSchema = BaseMessageSchema.extend({
-  type: z.literal("error"),
+  type: z.literal('error'),
   content: z.object({
     text: z.enum(CHAT_ERRORS),
-    details: z.array(ZodValidationErrorSchema),
   }),
 });
 
 export type ChatError = z.infer<typeof ChatErrorSchema>;
 
 export const ChatGameEventSchema = BaseMessageSchema.extend({
-  type: z.literal("game-event"),
+  type: z.literal('game-event'),
   content: z.object({
     text: z.string(),
     payload: z.unknown(),
@@ -120,7 +112,7 @@ export type ChatGameEvent = z.infer<typeof ChatGameEventSchema>;
 // union
 // ---------------------------------------------------------------
 
-export const ChatMessageUnionSchema = z.discriminatedUnion("type", [
+export const ChatMessageUnionSchema = z.discriminatedUnion('type', [
   ChatMessageSchema,
   ChatMeSchema,
   ChatSystemMessageSchema,
