@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={locale} className={`${primary.variable} ${mono.variable}`}>
-      <body className="h-screen flex">{children}</body>
+      <body className="h-screen flex w-full overflow-hidden">{children}</body>
     </html>
   );
 }
