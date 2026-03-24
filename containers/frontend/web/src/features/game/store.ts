@@ -10,6 +10,8 @@ type player = parse_entity & {
   facing: string;
   abilities: string[];
   dice: number[];
+  usedDice: number[];
+  hasMoved: boolean;
 };
 
 type enemy = player;
@@ -64,14 +66,13 @@ type gameState = {
   highlights: Record<string, boolean>;
   selectables: Record<string, boolean>;
   affected: Record<string, boolean>;
-  selectedDice: number;
-  selectedAbDice: number | null;
+  selectedDice: number | null;
 
   nextTurn: () => void;
   selectEntity: (Id: string) => void;
   getSel: () => entity | undefined;
-  movDice: (maxNum: number) => void;
-  selectAbDice: (dice: number) => void;
+  movDice: (mov: number) => void;
+  selectDice: (dice: number) => void;
   addHistory: (action: historyAction) => void;
   moveTo: (tileId: string) => Promise<void>;
   changeMode: () => void;
@@ -93,15 +94,25 @@ type gameState = {
   takeAb: (id: string, type: string, ab: abilityInfo, roll: number) => player | enemy;
 }
 
+const clean = {
+  canSelect: true,
+  typeEnt: null,
+  selectedAb: null,
+  selectedDice: null,
+  selectedEnt: null,
+  highlights: {},
+  selectables: {},
+};
+
 export const useGame = create<gameState>()((set, get) => ({
   turn: 1,
   executeTurn: false,
   canSelect: true,
   typeEnt: null,
   selectedAb: null,
-  selectedAbDice: null,
+  selectedMovDice: null,
   selectedEnt: null,
-  selectedDice: 0,
+  selectedDice: null,
   players: {},
   enemies: {},
   obstacles: {},
@@ -115,27 +126,19 @@ export const useGame = create<gameState>()((set, get) => ({
     { turn: state.turn + 1 }
   )),
 
+
   selectEntity: (Id) =>
     set((state) => {
       if (Id === state.selectedEnt) {
-        return {
-          selectedEnt: null,
-          selectedDice: 0,
-          typeEnt: null,
-          selectedAb: null,
-          highlights: {},
-          selectables: {},
-        };
+        return clean;
       }
       let ent = state.players[Id];
       if (!ent)
         ent = state.enemies[Id];
       return {
+        ...clean,
         selectedEnt: ent.id,
         typeEnt: ent.type,
-        selectedAb: null,
-        highlights: {},
-        selectables: {}
       };
     }),
   getSel: () => {
@@ -145,15 +148,33 @@ export const useGame = create<gameState>()((set, get) => ({
     return (s.typeEnt === "player" ? s.players[s.selectedEnt] : s.enemies[s.selectedEnt])
   },
 
-  movDice: (maxNum) => {
+  movDice: (mov) => {
     const state = get();
     const ent = state.getSel();
     if (!ent)
+      throw new Error("no ent id!");
+    if (ent.hasMoved === true)
       return;
-    const hlId = state.dijkstra(ent.position, maxNum);
+    const hlId = state.dijkstra(ent.position, mov);
     const hlTiles: Record<string, boolean> = {};
     hlId.forEach((id: string) => (hlTiles[id] = true));
-    set({ highlights: hlTiles });
+    set({
+      highlights: hlTiles,
+      selectedDice: mov,
+    });
+  },
+
+  selectDice: (dice) => {
+    const state = get()
+    if (state.selectedDice === dice) {
+      set({ selectedDice: null });
+      return;
+    }
+    const entid = state.selectedEnt;
+    if (!entid)
+      throw new Error("no ent id!");
+    set({ selectedDice: dice });
+    console.log(get().selectedDice);
   },
 
   addHistory: (action) => set((state) => {
@@ -189,27 +210,33 @@ export const useGame = create<gameState>()((set, get) => ({
     else if (state.typeEnt === "enemy")
       ent = state.enemies[state.selectedEnt];
     if (!ent)
-      return;
+      throw new Error("no ent id!");
     const path = state.Astar(ent.position, dest);
-    if (!path || path.length === 0)
+    if (!path || path.length === 0 || !state.selectedDice)
       return;
     set({
-      highlights: {},
-      selectedEnt: null,
-      selectedDice: 0,
-      canSelect: false
-    })
+      ...clean,
+      typeEnt: state.typeEnt,
+      canSelect: false,
+      players: {
+        ...state.players,
+        [ent.id]: {
+          ...state.players[ent.id],
+          dice: state.players[ent.id].dice.toSpliced(
+            state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
+          usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
+          hasMoved: true,
+        }
+      }
+    });
     for (let i = 1; i < path.length; ++i) {
       await sleep(300);
-      const [sx, sy, sz] =
-        path[i].split(',').map(Number);
-      const stepPos =
-        { x: sx, y: sy, z: sz };
+      const [sx, sy, sz] = path[i].split(',').map(Number);
+      const stepPos = { x: sx, y: sy, z: sz };
       set((currState) => {
         if (currState.typeEnt === "player") {
           return {
-            players:
-            {
+            players: {
               ...currState.players,
               [ent.id]: {
                 ...currState.players[ent.id],
@@ -219,8 +246,7 @@ export const useGame = create<gameState>()((set, get) => ({
           }
         }
         return {
-          enemies:
-          {
+          enemies: {
             ...currState.enemies,
             [ent.id]: {
               ...currState.enemies[ent.id],
@@ -253,8 +279,10 @@ export const useGame = create<gameState>()((set, get) => ({
             ...entity, type: "player", hp: 13, maxHp: 13,
             abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
             dice: [4, 4, 4, 4, 8],
+            usedDice: [],
             facing: "center",
             status: null,
+            hasMoved: false,
           }
           break;
         case "paladin":
@@ -262,8 +290,10 @@ export const useGame = create<gameState>()((set, get) => ({
             ...entity, type: "player", hp: 16, maxHp: 16,
             abilities: ["Thrust", "Defend", "Shield Bash", "Vertical Slash"],
             dice: [6, 6, 6, 6],
+            usedDice: [],
             facing: "center",
             status: null,
+            hasMoved: false,
           }
           break;
         case "mage":
@@ -271,8 +301,10 @@ export const useGame = create<gameState>()((set, get) => ({
             ...entity, type: "player", hp: 8, maxHp: 8,
             abilities: ["Fire Breath", "Azure Comet", "Small Meteor", "Rising Thorns"],
             dice: [4, 8, 12],
+            usedDice: [],
             facing: "center",
             status: null,
+            hasMoved: false,
           }
           break;
         case "scientist":
@@ -280,8 +312,10 @@ export const useGame = create<gameState>()((set, get) => ({
             abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],
             ...entity, type: "player", hp: 10, maxHp: 10,
             dice: [6, 8, 10],
+            usedDice: [],
             facing: "center",
             status: null,
+            hasMoved: false,
           }
           break;
       }
@@ -290,8 +324,10 @@ export const useGame = create<gameState>()((set, get) => ({
           ...entity, type: "enemy", hp: 13, maxHp: 13,
           abilities: ["Claw"],
           dice: [4],
+          usedDice: [],
           facing: "center",
-          status: null
+          status: null,
+          hasMoved: false,
         }
       }
     });
@@ -796,45 +832,22 @@ export const useGame = create<gameState>()((set, get) => ({
     }
   },
 
-  selectAbDice: (dice) => {
-    const state = get()
-    if (state.selectedAbDice === dice) {
-      set({ selectedAbDice: null });
-      return;
-    }
-    const entid = state.selectedEnt;
-    if (!entid)
-      return;
-    set({ selectedAbDice: dice });
-    console.log(get().selectedAbDice);
-  },
-
   selectAbility: (name) => {
     const state = get()
-    if (state.selectedAb === name) {
-      set(
-        {
-          selectedAb: null,
-          selectedDice: 0,
-          selectedAbDice: null,
-          highlights: {},
-          selectables: {},
-          canSelect: true,
-        });
-      return;
-    }
+    if (state.selectedAb === name)
+      return set(clean);
     const entid = state.selectedEnt;
     if (!entid)
-      return;
+      throw new Error("no ent id!");
     const pos = state.players[entid].position;
     const { type, range, self } = state.getAbility(name);
-    set(
-      {
-        selectedAb: name,
-        highlights: {},
-        selectables: state.paint(pos, type, range, self),
-        canSelect: false
-      });
+    set({
+      selectedAb: name,
+      highlights: {},
+      selectedDice: null,
+      selectables: state.paint(pos, type, range, self),
+      canSelect: false
+    });
     console.log(get().selectedAb);
     console.log(get().selectables);
   },
@@ -854,23 +867,12 @@ export const useGame = create<gameState>()((set, get) => ({
   executeAbility: (target) => {
     const state = get();
     const name = state.selectedAb;
-    if (!state.selectedAb || !name || !state.selectedAbDice)
+    if (!state.selectedAb || !name || !state.selectedDice)
       return;
     const ab = state.getAbility(name);
-    const roll = Math.ceil(Math.random() * state.selectedAbDice);
-    if (!ab.cond(roll)) {
-      set({
-        selectedEnt: null,
-        selectedDice: 0,
-        canSelect: true,
-        selectedAbDice: null,
-        typeEnt: null,
-        selectedAb: null,
-        highlights: {},
-        selectables: {},
-      });
-      return;
-    }
+    const roll = Math.ceil(Math.random() * state.selectedDice);
+    if (!ab.cond(roll))
+      return set(clean);
     const targets = [target];
     // if (ab.AoE)
     //   targets.push(...state.getAoE(pos, ab.AoEtype, AoErange));
@@ -889,14 +891,7 @@ export const useGame = create<gameState>()((set, get) => ({
     })
 
     set({
-      selectedEnt: null,
-      selectedDice: 0,
-      canSelect: true,
-      selectedAbDice: null,
-      typeEnt: null,
-      selectedAb: null,
-      highlights: {},
-      selectables: {},
+      ...clean,
       players: { ...state.players, ...Object.fromEntries(changedPlayers.map(p => [p.id, p])) },
       enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map(e => [e.id, e])) },
     })

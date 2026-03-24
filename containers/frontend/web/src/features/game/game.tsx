@@ -38,11 +38,19 @@ function DiceButtons() {
   const canSelect = useGame((state) => state.canSelect);
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
-  const selectDice = useGame((state) => state.selectAbDice);
+  const selectDice = useGame((state) => state.selectDice);
   return (
     <div className='z-10 bottom-[10%] left-[20%] flex gap-4'
     >
 
+      {ent?.usedDice.map((diceNum, i) => (
+        <Button
+          key={i}
+          className={`px-4 py-2 bg-gray-500 text-white transition-all`}
+        >
+          {`d${diceNum}`}
+        </Button>
+      ))}
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
@@ -89,7 +97,7 @@ function HUD() {
           formatOptions={{ style: "decimal" }} />
       </div>
       <DiceButtons />
-      <DiceInfo />
+      {/* <DiceInfo /> */}
     </Stack>
   )
 }
