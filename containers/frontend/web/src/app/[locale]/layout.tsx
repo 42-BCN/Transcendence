@@ -48,7 +48,6 @@ export default async function LocaleLayout({
         <HtmlLangSync />
 
         <NavigationServer locale={locale} />
-
         {children}
       </Providers>
     </NextIntlClientProvider>
