@@ -27,7 +27,7 @@ function renderNavLinkContent(icon: NavItem['icon'], label: string, isExpanded: 
   return (
     <>
       <Icon name={icon} size={20} />
-      {isExpanded ? <span>{label}</span> : null}
+      {isExpanded ? <span className="whitespace-nowrap">{label}</span> : null}
     </>
   );
 }

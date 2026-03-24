@@ -1,42 +1,47 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Stack } from '@components/primitives/stack';
-import { ChatHeader } from './chat.header';
-
+import { Form } from '@components/composites/form';
 import { TextAreaField } from '@components/composites/text-area-field';
-import { chatStyles } from './chat.styles';
+
+import { ChatHeader } from './chat.header';
 import { ChatMain } from './chat.main';
-import { CHAT_MESSAGES } from './chat.store';
+import { chatStyles } from './chat.styles';
+import { useChat } from './chat.provider';
 
-export type Message = {
-  id: string;
-  username: string;
-  content: {
-    text: string;
-  };
-};
-
-export function ChatFeature() {
-  const [messages] = useState<Message[]>(CHAT_MESSAGES);
-  const [value, setValue] = useState('');
-
-  const handleChange = (value: string) => {
-    setValue(value);
-  };
+function ChatContent() {
+  const { messages, value, setValue, sendMessage } = useChat();
 
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
       <ChatHeader room="chatTest" participants={['capapes', 'cmanica-', 'mfontser', 'mvelazqu']} />
+
       <ChatMain messages={messages} />
-      <TextAreaField
-        value={value}
-        onChange={handleChange}
-        className={chatStyles.footer.input}
-        aria-label="message"
-        maxLength={300}
-      />
+
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          sendMessage();
+        }}
+      >
+        <TextAreaField
+          value={value}
+          onChange={setValue}
+          className={chatStyles.footer.input}
+          aria-label="message"
+          maxLength={300}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
+        />
+      </Form>
     </Stack>
   );
+}
+
+export function ChatFeature({ isVisible }: { isVisible: boolean }) {
+  return isVisible && <ChatContent />;
 }

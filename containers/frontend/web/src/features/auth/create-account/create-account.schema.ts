@@ -1,4 +1,4 @@
-import { SignupReqSchema, type SignupReq } from '@/contracts/auth/auth.validation';
+import { SignupReqSchema, type SignupReq } from '@/contracts/api/auth/auth.validation';
 import { createEmptyValues } from '@/lib/forms/defaults';
 
 export const fieldsBase = {

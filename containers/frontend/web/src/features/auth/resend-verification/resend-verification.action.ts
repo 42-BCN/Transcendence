@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
-import { type ApiResponse } from '@/contracts/http';
+import { type ApiResponse } from '@/contracts/api/http';
 
 export async function resendVerificationAction(): Promise<ApiResponse<unknown>> {
   // TODO: For now, the endpoint is a placeholder until the backend implements it.

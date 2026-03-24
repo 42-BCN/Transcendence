@@ -1,6 +1,6 @@
 'use server';
 
-import type { SignupRes } from '@/contracts/auth/auth.contract';
+import type { SignupRes } from '@/contracts/api/auth/auth.contract';
 import { fetchServer } from '@/lib/http/fetcher.server';
 import { redirect } from '@/i18n/navigation';
 import { getLocale } from 'next-intl/server';

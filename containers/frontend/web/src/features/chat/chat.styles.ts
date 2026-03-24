@@ -8,5 +8,5 @@ export const chatStyles = {
   main: {
     wrapper: 'px-3 py-4',
   },
-  footer: { input: 'rounded-none shadow-md border-none px-3' },
+  footer: { input: 'rounded-none shadow-md px-3' },
 };

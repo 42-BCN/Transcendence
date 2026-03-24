@@ -9,7 +9,7 @@ import { recoverAction } from './recover.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 
-import { RecoverReqSchema, type RecoverReq } from '@/contracts/auth/auth.recover.caro';
+import { RecoverReqSchema, type RecoverReq } from '@/contracts/api/auth/auth.recover.caro';
 import { Text } from '@components/primitives/text';
 import { Stack } from '@components/primitives/stack';
 
