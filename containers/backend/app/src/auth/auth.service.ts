@@ -92,12 +92,9 @@ export async function verifyAccount(input: { token: string }): Promise<void> {
     throw new ApiError("AUTH_TOKEN_EXPIRED");
   user = await Repo.verifyAccount(user.id);
   if (!user) throw new ApiError("AUTH_INTERNAL_ERROR");
-  return;
 }
 //no need to resturn the token
-export async function resendVerifMail(
-  identifier: string,
-): Promise<string | null> {
+export async function resendVerifMail(identifier: string): Promise<void> {
   const key = identifyKey(identifier);
   const user = await Repo.findUserForVerify(key, identifier);
   if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
@@ -109,8 +106,6 @@ export async function resendVerifMail(
   //Controller job?
   //await sendConfirmMail(user.email, token);
   console.log(`Sending email:`, user.account_token); //DEV borrar
-
-  return user.account_token;
 }
 
 function getUserProfile(profile: Profile) {

@@ -1,5 +1,4 @@
 import { pool, sql, ApiError } from "@shared";
-import type { AuthSigninUser } from "@contracts/auth/auth.contract";
 
 import type { AuthUserRow } from "./auth.model";
 
@@ -20,10 +19,20 @@ export type UserRecoverData = Pick<
   | "recover_token_expiration"
   | "recover_attempts"
 >;
+type UserVerifyData = Pick<
+  AuthUserRow,
+  | "id"
+  | "email"
+  | "username"
+  | "is_blocked"
+  | "email_verified_at"
+  | "account_token"
+  | "account_token_expiration"
+>;
 
 const USER_PUBLIC_SELECT = `id, email, username`;
 const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
-const USER_SIGNIN_DATA = `id, email, username, is_blocked, email_verified_at, account_token, account_token_expiration`;
+const USER_VERIFY_DATA = `id, email, username, is_blocked, email_verified_at, account_token, account_token_expiration`;
 const USER_RECOVER_DATA = `id, email, username, is_blocked, recover_token, recover_token_expiration, recover_attempts`;
 
 export async function findUserByEmail(
@@ -143,9 +152,9 @@ export async function setConfirmToken(
 }
 export async function findUserByAccountToken(
   token: string,
-): Promise<AuthSigninUser | null> {
+): Promise<UserVerifyData | null> {
   const res = await pool.query(
-    sql`SELECT ${USER_SIGNIN_DATA} FROM public.users
+    sql`SELECT ${USER_VERIFY_DATA} FROM public.users
     WHERE account_token = $1`,
     [token],
   );
@@ -153,8 +162,8 @@ export async function findUserByAccountToken(
 }
 export async function verifyAccount(
   id: string,
-): Promise<AuthSigninUser | null> {
-  const res = await pool.query<AuthSigninUser>(
+): Promise<UserVerifyData | null> {
+  const res = await pool.query<UserVerifyData>(
     sql`
     UPDATE public.users 
     SET 
@@ -163,7 +172,7 @@ export async function verifyAccount(
       account_token = NULL, 
       account_token_expiration = NULL
     WHERE id = $1
-    RETURNING ${USER_SIGNIN_DATA};
+    RETURNING ${USER_VERIFY_DATA};
     `,
     [id],
   );
@@ -172,15 +181,15 @@ export async function verifyAccount(
 export async function findUserForVerify(
   key: "email" | "username",
   identifier: string,
-): Promise<AuthSigninUser | null> {
+): Promise<UserVerifyData | null> {
   const res = await pool.query(
     sql`
-    SELECT ${USER_SIGNIN_DATA} FROM public.users 
+    SELECT ${USER_VERIFY_DATA} FROM public.users 
     WHERE ${key} = $1;
   `,
     [identifier],
   );
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }
 
 /*

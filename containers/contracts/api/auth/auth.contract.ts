@@ -8,16 +8,6 @@ export type AuthUser = {
   username: string;
 };
 
-export type AuthSigninUser = {
-  id: string;
-  email: string;
-  username: string;
-  is_blocked: boolean;
-  email_verified_at: Date;
-  account_token: string;
-  account_token_expiration: Date;
-};
-
 // ---------------------------------------
 // POST /api/auth/signup
 // ---------------------------------------

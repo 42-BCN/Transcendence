@@ -7,12 +7,13 @@ export type AuthUserRow = {
   password_hash: string | null;
   provider: "local" | "google";
   google_id: string | null;
+  email_verified_at: Date;
   is_blocked: boolean;
   recover_token: string | null;
   recover_token_expiration: Date;
   recover_attempts: number;
   account_token: string | null;
-  account_token_expiration: string | null;
+  account_token_expiration: Date;
 };
 
 export function toAuthUser(row: {
