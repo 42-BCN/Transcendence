@@ -151,7 +151,7 @@ export async function getRecovery(
   res.status(200).json({ ok: true, data: user });
 }
 export async function putRecovery(
-  req: Request<unknown, RecoverUpdate>,
+  req: Request<unknown, unknown, RecoverUpdate>,
   res: Response,
 ): Promise<void> {
   await Service.updateRecoverAccount(req.body);

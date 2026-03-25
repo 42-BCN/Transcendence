@@ -1,8 +1,5 @@
 import { pool, sql, ApiError } from "@shared";
-import type {
-  AuthRecoverUser,
-  AuthSigninUser,
-} from "@contracts/auth/auth.contract";
+import type { AuthSigninUser } from "@contracts/auth/auth.contract";
 
 import type { AuthUserRow } from "./auth.model";
 
@@ -12,6 +9,18 @@ type UserWithPassword = Pick<
   "id" | "email" | "username" | "password_hash"
 >;
 
+//Easy solution (export) for the Service
+export type UserRecoverData = Pick<
+  AuthUserRow,
+  | "id"
+  | "email"
+  | "username"
+  | "is_blocked"
+  | "recover_token"
+  | "recover_token_expiration"
+  | "recover_attempts"
+>;
+
 const USER_PUBLIC_SELECT = `id, email, username`;
 const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
 const USER_SIGNIN_DATA = `id, email, username, is_blocked, email_verified_at, account_token, account_token_expiration`;
@@ -19,11 +28,11 @@ const USER_RECOVER_DATA = `id, email, username, is_blocked, recover_token, recov
 
 export async function findUserByEmail(
   email: string,
-): Promise<AuthUserRow | null> {
-  const res = await pool.query<AuthUserRow>(
+): Promise<UserWithPassword | null> {
+  const res = await pool.query<UserWithPassword>(
     //Cambiar Query.select.values a una MACRO
     sql`
-    SELECT id, email, username, password_hash
+    SELECT ${USER_WITH_PASSWORD_SELECT}
     FROM public.users
     WHERE email = $1
     LIMIT 1;
@@ -202,7 +211,7 @@ export async function linkGoogleIdToEmailUser(input: {
 export async function findUserForRecovery(
   key: "email" | "username",
   identifier: string,
-): Promise<AuthRecoverUser | null> {
+): Promise<UserRecoverData | null> {
   const res = await pool.query(
     sql`
     SELECT ${USER_RECOVER_DATA} FROM public.users 
@@ -210,7 +219,7 @@ export async function findUserForRecovery(
   `,
     [identifier],
   );
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }
 export async function setRecoveryToken(
   username: string,
@@ -231,13 +240,13 @@ export async function setRecoveryToken(
 }
 export async function findUserByToken(
   token: string,
-): Promise<AuthRecoverUser | null> {
+): Promise<UserRecoverData | null> {
   const res = await pool.query(
     sql`SELECT ${USER_RECOVER_DATA} FROM public.users
-    WHERE recover_token = $1/* AND recover_token_expiration > NOW()*/`,
+    WHERE recover_token = $1`,
     [token],
   );
-  return res.rows[0];
+  return res.rows[0] ?? null;
 }
 export async function updatePasswordRecover(
   userId: string,
@@ -276,5 +285,5 @@ export async function selectUser(
     `SELECT * FROM public.users WHERE username = $1`,
     [username],
   );
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }

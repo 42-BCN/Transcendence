@@ -18,16 +18,6 @@ export type AuthSigninUser = {
   account_token_expiration: Date;
 };
 
-export type AuthRecoverUser = {
-  id: string;
-  email: string;
-  username: string;
-  is_blocked: boolean;
-  recover_token: string;
-  recover_token_expiration: Date;
-  recover_attempts: number;
-};
-
 // ---------------------------------------
 // POST /api/auth/signup
 // ---------------------------------------

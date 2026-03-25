@@ -9,8 +9,8 @@ export type AuthUserRow = {
   google_id: string | null;
   is_blocked: boolean;
   recover_token: string | null;
-  recover_token_expiration: string | null;
-  recover_attempts: string | null;
+  recover_token_expiration: Date;
+  recover_attempts: number;
   account_token: string | null;
   account_token_expiration: string | null;
 };

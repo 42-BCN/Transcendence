@@ -10,6 +10,7 @@ export const RES_ERRORS = {
   INTERNAL_ERROR: HttpStatus.INTERNAL_SERVER_ERROR,
   // Global errors
   ...VALIDATION_ERROR,
+  TOO_MANY_REQUEST: HttpStatus.TOO_MANY_REQUEST,
 } as const;
 
 /* "AUTH_UNAUTHORIZED" | "AUTH_FORBIDDEN" | ... - code used for internationalization*/
