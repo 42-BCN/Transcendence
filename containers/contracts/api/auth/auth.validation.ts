@@ -41,6 +41,11 @@ export const SignupReqSchema = z
 
 export type SignupReq = z.infer<typeof SignupReqSchema>;
 
+export const VerifyQuerySchema = z.strictObject({
+  token: z.string().min(1, { message: V.REQUIRED }),
+});
+export type VerifyQuery = z.infer<typeof VerifyQuerySchema>;
+
 export const RecoverReqSchema = z.strictObject({
   identifier: identifierSchema.transform((val) =>
     val.includes("@") ? val.toLowerCase().trim() : val,

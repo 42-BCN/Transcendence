@@ -26,6 +26,38 @@ export async function login(input: LoginReq): Promise<AuthUser> {
   return toAuthUser(user);
 }
 
+/*
+ * SINGIN utils
+ *  */
+async function setConfirmToken(id: string): Promise<string | null> {
+  let token = null;
+
+  for (let not_done = 1; not_done <= 5; ++not_done) {
+    try {
+      token = generateToken();
+      await Repo.setConfirmToken(id, token);
+      break;
+    } catch (err) {
+      if (!(err instanceof DatabaseError) || err.code !== "23505") throw err;
+      token = null;
+    }
+  }
+  return token;
+}
+async function generateUser(
+  email: string,
+  passwordHash: string,
+): Promise<AuthUser | null> {
+  let user: AuthUser | null = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const username = generateUsername();
+
+    user = await Repo.insertUser({ email, username, passwordHash });
+    if (user) break;
+  }
+  return user;
+}
+
 export async function signup(input: {
   email: string;
   password: string;
@@ -37,14 +69,48 @@ export async function signup(input: {
 
   const passwordHash = await argon2.hash(input.password);
 
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const username = generateUsername();
+  const user = await generateUser(email, passwordHash);
+  if (!user) throw new ApiError("INTERNAL_ERROR");
 
-    const created = await Repo.insertUser({ email, username, passwordHash });
-    if (created) return toAuthUser(created);
-  }
+  const token = await setConfirmToken(user.id);
+  if (!token) throw new ApiError("AUTH_INTERNAL_ERROR");
 
-  throw new ApiError("INTERNAL_ERROR");
+  //Controller job?
+  //await sendConfirmMail(user.email, token);
+
+  return user;
+}
+
+/*
+ * VERIFY PROCESS
+ *  */
+export async function verifyAccount(input: { token: string }): Promise<void> {
+  let user = await Repo.findUserByAccountToken(input.token);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
+  if (user.account_token_expiration.getTime() < Date.now())
+    throw new ApiError("AUTH_TOKEN_EXPIRED");
+  user = await Repo.verifyAccount(user.id);
+  if (!user) throw new ApiError("AUTH_INTERNAL_ERROR");
+  return;
+}
+//no need to resturn the token
+export async function resendVerifMail(
+  identifier: string,
+): Promise<string | null> {
+  const key = identifyIntentifier(identifier);
+  const user = await Repo.findUserForVerify(key, identifier);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  if (user.email_verified_at) throw new ApiError("AUTH_UNAUTHORIZED");
+  if (!user.account_token) throw new ApiError("AUTH_UNAUTHORIZED");
+  if (user.account_token_expiration.getTime() < Date.now())
+    throw new ApiError("AUTH_TOKEN_EXPIRED");
+
+  //Controller job?
+  //await sendConfirmMail(user.email, token);
+  console.log(`Sending email:`, user.account_token); //DEV borrar
+
+  return user.account_token;
 }
 
 function getUserProfile(profile: Profile) {
@@ -54,6 +120,9 @@ function getUserProfile(profile: Profile) {
   return { googleId, email, username };
 }
 
+/*
+ * GOOGLE PROCESS
+ *  */
 export async function findOrCreateGoogleUser(
   profile: Profile,
 ): Promise<AuthUser> {
@@ -77,24 +146,24 @@ export async function findOrCreateGoogleUser(
 /*
  * RECOVERY utils
  *  */
-function generateRecoveryToken(): string {
+function generateToken(): string {
   const token = crypto.randomBytes(32).toString("hex");
   return token;
 }
 async function setRecoveryToken(id: string): Promise<string | null> {
-  let recoverToken = null;
+  let token = null;
 
   for (let not_done = 1; not_done <= 5; ++not_done) {
     try {
-      recoverToken = generateRecoveryToken();
-      await Repo.setRecoveryToken(id, recoverToken);
+      token = generateToken();
+      await Repo.setRecoveryToken(id, token);
       break;
     } catch (err) {
       if (!(err instanceof DatabaseError) || err.code !== "23505") throw err;
-      recoverToken = null;
+      token = null;
     }
   }
-  return recoverToken;
+  return token;
 }
 //FIXING COMPLEXITY PROBLEM MAY BE A PROBLEM
 function identifyIntentifier(identifier: string): "email" | "username" {
@@ -126,7 +195,7 @@ export async function processRecovery(
 
   const recoverToken = await setRecoveryToken(user.id);
   if (!recoverToken) throw new ApiError("INTERNAL_ERROR");
-  //Enviar email - tal vez esto deberia estar en el controlador
+  //Send email - maybe in controller?
   //await sendRecoveryMail(user.email, recoverToken);
 
   return recoverToken;
@@ -157,7 +226,7 @@ export async function resendRecMail(
   let user = await Repo.findUserForRecovery(key, identifier);
   user = checkRecoverUser(user);
   if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
-  //Enviar email - tal vez esto deberia estar en el controlador
+  //Send email - maybe in controller?
   //await sendRecoveryMail(user.email, recoverToken);
   return user.recover_token;
 }

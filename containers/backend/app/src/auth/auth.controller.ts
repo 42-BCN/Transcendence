@@ -10,6 +10,7 @@ import type {
   RecoverUpdate,
   RecoverParam,
   FullUser,
+  VerifyQuery,
 } from "@contracts/auth/auth.validation";
 import { HttpStatus } from "@contracts/http";
 
@@ -37,7 +38,7 @@ export async function postSignup(
 ): Promise<void> {
   const result = await Service.signup(req.body);
 
-  res.status(200).json({
+  res.status(201).json({
     ok: true,
     data: { user: result },
   });
@@ -81,6 +82,9 @@ export function postLogout(req: Request, res: Response): void {
   });
 }
 
+/*
+ * GOOGLE PROCESS
+ *  */
 export function getGoogleCallback(
   req: Request,
   res: Response,
@@ -102,6 +106,30 @@ export function getGoogleCallback(
       });
     });
   })(req, res, next);
+}
+
+/*
+ * VERIFY PROCESS
+ *  */
+type Locals = { query: VerifyQuery };
+
+export async function getVerify(
+  req: Request,
+  res: Response<unknown, Locals>,
+): Promise<void> {
+  await Service.verifyAccount(res.locals.query);
+  res.status(200).json({
+    ok: true,
+    data: null, // No data needed to send?
+  });
+}
+export async function postVerifResend(
+  req: Request<unknown, RecoverReq>,
+  res: Response,
+) {
+  const identifier = req.body.identifier;
+  await Service.resendVerifMail(identifier);
+  res.status(200).json({ ok: true, data: null });
 }
 
 /*
@@ -135,7 +163,7 @@ export async function postRecResend(
 ): Promise<void> {
   const identifier = req.body.identifier;
   await Service.resendRecMail(identifier); //Maybe should't wait till it finishes
-  res.status(200).json({ ok: true, data: `Done` /* TESTING DEV null*/ });
+  res.status(200).json({ ok: true, data: null });
 }
 
 //DELETE THIS

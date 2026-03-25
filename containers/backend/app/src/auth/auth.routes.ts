@@ -2,7 +2,11 @@ import { Router } from "express";
 import passport from "passport";
 
 import { recoverLimiter } from "@shared/utils/rate-limiter";
-import { validateBody, validateParams } from "@shared/validation.middleware";
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from "@shared/validation.middleware";
 import {
   LoginReqSchema,
   RecoverReqSchema,
@@ -10,6 +14,7 @@ import {
   SignupReqSchema,
   RecoverParamSchema,
   FullUserSchema,
+  VerifyQuerySchema,
 } from "@contracts/auth/auth.validation";
 
 import {
@@ -22,6 +27,8 @@ import {
   getRecovery,
   getUser,
   postRecResend,
+  getVerify,
+  postVerifResend,
 } from "./auth.controller";
 
 export const authRouter = Router();
@@ -29,6 +36,13 @@ export const authRouter = Router();
 authRouter.use("/recover", recoverLimiter);
 
 authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
+authRouter.get("/verify", validateQuery(VerifyQuerySchema), getVerify);
+//May remake the recover Schema
+authRouter.post(
+  "/verify/resend",
+  validateBody(RecoverReqSchema),
+  postVerifResend,
+);
 authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
 authRouter.get(
   "/google",

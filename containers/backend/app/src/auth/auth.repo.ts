@@ -1,5 +1,8 @@
 import { pool, sql, ApiError } from "@shared";
-import type { AuthRecoverUser } from "@contracts/auth/auth.contract";
+import type {
+  AuthRecoverUser,
+  AuthSigninUser,
+} from "@contracts/auth/auth.contract";
 
 import type { AuthUserRow } from "./auth.model";
 
@@ -11,6 +14,7 @@ type UserWithPassword = Pick<
 
 const USER_PUBLIC_SELECT = `id, email, username`;
 const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
+const USER_SIGNIN_DATA = `id, email, username, is_blocked, email_verified_at, account_token, account_token_expiration`;
 const USER_RECOVER_DATA = `id, email, username, is_blocked, recover_token, recover_token_expiration, recover_attempts`;
 
 export async function findUserByEmail(
@@ -80,8 +84,8 @@ export async function insertGoogleUser(input: {
 }): Promise<UserPublic> {
   const res = await pool.query<UserPublic>(
     sql`
-    INSERT INTO public.users (email, username, google_id, provider)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO public.users (email, username, google_id, provider, email_verified_at)
+    VALUES ($1, $2, $3, $4, NOW())
     RETURNING ${USER_PUBLIC_SELECT};
     `,
     [input.email, input.username, input.googleId, "google"],
@@ -109,6 +113,70 @@ export async function insertUser(input: {
   return res.rows[0] ?? null;
 }
 
+/*
+ * VERIFY PROCESS
+ *  */
+export async function setConfirmToken(
+  username: string,
+  token: string,
+): Promise<void> {
+  await pool.query(
+    sql`
+    UPDATE public.users 
+    SET 
+      updated_at = NOW(),
+      account_token = $2, 
+      account_token_expiration = NOW() + INTERVAL '3 days'
+    WHERE id = $1;
+  `,
+    [username, token],
+  );
+}
+export async function findUserByAccountToken(
+  token: string,
+): Promise<AuthSigninUser | null> {
+  const res = await pool.query(
+    sql`SELECT ${USER_SIGNIN_DATA} FROM public.users
+    WHERE account_token = $1`,
+    [token],
+  );
+  return res.rows[0];
+}
+export async function verifyAccount(
+  id: string,
+): Promise<AuthSigninUser | null> {
+  const res = await pool.query<AuthSigninUser>(
+    sql`
+    UPDATE public.users 
+    SET 
+      updated_at = NOW(),
+      email_verified_at = NOW(),
+      account_token = NULL, 
+      account_token_expiration = NULL
+    WHERE id = $1
+    RETURNING ${USER_SIGNIN_DATA};
+    `,
+    [id],
+  );
+  return res.rows[0] ?? null;
+}
+export async function findUserForVerify(
+  key: "email" | "username",
+  identifier: string,
+): Promise<AuthSigninUser | null> {
+  const res = await pool.query(
+    sql`
+    SELECT ${USER_SIGNIN_DATA} FROM public.users 
+    WHERE ${key} = $1;
+  `,
+    [identifier],
+  );
+  return res.rows[0] || null;
+}
+
+/*
+ * GOOGLE PROCESS
+ *  */
 export async function linkGoogleIdToEmailUser(input: {
   email: string;
   googleId: string;

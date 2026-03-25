@@ -10,6 +10,9 @@ export type AuthUserRow = {
   is_blocked: boolean;
   recover_token: string | null;
   recover_token_expiration: string | null;
+  recover_attempts: string | null;
+  account_token: string | null;
+  account_token_expiration: string | null;
 };
 
 export function toAuthUser(row: {

@@ -30,6 +30,9 @@ export async function bootstrap(): Promise<void> {
       recover_token_expiration TIMESTAMPTZ DEFAULT NULL,
       recover_attempts INT DEFAULT 0,
 
+      account_token TEXT UNIQUE DEFAULT NULL,
+      account_token_expiration TIMESTAMPTZ DEFAULT NULL,
+
       CONSTRAINT users_auth_provider_chk
         CHECK (provider IN ('local', 'google'))
       );
