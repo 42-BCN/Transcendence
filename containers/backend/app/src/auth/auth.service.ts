@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import crypto from "crypto";
 import type { Profile } from "passport";
 import { DatabaseError } from "pg";
@@ -20,7 +20,7 @@ export async function login(input: LoginReq): Promise<AuthUser> {
     : await Repo.findUserByUsername(identifier);
   if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
   if (!user.password_hash) throw new ApiError("AUTH_INVALID_CREDENTIALS");
-  const ok = await bcrypt.compare(input.password, user.password_hash);
+  const ok = await argon2.verify(user.password_hash, input.password);
   if (!ok) throw new ApiError("AUTH_INVALID_CREDENTIALS");
 
   return toAuthUser(user);
@@ -35,7 +35,7 @@ export async function signup(input: {
   const existing = await Repo.findUserByEmail(email);
   if (existing) throw new ApiError("AUTH_EMAIL_ALREADY_EXISTS");
 
-  const passwordHash = await bcrypt.hash(input.password, 12);
+  const passwordHash = await argon2.hash(input.password);
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const username = generateUsername();
@@ -100,6 +100,15 @@ async function setRecoveryToken(id: string): Promise<string | null> {
 function identifyIntentifier(identifier: string): "email" | "username" {
   return identifier.includes(`@`) ? "email" : "username";
 }
+function checkRecoverUser(user: AuthRecoverUser | null): AuthRecoverUser {
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
+  if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
+    throw new ApiError("AUTH_TOO_MANY_REQUEST");
+  if (user.recover_token_expiration.getTime() < Date.now())
+    throw new ApiError("AUTH_TOKEN_EXPIRED");
+  return user;
+}
 
 /*
  * RECOVERY PROCESS
@@ -112,7 +121,6 @@ export async function processRecovery(
 
   if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
   if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
-  //if(user.recover_token) throw new ApiError("already in proces or somthign");
   if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
     throw new ApiError("AUTH_TOO_MANY_REQUEST");
 
@@ -136,27 +144,19 @@ export async function updateRecoverAccount(input: {
   token: string;
   password: string;
 }): Promise<void> {
-  const user = await Repo.findUserByToken(input.token);
-  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
-  if (user.recover_token_expiration.getTime() < Date.now())
-    throw new ApiError("AUTH_TOKEN_EXPIRED");
-  const passwordHash = await bcrypt.hash(input.password, 12); //Is encrypted enough?
+  let user = await Repo.findUserByToken(input.token);
+  user = checkRecoverUser(user);
+  if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
+  const passwordHash = await argon2.hash(input.password);
   await Repo.updatePasswordRecover(user.id, passwordHash);
 }
 export async function resendRecMail(
   identifier: string,
 ): Promise<string | null> {
   const key = identifyIntentifier(identifier);
-  const user = await Repo.findUserForRecovery(key, identifier);
-  if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
-  if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
-  //if(user.recover_token) throw new ApiError("already in proces or somthign");
-  if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
-    throw new ApiError("AUTH_TOO_MANY_REQUEST");
+  let user = await Repo.findUserForRecovery(key, identifier);
+  user = checkRecoverUser(user);
   if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
-  if (user.recover_token_expiration.getTime() < Date.now())
-    throw new ApiError("AUTH_TOKEN_EXPIRED");
-
   //Enviar email - tal vez esto deberia estar en el controlador
   //await sendRecoveryMail(user.email, recoverToken);
   return user.recover_token;

@@ -67,11 +67,11 @@ export function validateQuery<T>(schema: z.ZodType<T>) {
 }
 
 export function validateParams<T>(schema: z.ZodType<T>) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request<T>, res: Response, next: NextFunction) => {
     const parsed = schema.safeParse(req.params);
     if (!parsed.success) return zodErrRes(res, parsed);
 
-    req.params = parsed.data as any;
+    req.params = parsed.data;
     next();
   };
 }

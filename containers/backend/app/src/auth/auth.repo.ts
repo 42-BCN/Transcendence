@@ -1,8 +1,7 @@
 import { pool, sql, ApiError } from "@shared";
+import type { AuthRecoverUser } from "@contracts/auth/auth.contract";
 
 import type { AuthUserRow } from "./auth.model";
-import { FullUser } from "@contracts/auth/auth.validation";
-import { AuthRecoverUser } from "@contracts/auth/auth.contract";
 
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
 type UserWithPassword = Pick<
