@@ -4,10 +4,10 @@ import { ScrollArea } from '@components/primitives/scroll-area';
 import { MessageBubble } from '@components/primitives/message-bubble';
 import { Text } from '@components/primitives/text';
 import { Stack } from '@components/primitives/stack';
-import type { Message } from './chat';
 import { chatStyles } from './chat.styles';
+import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
 
-export function ChatMain({ messages }: { messages: Message[] }) {
+export function ChatMain({ messages }: { messages: ChatMessageUnion[] }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,12 +18,14 @@ export function ChatMain({ messages }: { messages: Message[] }) {
   return (
     <ScrollArea>
       <Stack className={chatStyles.main.wrapper}>
-        {messages.map(({ id, username, content }) => (
-          <MessageBubble key={id} variant={username === 'capapes' ? 'default' : 'reverse'}>
-            <Text as="h3" variant="caption">
-              {username}
-            </Text>
-            <Text as="p" variant="body-xs">
+        {messages.map(({ id, username, content, type }) => (
+          <MessageBubble key={id} variant={type}>
+            {type === 'user' && (
+              <Text as="h3" variant="caption">
+                {username}
+              </Text>
+            )}
+            <Text as="p" variant="body-xs" className="whitespace-pre-wrap">
               {content.text}
             </Text>
           </MessageBubble>

@@ -2,9 +2,9 @@
 
 import { cookies } from 'next/headers';
 import { fetchServer } from '@/lib/http/fetcher.server';
-import { LoginReqSchema } from '@/contracts/auth/auth.validation';
-import { type LoginRes } from '@/contracts/auth/auth.contract';
-import { type ApiResponse } from '@/contracts/http';
+import { LoginReqSchema } from '@/contracts/api/auth/auth.validation';
+import { type LoginRes } from '@/contracts/api/auth/auth.contract';
+import { type ApiResponse } from '@/contracts/api/http';
 import { redirect } from 'next/navigation';
 
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 7;

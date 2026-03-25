@@ -9,9 +9,9 @@ import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
 import { fieldsBase, formApiReq } from './login.schema';
 import { useForm } from '@/lib/forms/use-form';
-import { type LoginReq } from '@/contracts/auth/auth.validation';
-import { type LoginRes } from '@/contracts/auth/auth.contract';
-import { type ApiResponse } from '@/contracts/http';
+import { type LoginReq } from '@/contracts/api/auth/auth.validation';
+import { type LoginRes } from '@/contracts/api/auth/auth.contract';
+import { type ApiResponse } from '@/contracts/api/http';
 
 import { loginAction } from './login.action';
 
