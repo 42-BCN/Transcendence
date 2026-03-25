@@ -2,7 +2,7 @@ import express from "express";
 import session from "express-session";
 import passport from "passport";
 
-import { limiter } from "@utils/rate-limiter";
+import { limiter } from "@shared/utils/rate-limiter";
 import { errorMiddleware } from "@shared";
 
 import { usersRouter } from "./users/users.routes";
