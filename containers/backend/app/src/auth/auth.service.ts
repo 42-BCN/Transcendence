@@ -3,7 +3,7 @@ import crypto from "crypto";
 import type { Profile } from "passport";
 import { DatabaseError } from "pg";
 
-import type { AuthRecoverUser, AuthUser } from "@contracts/auth/auth.contract";
+import type { AuthUser } from "@contracts/auth/auth.contract";
 import type { LoginReq } from "@contracts/auth/auth.validation";
 import { generateUsername, ApiError } from "@shared";
 
@@ -100,13 +100,13 @@ async function setRecoveryToken(id: string): Promise<string | null> {
 function identifyIntentifier(identifier: string): "email" | "username" {
   return identifier.includes(`@`) ? "email" : "username";
 }
-function checkRecoverUser(user: AuthRecoverUser | null): AuthRecoverUser {
-  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+function validateRecoverUser(user: Repo.UserRecoverData): AuthUser {
   if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
   if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
     throw new ApiError("AUTH_TOO_MANY_REQUEST");
   if (user.recover_token_expiration.getTime() < Date.now())
     throw new ApiError("AUTH_TOKEN_EXPIRED");
+  if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
   return user;
 }
 
@@ -133,33 +133,32 @@ export async function processRecovery(
 }
 export async function validateRecoverToken(
   token: string,
-): Promise<AuthRecoverUser | null> {
+): Promise<AuthUser | null> {
   const user = await Repo.findUserByToken(token);
   if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
-  if (user.recover_token_expiration.getTime() < Date.now())
-    throw new ApiError("AUTH_TOKEN_EXPIRED");
-  return user;
+  const validatedUser = validateRecoverUser(user);
+  if (!validatedUser) throw new ApiError("AUTH_INTERNAL_ERROR");
+  return toAuthUser(validatedUser);
 }
 export async function updateRecoverAccount(input: {
   token: string;
   password: string;
 }): Promise<void> {
-  let user = await Repo.findUserByToken(input.token);
-  user = checkRecoverUser(user);
-  if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
+  const user = await Repo.findUserByToken(input.token);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  const validatedUser = validateRecoverUser(user);
+  if (!validatedUser) throw new ApiError("AUTH_INTERNAL_ERROR");
   const passwordHash = await argon2.hash(input.password);
-  await Repo.updatePasswordRecover(user.id, passwordHash);
+  await Repo.updatePasswordRecover(validatedUser.id, passwordHash);
 }
-export async function resendRecMail(
-  identifier: string,
-): Promise<string | null> {
+export async function resendRecMail(identifier: string): Promise<void> {
   const key = identifyIntentifier(identifier);
-  let user = await Repo.findUserForRecovery(key, identifier);
-  user = checkRecoverUser(user);
-  if (!user.recover_token) throw new ApiError("AUTH_UNAUTHORIZED");
+  const user = await Repo.findUserForRecovery(key, identifier);
+  if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
+  const validatedUser = validateRecoverUser(user);
+  if (!validatedUser) throw new ApiError("AUTH_INTERNAL_ERROR");
   //Enviar email - tal vez esto deberia estar en el controlador
   //await sendRecoveryMail(user.email, recoverToken);
-  return user.recover_token;
 }
 
 //DELETE THIS
