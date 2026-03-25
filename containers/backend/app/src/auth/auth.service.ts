@@ -121,7 +121,7 @@ export async function processRecovery(
 
   if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
   if (user.is_blocked) throw new ApiError("AUTH_ACCOUNT_LOCKED");
-  if (user.recover_attempts > RECOVER_ALLOW_ATTEMPTS)
+  if (user.recover_attempts >= RECOVER_ALLOW_ATTEMPTS)
     throw new ApiError("AUTH_TOO_MANY_REQUEST");
 
   const recoverToken = await setRecoveryToken(user.id);
