@@ -39,7 +39,7 @@ authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
 authRouter.get("/verify", validateQuery(VerifyQuerySchema), getVerify);
 //May remake the recover Schema
 authRouter.post(
-  "/verify/resend",
+  "/resend-verification",
   validateBody(RecoverReqSchema),
   postVerifResend,
 );

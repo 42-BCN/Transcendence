@@ -28,11 +28,12 @@ type UserVerifyData = Pick<
   | "email_verified_at"
   | "account_token"
   | "account_token_expiration"
+  | "last_email_sent"
 >;
 
 const USER_PUBLIC_SELECT = `id, email, username`;
 const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
-const USER_VERIFY_DATA = `id, email, username, is_blocked, email_verified_at, account_token, account_token_expiration`;
+const USER_VERIFY_DATA = `id, email, username, is_blocked, email_verified_at, account_token, account_token_expiration, last_email_sent`;
 const USER_RECOVER_DATA = `id, email, username, is_blocked, recover_token, recover_token_expiration, recover_attempts`;
 
 export async function findUserByEmail(
@@ -158,7 +159,7 @@ export async function findUserByAccountToken(
     WHERE account_token = $1`,
     [token],
   );
-  return res.rows[0];
+  return res.rows[0] ?? null;
 }
 export async function verifyAccount(
   id: string,

@@ -14,6 +14,7 @@ export type AuthUserRow = {
   recover_attempts: number;
   account_token: string | null;
   account_token_expiration: Date;
+  last_email_sent: Date;
 };
 
 export function toAuthUser(row: {
