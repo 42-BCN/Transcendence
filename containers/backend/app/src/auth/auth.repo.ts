@@ -153,7 +153,7 @@ export async function findUserForRecovery(
   `,
     [identifier],
   );
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }
 export async function setRecoveryToken(
   username: string,
@@ -177,10 +177,10 @@ export async function findUserByToken(
 ): Promise<UserRecoverData | null> {
   const res = await pool.query(
     sql`SELECT ${USER_RECOVER_DATA} FROM public.users
-    WHERE recover_token = $1/* AND recover_token_expiration > NOW()*/`,
+    WHERE recover_token = $1`,
     [token],
   );
-  return res.rows[0];
+  return res.rows[0] ?? null;
 }
 export async function updatePasswordRecover(
   userId: string,
@@ -219,5 +219,5 @@ export async function selectUser(
     `SELECT * FROM public.users WHERE username = $1`,
     [username],
   );
-  return res.rows[0] || null;
+  return res.rows[0] ?? null;
 }
