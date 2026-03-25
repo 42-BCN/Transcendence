@@ -98,7 +98,7 @@ export async function verifyAccount(input: { token: string }): Promise<void> {
 export async function resendVerifMail(
   identifier: string,
 ): Promise<string | null> {
-  const key = identifyIntentifier(identifier);
+  const key = identifyKey(identifier);
   const user = await Repo.findUserForVerify(key, identifier);
   if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
   if (user.email_verified_at) throw new ApiError("AUTH_UNAUTHORIZED");
