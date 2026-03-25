@@ -97,7 +97,7 @@ async function setRecoveryToken(id: string): Promise<string | null> {
   return recoverToken;
 }
 //FIXING COMPLEXITY PROBLEM MAY BE A PROBLEM
-function identifyIntentifier(identifier: string): "email" | "username" {
+function identifyKey(identifier: string): "email" | "username" {
   return identifier.includes(`@`) ? "email" : "username";
 }
 function validateRecoverUser(user: Repo.UserRecoverData): AuthUser {
@@ -116,7 +116,7 @@ function validateRecoverUser(user: Repo.UserRecoverData): AuthUser {
 export async function processRecovery(
   identifier: string,
 ): Promise<string | null> {
-  const key = identifyIntentifier(identifier);
+  const key = identifyKey(identifier);
   const user = await Repo.findUserForRecovery(key, identifier);
 
   if (!user) throw new ApiError("AUTH_ACCOUNT_NOT_FOUND");
@@ -152,7 +152,7 @@ export async function updateRecoverAccount(input: {
   await Repo.updatePasswordRecover(validatedUser.id, passwordHash);
 }
 export async function resendRecMail(identifier: string): Promise<void> {
-  const key = identifyIntentifier(identifier);
+  const key = identifyKey(identifier);
   const user = await Repo.findUserForRecovery(key, identifier);
   if (!user) throw new ApiError("AUTH_INVALID_CREDENTIALS");
   const validatedUser = validateRecoverUser(user);
