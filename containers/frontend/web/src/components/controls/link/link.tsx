@@ -19,12 +19,31 @@ export type LinkProps = {
   icon?: ReactNode;
   href: string;
   children: ReactNode;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
 };
 
 export function ExternalLink(args: LinkProps) {
-  const { variant = 'primary', size = 'md', w = 'full', children, icon, href } = args;
+  const {
+    variant = 'primary',
+    size = 'md',
+    w = 'full',
+    children,
+    icon,
+    href,
+    target = '_blank',
+    rel,
+  } = args;
+
+  const computedRel = target === '_blank' ? (rel ?? 'noopener noreferrer') : rel;
+
   return (
-    <AriaLink href={href} className={buttonStyles({ variant, size, w })}>
+    <AriaLink
+      href={href}
+      target={target}
+      rel={computedRel}
+      className={buttonStyles({ variant, size, w })}
+    >
       {icon && <span className={iconStyles()}>{icon}</span>}
       {children}
     </AriaLink>
