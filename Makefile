@@ -2,6 +2,9 @@ COMPOSE = docker compose -f containers/docker-compose.yml
 
 SETUP_SCRIPT = scripts/env/setup-env.sh
 
+DATABASE_CHECK_BASE = containers/backend/app/scripts
+DATABASE_CHECK_FILES = ${DATABASE_CHECK_BASE}/user/bootstrap.ts
+
 .PHONY: all up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
 	db-reset db-seed db-bootstrap \
@@ -14,7 +17,7 @@ all: up
 setup:
 	@sh $(SETUP_SCRIPT)
 
-up: setup
+up: setup db-seed
 	$(COMPOSE) up -d
 
 down:
@@ -86,11 +89,12 @@ shell-db:
 
 #---- Database management ----
 
-db-bootstrap:
+db-bootstrap: db-reset
 	$(COMPOSE) exec backend npm run bootstrap
 
 db-seed: db-bootstrap
 	$(COMPOSE) exec backend npm run seed
 
-db-reset:
+db-reset: ${DATABASE_CHECK_FILES} 
 	$(COMPOSE) exec backend npm run reset
+
