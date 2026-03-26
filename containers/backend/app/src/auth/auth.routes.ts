@@ -57,6 +57,6 @@ authRouter.post(
 );
 
 /* *
- * DELETE testing porpoise only (purpose)
+ * DELETE testing purpose only
  */
 authRouter.get("/admin/:user", validateParams(FullUserSchema), getUser);
