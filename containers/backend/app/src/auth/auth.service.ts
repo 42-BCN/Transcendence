@@ -44,7 +44,7 @@ export async function signup(input: {
     if (created) return toAuthUser(created);
   }
 
-  throw new ApiError("INTERNAL_ERROR");
+  throw new ApiError("AUTH_INTERNAL_ERROR");
 }
 
 function getUserProfile(profile: Profile) {
@@ -90,6 +90,7 @@ async function setRecoveryToken(id: string): Promise<string | null> {
       await Repo.setRecoveryToken(id, recoverToken);
       break;
     } catch (err) {
+      //error code 23505: pg insert of unique violation
       if (!(err instanceof DatabaseError) || err.code !== "23505") throw err;
       recoverToken = null;
     }
@@ -125,7 +126,7 @@ export async function processRecovery(
     throw new ApiError("AUTH_TOO_MANY_REQUEST");
 
   const recoverToken = await setRecoveryToken(user.id);
-  if (!recoverToken) throw new ApiError("INTERNAL_ERROR");
+  if (!recoverToken) throw new ApiError("AUTH_INTERNAL_ERROR");
   //Enviar email - tal vez esto deberia estar en el controlador
   //await sendRecoveryMail(user.email, recoverToken);
 

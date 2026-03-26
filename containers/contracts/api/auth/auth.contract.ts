@@ -81,3 +81,38 @@ export const AUTH_ME_ERRORS = [
 export type MeError = (typeof AUTH_ME_ERRORS)[number];
 
 export type MeRes = ApiResponse<AuthMeOk, MeError>;
+
+// ---------------------------------------
+// POST /api/auth/recover
+// ---------------------------------------
+
+export type RecoverOk = null;
+
+export const AUTH_RECOVER_ERRORS = [
+  "AUTH_INTERNAL_ERROR",
+  "AUTH_ACCOUNT_NOT_FOUND",
+  "AUTH_ACCOUNT_LOCKED",
+  "AUTH_TOO_MANY_REQUEST",
+] as const satisfies readonly AuthErrorName[];
+
+export type RecoverError = (typeof AUTH_RECOVER_ERRORS)[number];
+
+export type RecoverRes = ApiResponse<RecoverOk, RecoverError>;
+
+// ---------------------------------------
+// POST /api/auth/recover/resend
+// ---------------------------------------
+
+export type RecoverResendOk = null;
+
+export const AUTH_RECOVER_RESEND_ERROR = [
+  "AUTH_INTERNAL_ERROR",
+  "AUTH_INVALID_CREDENTIALS",
+  "AUTH_TOO_MANY_REQUEST",
+  "AUTH_TOKEN_EXPIRED",
+  "AUTH_UNAUTHORIZED",
+] as const satisfies readonly AuthErrorName[];
+
+export type RecoverResendError = (typeof AUTH_RECOVER_RESEND_ERROR)[number];
+
+export type RecoverResendRes = ApiResponse<RecoverResendOk, RecoverResendError>;
