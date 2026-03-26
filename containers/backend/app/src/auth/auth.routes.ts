@@ -57,6 +57,6 @@ authRouter.post(
 );
 
 /* *
- * DELETE testing purpose only
+ * DELETE testing purpose
  */
 authRouter.get("/admin/:user", validateParams(FullUserSchema), getUser);
