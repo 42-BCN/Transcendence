@@ -4,7 +4,7 @@ const navBase = [
   'min-h-6, min-w-6',
   'font-caption',
   // layout
-  'inline-flex items-center justify-center rounded-md min-h-6 min-w-6 gap-3',
+  'inline-flex items-center justify-center rounded-md min-h-6 min-w-6',
   // behavior
   'transition outline-none',
   // default visual - will be overridden
