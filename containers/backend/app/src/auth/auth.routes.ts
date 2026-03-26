@@ -28,6 +28,9 @@ export const authRouter = Router();
 
 authRouter.use("/recover", recoverLimiter);
 
+/* *
+ * Sigin endpoints
+ */
 authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
 authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
 authRouter.get(
@@ -49,7 +52,7 @@ authRouter.get(
   validateParams(RecoverParamSchema),
   getRecovery,
 );
-authRouter.put("/recover", validateBody(RecoverUpdateSchema), putRecovery);
+authRouter.patch("/recover", validateBody(RecoverUpdateSchema), putRecovery);
 authRouter.post(
   "/recover/resend",
   validateBody(RecoverReqSchema),
