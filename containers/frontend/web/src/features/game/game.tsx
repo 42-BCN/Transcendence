@@ -85,9 +85,7 @@ function HUD() {
   const typeEnt = useGame((state) => state.typeEnt);
   const canSelect = useGame((state) => state.selectedEnt);
   const ent = useGame((state) => state.getSel());
-  if (!ent)
-    return;
-  return (typeEnt !== 'player' || !canSelect ? null :
+  return (!ent || !canSelect ? null :
     <Stack className="absolute bottom-4 left-4">
       <AbButtons />
       <div>
@@ -186,21 +184,23 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
   );
 }
 
-function Player({ id, pos }: { id: string, pos: pos }) {
+function Clone({ id, pos }: { id: string, pos: pos }) {
   const pRef = useRef(null);
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
+  const selectedDice = useGame(state => state.selectedDice);
+  const selectedAb = useGame(state => state.selectedAb);
   const canSelect = useGame(state => state.canSelect);
-  const executeAbility = useGame(state => state.executeAbility);
+  const addHistoryAbility = useGame(state => state.addHistoryAbility);
   const isTarget = useGame(state => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
 
-  let color = (selected === id ? "white" : "blue");
+  let color = (selected === id ? "white" : "cyan");
   if (isTarget)
-    color = "red";
+    color = "pink";
   else if (isHovered)
     color = "lightblue";
-  if (color === 'red' && isHovered)
+  if (color === 'pink' && isHovered)
     color = 'lightpink';
 
   return (
@@ -219,8 +219,51 @@ function Player({ id, pos }: { id: string, pos: pos }) {
         event.stopPropagation();
         if (canSelect)
           selectEntity(id);
-        else if (isTarget)
-          executeAbility(id);
+        else if (isTarget && selected && selectedDice && selectedAb) // ts errors
+          addHistoryAbility(id);
+      }}
+    >
+      <boxGeometry args={[s, s, s]} />
+      <meshStandardMaterial color={color} />
+    </mesh>
+  );
+}
+
+function Player({ id, pos }: { id: string, pos: pos }) {
+  const pRef = useRef(null);
+  const selectEntity = useGame(state => state.selectEntity);
+  const selected = useGame(state => state.selectedEnt);
+  const canSelect = useGame(state => state.canSelect);
+  const addHistoryAbility = useGame(state => state.addHistoryAbility);
+  const isTarget = useGame(state => state.selectables[id]);
+  const [isHovered, setHover] = useState(false);
+
+  let color = (selected === id ? "white" : "blue");
+  if (isTarget)
+    color = "pink";
+  else if (isHovered)
+    color = "lightblue";
+  if (color === 'pink' && isHovered)
+    color = 'lightpink';
+
+  return (
+    <mesh
+      position={[pos.x, pos.y, pos.z]}
+      ref={pRef}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHover(true);
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        setHover(false);
+      }}
+      onClick={(event) => {
+        event.stopPropagation();
+        if (canSelect)
+          selectEntity(id);
+        else if (isTarget) // ts errors
+          addHistoryAbility(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -239,6 +282,7 @@ function Scene() {
 
   const init = useGame((state) => state.init);
   const players = useGame((state) => state.players);
+  const clones = useGame((state) => state.clones);
   const enemies = useGame((state) => state.enemies);
 
   useEffect(() => { init(entities, tiles, { width, height, depth }) },
@@ -282,6 +326,17 @@ function Scene() {
           }}
         />
       ))}
+      {Object.values(clones).map((c) => (
+        <Clone
+          key={c.id}
+          id={c.id}
+          pos={{
+            x: c.position.x - 5,
+            y: c.position.y - 1,
+            z: c.position.z - 5
+          }}
+        />
+      ))}
       {Object.values(enemies).map((e) => (
         <Enemy
           key={e.id}
@@ -306,8 +361,8 @@ export function Game() {
   //     position: "relative",
   //     overflow: "hidden"
   //   }}
-  const selectedDice = useGame((state) => state.selectedAbDice);
-  console.log(selectedDice);
+  const selectedDice = useGame((state) => state.selectedDice);
+  console.log("selectedDice: ", selectedDice);
   return (
     // <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
     <>

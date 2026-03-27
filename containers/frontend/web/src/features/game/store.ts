@@ -31,10 +31,17 @@ type mapInfo = {
   depth: number;
 }
 
+type ability = {
+  name: string;
+  target: string;
+  dice: number;
+  aftermov: boolean;
+}
+
 type historyAction = {
   who: string;
-  type: string;
-  ability: string;
+  moveto: string | null;
+  abilities?: ability[];
 }
 
 type abilityInfo = {
@@ -54,6 +61,7 @@ type gameState = {
   turn: number;
   players: Record<string, entity>;
   enemies: Record<string, entity>;
+  clones: Record<string, entity>;
   history: historyAction[];
   typeEnt: string | null;
   mapBounds: mapInfo;
@@ -73,7 +81,8 @@ type gameState = {
   getSel: () => entity | undefined;
   movDice: (mov: number) => void;
   selectDice: (dice: number) => void;
-  addHistory: (action: historyAction) => void;
+  addHistory: (who: string, type: string, target: string, dice: number, ability: string) => void;
+  addHistoryAbility: (target: string) => void;
   moveTo: (tileId: string) => Promise<void>;
   changeMode: () => void;
   init: (entities: parse_entity[], tiles: tile[], mapInfo: mapInfo) => void;
@@ -90,7 +99,7 @@ type gameState = {
   paint: (pos: pos, type: string, range: number, self: boolean) => Record<string, boolean>;
   selectAbility: (name: string) => void;
   getAbility: (name: string) => abilityInfo;
-  executeAbility: (id: string) => void;
+  executeAbility: (who: string, which: string, target: string) => void;
   takeAb: (id: string, type: string, ab: abilityInfo, roll: number) => player | enemy;
 }
 
@@ -115,6 +124,7 @@ export const useGame = create<gameState>()((set, get) => ({
   selectedDice: null,
   players: {},
   enemies: {},
+  clones: {},
   obstacles: {},
   highlights: {},
   selectables: {},
@@ -127,14 +137,15 @@ export const useGame = create<gameState>()((set, get) => ({
   )),
 
 
-  selectEntity: (Id) =>
+  selectEntity: (id) =>
     set((state) => {
-      if (Id === state.selectedEnt) {
+      if (id === state.selectedEnt) {
         return clean;
       }
-      let ent = state.players[Id];
+      let ent = state.players[id] || state.enemies[id] || state.clones[id];
       if (!ent)
-        ent = state.enemies[Id];
+        throw new Error("cannot select entity!");
+      console.log("ent.id: ", ent.id);
       return {
         ...clean,
         selectedEnt: ent.id,
@@ -145,7 +156,8 @@ export const useGame = create<gameState>()((set, get) => ({
     const s = get();
     if (!s.selectedEnt)
       return;
-    return (s.typeEnt === "player" ? s.players[s.selectedEnt] : s.enemies[s.selectedEnt])
+    const id = s.selectedEnt;
+    return (s.players[id] || s.enemies[id] || s.clones[id]);
   },
 
   movDice: (mov) => {
@@ -174,25 +186,88 @@ export const useGame = create<gameState>()((set, get) => ({
     if (!entid)
       throw new Error("no ent id!");
     set({ selectedDice: dice });
-    console.log(get().selectedDice);
+    console.log("selectedDice: ", get().selectedDice);
   },
 
-  addHistory: (action) => set((state) => {
+  addHistory: (who, type, target, dice = 0, ability = "") => set((state) => {
     const len = state.history.length;
+    if (len > 4)
+      throw new Error("History over 4 elements!");
+    console.log("history: ", state.history);
+    let lastAction = null;
     const newHistory = [...state.history];
+    //getprev
     for (let i = 0; i < len; ++i) {
-      if (action.who !== newHistory[i].who)
+      if (who !== newHistory[i].who)
         continue;
-      if (action.type === "abilities") {
-        newHistory[i].ability = action.ability;
-        return { history: newHistory };
-      }
-      newHistory.splice(i, 1);
+      [lastAction] = newHistory.splice(i, 1);
       break;
     }
-    newHistory.push(action);
+    if (!lastAction) {
+      newHistory.push({
+        who: who,
+        moveto: type === "mov" ? target : null,
+        abilities: type === "ability" ? [{ name: ability, target: target, dice: dice, aftermov: false }] : [],
+      });
+      console.log("newHistory: ", newHistory);
+      return { history: newHistory };
+    }
+    const newAction = { ...lastAction };
+    if (type === "ability") {
+      newAction.abilities = [...(lastAction.abilities || []), {
+        name: ability,
+        target: target,
+        dice: dice,
+        aftermov: lastAction.moveto ? true : false
+      }]
+    }
+    else if (type === "mov") {
+      newAction.moveto = lastAction.moveto;
+      newAction.abilities = lastAction.abilities?.filter((ab) => ab.aftermov === false) || [];
+    }
+    console.log("newHistory: ", newHistory);
     return { history: newHistory };
   }),
+
+  addHistoryAbility: (target) => {
+    const state = get();
+    const entid = state.selectedEnt;
+    const selectedDice = state.selectedDice;
+    const selectedAb = state.selectedAb;
+
+    if (!entid || !selectedDice || !selectedAb)
+      throw new Error("Couldn't add ability to history!");
+    state.addHistory(entid, "ability", target, selectedDice, selectedAb);
+    if (state.typeEnt === 'player') {
+      return set({
+        ...clean,
+        players: {
+          ...state.players,
+          [entid]: {
+            ...state.players[entid],
+            dice: state.players[entid].dice.toSpliced(
+              state.players[entid].dice.indexOf(selectedDice, 1), 1),
+            usedDice: [...state.players[entid].usedDice, selectedDice],
+          }
+        }
+      })
+    }
+    else if (state.typeEnt === 'clone') {
+      return set({
+        ...clean,
+        clones: {
+          ...state.clones,
+          [entid]: {
+            ...state.clones[entid],
+            dice: state.clones[entid].dice.toSpliced(
+              state.clones[entid].dice.indexOf(selectedDice, 1), 1),
+            usedDice: [...state.clones[entid].usedDice, selectedDice],
+          }
+        }
+      })
+    }
+    throw new Error("Couldn't add ability to history due to typeEnt not being of a valid type!");
+  },
 
   moveTo: async (tileId) => {
     const state = get()
@@ -214,18 +289,27 @@ export const useGame = create<gameState>()((set, get) => ({
     const path = state.Astar(ent.position, dest);
     if (!path || path.length === 0 || !state.selectedDice)
       return;
+    state.addHistory({ who: state.selectedEnt, type: "move", target: tileId });
+    const cloneid = `clone_${ent.id}`;
     set({
       ...clean,
-      typeEnt: state.typeEnt,
+      typeEnt: "clone",
       canSelect: false,
       players: {
         ...state.players,
         [ent.id]: {
           ...state.players[ent.id],
+        },
+      },
+      clones: {
+        [cloneid]: {
+          ...state.players[ent.id],
+          type: "clone",
+          id: cloneid,
           dice: state.players[ent.id].dice.toSpliced(
             state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
           usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
-          hasMoved: true,
+          hasMoved: true
         }
       }
     });
@@ -234,12 +318,12 @@ export const useGame = create<gameState>()((set, get) => ({
       const [sx, sy, sz] = path[i].split(',').map(Number);
       const stepPos = { x: sx, y: sy, z: sz };
       set((currState) => {
-        if (currState.typeEnt === "player") {
+        if (currState.typeEnt === "clone") {
           return {
-            players: {
-              ...currState.players,
-              [ent.id]: {
-                ...currState.players[ent.id],
+            clones: {
+              ...currState.clones,
+              [cloneid]: {
+                ...currState.clones[cloneid],
                 position: stepPos
               }
             }
@@ -446,9 +530,8 @@ export const useGame = create<gameState>()((set, get) => ({
     }
     const reachable = [];
     for (const key in dist) {
-      if (dist[key] <= maxCost) {
-        const [x, y, z] =
-          key.split(",").map(Number);
+      if (dist[key] <= maxCost && key !== initial) {
+        const [x, y, z] = key.split(",").map(Number);
         reachable.push(`${x},${y - 1},${z}`);
       }
     }
@@ -468,8 +551,7 @@ export const useGame = create<gameState>()((set, get) => ({
     const History: Record<string, string | null> = {};
     const Closed = new Set();
     const Open = new TinyQueue([], (a: node, b: node) => a.f - b.f);
-    const destKey =
-      `${dest.x},${dest.y},${dest.z}`
+    const destKey = `${dest.x},${dest.y},${dest.z}`
     const heuristic = (p1: pos, p2: pos) => Math.abs(p1.x - p2.x) + ((p2.y - p1.y)
       + Math.abs(p2.y - p1.y)) / 2 + Math.abs(p1.z - p2.z);
     const initial: node = {
@@ -502,16 +584,14 @@ export const useGame = create<gameState>()((set, get) => ({
         const ny = node?.pos?.y + dy;
         const nz = node?.pos?.z + dz;
 
-        if (state.isOOB(nx, ny, nz) || state.isBlocked(nx, ny, nz)
-          || !state.hasFloor(nx, ny, nz))
+        if (state.isOOB(nx, ny, nz) || state.isBlocked(nx, ny, nz) || !state.hasFloor(nx, ny, nz))
           continue;
         const newG = node.g +
           (dy === 1 ? 2 : 1)
         const Id = `${nx},${ny},${nz}`;
         if (Closed.has(Id))
           continue;
-        if (bestG[Id] === undefined
-          || newG < bestG[Id]) {
+        if (bestG[Id] === undefined || newG < bestG[Id]) {
           bestG[Id] = newG;
           const newNode = {
             id: Id,
@@ -839,7 +919,9 @@ export const useGame = create<gameState>()((set, get) => ({
     const entid = state.selectedEnt;
     if (!entid)
       throw new Error("no ent id!");
-    const pos = state.players[entid].position;
+    const pos = state.getSel()?.position;
+    if (!pos)
+      throw new Error("no position!");
     const { type, range, self } = state.getAbility(name);
     set({
       selectedAb: name,
@@ -848,8 +930,8 @@ export const useGame = create<gameState>()((set, get) => ({
       selectables: state.paint(pos, type, range, self),
       canSelect: false
     });
-    console.log(get().selectedAb);
-    console.log(get().selectables);
+    console.log("SelectedAb: ", get().selectedAb);
+    console.log("Selectables: ", get().selectables);
   },
 
   takeAb: (id, type, ab, roll) => {
@@ -864,35 +946,52 @@ export const useGame = create<gameState>()((set, get) => ({
     return (target);
   },
 
-  executeAbility: (target) => {
+  executeAbility: (who, which, target) => {
     const state = get();
     const name = state.selectedAb;
-    if (!state.selectedAb || !name || !state.selectedDice)
+    const ent = state.getSel();
+    if (!which || !who)
       return;
-    const ab = state.getAbility(name);
+    const ab = state.getAbility(who);
+    if (!state.selectedDice || !ent)
+      throw new Error("No selected dice!");
     const roll = Math.ceil(Math.random() * state.selectedDice);
     if (!ab.cond(roll))
-      return set(clean);
+      return set({
+        ...clean,
+        players: {
+          ...state.players,
+          [ent.id]: {
+            ...state.players[ent.id],
+            dice: state.players[ent.id].dice.toSpliced(
+              state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
+            usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
+          }
+        }
+      });
     const targets = [target];
     // if (ab.AoE)
     //   targets.push(...state.getAoE(pos, ab.AoEtype, AoErange));
     const changedPlayers: player[] = [];
     const changedEnemies: enemy[] = [];
     targets.forEach((id) => {
-      let type = null;
-      if (state.enemies[id]) {
-        type = "enemy";
-        changedEnemies.push(state.takeAb(id, type, ab, roll))
-      }
-      else if (state.players[id]) {
-        type = "player";
-        changedPlayers.push(state.takeAb(id, type, ab, roll))
-      }
+      if (state.enemies[id])
+        changedEnemies.push(state.takeAb(id, "enemy", ab, roll))
+      else if (state.players[id])
+        changedPlayers.push(state.takeAb(id, "player", ab, roll))
     })
-
     set({
       ...clean,
-      players: { ...state.players, ...Object.fromEntries(changedPlayers.map(p => [p.id, p])) },
+      players: {
+        ...state.players,
+        ...Object.fromEntries(changedPlayers.map(p => [p.id, p])),
+        [ent.id]: {
+          ...state.players[ent.id],
+          dice: state.players[ent.id].dice.toSpliced(
+            state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
+          usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
+        }
+      },
       enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map(e => [e.id, e])) },
     })
   }
