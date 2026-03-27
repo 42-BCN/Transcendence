@@ -82,6 +82,7 @@ type gameState = {
   movDice: (mov: number) => void;
   selectDice: (dice: number) => void;
   addHistory: (who: string, type: string, target: string, dice: number, ability: string) => void;
+  resetHistory: (id: string) => void;
   addHistoryAbility: (target: string) => void;
   moveTo: (tileId: string) => Promise<void>;
   changeMode: () => void;
@@ -189,8 +190,27 @@ export const useGame = create<gameState>()((set, get) => ({
     console.log("selectedDice: ", get().selectedDice);
   },
 
-  addHistory: (who, type, target, dice = 0, ability = "") => set((state) => {
+  resetHistory: (id) => {
+    const state = get();
+    const newHistory = state.history.filter((action) => action.who !== id);
+    return set({
+      history: [...newHistory],
+      players: {
+        ...state.players,
+        [id]: {
+          ...state.players[id],
+          dice: [...state.players[id].dice, ...state.players[id].usedDice].sort(),
+          usedDice: [],
+        },
+      },
+    });
+  },
+
+  addHistory: (id, type, target, dice = 0, ability = "") => set((state) => {
     const len = state.history.length;
+    const who = id.startsWith("clone_") ? id.replace("clone_", "") : id;
+    const ent = state.players[id] || state.enemies[id] || state.clones[id];
+
     if (len > 4)
       throw new Error("History over 4 elements!");
     console.log("history: ", state.history);
@@ -218,13 +238,24 @@ export const useGame = create<gameState>()((set, get) => ({
         name: ability,
         target: target,
         dice: dice,
-        aftermov: lastAction.moveto ? true : false
+        aftermov: lastAction.moveto && id !== who ? true : false
       }]
+      // console.log("pasa antes del if: ", lastAction, newAction.abilities.length);
+      if (lastAction.moveto && newAction.abilities[newAction.abilities.length - 1]?.aftermov === false) {
+        const { [`clone_${who}`]: _, ...remainingClones } = state.clones;
+        newHistory.push(newAction);
+        console.log("newHistory from inside the clone deletion: ", newHistory);
+        return {
+          clones: { ...remainingClones },
+          history: newHistory
+        };
+      }
     }
     else if (type === "mov") {
-      newAction.moveto = lastAction.moveto;
+      newAction.moveto = target;
       newAction.abilities = lastAction.abilities?.filter((ab) => ab.aftermov === false) || [];
     }
+    newHistory.push(newAction);
     console.log("newHistory: ", newHistory);
     return { history: newHistory };
   }),
@@ -246,7 +277,7 @@ export const useGame = create<gameState>()((set, get) => ({
           [entid]: {
             ...state.players[entid],
             dice: state.players[entid].dice.toSpliced(
-              state.players[entid].dice.indexOf(selectedDice, 1), 1),
+              state.players[entid].dice.indexOf(selectedDice), 1),
             usedDice: [...state.players[entid].usedDice, selectedDice],
           }
         }
@@ -260,8 +291,8 @@ export const useGame = create<gameState>()((set, get) => ({
           [entid]: {
             ...state.clones[entid],
             dice: state.clones[entid].dice.toSpliced(
-              state.clones[entid].dice.indexOf(selectedDice, 1), 1),
-            usedDice: [...state.clones[entid].usedDice, selectedDice],
+              state.clones[entid].dice.indexOf(selectedDice), 1),
+            usedDice: [...state.clones[entid].usedDice, selectedDice].sort(),
           }
         }
       })
@@ -289,7 +320,7 @@ export const useGame = create<gameState>()((set, get) => ({
     const path = state.Astar(ent.position, dest);
     if (!path || path.length === 0 || !state.selectedDice)
       return;
-    state.addHistory({ who: state.selectedEnt, type: "move", target: tileId });
+    state.addHistory(state.selectedEnt, "mov", tileId);
     const cloneid = `clone_${ent.id}`;
     set({
       ...clean,
@@ -302,13 +333,14 @@ export const useGame = create<gameState>()((set, get) => ({
         },
       },
       clones: {
+        ...state.clones,
         [cloneid]: {
           ...state.players[ent.id],
           type: "clone",
           id: cloneid,
           dice: state.players[ent.id].dice.toSpliced(
-            state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
-          usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
+            state.players[ent.id].dice.indexOf(state.selectedDice), 1),
+          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort(),
           hasMoved: true
         }
       }
@@ -428,6 +460,7 @@ export const useGame = create<gameState>()((set, get) => ({
     const entities = [
       ...Object.values(state.players),
       ...Object.values(state.enemies),
+      ...Object.values(state.clones),
     ];
 
     return entities.find((e) =>
@@ -964,7 +997,7 @@ export const useGame = create<gameState>()((set, get) => ({
           [ent.id]: {
             ...state.players[ent.id],
             dice: state.players[ent.id].dice.toSpliced(
-              state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
+              state.players[ent.id].dice.indexOf(state.selectedDice), 1),
             usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
           }
         }
@@ -988,7 +1021,7 @@ export const useGame = create<gameState>()((set, get) => ({
         [ent.id]: {
           ...state.players[ent.id],
           dice: state.players[ent.id].dice.toSpliced(
-            state.players[ent.id].dice.indexOf(state.selectedDice, 1), 1),
+            state.players[ent.id].dice.indexOf(state.selectedDice), 1),
           usedDice: [...state.players[ent.id].usedDice, state.selectedDice],
         }
       },

@@ -67,18 +67,22 @@ function DiceButtons() {
   )
 }
 
-function DiceInfo() {
-  const selectedDice = useGame((state) => state.selectedDice);
+function Reset() {
+  const selectedEnt = useGame((state) => state.selectedEnt);
+  const history = useGame((state) => state.history);
+  const resetHistory = useGame((state) => state.resetHistory);
+  if (!history.find((h) => h.who === selectedEnt) || !selectedEnt)
+    return null;
   return (
-    selectedDice ?
-      <div className='z-10 top-[10%] left-[10%] flex gap-4'
-      >
-        <Button
-          className={'px-4 left-8 py-2 bg-red-500 text-white transition-all'}
-        >
-        </Button>
-      </div>
-      : null)
+    <Button className='absolute z-10 top-8 left-8'
+      variant='primary'
+      w='default'
+      onPress={
+        () => resetHistory(selectedEnt)
+      }
+    >
+    </Button >
+  )
 }
 
 function HUD() {
@@ -86,17 +90,19 @@ function HUD() {
   const canSelect = useGame((state) => state.selectedEnt);
   const ent = useGame((state) => state.getSel());
   return (!ent || !canSelect ? null :
-    <Stack className="absolute bottom-4 left-4">
-      <AbButtons />
-      <div>
-        <Meter label="HP" value={ent.hp}
-          maxValue={ent.maxHp}
-          max={ent.maxHp}
-          formatOptions={{ style: "decimal" }} />
-      </div>
-      <DiceButtons />
-      {/* <DiceInfo /> */}
-    </Stack>
+    <>
+      <Stack className="absolute left-8 bottom-4">
+        <AbButtons />
+        <div>
+          <Meter label="HP" value={ent.hp}
+            maxValue={ent.maxHp}
+            max={ent.maxHp}
+            formatOptions={{ style: "decimal" }} />
+        </div>
+        <DiceButtons />
+      </Stack>
+      <Reset />
+    </>
   )
 }
 
