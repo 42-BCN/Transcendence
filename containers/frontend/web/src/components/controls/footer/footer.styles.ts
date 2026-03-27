@@ -1,9 +1,5 @@
 import { cn } from '@/lib/styles/cn';
 
-export function footerStyles(className?: string) {
-  return cn('relative w-full pt-3 border-t border-white/10', className);
-}
-
 export function footerContainerStyles() {
   return cn('flex flex-col items-start px-4 gap-1 w-full');
 }

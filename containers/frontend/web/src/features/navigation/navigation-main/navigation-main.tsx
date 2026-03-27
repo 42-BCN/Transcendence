@@ -14,6 +14,7 @@ import { Icon } from '@components/primitives/icon';
 
 import { useNavigationContext } from '../navigation.context';
 import { Stack } from '@components/primitives/stack';
+import { headerStyles } from '../navigation-header/navigation-header.styles';
 
 type NavLinkItemProps = {
   navItem: NavItem;
@@ -23,16 +24,26 @@ function isNavItemCurrent(pathname: string, href: string, exact?: boolean) {
   return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function renderNavLinkContent(icon: NavItem['icon'], label: string, isExpanded: boolean) {
+type RenderNavLinkContentProps = {
+  icon: NavItem['icon'];
+  label: string;
+  isExpanded: boolean;
+};
+
+export function RenderNavLinkContent(args: RenderNavLinkContentProps) {
+  const { icon, label, isExpanded } = args;
   return (
     <>
-      <Icon name={icon} size={20} />
+      {/* TODO This should be a minimun clickeable icon area wrapper to avoid repetition*/}
+      <div className={headerStyles.wrapper}>
+        <Icon name={icon} size={20} />
+      </div>
       {isExpanded ? <span className="whitespace-nowrap">{label}</span> : null}
     </>
   );
 }
 
-function withTooltip(content: ReactNode, label: string, enabled: boolean) {
+function WithTooltip(content: ReactNode, label: string, enabled: boolean) {
   return enabled ? <TooltipTrigger label={label}>{content}</TooltipTrigger> : content;
 }
 
@@ -49,11 +60,11 @@ function NavLinkItem(args: NavLinkItemProps) {
 
   const link = (
     <NavLink href={href} isCurrent={isCurrent} aria-label={label}>
-      {renderNavLinkContent(navItem.icon, label, isExpanded)}
+      <RenderNavLinkContent icon={navItem.icon} label={label} isExpanded={isExpanded} />
     </NavLink>
   );
 
-  return withTooltip(link, label, !isExpanded);
+  return WithTooltip(link, label, !isExpanded);
 }
 
 type NavigationMainProps = {

@@ -1,18 +1,21 @@
 import { cn } from '@/lib/styles/cn';
 
-const groupBase = ['inline-flex items-stretch flex-col', 'border border-black'];
+const groupBase = ['flex  w-6'];
 
 const itemBase = [
   'relative inline-flex items-center justify-center min-w-6 min-h-6 text-sm font-medium',
   'border border-black',
+  'first:rounded-s-md last:rounded-e-md',
+  '[&:not(:first-child)]:border-s-0',
   'text-black bg-white',
   'transition-colors',
   'focus-visible:outline-none',
+  'overflow-hidden',
 ];
 
 const itemRACState = [
   'data-[hovered]:bg-black data-[hovered]:text-white',
-  'data-[selected]:bg-black data-[selected]:text-white',
+  'data-[selected]:bg-black data-[selected]:text-white ',
   'data-[disabled]:opacity-40 data-[disabled]:cursor-not-allowed',
 ];
 
