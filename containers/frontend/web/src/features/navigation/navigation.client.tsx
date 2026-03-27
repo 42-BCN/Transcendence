@@ -7,6 +7,7 @@ import { NavigationHeader } from './navigation-header';
 import { NavigationMain } from './navigation-main';
 import { NavigationFooter } from './navigation-footer';
 import { Stack } from '@components/primitives/stack';
+import { glassCardStyles } from '@components/primitives/glass-card/glass-card.styles';
 
 // TODO Translate aria-labels
 
@@ -32,17 +33,24 @@ export function NavigationClient(args: NavigationClientProps) {
   );
   return (
     <NavigationProvider value={value}>
-      <Stack
-        as="nav"
-        aria-label="main"
-        // TODO: This style here will be removed once the navigation is fully implemented. There's another issue for this component developing on parallel.
-        className="group py-4 z-10 backdrop-blur-sm h-full overflow-y-auto bg-pink-100 "
-        align="start"
-      >
-        <NavigationHeader />
-        <NavigationMain {...args} />
-        <NavigationFooter />
-      </Stack>
+      <div className="absolute inset-0 ">
+        <Stack
+          as="nav"
+          aria-label="main"
+          // TODO: This style here will be removed once the navigation is fully implemented. There's another issue for this component developing on parallel.
+          className={glassCardStyles({
+            intensity: 'medium',
+            blur: 'xl',
+            className:
+              'group py-4 z-10 h-screen overflow-y-auto w-min px-0 sticky top-0 rounded-s-none rounded-e-md',
+          })}
+          align="start"
+        >
+          <NavigationHeader />
+          <NavigationMain {...args} />
+          <NavigationFooter />
+        </Stack>
+      </div>
     </NavigationProvider>
   );
 }

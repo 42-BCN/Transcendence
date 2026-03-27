@@ -10,6 +10,8 @@ import {
   Box,
   PanelRightClose,
   PanelLeftClose,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 export const icons = {
@@ -24,6 +26,8 @@ export const icons = {
   app: Box,
   expand: PanelRightClose,
   collapse: PanelLeftClose,
+  lightMode: Sun,
+  darkMode: Moon,
 };
 
 export type IconName = keyof typeof icons;

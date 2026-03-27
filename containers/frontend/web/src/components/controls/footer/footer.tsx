@@ -9,7 +9,6 @@ import {
 } from './footer.styles';
 import { Stack } from '@components/primitives/stack';
 import { ExternalLink } from '@components/controls/link/link';
-import { Icon } from '@components/primitives/icon';
 
 export type FooterProps = {
   className?: string;
@@ -19,9 +18,9 @@ export function Footer({ className }: FooterProps) {
   const t = useTranslations('Footer');
 
   const links = [
-    { key: 'privacy', href: '/privacy' },
-    { key: 'terms', href: '/terms' },
-    { key: 'github', href: 'https://github.com/42-BCN/Transcendence' },
+    { key: 'privacy', href: '/privacy', label: t('privacy') },
+    { key: 'terms', href: '/terms', label: t('terms') },
+    { key: 'github', href: 'https://github.com/42-BCN/Transcendence', label: t('github') },
   ] as const;
 
   return (
@@ -29,15 +28,14 @@ export function Footer({ className }: FooterProps) {
       <Stack>
         <div className={footerLinksGroupStyles()}>
           {/* this should be an extenssion of link */}
-          <Icon name="link" />
-          {links.map((link) =>
-            link.href.startsWith('http') ? (
-              <ExternalLink href={link.href} key={link.key} variant="ghost">
-                {t(link.key)}
+          {links.map(({ href, label }) =>
+            href.startsWith('http') ? (
+              <ExternalLink href={href} key={label} as="link">
+                {label}
               </ExternalLink>
             ) : (
-              <Link href={link.href as any} key={link.key} className={footerLinkItemStyles()}>
-                {t(link.key)}
+              <Link href={href as any} key={label} className={footerLinkItemStyles()}>
+                {label}
               </Link>
             ),
           )}

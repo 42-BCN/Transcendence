@@ -8,12 +8,13 @@ import { Text } from '@components/primitives/text';
 import { SegmentedControlGroup } from '@components/composites/segmented-control-group';
 import { Button, DialogTrigger, Popover } from 'react-aria-components';
 import { GlassCard } from '@components/primitives/glass-card';
+import { Icon } from '@components/primitives/icon';
 
 export function NavigationFooter() {
   const { isExpanded } = useNavigationContext();
   const options = [
-    { id: 'dark', label: 'd' },
-    { id: 'light', label: 'l' },
+    { id: 'dark', label: <Icon name="darkMode" size={16} /> },
+    { id: 'light', label: <Icon name="lightMode" size={16} /> },
   ] as const;
   // TODO marta change theme function
   return (
@@ -27,7 +28,7 @@ export function NavigationFooter() {
         <Popover placement="end">
           <GlassCard className="border p-3 rounded-lg" intensity="medium" blur="xl">
             <Stack align="start" className="px-2 pe-3" gap="md">
-              <Stack gap="sm">
+              <Stack gap="xs">
                 <Text as="p" variant="caption">
                   Theme
                 </Text>
@@ -38,7 +39,7 @@ export function NavigationFooter() {
                   options={options}
                 />
               </Stack>
-              <Stack gap="sm">
+              <Stack gap="xs">
                 <Text as="p" variant="caption">
                   Language
                 </Text>
