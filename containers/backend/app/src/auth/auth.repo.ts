@@ -1,4 +1,5 @@
 import { pool, sql, ApiError } from "@shared";
+import { prisma } from "@/lib/prisma";
 
 import type { AuthUserRow } from "./auth.model";
 
@@ -9,65 +10,52 @@ type UserWithPassword = Pick<
 >;
 
 const USER_PUBLIC_SELECT = `id, email, username`;
-const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
 
-export async function findUserByEmail(
+const userPublicSelect = {
+  id: true,
+  email: true,
+  username: true,
+} as const;
+
+const userWithPasswordSelect = {
+  id: true,
+  email: true,
+  username: true,
+  password_hash: true,
+} as const;
+
+export function findUserByEmail(
   email: string,
-): Promise<AuthUserRow | null> {
-  const res = await pool.query<AuthUserRow>(
-    sql`
-    SELECT id, email, username, password_hash
-    FROM public.users
-    WHERE email = $1
-    LIMIT 1;
-    `,
-    [email],
-  );
-  return res.rows[0] ?? null;
+): Promise<UserWithPassword | null> {
+  return prisma.user.findUnique({
+    where: { email },
+    select: userWithPasswordSelect,
+  });
 }
 
-export async function findUserByUsername(
+export function findUserByUsername(
   username: string,
 ): Promise<UserWithPassword | null> {
-  const res = await pool.query<UserWithPassword>(
-    sql`
-    SELECT ${USER_WITH_PASSWORD_SELECT}
-    FROM public.users
-    WHERE username = $1
-    LIMIT 1;
-    `,
-    [username],
-  );
-  return res.rows[0] ?? null;
+  return prisma.user.findUnique({
+    where: { username },
+    select: userWithPasswordSelect,
+  });
 }
 
-export async function findUserById(id: string): Promise<UserPublic | null> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    SELECT ${USER_PUBLIC_SELECT}
-    FROM public.users
-    WHERE id = $1
-    LIMIT 1;
-    `,
-    [id],
-  );
-  return res.rows[0] ?? null;
+export function findUserById(id: string): Promise<UserPublic | null> {
+  return prisma.user.findUnique({
+    where: { id },
+    select: userPublicSelect,
+  });
 }
 
-export async function findUserByGoogleId(
+export function findUserByGoogleId(
   googleId: string,
 ): Promise<UserPublic | null> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    SELECT ${USER_PUBLIC_SELECT}
-    FROM public.users
-    WHERE google_id = $1
-    LIMIT 1;
-    `,
-    [googleId],
-  );
-
-  return res.rows[0] ?? null;
+  return prisma.user.findUnique({
+    where: { google_id: googleId },
+    select: userPublicSelect,
+  });
 }
 
 export async function insertGoogleUser(input: {
