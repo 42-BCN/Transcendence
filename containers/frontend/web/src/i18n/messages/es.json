@@ -117,5 +117,9 @@
     "terms": "Términos de Servicio",
     "github": "GitHub",
     "copyright": "Todos los derechos reservados"
+  },
+  "settings": {
+    "theme": "Tema",
+    "language": "Idioma"
   }
 }

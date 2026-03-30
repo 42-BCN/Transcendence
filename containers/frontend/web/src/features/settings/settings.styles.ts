@@ -1,5 +1,7 @@
-import { cn } from '@/lib/styles/cn';
+const divider = 'border-t border-black w-full';
+const wrapper = 'p-1';
 
- export function settingsStyles () {
-   return cn()
- };
+export const settingsStyles = {
+  divider,
+  wrapper,
+};

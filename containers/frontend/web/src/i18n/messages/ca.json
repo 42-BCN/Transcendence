@@ -116,5 +116,9 @@
     "terms": "Termes de Servei",
     "github": "GitHub",
     "copyright": "Tots els drets reservats"
+  },
+  "settings": {
+    "theme": "Tema",
+    "language": "Idioma"
   }
 }

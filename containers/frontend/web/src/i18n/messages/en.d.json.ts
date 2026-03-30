@@ -114,6 +114,10 @@ declare const messages: {
     "terms": "Terms of Service",
     "github": "GitHub",
     "copyright": "All rights reserved"
+  },
+  "settings": {
+    "theme": "Theme",
+    "language": "Language"
   }
 };
 export default messages;

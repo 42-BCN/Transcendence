@@ -1,22 +1,26 @@
 import { Text } from '@components/primitives/text';
 import { SegmentedControlGroup } from '@components/composites/segmented-control-group';
 import { LocaleSwitcher } from '@/features/locale-switcher';
-import { Footer } from '@/features/footer';
+import { Footer } from '../footer';
 import { Icon } from '@components/primitives/icon';
+import { useTranslations } from 'next-intl';
 
 import { Stack } from '@components/primitives/stack';
+import { settingsStyles } from './settings.styles';
 
 export function Settings() {
+  // TODO move feature change theme to its own component
   // TODO marta change theme function
+  const t = useTranslations('settings');
   const options = [
     { id: 'dark', label: <Icon name="darkMode" size={16} /> },
     { id: 'light', label: <Icon name="lightMode" size={16} /> },
   ] as const;
   return (
-    <Stack align="start" className="px-2 pe-3" gap="md">
+    <Stack align="start" className={settingsStyles.wrapper} gap="md">
       <Stack gap="xs">
         <Text as="p" variant="caption">
-          Theme
+          {t('theme')}
         </Text>
         <SegmentedControlGroup
           aria-label={'aria-label'}
@@ -27,11 +31,11 @@ export function Settings() {
       </Stack>
       <Stack gap="xs">
         <Text as="p" variant="caption">
-          Language
+          {t('language')}
         </Text>
         <LocaleSwitcher />
       </Stack>
-      <hr className="border-t border-black w-full min-w-[180px]" />
+      <hr className={settingsStyles.divider} />
       <Footer />
     </Stack>
   );
