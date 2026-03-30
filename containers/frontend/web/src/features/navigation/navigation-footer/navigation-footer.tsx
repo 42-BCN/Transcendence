@@ -1,22 +1,14 @@
-import { LocaleSwitcher } from '@/features/locale-switcher';
-import { Footer } from '@components/controls/footer';
 import { useNavigationContext } from '@/features/navigation/navigation.context';
-import { Stack } from '@components/primitives/stack';
 import { RenderNavLinkContent } from '../navigation-main/navigation-main';
 import { navLinkStyles } from '@components/controls/nav-link/nav-link.styles';
-import { Text } from '@components/primitives/text';
-import { SegmentedControlGroup } from '@components/composites/segmented-control-group';
+
 import { Button, DialogTrigger, Popover } from 'react-aria-components';
 import { GlassCard } from '@components/primitives/glass-card';
-import { Icon } from '@components/primitives/icon';
+import { Settings } from '@/features/settings';
 
 export function NavigationFooter() {
   const { isExpanded } = useNavigationContext();
-  const options = [
-    { id: 'dark', label: <Icon name="darkMode" size={16} /> },
-    { id: 'light', label: <Icon name="lightMode" size={16} /> },
-  ] as const;
-  // TODO marta change theme function
+
   return (
     <>
       <DialogTrigger>
@@ -27,27 +19,7 @@ export function NavigationFooter() {
         {/* This should be moved to its own component of settings/footer */}
         <Popover placement="end">
           <GlassCard className="border px-5 py-4 rounded-lg" intensity="medium" blur="xl">
-            <Stack align="start" className="px-2 pe-3" gap="md">
-              <Stack gap="xs">
-                <Text as="p" variant="caption">
-                  Theme
-                </Text>
-                <SegmentedControlGroup
-                  aria-label={'aria-label'}
-                  selectedKey="dark"
-                  // onSelectionChange={changeLocaleHandler}
-                  options={options}
-                />
-              </Stack>
-              <Stack gap="xs">
-                <Text as="p" variant="caption">
-                  Language
-                </Text>
-                <LocaleSwitcher />
-              </Stack>
-              <hr className="border-t border-black w-full min-w-[180px]" />
-              <Footer />
-            </Stack>
+            <Settings />
           </GlassCard>
         </Popover>
       </DialogTrigger>
