@@ -9,11 +9,17 @@ export type NavLinkProps = {
   href: string;
   isCurrent?: boolean;
   children: ReactNode;
+  onPress?: () => void;
 };
 
-export function NavLink({ href, isCurrent, children }: NavLinkProps) {
+export function NavLink({ href, isCurrent, children, onPress }: NavLinkProps) {
   return (
-    <RacLink href={href} aria-current={isCurrent ? 'page' : undefined} className={navLinkStyles()}>
+    <RacLink
+      href={href}
+      aria-current={isCurrent ? 'page' : undefined}
+      className={navLinkStyles()}
+      onPress={onPress}
+    >
       {children}
     </RacLink>
   );

@@ -1,9 +1,7 @@
 'use client';
-// TODO navLinkItems check icon aria label props
 
 import { type ReactNode } from 'react';
 import { getPathname } from '@/i18n/navigation';
-
 import { usePathname } from 'next/navigation';
 import { NavLink } from '@components/controls/nav-link';
 import { type NavItem } from '../navigation.config';
@@ -11,7 +9,6 @@ import { useTranslations } from 'next-intl';
 import { Logout } from '../../auth/logout';
 import { TooltipTrigger } from '@components/composites/tooltip-trigger';
 import { Icon } from '@components/primitives/icon';
-
 import { useNavigationContext } from '../navigation.context';
 import { Stack } from '@components/primitives/stack';
 import { headerStyles } from '../navigation-header/navigation-header.styles';
@@ -32,9 +29,9 @@ type RenderNavLinkContentProps = {
 
 export function RenderNavLinkContent(args: RenderNavLinkContentProps) {
   const { icon, label, isExpanded } = args;
+
   return (
     <>
-      {/* TODO This should be a minimun clickeable icon area wrapper to avoid repetition*/}
       <div className={headerStyles.wrapper}>
         <Icon name={icon} size={20} />
       </div>
@@ -49,7 +46,7 @@ function WithTooltip(content: ReactNode, label: string, enabled: boolean) {
 
 function NavLinkItem(args: NavLinkItemProps) {
   const { navItem } = args;
-  const { isExpanded, locale } = useNavigationContext();
+  const { isExpanded, locale, closeNavigation } = useNavigationContext();
 
   const t = useTranslations('navigation');
   const label = t(navItem.key);
@@ -59,7 +56,7 @@ function NavLinkItem(args: NavLinkItemProps) {
   const isCurrent = isNavItemCurrent(pathname, href, navItem.exact);
 
   const link = (
-    <NavLink href={href} isCurrent={isCurrent} aria-label={label}>
+    <NavLink href={href} isCurrent={isCurrent} aria-label={label} onPress={closeNavigation}>
       <RenderNavLinkContent icon={navItem.icon} label={label} isExpanded={isExpanded} />
     </NavLink>
   );

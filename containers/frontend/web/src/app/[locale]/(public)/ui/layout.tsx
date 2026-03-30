@@ -8,7 +8,7 @@ export default function UiLayout({ children }: { children: ReactNode }) {
       {/* <Grid4Overlay />
       <Grid8Overlay />
       <Columns12Overlay /> */}
-      <div className="px-6">{children}</div>
+      <div className="d-flex w-full">{children}</div>
     </>
   );
 }

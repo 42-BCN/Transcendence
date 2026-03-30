@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { type NavItem } from './navigation.config';
 import { NavigationProvider } from './navigation.context';
 import { NavigationHeader } from './navigation-header';
@@ -11,9 +12,6 @@ import { glassCardStyles } from '@components/primitives/glass-card/glass-card.st
 import { Drawer } from '@components/composites/drawer';
 import { Button, DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
-// import { LocaleSwitcher } from '../locale-switcher';
-
-// TODO Translate aria-labels
 
 type NavigationClientProps = {
   locale: string;
@@ -39,71 +37,96 @@ export function useMediaQuery(query: string) {
 
 function MobileNavigation(args: NavigationClientProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const closeNavigation = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  const value = useMemo(
+    () => ({
+      locale: args.locale,
+      isExpanded: true,
+      toggleExpanded: () => {},
+      closeNavigation,
+    }),
+    [args.locale, closeNavigation],
+  );
 
   return (
-    <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-      <Button className="md:hidden absolute inset-0 top-5 left-2 w-min h-min">Menu</Button>
+    <NavigationProvider value={value}>
+      <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <Button className="md:hidden absolute top-5 left-2 z-20 h-min w-min">Menu</Button>
 
-      <Drawer>
-        <Stack
-          as="nav"
-          aria-label="main"
-          className="group py-4 z-10 h-screen overflow-y-auto w-full px-0 rounded-s-none rounded-e-md"
-          align="start"
-        >
-          <NavigationHeader />
-          <NavigationMain {...args} />
-          <Settings />
-        </Stack>
-      </Drawer>
-    </DialogTrigger>
+        <Drawer>
+          <Stack
+            as="nav"
+            aria-label="main"
+            className="group z-10 flex max-h-[100dvh] w-full overflow-y-auto overscroll-contain px-0 py-4 rounded-s-none rounded-e-md"
+            align="start"
+          >
+            <NavigationHeader />
+            <NavigationMain {...args} />
+            <Settings />
+          </Stack>
+        </Drawer>
+      </DialogTrigger>
+    </NavigationProvider>
   );
 }
 
 function DesktopNavigation(args: NavigationClientProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded((prev) => !prev);
+  }, []);
+
+  const closeNavigation = useCallback(() => {
+    setIsExpanded(false);
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      locale: args.locale,
+      isExpanded,
+      toggleExpanded,
+      closeNavigation,
+    }),
+    [args.locale, isExpanded, toggleExpanded, closeNavigation],
+  );
+
   return (
-    <div className="absolute inset-0 ">
-      <Stack
-        as="nav"
-        aria-label="main"
-        // TODO: This style here will be removed once the navigation is fully implemented. There's another issue for this component developing on parallel.
-        className={glassCardStyles({
-          intensity: 'medium',
-          blur: 'sm',
-          className:
-            'group py-4 z-10 h-screen overflow-y-auto w-min px-0 sticky top-0 rounded-s-none rounded-e-md',
-        })}
-        align="start"
-      >
-        <NavigationHeader />
-        <NavigationMain {...args} />
-        <NavigationFooter />
-      </Stack>
-    </div>
+    <NavigationProvider value={value}>
+      <div className="absolute inset-0">
+        <Stack
+          as="nav"
+          aria-label="main"
+          className={glassCardStyles({
+            intensity: 'medium',
+            blur: 'sm',
+            className:
+              'group py-4 z-10 h-screen overflow-y-auto w-min px-0 sticky top-0 rounded-s-none rounded-e-md',
+          })}
+          align="start"
+        >
+          <NavigationHeader />
+          <NavigationMain {...args} />
+          <NavigationFooter />
+        </Stack>
+      </div>
+    </NavigationProvider>
   );
 }
 
 export function NavigationClient(args: NavigationClientProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const { locale } = args;
 
-  const [isExpandedState, setIsExpanded] = useState(false);
-  const isExpanded = isDesktop ? isExpandedState : true;
-  const toggleExpanded = () => setIsExpanded((prev) => !prev);
-
-  const value = useMemo(
-    () => ({
-      locale,
-      isExpanded,
-      toggleExpanded,
-    }),
-    [locale, isExpanded, toggleExpanded],
-  );
   if (isDesktop === null) return null;
 
-  return (
-    <NavigationProvider value={value}>
-      {isDesktop ? <DesktopNavigation {...args} /> : <MobileNavigation {...args} />}
-    </NavigationProvider>
-  );
+  return isDesktop ? <DesktopNavigation {...args} /> : <MobileNavigation {...args} />;
 }
