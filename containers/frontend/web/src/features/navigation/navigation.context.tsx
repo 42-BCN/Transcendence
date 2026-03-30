@@ -6,6 +6,7 @@ type NavigationContextValue = {
   locale: string;
   isExpanded: boolean;
   toggleExpanded: () => void;
+  closeDrawer: () => void;
 };
 
 const NavigationContext = createContext<NavigationContextValue | null>(null);
