@@ -45,7 +45,7 @@ export function NavigationFooter() {
                 </Text>
                 <LocaleSwitcher />
               </Stack>
-              <hr className="border-t border-white w-full min-w-[180px]" />
+              <hr className="border-t border-black w-full min-w-[180px]" />
               <Footer />
             </Stack>
           </GlassCard>

@@ -38,7 +38,7 @@ export function RenderNavLinkContent(args: RenderNavLinkContentProps) {
       <div className={headerStyles.wrapper}>
         <Icon name={icon} size={20} />
       </div>
-      {isExpanded ? <span className="whitespace-nowrap dark:text-white pe-3">{label}</span> : null}
+      {isExpanded ? <span className="whitespace-nowrap pe-3">{label}</span> : null}
     </>
   );
 }
