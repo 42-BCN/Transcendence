@@ -32,7 +32,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={locale} className={`${primary.variable} ${mono.variable}`}>
-      <body className="h-screen flex">{children}</body>
+      <body
+        className="min-h-screen flex 
+        text-black dark:text-white
+absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px] dark:bg-slate-900 bg-slate-100"
+      >
+        {children}
+      </body>
     </html>
   );
 }

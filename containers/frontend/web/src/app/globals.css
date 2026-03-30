@@ -72,6 +72,10 @@
   --space-md: var(--space-4);
   --space-lg: var(--space-5);
   --space-xl: var(--space-7);
+
+  .dark {
+    --color-text-primary: #fff;
+  }
 }
 
 .font-caption {

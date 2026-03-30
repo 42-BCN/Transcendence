@@ -26,7 +26,7 @@ const variantClasses: Record<TextVariant, string> = {
 };
 
 const colorVariant = {
-  primary: 'text-black',
+  primary: 'text-black dark:text-white',
   info: 'text-blue-400',
   danger: 'text-red-700',
   success: 'text-green-700',

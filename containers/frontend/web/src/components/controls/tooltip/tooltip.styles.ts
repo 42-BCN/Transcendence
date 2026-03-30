@@ -2,6 +2,7 @@ import { cn } from '@/lib/styles/cn';
 
 const tooltipBase = `
   font-caption
+  text-white dark:text-black
   group
   bg-slate-100
   border border-slate-200 
