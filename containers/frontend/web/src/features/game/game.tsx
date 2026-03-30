@@ -81,7 +81,26 @@ function Reset() {
         () => resetHistory(selectedEnt)
       }
     >
+      Reset plan
     </Button >
+  )
+}
+
+function EndTurn() {
+  const nextTurnStage = useGame((state) => state.changeTurnStage);
+  const historyLength = useGame((state) => state.history.length);
+  return (
+    historyLength === 4 ?
+      <Button className='absolute z-10 bottom-8 right-16'
+        variant='primary'
+        w='default'
+        onPress={
+          () => nextTurnStage()
+        }
+      >
+        End turn
+      </Button >
+      : null
   )
 }
 
@@ -107,7 +126,7 @@ function HUD() {
 }
 
 function Obstacle({ id, pos }: { id: string, pos: pos }) {
-  const moveTo = useGame(state => state.moveTo);
+  const moveClone = useGame(state => state.moveClone);
   const isHighlighted = useGame(state => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id])
@@ -140,7 +159,7 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
       }}
       onClick={(event) => {
         event.stopPropagation();
-        moveTo(id).catch(console.error);
+        moveClone(id);
       }}>
       <boxGeometry args={[s, s, s]} />
       <meshStandardMaterial
@@ -178,12 +197,12 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
         event.stopPropagation();
         setHover(false);
       }}
-      onClick={(event) => {
-        event.stopPropagation();
-        if (canSelect)
-          selectEntity(id);
-      }}
     >
+      {/* onClick={(event) => { */}
+      {/*   event.stopPropagation(); */}
+      {/*   if (canSelect) */}
+      {/*     selectEntity(id); */}
+      {/* }} */}
       <boxGeometry args={[s, s, s]} />
       <meshStandardMaterial color={color} />
     </mesh>
@@ -378,6 +397,7 @@ export function Game() {
         {`d${selectedDice}`}
       </Text>}
       <HUD />
+      <EndTurn />
       <Canvas>
         <Scene />
       </Canvas>

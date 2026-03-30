@@ -85,7 +85,8 @@ type gameState = {
   resetHistory: (id: string) => void;
   addHistoryAbility: (target: string) => void;
   moveTo: (tileId: string) => Promise<void>;
-  changeMode: () => void;
+  moveClone: (tileId: string) => void;
+  changeTurnStage: () => void;
   init: (entities: parse_entity[], tiles: tile[], mapInfo: mapInfo) => void;
   checkEnt: (x: number, y: number, z: number) => entity | undefined;
   isOOB: (x: number, y: number, z: number) => boolean;
@@ -193,6 +194,7 @@ export const useGame = create<gameState>()((set, get) => ({
   resetHistory: (id) => {
     const state = get();
     const newHistory = state.history.filter((action) => action.who !== id);
+    const { [`clone_${id}`]: _, ...remainingClones } = state.clones;
     return set({
       history: [...newHistory],
       players: {
@@ -203,6 +205,7 @@ export const useGame = create<gameState>()((set, get) => ({
           usedDice: [],
         },
       },
+      clones: { ...remainingClones },
     });
   },
 
@@ -300,6 +303,48 @@ export const useGame = create<gameState>()((set, get) => ({
     throw new Error("Couldn't add ability to history due to typeEnt not being of a valid type!");
   },
 
+  moveClone: (tileId) => {
+    const state = get()
+    if (!state.highlights[tileId])
+      return;
+    const [x, y, z] = tileId.split(',').map(Number);
+    const dest = { x, y: (y + 1), z };
+    let ent = null;
+    if (!state.selectedEnt || !state.selectedDice)
+      return;
+    if (state.typeEnt === "player")
+      ent = state.players[state.selectedEnt];
+    else if (state.typeEnt === "enemy")
+      ent = state.enemies[state.selectedEnt];
+    if (!ent)
+      throw new Error("no ent id!");
+    state.addHistory(state.selectedEnt, "mov", tileId);
+    const cloneid = `clone_${ent.id}`;
+    set({
+      ...clean,
+      typeEnt: "clone",
+      players: {
+        ...state.players,
+        [ent.id]: {
+          ...state.players[ent.id],
+        },
+      },
+      clones: {
+        ...state.clones,
+        [cloneid]: {
+          ...state.players[ent.id],
+          type: "clone",
+          id: cloneid,
+          dice: state.players[ent.id].dice.toSpliced(
+            state.players[ent.id].dice.indexOf(state.selectedDice), 1),
+          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort(),
+          hasMoved: true,
+          position: dest,
+        }
+      }
+    });
+  },
+
   moveTo: async (tileId) => {
     const state = get()
     if (!state.highlights[tileId])
@@ -377,8 +422,14 @@ export const useGame = create<gameState>()((set, get) => ({
     );
   },
 
-  changeMode: () => set((state) => (
-    { executeTurn: !state.executeTurn })),
+  changeTurnStage: () => {
+    console.log("turn changed")
+    set((state) => ({
+      executeTurn: !state.executeTurn,
+      canSelect: false,
+    }))
+
+  },
 
   init: (entities, tiles, mapInfo) => {
     const playEnt: Record<string, player> = {};
