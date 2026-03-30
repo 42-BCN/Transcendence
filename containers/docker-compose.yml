@@ -69,6 +69,8 @@ services:
         condition: service_healthy
     env_file:
       - ./backend/docker/.env.development
+    environment:
+      DATABASE_URL: postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}?schema=public
     volumes:
       - ./backend/app:/app
       - node_modules_backend:/app/node_modules
