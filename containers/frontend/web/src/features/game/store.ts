@@ -81,7 +81,7 @@ type gameState = {
   getSel: () => entity | undefined;
   movDice: (mov: number) => void;
   selectDice: (dice: number) => void;
-  addHistory: (who: string, type: string, target: string, dice: number, ability: string) => void;
+  addHistory: (who: string, type: string, target: string, dice?: number, ability?: string) => void;
   resetHistory: (id: string) => void;
   addHistoryAbility: (target: string) => void;
   moveTo: (tileId: string) => Promise<void>;
@@ -121,7 +121,6 @@ export const useGame = create<gameState>()((set, get) => ({
   canSelect: true,
   typeEnt: null,
   selectedAb: null,
-  selectedMovDice: null,
   selectedEnt: null,
   selectedDice: null,
   players: {},
@@ -201,7 +200,7 @@ export const useGame = create<gameState>()((set, get) => ({
         ...state.players,
         [id]: {
           ...state.players[id],
-          dice: [...state.players[id].dice, ...state.players[id].usedDice].sort(),
+          dice: [...state.players[id].dice, ...state.players[id].usedDice].sort((a, b) => a - b),
           usedDice: [],
         },
       },
@@ -212,7 +211,7 @@ export const useGame = create<gameState>()((set, get) => ({
   addHistory: (id, type, target, dice = 0, ability = "") => set((state) => {
     const len = state.history.length;
     const who = id.startsWith("clone_") ? id.replace("clone_", "") : id;
-    const ent = state.players[id] || state.enemies[id] || state.clones[id];
+    //    const ent = state.players[id] || state.enemies[id] || state.clones[id];
 
     if (len > 4)
       throw new Error("History over 4 elements!");
@@ -242,7 +241,7 @@ export const useGame = create<gameState>()((set, get) => ({
         target: target,
         dice: dice,
         aftermov: lastAction.moveto && id !== who ? true : false
-      }]
+      }];
       // console.log("pasa antes del if: ", lastAction, newAction.abilities.length);
       if (lastAction.moveto && newAction.abilities[newAction.abilities.length - 1]?.aftermov === false) {
         const { [`clone_${who}`]: _, ...remainingClones } = state.clones;
@@ -295,7 +294,7 @@ export const useGame = create<gameState>()((set, get) => ({
             ...state.clones[entid],
             dice: state.clones[entid].dice.toSpliced(
               state.clones[entid].dice.indexOf(selectedDice), 1),
-            usedDice: [...state.clones[entid].usedDice, selectedDice].sort(),
+            usedDice: [...state.clones[entid].usedDice, selectedDice].sort((a, b) => a - b),
           }
         }
       })
@@ -337,7 +336,7 @@ export const useGame = create<gameState>()((set, get) => ({
           id: cloneid,
           dice: state.players[ent.id].dice.toSpliced(
             state.players[ent.id].dice.indexOf(state.selectedDice), 1),
-          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort(),
+          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort((a, b) => a - b),
           hasMoved: true,
           position: dest,
         }
@@ -385,7 +384,7 @@ export const useGame = create<gameState>()((set, get) => ({
           id: cloneid,
           dice: state.players[ent.id].dice.toSpliced(
             state.players[ent.id].dice.indexOf(state.selectedDice), 1),
-          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort(),
+          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort((a, b) => a - b),
           hasMoved: true
         }
       }
