@@ -38,7 +38,7 @@ export function ExternalLink(args: LinkProps) {
     as = 'button',
   } = args;
 
-  const computedRel = target === '_blank' ? (rel ?? 'noopener noreferrer') : rel;
+  const computedRel = target === '_blank' ? 'noopener noreferrer' : rel;
 
   return (
     <AriaLink

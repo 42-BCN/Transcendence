@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const groupBase = ['flex  w-6'];
+const groupBase = ['inline-flex'];
 
 const itemBase = [
   'relative inline-flex items-center justify-center min-w-6 min-h-6 text-xs font-medium',

@@ -5,15 +5,17 @@ import { navLinkStyles } from '@components/controls/nav-link/nav-link.styles';
 import { Button, DialogTrigger, Popover } from 'react-aria-components';
 import { GlassCard } from '@components/primitives/glass-card';
 import { Settings } from '@/features/settings';
+import { useTranslations } from 'next-intl';
 
 export function NavigationFooter() {
   const { isExpanded } = useNavigationContext();
+  const t = useTranslations('navigation');
 
   return (
     <>
       <DialogTrigger>
         <Button className={navLinkStyles()}>
-          <RenderNavLinkContent icon="settings" label="Settings" isExpanded={isExpanded} />
+          <RenderNavLinkContent icon="settings" label={t('settings')} isExpanded={isExpanded} />
         </Button>
 
         {/* This should be moved to its own component of settings/footer */}

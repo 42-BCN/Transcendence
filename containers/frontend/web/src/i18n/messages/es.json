@@ -6,7 +6,8 @@
     "UI": "UI",
     "robots": "Robots",
     "profile": "Perfil",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "settings": "Configuración"
   },
   "SignupPage": {
     "title": "Crear cuenta",

@@ -23,7 +23,7 @@ export function Settings() {
           {t('theme')}
         </Text>
         <SegmentedControlGroup
-          aria-label={'aria-label'}
+          aria-label={'theme switcher'}
           selectedKey="dark"
           // onSelectionChange={changeLocaleHandler}
           options={options}

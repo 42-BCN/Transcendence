@@ -22,7 +22,7 @@ export function Footer() {
             {t(label)}
           </ExternalLink>
         ) : (
-          <InternalLink href={href as any} key={label}>
+          <InternalLink href={href} key={label}>
             {t(label)}
           </InternalLink>
         ),

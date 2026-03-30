@@ -9,7 +9,8 @@ declare const messages: {
     "UI": "UI",
     "robots": "Robots",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "settings": "Settings"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
