@@ -26,7 +26,7 @@ export function NavigationFooter() {
 
         {/* This should be moved to its own component of settings/footer */}
         <Popover placement="end">
-          <GlassCard className="border p-3 rounded-lg" intensity="medium" blur="xl">
+          <GlassCard className="border px-5 py-4 rounded-lg" intensity="medium" blur="xl">
             <Stack align="start" className="px-2 pe-3" gap="md">
               <Stack gap="xs">
                 <Text as="p" variant="caption">
@@ -45,6 +45,7 @@ export function NavigationFooter() {
                 </Text>
                 <LocaleSwitcher />
               </Stack>
+              <hr className="border-t border-white w-full min-w-[180px]" />
               <Footer />
             </Stack>
           </GlassCard>
