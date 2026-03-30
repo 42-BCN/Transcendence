@@ -1,7 +1,7 @@
 import { Text } from '@components/primitives/text';
 import { SegmentedControlGroup } from '@components/composites/segmented-control-group';
 import { LocaleSwitcher } from '@/features/locale-switcher';
-import { Footer } from '@components/controls/footer';
+import { Footer } from '@/features/footer';
 import { Icon } from '@components/primitives/icon';
 
 import { Stack } from '@components/primitives/stack';
