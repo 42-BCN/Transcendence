@@ -23,7 +23,7 @@ NODE_MODULES_SOCKET_STAMP = .make/socket-node-modules.stamp
 .PHONY: all up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
 	db-reset db-seed db-push db-setup \
-	ps restart shell-frontend shell-api shell-db setup stop
+	ps restart shell-frontend shell-api shell-db shell-socket setup stop
 
 #---- Default ----
 

@@ -21,9 +21,14 @@ fi
 echo "⚙️ Generating Prisma client..."
 npm run prisma:generate
 
+if [ "$NODE_ENV" = "development" ]; then
 echo "🗄️ Syncing database schema with Prisma..."
 npm run prisma:db:push
 echo ""
+
+else
+  echo "⏭️ Skipping Prisma db push (NODE_ENV=$NODE_ENV, PRISMA_DB_PUSH_ON_START=$PRISMA_DB_PUSH_ON_START)."
+fi
 
 echo "▶️ Starting Express.js..."
 exec "$@"
