@@ -1,5 +1,7 @@
 # [AUTH][SPIKE] User Data Model & Credential Policy
 
+## 1) User Data Model
+
 | Field | Type | Null | Notes |
 |---|---|---:|---|
 | `id` | UUID | No | Primary key |
@@ -111,7 +113,7 @@ Use a dedicated `password_resets` table.
 |---|---|---:|---|
 | `id` | UUID | No | Primary key |
 | `user_id` | UUID | No | FK to `users.id` |
-| `token_hash` | TEXT | No | Store hashed token only |
+| `token_hash` | TEXT | No | Store hashed token only unique|
 | `expires_at` | TIMESTAMPTZ | No | Expiration timestamp |
 | `used_at` | TIMESTAMPTZ | Yes | One-time use marker |
 | `created_at` | TIMESTAMPTZ | No | Default `now()` |
@@ -146,7 +148,7 @@ Use a dedicated `email_verifications` table.
 |---|---|---:|---|
 | `id` | UUID | No | Primary key |
 | `user_id` | UUID | No | FK to `users.id` |
-| `token_hash` | TEXT | No | Store hashed token only |
+| `token_hash` | TEXT | No | Store hashed token only unique |
 | `expires_at` | TIMESTAMPTZ | No | Expiration timestamp |
 | `used_at` | TIMESTAMPTZ | Yes | One-time use marker |
 | `created_at` | TIMESTAMPTZ | No | Default `now()` |
