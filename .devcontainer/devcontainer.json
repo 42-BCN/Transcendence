@@ -61,8 +61,6 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "rhalaly.scope-to-this",
-        "frigus02.vscode-sql-tagged-template-literals",
-        "frigus02.vscode-sql-tagged-template-literals-syntax-only",
         "Gruntfuggly.todo-tree"
       ]
     }
