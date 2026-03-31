@@ -16,7 +16,7 @@ export type TooltipTriggerProps = {
 export function TooltipTrigger(props: TooltipTriggerProps) {
   const { children, label, placement = 'right' } = props;
   return (
-    <RACTooltipTrigger>
+    <RACTooltipTrigger delay={0}>
       {children}
       <Tooltip placement={placement}>{label}</Tooltip>
     </RACTooltipTrigger>

@@ -9,7 +9,8 @@ declare const messages: {
     "UI": "UI",
     "robots": "Robots",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "settings": "Settings"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -114,6 +115,10 @@ declare const messages: {
     "terms": "Terms of Service",
     "github": "GitHub",
     "copyright": "All rights reserved"
+  },
+  "settings": {
+    "theme": "Theme",
+    "language": "Language"
   }
 };
 export default messages;

@@ -38,11 +38,19 @@ function DiceButtons() {
   const canSelect = useGame((state) => state.canSelect);
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
-  const selectDice = useGame((state) => state.selectAbDice);
+  const selectDice = useGame((state) => state.selectDice);
   return (
     <div className='z-10 bottom-[10%] left-[20%] flex gap-4'
     >
 
+      {ent?.usedDice.map((diceNum, i) => (
+        <Button
+          key={i}
+          className={`px-4 py-2 bg-gray-500 text-white transition-all`}
+        >
+          {`d${diceNum}`}
+        </Button>
+      ))}
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
@@ -59,43 +67,66 @@ function DiceButtons() {
   )
 }
 
-function DiceInfo() {
-  const selectedDice = useGame((state) => state.selectedDice);
+function Reset() {
+  const selectedEnt = useGame((state) => state.selectedEnt);
+  const history = useGame((state) => state.history);
+  const resetHistory = useGame((state) => state.resetHistory);
+  if (!history.find((h) => h.who === selectedEnt) || !selectedEnt)
+    return null;
   return (
-    selectedDice ?
-      <div className='z-10 top-[10%] left-[10%] flex gap-4'
+    <Button className='absolute z-10 top-8 left-8'
+      variant='primary'
+      w='default'
+      onPress={
+        () => resetHistory(selectedEnt)
+      }
+    >
+      Reset plan
+    </Button >
+  )
+}
+
+function EndTurn() {
+  const nextTurnStage = useGame((state) => state.changeTurnStage);
+  const historyLength = useGame((state) => state.history.length);
+  return (
+    historyLength === 4 ?
+      <Button className='absolute z-10 bottom-8 right-16'
+        variant='primary'
+        w='default'
+        onPress={
+          () => nextTurnStage()
+        }
       >
-        <Button
-          className={'px-4 left-8 py-2 bg-red-500 text-white transition-all'}
-        >
-        </Button>
-      </div>
-      : null)
+        End turn
+      </Button >
+      : null
+  )
 }
 
 function HUD() {
   const typeEnt = useGame((state) => state.typeEnt);
   const canSelect = useGame((state) => state.selectedEnt);
   const ent = useGame((state) => state.getSel());
-  if (!ent)
-    return;
-  return (typeEnt !== 'player' || !canSelect ? null :
-    <Stack className="absolute bottom-4 left-4">
-      <AbButtons />
-      <div>
-        <Meter label="HP" value={ent.hp}
-          maxValue={ent.maxHp}
-          max={ent.maxHp}
-          formatOptions={{ style: "decimal" }} />
-      </div>
-      <DiceButtons />
-      <DiceInfo />
-    </Stack>
+  return (!ent || !canSelect ? null :
+    <>
+      <Stack className="absolute left-8 bottom-4">
+        <AbButtons />
+        <div>
+          <Meter label="HP" value={ent.hp}
+            maxValue={ent.maxHp}
+            max={ent.maxHp}
+            formatOptions={{ style: "decimal" }} />
+        </div>
+        <DiceButtons />
+      </Stack>
+      <Reset />
+    </>
   )
 }
 
 function Obstacle({ id, pos }: { id: string, pos: pos }) {
-  const moveTo = useGame(state => state.moveTo);
+  const moveClone = useGame(state => state.moveClone);
   const isHighlighted = useGame(state => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id])
@@ -128,7 +159,7 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
       }}
       onClick={(event) => {
         event.stopPropagation();
-        moveTo(id).catch(console.error);
+        moveClone(id);
       }}>
       <boxGeometry args={[s, s, s]} />
       <meshStandardMaterial
@@ -166,33 +197,35 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
         event.stopPropagation();
         setHover(false);
       }}
-      onClick={(event) => {
-        event.stopPropagation();
-        if (canSelect)
-          selectEntity(id);
-      }}
     >
+      {/* onClick={(event) => { */}
+      {/*   event.stopPropagation(); */}
+      {/*   if (canSelect) */}
+      {/*     selectEntity(id); */}
+      {/* }} */}
       <boxGeometry args={[s, s, s]} />
       <meshStandardMaterial color={color} />
     </mesh>
   );
 }
 
-function Player({ id, pos }: { id: string, pos: pos }) {
+function Clone({ id, pos }: { id: string, pos: pos }) {
   const pRef = useRef(null);
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
+  const selectedDice = useGame(state => state.selectedDice);
+  const selectedAb = useGame(state => state.selectedAb);
   const canSelect = useGame(state => state.canSelect);
-  const executeAbility = useGame(state => state.executeAbility);
+  const addHistoryAbility = useGame(state => state.addHistoryAbility);
   const isTarget = useGame(state => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
 
-  let color = (selected === id ? "white" : "blue");
+  let color = (selected === id ? "white" : "cyan");
   if (isTarget)
-    color = "red";
+    color = "pink";
   else if (isHovered)
     color = "lightblue";
-  if (color === 'red' && isHovered)
+  if (color === 'pink' && isHovered)
     color = 'lightpink';
 
   return (
@@ -211,8 +244,51 @@ function Player({ id, pos }: { id: string, pos: pos }) {
         event.stopPropagation();
         if (canSelect)
           selectEntity(id);
-        else if (isTarget)
-          executeAbility(id);
+        else if (isTarget && selected && selectedDice && selectedAb) // ts errors
+          addHistoryAbility(id);
+      }}
+    >
+      <boxGeometry args={[s, s, s]} />
+      <meshStandardMaterial color={color} />
+    </mesh>
+  );
+}
+
+function Player({ id, pos }: { id: string, pos: pos }) {
+  const pRef = useRef(null);
+  const selectEntity = useGame(state => state.selectEntity);
+  const selected = useGame(state => state.selectedEnt);
+  const canSelect = useGame(state => state.canSelect);
+  const addHistoryAbility = useGame(state => state.addHistoryAbility);
+  const isTarget = useGame(state => state.selectables[id]);
+  const [isHovered, setHover] = useState(false);
+
+  let color = (selected === id ? "white" : "blue");
+  if (isTarget)
+    color = "pink";
+  else if (isHovered)
+    color = "lightblue";
+  if (color === 'pink' && isHovered)
+    color = 'lightpink';
+
+  return (
+    <mesh
+      position={[pos.x, pos.y, pos.z]}
+      ref={pRef}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        setHover(true);
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        setHover(false);
+      }}
+      onClick={(event) => {
+        event.stopPropagation();
+        if (canSelect)
+          selectEntity(id);
+        else if (isTarget) // ts errors
+          addHistoryAbility(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -231,6 +307,7 @@ function Scene() {
 
   const init = useGame((state) => state.init);
   const players = useGame((state) => state.players);
+  const clones = useGame((state) => state.clones);
   const enemies = useGame((state) => state.enemies);
 
   useEffect(() => { init(entities, tiles, { width, height, depth }) },
@@ -274,6 +351,17 @@ function Scene() {
           }}
         />
       ))}
+      {Object.values(clones).map((c) => (
+        <Clone
+          key={c.id}
+          id={c.id}
+          pos={{
+            x: c.position.x - 5,
+            y: c.position.y - 1,
+            z: c.position.z - 5
+          }}
+        />
+      ))}
       {Object.values(enemies).map((e) => (
         <Enemy
           key={e.id}
@@ -298,8 +386,8 @@ export function Game() {
   //     position: "relative",
   //     overflow: "hidden"
   //   }}
-  const selectedDice = useGame((state) => state.selectedAbDice);
-  console.log(selectedDice);
+  const selectedDice = useGame((state) => state.selectedDice);
+  console.log("selectedDice: ", selectedDice);
   return (
     // <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
     <>
@@ -309,6 +397,7 @@ export function Game() {
         {`d${selectedDice}`}
       </Text>}
       <HUD />
+      <EndTurn />
       <Canvas>
         <Scene />
       </Canvas>

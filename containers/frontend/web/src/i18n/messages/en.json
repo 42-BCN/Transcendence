@@ -6,7 +6,8 @@
     "UI": "UI",
     "robots": "Robots",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "settings": "Settings"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -111,5 +112,9 @@
     "terms": "Terms of Service",
     "github": "GitHub",
     "copyright": "All rights reserved"
+  },
+  "settings": {
+    "theme": "Theme",
+    "language": "Language"
   }
 }

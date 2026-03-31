@@ -1,7 +1,7 @@
 import { cn } from '@/lib/styles/cn';
 import { glassCardStyles } from '@components/primitives/glass-card/glass-card.styles';
 
-const groupBase = ['inline-flex items-stretch flex-col', 'border border-black'];
+const groupBase = ['inline-flex'];
 
 const itemBase = [
   'relative inline-flex items-center justify-center min-w-6 min-h-6 text-xs font-medium',
@@ -12,11 +12,12 @@ const itemBase = [
   'text-black dark:text-white',
   'transition-colors',
   'focus-visible:outline-none',
+  'overflow-hidden',
 ];
 
 const itemRACState = [
   'data-[hovered]:bg-black data-[hovered]:text-white',
-  'data-[selected]:bg-black data-[selected]:text-white',
+  'data-[selected]:bg-black data-[selected]:text-white ',
   'data-[disabled]:opacity-40 data-[disabled]:cursor-not-allowed',
 ];
 
