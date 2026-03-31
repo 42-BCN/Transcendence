@@ -1,49 +1,9 @@
-{
-  "name": "Next.js Web (Docker)",
-  "dockerComposeFile": ["../containers/docker-compose.yml"],
-  "service": "frontend",
-  "workspaceFolder": "/app",
-  "shutdownAction": "stopCompose",
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "[typescriptreact]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[javascriptreact]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "terminal.integrated.defaultProfile.linux": "bash"
-      },
-      "files.watcherExclude": {
-        "**/.next/**": true,
-        "**/node_modules/**": true,
-        "**/.git/**": true
-      },
-
-      "search.exclude": {
-        "**/.next": true,
-        "**/node_modules": true
-      },
-      "extensions": [
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "rhalaly.scope-to-this",
-        "bradlc.vscode-tailwindcss",
-        "Gruntfuggly.todo-tree"
-      ]
-    }
-  }
-}
 // {
-//   "name": "Express.js backend (Docker)",
+//   "name": "Next.js Web (Docker)",
 //   "dockerComposeFile": ["../containers/docker-compose.yml"],
-//   "service": "backend",
+//   "service": "frontend",
 //   "workspaceFolder": "/app",
 //   "shutdownAction": "stopCompose",
-//   "runServices": ["postgres"],
 //   "customizations": {
 //     "vscode": {
 //       "settings": {
@@ -57,17 +17,57 @@
 //         },
 //         "terminal.integrated.defaultProfile.linux": "bash"
 //       },
+//       "files.watcherExclude": {
+//         "**/.next/**": true,
+//         "**/node_modules/**": true,
+//         "**/.git/**": true
+//       },
+
+//       "search.exclude": {
+//         "**/.next": true,
+//         "**/node_modules": true
+//       },
 //       "extensions": [
 //         "dbaeumer.vscode-eslint",
 //         "esbenp.prettier-vscode",
 //         "rhalaly.scope-to-this",
-//         "frigus02.vscode-sql-tagged-template-literals",
-//         "frigus02.vscode-sql-tagged-template-literals-syntax-only",
+//         "bradlc.vscode-tailwindcss",
 //         "Gruntfuggly.todo-tree"
 //       ]
 //     }
 //   }
 // }
+{
+  "name": "Express.js backend (Docker)",
+  "dockerComposeFile": ["../containers/docker-compose.yml"],
+  "service": "backend",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "runServices": ["postgres"],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "rhalaly.scope-to-this",
+        "frigus02.vscode-sql-tagged-template-literals",
+        "frigus02.vscode-sql-tagged-template-literals-syntax-only",
+        "Gruntfuggly.todo-tree"
+      ]
+    }
+  }
+}
 // {
 //   "name": "Sockets (Docker)",
 //   "dockerComposeFile": ["../containers/docker-compose.yml"],

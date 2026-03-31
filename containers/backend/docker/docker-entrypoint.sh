@@ -4,7 +4,6 @@ set -e
 
 echo "🚀 Starting Backend Container..."
 
-
 if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
   echo "📦 node_modules not found. Installing dependencies..."
 
@@ -15,12 +14,15 @@ if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
     echo "🔒 Using lockfile. Running npm ci..."
     npm ci
   fi
-
 else
   echo "✅ Dependencies already installed."
 fi
 
-npm run bootstrap
+echo "⚙️ Generating Prisma client..."
+npm run prisma:generate
+
+echo "🗄️ Syncing database schema with Prisma..."
+npm run prisma:db:push
 echo ""
 
 echo "▶️ Starting Express.js..."

@@ -2,14 +2,21 @@ COMPOSE = docker compose -f containers/docker-compose.yml
 
 SETUP_SCRIPT = scripts/env/setup-env.sh
 
+BACKEND_DIR = containers/backend/app
+DB_SCHEMA_FILES = $(BACKEND_DIR)/prisma/schema.prisma $(BACKEND_DIR)/prisma.config.ts
+DB_SEED_FILES = $(DB_SCHEMA_FILES) $(BACKEND_DIR)/scripts/seed.ts
+
+DB_PUSH_STAMP = .make/db-push.stamp
+DB_SEED_STAMP = .make/db-seed.stamp
+
 .PHONY: all up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
-	db-reset db-seed db-bootstrap \
+	db-reset db-seed db-push db-setup \
 	ps restart shell-frontend shell-api shell-db setup stop
 
 #---- Default ----
 
-all: up
+all: up db-setup
 
 setup:
 	@sh $(SETUP_SCRIPT)
@@ -86,11 +93,24 @@ shell-db:
 
 #---- Database management ----
 
-db-bootstrap:
-	$(COMPOSE) exec backend npm run bootstrap
+.make:
+	mkdir -p .make
 
-db-seed: db-bootstrap
-	$(COMPOSE) exec backend npm run seed
+$(DB_PUSH_STAMP): $(DB_SCHEMA_FILES) | .make
+	$(COMPOSE) exec backend npm run prisma:db:push
+	touch $@
+
+$(DB_SEED_STAMP): $(DB_SEED_FILES) $(DB_PUSH_STAMP) | .make
+	$(COMPOSE) exec backend npm run db:seed
+	touch $@
+
+db-push: $(DB_PUSH_STAMP)
+
+db-seed: $(DB_SEED_STAMP)
 
 db-reset:
-	$(COMPOSE) exec backend npm run reset
+	$(COMPOSE) exec backend npm run db:reset
+	$(COMPOSE) exec backend npm run db:seed
+	rm -f $(DB_PUSH_STAMP) $(DB_SEED_STAMP)
+
+db-setup: db-seed
