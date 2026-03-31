@@ -10,13 +10,14 @@
     "lint": "eslint .",
     "format": "prettier . --write",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "bootstrap": "tsx scripts/bootstrap.index.ts",
-    "seed": "tsx scripts/seed.index.ts",
-    "reset": "tsx scripts/reset.index.ts",
     "prisma:generate": "node --import=dotenv/config ./node_modules/prisma/build/index.js generate",
     "prisma:db:pull": "node --import=dotenv/config ./node_modules/prisma/build/index.js db pull",
-    "prisma:migrate:dev": "node --import=dotenv/config ./node_modules/prisma/build/index.js migrate dev",
-    "prisma:studio": "node --import=dotenv/config ./node_modules/prisma/build/index.js studio"
+    "prisma:db:push": "node --import=dotenv/config ./node_modules/prisma/build/index.js db push",
+    "db:reset": "node --import=dotenv/config ./node_modules/prisma/build/index.js db push --force-reset",
+    "db:seed": "node --import=dotenv/config ./node_modules/prisma/build/index.js db seed"
+  },
+  "prisma": {
+    "seed": "tsx scripts/seed.ts"
   },
   "keywords": [],
   "author": "",
