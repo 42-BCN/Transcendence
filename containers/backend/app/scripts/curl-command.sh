@@ -47,7 +47,7 @@ curl -k "$BASE/users?limit=25&offset=0" \
   -b "$COOKIES"
 
 echo ""
-echo "" d
+echo ""
 
 echo "-----------------------------------"
 echo "Logout"

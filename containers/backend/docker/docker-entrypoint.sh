@@ -27,7 +27,7 @@ npm run prisma:db:push
 echo ""
 
 else
-  echo "⏭️ Skipping Prisma db push (NODE_ENV=$NODE_ENV, PRISMA_DB_PUSH_ON_START=$PRISMA_DB_PUSH_ON_START)."
+  echo "⏭️ Skipping Prisma db push (NODE_ENV=$NODE_ENV)."
 fi
 
 echo "▶️ Starting Express.js..."

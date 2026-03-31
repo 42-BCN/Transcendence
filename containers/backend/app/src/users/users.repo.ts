@@ -1,4 +1,4 @@
-import type { UserPublic } from "@contracts/users/users.contract";
+import type { UserPublic } from "@contracts/users/users.contracts";
 import { prisma } from "@/lib/prisma";
 
 type UserPublicRow = {
