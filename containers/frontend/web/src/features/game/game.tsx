@@ -40,9 +40,7 @@ function DiceButtons() {
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectDice);
   return (
-    <div className='z-10 bottom-[10%] left-[20%] flex gap-4'
-    >
-
+    <div className='z-10 bottom-[10%] left-[20%] flex gap-4'>
       {ent?.usedDice.map((diceNum, i) => (
         <Button
           key={i}
@@ -54,9 +52,7 @@ function DiceButtons() {
       {ent?.dice.map((diceNum, i) => (
         <Button
           key={i}
-          onPress={
-            () => ability ? selectDice(diceNum) : movDice(diceNum)
-          }
+          onPress={() => ability ? selectDice(diceNum) : movDice(diceNum)}
           className={`px-4 py-2 bg-blue-500 text-white transition-all
     ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : ''}`}
         >
@@ -86,21 +82,19 @@ function Reset() {
   )
 }
 
-function EndTurn() {
-  const nextTurnStage = useGame((state) => state.changeTurnStage);
+function EndPlan() {
+  const nextPhase = useGame((state) => state.nextPhase);
+  const phase = useGame((state) => state.phase);
   const historyLength = useGame((state) => state.history.length);
-  return (
-    historyLength === 4 ?
-      <Button className='absolute z-10 bottom-8 right-16'
-        variant='primary'
-        w='default'
-        onPress={
-          () => nextTurnStage()
-        }
-      >
-        End turn
-      </Button >
-      : null
+  return (phase === "PLAN" && historyLength === 4 ?
+    <Button className='absolute z-10 bottom-8 right-64'
+      variant='primary'
+      w='default'
+      onPress={() => nextPhase()}
+    >
+      Execute plan
+    </Button >
+    : null
   )
 }
 
@@ -126,6 +120,7 @@ function HUD() {
 }
 
 function Obstacle({ id, pos }: { id: string, pos: pos }) {
+  const phase = useGame((state) => state.phase);
   const moveClone = useGame(state => state.moveClone);
   const isHighlighted = useGame(state => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
@@ -158,6 +153,9 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
+        if (phase !== "PLAN")
+          return;
+        moveClone(id);
         event.stopPropagation();
         moveClone(id);
       }}>
@@ -172,6 +170,7 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
 
 function Enemy({ id, pos }: { id: string, pos: pos }) {
   const eRef = useRef(null);
+  const phase = useGame((state) => state.phase);
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
@@ -190,15 +189,13 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
       position={[pos.x, pos.y, pos.z]}
       ref={eRef}
       onPointerOver={(event) => {
-        event.stopPropagation();
-        setHover(true);
+        event.stopPropagation(); setHover(true);
       }}
-      onPointerOut={(event) => {
-        event.stopPropagation();
-        setHover(false);
-      }}
+      onPointerOut={(event) => { event.stopPropagation(); setHover(false); }}
     >
       {/* onClick={(event) => { */}
+      {/*   if (phase !== "PLAN") */}
+      {/*     return; */}
       {/*   event.stopPropagation(); */}
       {/*   if (canSelect) */}
       {/*     selectEntity(id); */}
@@ -211,6 +208,7 @@ function Enemy({ id, pos }: { id: string, pos: pos }) {
 
 function Clone({ id, pos }: { id: string, pos: pos }) {
   const pRef = useRef(null);
+  const phase = useGame((state) => state.phase);
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
   const selectedDice = useGame(state => state.selectedDice);
@@ -241,6 +239,8 @@ function Clone({ id, pos }: { id: string, pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
+        if (phase !== "PLAN")
+          return;
         event.stopPropagation();
         if (canSelect)
           selectEntity(id);
@@ -256,6 +256,7 @@ function Clone({ id, pos }: { id: string, pos: pos }) {
 
 function Player({ id, pos }: { id: string, pos: pos }) {
   const pRef = useRef(null);
+  const phase = useGame((state) => state.phase);
   const selectEntity = useGame(state => state.selectEntity);
   const selected = useGame(state => state.selectedEnt);
   const canSelect = useGame(state => state.canSelect);
@@ -284,6 +285,8 @@ function Player({ id, pos }: { id: string, pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
+        if (phase !== "PLAN")
+          return;
         event.stopPropagation();
         if (canSelect)
           selectEntity(id);
@@ -377,6 +380,19 @@ function Scene() {
   );
 }
 
+function name(phase: string) {
+  switch (phase) {
+    case "PLAN":
+      return "PLANNING PHASE";
+    case "EXEC":
+      return "EXECUTION PHASE";
+    case "ENEMY":
+      return "ENEMY PHASE";
+    default:
+      return "END PHASE";
+  }
+}
+
 export function Game() {
   // <div
   //   style={{
@@ -386,18 +402,20 @@ export function Game() {
   //     position: "relative",
   //     overflow: "hidden"
   //   }}
+  const phase = useGame((state) => state.phase);
   const selectedDice = useGame((state) => state.selectedDice);
   console.log("selectedDice: ", selectedDice);
   return (
-    // <div className="h-[100vh] w-[100vw] bg-white relative overflow-hidden">
     <>
-      {selectedDice && <Text
-        className='absolute z-10 top-[10%] left-[10%] flex gap-4'
-      >
-        {`d${selectedDice}`}
-      </Text>}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
+        {name(phase)}
+      </div>
+      {selectedDice && phase === "PLAN" && (
+        <Text className='absolute z-10 top-[10%] left-[10%] flex gap-4'>
+          {`d${selectedDice}`}
+        </Text>)}
       <HUD />
-      <EndTurn />
+      <EndPlan />
       <Canvas>
         <Scene />
       </Canvas>
