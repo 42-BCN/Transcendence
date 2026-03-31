@@ -47,17 +47,7 @@ curl -k "$BASE/users?limit=25&offset=0" \
   -b "$COOKIES"
 
 echo ""
-echo ""
-
-echo "-----------------------------------"
-echo "Get first user (replace id if needed)"
-echo "-----------------------------------"
-
-curl -k "$BASE/users/1" \
-  -b "$COOKIES"
-
-echo ""
-echo ""
+echo "" d
 
 echo "-----------------------------------"
 echo "Logout"
