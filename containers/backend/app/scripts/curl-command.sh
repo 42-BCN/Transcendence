@@ -43,7 +43,7 @@ echo "-----------------------------------"
 echo "Get users"
 echo "-----------------------------------"
 
-curl -k "$BASE/users?limit=10&offset=0" \
+curl -k "$BASE/users?limit=25&offset=0" \
   -b "$COOKIES"
 
 echo ""
