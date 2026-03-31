@@ -6,7 +6,8 @@
     "UI": "UI",
     "robots": "Robots",
     "profile": "Perfil",
-    "logout": "Tancar sessió"
+    "logout": "Tancar sessió",
+    "settings": "Configuració"
   },
   "SignupPage": {
     "title": "Crear compte",
@@ -116,5 +117,9 @@
     "terms": "Termes de Servei",
     "github": "GitHub",
     "copyright": "Tots els drets reservats"
+  },
+  "settings": {
+    "theme": "Tema",
+    "language": "Idioma"
   }
 }

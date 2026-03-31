@@ -10,7 +10,7 @@ const buttonBase = [
 const buttonVariants = {
   primary: 'border-gray-900 bg-white data-[hovered]:bg-slate-100',
   secondary: 'border-gray-400 data-[hovered]:bg-slate-100',
-  ghost: 'border-transparent data-[hovered]:bg-slate-100',
+  ghost: 'border-transparent',
   danger: 'border-red-600 data-[hovered]:bg-red-700',
 } as const;
 
