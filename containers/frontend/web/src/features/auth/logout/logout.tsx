@@ -5,7 +5,7 @@ import { logoutAction } from './logout.action';
 import { useRouter } from '@/i18n/navigation';
 import { Icon } from '@components/primitives/icon';
 
-export function Logout() {
+export function Logout({ onPress }: { onPress?: () => void }) {
   const router = useRouter();
   const logoutHandler = async () => {
     const { data } = await logoutAction();
@@ -16,6 +16,7 @@ export function Logout() {
 
     router.push('/login');
     router.refresh();
+    onPress?.();
   };
   const logoutIcon = <Icon name="logOut" />;
   return (

@@ -71,13 +71,14 @@ type NavigationMainProps = {
 
 export function NavigationMain(args: NavigationMainProps) {
   const { mainNavItems, isAuthenticated = false } = args;
+  const { closeNavigation } = useNavigationContext();
 
   return (
     <Stack className="flex-1 list" gap="sm" align="start" role="list">
       {mainNavItems.map((item) => (
         <NavLinkItem key={item.href} navItem={item} />
       ))}
-      {isAuthenticated ? <Logout /> : null}
+      {isAuthenticated ? <Logout onPress={closeNavigation} /> : null}
     </Stack>
   );
 }
