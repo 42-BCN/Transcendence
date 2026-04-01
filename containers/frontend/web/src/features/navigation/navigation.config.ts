@@ -1,4 +1,4 @@
-import { IconName } from '@components/primitives/icon/icons';
+import type { IconName } from '@components/primitives/icon/icons';
 
 // features/navigation/navigation.config.ts
 type NavHref = '/' | '/robots' | '/ui' | '/signup' | '/login' | '/profile';
@@ -16,7 +16,7 @@ const baseNavItems: NavItem[] = [
 ];
 
 const publicNavItems: NavItem[] = [
-  { href: '/signup', key: 'createAccount', exact: false, icon: 'logIn' },
+  // { href: '/signup', key: 'createAccount', exact: false, icon: 'logIn' },
   { href: '/login', key: 'login', exact: false, icon: 'logIn' },
 ];
 

@@ -5,8 +5,6 @@
     "esbenp.prettier-vscode",
     "rhalaly.scope-to-this",
     "bradlc.vscode-tailwindcss",
-    "frigus02.vscode-sql-tagged-template-literals",
-    "frigus02.vscode-sql-tagged-template-literals-syntax-only",
     "gruntfuggly.todo-tree"
   ]
 }

@@ -29,45 +29,35 @@ Our system is intentionally stateful.
 
 ## 3. Session Storage
 
-Sessions are stored in **PostgreSQL**.
+Sessions are stored in **Redis**.
 
-Each session record contains:
-
-- sessionId (UUID)
-- userId
-- createdAt
-- lastActivityAt
-- expiresAt (sliding)
-- absoluteExpiresAt (hard cap) -> good practice, but won't apply
-- optional metadata (IP, user agent)
-
-The cookie stores only the sessionId.
+The cookie contains only the session identifier.
+All session state lives in Redis and is managed server-side.
 
 On every authenticated request:
 
 1. Extract cookie
-2. Validate session existence
+2. Validate session existence in Redis
 3. Validate expiration
-4. Update sliding expiration
+4. Refresh idle expiration if applicable
 5. Continue request
 
 ---
 
-## 4. Cookie Configuration
+## 3. Session Storage
 
-Session cookie properties:
+Sessions are stored in **Redis**.
 
-- HttpOnly
-- Secure
-- SameSite=Strict
-- Path=/
-- Persistent
-- Sliding expiration enabled
+The cookie contains only the session identifier.
+All session state lives in Redis and is managed server-side.
 
-If OAuth is introduced:
+On every authenticated request:
 
-- Switch SameSite to Lax
-- Implement CSRF token protection for state-changing requests
+1. Extract cookie
+2. Validate session existence in Redis
+3. Validate expiration
+4. Refresh idle expiration if applicable
+5. Continue request
 
 ---
 
@@ -166,47 +156,43 @@ If a session is revoked:
 
 ## 1. CSRF Strategy
 
-Default configuration:
-
-- SameSite=Strict
-- No CSRF token required for first-party flows
-
-If OAuth or cross-site flows are introduced:
+Because OAuth is enabled:
 
 - SameSite=Lax
-- Implement CSRF token validation for:
+- CSRF token validation is required for:
   - POST
   - PUT
   - PATCH
   - DELETE
 
 CSRF applies to HTTP requests where cookies are automatically included.
-
 CSRF does not apply to WebSocket messages the same way as form-based HTTP requests.
+Change: Redis migration path
 
----
+It currently says:
 
-## 2. Redis Migration Path
+current architecture = PostgreSQL sessions
+future architecture = Redis sessions.
+
+That is no longer true.
+
+Replace “## 2. Redis Migration Path” with:
+
+## 2. Session Storage Architecture
 
 Current architecture:
-
-Client → Backend → PostgreSQL (sessions)
-
-Future architecture:
 
 Client → Backend → Redis (sessions)
 ↓
 PostgreSQL (user data)
 
-Redis advantages:
+Why Redis:
 
 - Lower latency
 - Native TTL
 - Better horizontal scaling
-- Improved WebSocket performance
+- Better fit for ephemeral session state
 - Cleaner session invalidation across instances
-
-PostgreSQL is sufficient for phase 1.
-Redis is a scalability optimization.
+- Better alignment with WebSocket/session sharing
 
 ---

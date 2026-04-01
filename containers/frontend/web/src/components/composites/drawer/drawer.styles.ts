@@ -17,7 +17,6 @@ export function drawerOverlayStyles() {
 
 const drawerBase = [
   'fixed left-0 top-0 h-screen',
-  'w-[300px]',
   'bg-white',
   'border-l border-gray-200',
   'shadow-[-8px_0_20px_rgba(0,0,0,0.1)]',

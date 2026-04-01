@@ -4,7 +4,7 @@ export default async function HomePage() {
   const t = await getTranslations('home');
 
   return (
-    <main className="p-5">
+    <main className="p-8">
       <h1>{t('title')}</h1>
       <p>{t('subtitle')}</p>
     </main>
