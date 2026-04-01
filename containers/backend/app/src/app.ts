@@ -1,16 +1,22 @@
 import express from "express";
 import session from "express-session";
 import passport from "passport";
+import { RedisStore } from "connect-redis";
 
-import { errorMiddleware } from "@shared";
+import { errorMiddleware, redisClient } from "@shared";
 
 import { usersRouter } from "./users/users.routes";
+import { protectedRouter } from "./protected/protected.route";
 import "./auth/auth.passport";
 import { authRouter } from "./auth/auth.routes";
-import { protectedRouter } from "./protected/protected.route";
 
-export const ONE_DAY_MS = 1000 * 60 * 60 * 24;
-export const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
+// Ensure required environment variables are set
+// TODO manage like in frontend with a env schema validator
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) throw new Error("SESSION_SECRET is required");
+
+const ONE_DAY_MS = 1000 * 60 * 60 * 24;
+const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
 
 const app = express();
 
@@ -20,8 +26,13 @@ app.use(express.json());
 
 app.use(
   session({
+    store: new RedisStore({
+      client: redisClient,
+      ttl: Math.floor(SEVEN_DAYS_MS / 1000),
+      disableTouch: false,
+    }),
     name: "sid",
-    secret: process.env.SESSION_SECRET!,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     rolling: true,
@@ -37,8 +48,13 @@ app.use(
 
 app.use(passport.initialize());
 
-app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+app.get("/health", async (_req, res) => {
+  try {
+    await redisClient.ping();
+    res.json({ ok: true });
+  } catch {
+    res.status(500).json({ ok: false });
+  }
 });
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
