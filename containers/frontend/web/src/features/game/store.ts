@@ -142,36 +142,20 @@ export const useGame = create<gameState>()((set, get) => ({
   mapBounds: { width: 0, height: 0, depth: 0 },
 
   nextPhase: async () => {
-    console.log("ENTERS FUNCTION");
     const state = get();
     if (state.phase !== "PLAN")
       return;
-    set({
-      ...clean,
-      phase: "EXEC",
-      canSelect: false,
-    });
-
+    set({ ...clean, phase: "EXEC", canSelect: false });
     try {
       await get().executionPhase();
-
-      set({
-        ...clean,
-        phase: "ENEMY",
-        canSelect: false,
-      });
-
+      set({ ...clean, phase: "ENEMY", canSelect: false });
       await get().enemyPhase();
-
       set({ phase: "END" });
       get().endTurn();
-    } catch (err) {
+    }
+    catch (err) {
       console.error("Turn resolution failed:", err);
-      set({
-        ...clean,
-        phase: "PLAN",
-        canSelect: true,
-      });
+      set({ ...clean, phase: "PLAN", canSelect: true });
     }
   },
 
@@ -180,24 +164,18 @@ export const useGame = create<gameState>()((set, get) => ({
     const history = get().history;
 
     for (const action of history) {
-      // Habilidades que se ejecutan ANTES del movimiento
       for (const ab of action.abilities ?? []) {
         if (!ab.aftermov) {
           get().executeAbility(action.who, ab.name, ab.target);
           await sleep(400);
         }
       }
-
-      // Movimiento: eliminar el clon primero para que no bloquee el pathfinding
       if (action.moveto) {
         const cloneKey = `clone_${action.who}`;
-        const { [cloneKey]: _removed, ...remainingClones } = get().clones;
+        const { [cloneKey]: _, ...remainingClones } = get().clones;
         set({ clones: remainingClones });
-
         await get().moveTo(action.who, action.moveto);
       }
-
-      // Habilidades que se ejecutan DESPUÉS del movimiento
       for (const ab of action.abilities ?? []) {
         if (ab.aftermov) {
           get().executeAbility(action.who, ab.name, ab.target);
@@ -209,7 +187,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
   enemyPhase: async () => {
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    console.log("Turno del enemigo...");
+    console.log("Enemy turn");
     await sleep(1000);
   },
 
@@ -243,8 +221,7 @@ export const useGame = create<gameState>()((set, get) => ({
       enemies: updatedEnemies,
       canSelect: true,
     });
-
-    console.log("¡Nuevo turno de Planificación!");
+    console.log("New turn");
   },
 
 
