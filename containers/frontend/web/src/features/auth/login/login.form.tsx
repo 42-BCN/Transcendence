@@ -63,7 +63,7 @@ export function LoginForm() {
           errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
           onChange={(v) => form.setValue('identifier', v)}
           onBlur={() => form.setTouch('identifier')}
-          inputProps={{ ref: identifierRef }}
+          inputRef={identifierRef}
           {...fieldsBase.identifier}
         />
 

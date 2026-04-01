@@ -68,7 +68,7 @@ export function CreateAccountForm() {
           errorKey={form.errors.email && `validation.${form.errors.email}`}
           onChange={(v) => form.setValue('email', v)}
           onBlur={() => form.setTouch('email')}
-          inputProps={{ ref: emailRef }}
+          inputRef={emailRef}
           {...fieldsBase.email}
         />
         <TextField
