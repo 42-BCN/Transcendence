@@ -31,8 +31,15 @@ export function useForm<T extends Record<string, unknown>>(args: UseFormProps<T>
   const [errors, setErrors] = useState<FieldErrorsOf<T>>(() => ({}));
 
   const setValue = useCallback(
-    <K extends keyof T>(name: K, value: T[K]) => setValues((p) => ({ ...p, [name]: value })),
-    [],
+    <K extends keyof T>(name: K, value: T[K]) =>
+      setValues((prev) => {
+        const nextValues = { ...prev, [name]: value };
+
+        if (touched[name]) setErrors(validate(schema, nextValues, touched, fieldNames).errors);
+
+        return nextValues;
+      }),
+    [schema, touched, fieldNames],
   );
 
   const setTouch = useCallback(
