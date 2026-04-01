@@ -1,5 +1,6 @@
 'use client';
 
+import type { Ref, KeyboardEventHandler } from 'react';
 import type { InputProps as AriaInputProps } from 'react-aria-components';
 import { Input as AriaInput } from 'react-aria-components';
 
@@ -9,6 +10,8 @@ import type { InputSize as Size, InputVariant as Variant } from './input.styles'
 export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | 'onKeyDown'> & {
   variant?: Variant;
   size?: Size;
+  ref?: Ref<HTMLInputElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
 };
 
 export function Input({ variant = 'default', size = 'md', ...props }: InputProps) {

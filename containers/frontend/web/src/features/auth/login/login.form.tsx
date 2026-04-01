@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef, type KeyboardEvent } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { InternalLink } from '@components/controls/link/link';
@@ -19,8 +19,6 @@ type StateActionProps = {
   err: ApiResponse<LoginRes> | null | undefined;
 };
 
-// TODO make a component
-// TODO Add all error codes form auth to i18n
 function APIError({ err }: StateActionProps) {
   const t = useTranslations('api');
   return err?.ok === false ? (
@@ -30,14 +28,39 @@ function APIError({ err }: StateActionProps) {
   ) : null;
 }
 
+function useLoginFieldNavigation() {
+  const identifierRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    identifierRef.current?.focus();
+  }, []);
+
+  function handleIdentifierEnter(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      passwordRef.current?.focus();
+    }
+  }
+
+  return {
+    identifierRef,
+    passwordRef,
+    handleIdentifierEnter,
+  };
+}
+
 export function LoginForm() {
   const t = useTranslations('auth');
   const form = useForm<LoginReq>(formApiReq);
   const [state, formAction] = useActionState(loginAction, null);
 
+  const { identifierRef, passwordRef, handleIdentifierEnter } = useLoginFieldNavigation();
+
   return (
     <>
-      {state?.ok === false ? <APIError err={state} /> : null}
+      {state?.ok === false && <APIError err={state} />}
+
       <Form
         action={formAction}
         onSubmit={(e) => {
@@ -50,6 +73,7 @@ export function LoginForm() {
           errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
           onChange={(v) => form.setValue('identifier', v)}
           onBlur={() => form.setTouch('identifier')}
+          inputProps={{ ref: identifierRef, onKeyDown: handleIdentifierEnter }}
           {...fieldsBase.identifier}
         />
 
@@ -58,11 +82,14 @@ export function LoginForm() {
           errorKey={form.errors.password && `validation.${form.errors.password}`}
           onChange={(v) => form.setValue('password', v)}
           onBlur={() => form.setTouch('password')}
+          inputProps={{ ref: passwordRef }}
           {...fieldsBase.password}
         />
-        <div className="flex row gap-2  justify-center">
-          <InternalLink href={'/recover'}>{t('login.forgotPassword')}</InternalLink>
+
+        <div className="flex gap-2 justify-center">
+          <InternalLink href="/recover">{t('login.forgotPassword')}</InternalLink>
         </div>
+
         <Button type="submit">{t('login.submit')}</Button>
       </Form>
     </>
