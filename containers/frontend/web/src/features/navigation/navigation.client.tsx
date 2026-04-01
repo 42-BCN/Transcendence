@@ -102,7 +102,7 @@ function DesktopNavigation(args: NavigationClientProps) {
 
   return (
     <NavigationProvider value={value}>
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <Stack
           as="nav"
           aria-label="main"
@@ -110,7 +110,7 @@ function DesktopNavigation(args: NavigationClientProps) {
             intensity: 'medium',
             blur: 'sm',
             className:
-              'group py-4 z-10 h-screen overflow-y-auto w-min px-0 sticky top-0 rounded-s-none rounded-e-md',
+              'group py-4 z-10 h-screen overflow-y-auto w-min px-0 sticky top-0 rounded-s-none rounded-e-md pointer-events-auto',
           })}
           align="start"
         >
