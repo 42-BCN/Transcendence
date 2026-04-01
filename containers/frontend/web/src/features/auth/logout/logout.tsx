@@ -8,8 +8,8 @@ import { Icon } from '@components/primitives/icon';
 export function Logout() {
   const router = useRouter();
   const logoutHandler = async () => {
-    const response = await logoutAction();
-    if (!response.ok) {
+    const { data } = await logoutAction();
+    if (!data.ok) {
       // TODO handle error
       console.error('Failed to log out');
     }
