@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef, type KeyboardEvent } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { useForm } from '@/lib/forms/use-form';
@@ -29,20 +29,12 @@ type StateActionProps = {
 
 function useCreateAccountFieldNavigation() {
   const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
 
-  function handleEmailEnter(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      passwordRef.current?.focus();
-    }
-  }
-
-  return { emailRef, passwordRef, handleEmailEnter };
+  return { emailRef };
 }
 
 // TODO make a component
@@ -59,7 +51,7 @@ export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
   const t = useTranslations('auth');
   const [state, formAction] = useActionState(signupAction, null);
-  const { emailRef, passwordRef, handleEmailEnter } = useCreateAccountFieldNavigation();
+  const { emailRef } = useCreateAccountFieldNavigation();
 
   return (
     <>
@@ -76,7 +68,7 @@ export function CreateAccountForm() {
           errorKey={form.errors.email && `validation.${form.errors.email}`}
           onChange={(v) => form.setValue('email', v)}
           onBlur={() => form.setTouch('email')}
-          inputProps={{ ref: emailRef, onKeyDown: handleEmailEnter }}
+          inputProps={{ ref: emailRef }}
           {...fieldsBase.email}
         />
         <TextField
@@ -84,7 +76,6 @@ export function CreateAccountForm() {
           errorKey={form.errors.password && `validation.${form.errors.password}`}
           onChange={(v) => form.setValue('password', v)}
           onBlur={() => form.setTouch('password')}
-          inputProps={{ ref: passwordRef }}
           {...fieldsBase.password}
         />
         <Button type="submit">{t('createAccount.submit')}</Button>

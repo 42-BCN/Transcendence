@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef, type KeyboardEvent } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { InternalLink } from '@components/controls/link/link';
@@ -30,23 +30,13 @@ function APIError({ err }: StateActionProps) {
 
 function useLoginFieldNavigation() {
   const identifierRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     identifierRef.current?.focus();
   }, []);
 
-  function handleIdentifierEnter(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      passwordRef.current?.focus();
-    }
-  }
-
   return {
     identifierRef,
-    passwordRef,
-    handleIdentifierEnter,
   };
 }
 
@@ -55,7 +45,7 @@ export function LoginForm() {
   const form = useForm<LoginReq>(formApiReq);
   const [state, formAction] = useActionState(loginAction, null);
 
-  const { identifierRef, passwordRef, handleIdentifierEnter } = useLoginFieldNavigation();
+  const { identifierRef } = useLoginFieldNavigation();
 
   return (
     <>
@@ -73,7 +63,7 @@ export function LoginForm() {
           errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
           onChange={(v) => form.setValue('identifier', v)}
           onBlur={() => form.setTouch('identifier')}
-          inputProps={{ ref: identifierRef, onKeyDown: handleIdentifierEnter }}
+          inputProps={{ ref: identifierRef }}
           {...fieldsBase.identifier}
         />
 
@@ -82,7 +72,6 @@ export function LoginForm() {
           errorKey={form.errors.password && `validation.${form.errors.password}`}
           onChange={(v) => form.setValue('password', v)}
           onBlur={() => form.setTouch('password')}
-          inputProps={{ ref: passwordRef }}
           {...fieldsBase.password}
         />
 

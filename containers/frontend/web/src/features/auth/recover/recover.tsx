@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Form } from '@components/composites/form';
 import { TextField } from '@components/composites/text-field';
@@ -40,15 +40,8 @@ function useRecoverFieldNavigation() {
     identifierRef.current?.focus();
   }, []);
 
-  function handleIdentifierEnter(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-    }
-  }
-
   return {
     identifierRef,
-    handleIdentifierEnter,
   };
 }
 
@@ -56,7 +49,7 @@ export function RecoverFeature() {
   const form = useForm<RecoverReq>(formApiReq);
   const t = useTranslations('auth');
 
-  const { identifierRef, handleIdentifierEnter } = useRecoverFieldNavigation();
+  const { identifierRef } = useRecoverFieldNavigation();
 
   return (
     <Stack justify="center">
@@ -76,7 +69,7 @@ export function RecoverFeature() {
           errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
           onChange={(v) => form.setValue('identifier', v)}
           onBlur={() => form.setTouch('identifier')}
-          inputProps={{ ref: identifierRef, onKeyDown: handleIdentifierEnter }}
+          inputProps={{ ref: identifierRef }}
           {...fieldsBase.identifier}
         />
 

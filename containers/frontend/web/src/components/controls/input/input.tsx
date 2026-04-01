@@ -1,6 +1,6 @@
 'use client';
 
-import type { Ref, KeyboardEventHandler } from 'react';
+import type { Ref } from 'react';
 import type { InputProps as AriaInputProps } from 'react-aria-components';
 import { Input as AriaInput } from 'react-aria-components';
 
@@ -11,7 +11,6 @@ export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | '
   variant?: Variant;
   size?: Size;
   ref?: Ref<HTMLInputElement>;
-  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
 };
 
 export function Input({ variant = 'default', size = 'md', ...props }: InputProps) {
