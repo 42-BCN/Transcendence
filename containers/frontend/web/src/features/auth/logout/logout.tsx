@@ -2,7 +2,7 @@
 
 import { Button } from '@components/controls/button';
 import { logoutAction } from './logout.action';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { Icon } from '@components/primitives/icon';
 
 export function Logout() {
@@ -20,6 +20,13 @@ export function Logout() {
   const logoutIcon = <Icon name="logOut" />;
   return (
     // TODO add tooltip. Add on expanse. Unify Link and button styles
-    <Button w="default" onPress={logoutHandler} icon={logoutIcon} variant="ghost" className="p-2" />
+    <Button
+      w="default"
+      onPress={logoutHandler}
+      icon={logoutIcon}
+      variant="ghost"
+      className="p-2"
+      aria-label="Log out"
+    />
   );
 }

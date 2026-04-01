@@ -1,4 +1,3 @@
-import { FetcherError } from './errors';
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 
@@ -19,7 +18,6 @@ export async function fetchClient<T>(
   });
 
   const json = await res.json();
-  if (!res.ok) throw new FetcherError(res.status, json);
 
   return json as T;
 }
