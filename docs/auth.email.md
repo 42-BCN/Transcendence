@@ -1,6 +1,6 @@
-## Alignment with AUTH_V1 issue set
+## Email implementation
 
-### Flow wehre mails are required
+### Flow where mails are required
 
 - Password reset email: **required**
 - Email verification: **included**
@@ -49,8 +49,6 @@ Rules:
 
 ### Abuse controls and enforcement boundaries
 
-This spike should remain aligned with the existing separation of responsibilities:
-
 - **Nginx**: per-IP rate limiting on auth endpoints
 - **Backend**: per-account/email abuse controls, cooldowns, token issuance rules, single-use validation, generic responses
 - **Database**: hashed token storage and token lifecycle fields
@@ -71,7 +69,7 @@ This spike should remain aligned with the existing separation of responsibilitie
 - lands on frontend reset/verify page
 - completes the flow in browser/PWA
 
-### TL:DR
+### TL;DR
 
 - V1 includes password reset and email verification
 - Gmail API transport is the initial sending mechanism behind an abstraction
