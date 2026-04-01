@@ -19,6 +19,8 @@ async function insertSeedUser(): Promise<boolean> {
         provider: "local",
         emailVerifiedAt: new Date(),
         isBlocked: false,
+        failedAttempts: 0,
+        lastLoginAt: new Date(),
       },
       select: { id: true },
     });
@@ -48,6 +50,10 @@ async function insertSpecificUser(user: string): Promise<void> {
       username: user,
       passwordHash,
       provider: "local",
+      emailVerifiedAt: new Date(),
+      isBlocked: false,
+      failedAttempts: 0,
+      lastLoginAt: new Date(),
     },
   });
 }
