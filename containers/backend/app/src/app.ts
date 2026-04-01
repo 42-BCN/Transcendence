@@ -3,7 +3,7 @@ import session from "express-session";
 import passport from "passport";
 import { RedisStore } from "connect-redis";
 
-import { errorMiddleware, redisClient } from "@shared";
+import { errorMiddleware, getRedisClient } from "@shared";
 
 import { usersRouter } from "./users/users.routes";
 import { protectedRouter } from "./protected/protected.route";
@@ -27,7 +27,7 @@ app.use(express.json());
 app.use(
   session({
     store: new RedisStore({
-      client: redisClient,
+      client: getRedisClient(),
       ttl: Math.floor(SEVEN_DAYS_MS / 1000),
       disableTouch: false,
     }),
@@ -50,7 +50,7 @@ app.use(passport.initialize());
 
 app.get("/health", async (_req, res) => {
   try {
-    await redisClient.ping();
+    await getRedisClient().ping();
     res.json({ ok: true });
   } catch {
     res.status(500).json({ ok: false });

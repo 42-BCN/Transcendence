@@ -16,4 +16,4 @@ export { requireAuth } from "./auth.middleware";
 export { pool } from "./db.pool";
 
 export { generateUsername } from "./utils/username-generator";
-export { redisClient, connectRedis } from "./redis.client";
+export { getRedisClient, connectRedis } from "./redis.client";

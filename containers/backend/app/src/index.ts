@@ -21,5 +21,5 @@ async function start(): Promise<void> {
 
 void start().catch((err: unknown) => {
   console.error("Startup failed:", err);
-  throw err;
+  process.exitCode = 1;
 });
