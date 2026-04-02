@@ -110,7 +110,8 @@
     "INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
     "FIELD_TOO_SHORT": "Demasiado corto.",
     "FIELD_TOO_LONG": "Demasiado largo.",
-    "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden."
+    "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden.",
+    "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
   "Footer": {
     "appName": "Transcendence",

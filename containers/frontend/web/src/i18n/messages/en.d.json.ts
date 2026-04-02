@@ -107,7 +107,8 @@ declare const messages: {
     "INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
     "FIELD_TOO_SHORT": "Too short.",
     "FIELD_TOO_LONG": "Too long.",
-    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+    "OUT_OF_RANGE": "Query out of range"
   },
   "Footer": {
     "appName": "Transcendence",

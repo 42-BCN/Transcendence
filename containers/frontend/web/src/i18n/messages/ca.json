@@ -109,7 +109,8 @@
     "INVALID_USERNAME_FORMAT": "El nom d'usuari només pot contenir lletres, números, guions baixos (_) i guions (-).",
     "FIELD_TOO_SHORT": "Massa curt.",
     "FIELD_TOO_LONG": "Massa llarg.",
-    "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen."
+    "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen.",
+    "OUT_OF_RANGE": "Sol·licitud fora de rang"
   },
   "Footer": {
     "appName": "Transcendence",
