@@ -14,6 +14,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('dark'); // Default to dark/current baseline
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     // 1. Check local storage
@@ -25,14 +26,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setThemeState(systemPrefersDark ? 'dark' : 'light');
     }
+    setIsInitialized(true);
   }, []);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
-  }, [theme]);
+  }, [theme, isInitialized]);
 
   const setTheme = (newTheme: Theme) => setThemeState(newTheme);
   const toggleTheme = () => setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
