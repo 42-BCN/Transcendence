@@ -10,7 +10,8 @@ declare const messages: {
     "robots": "Robots",
     "profile": "Profile",
     "logout": "Logout",
-    "settings": "Settings"
+    "settings": "Settings",
+    "menu": "Menu"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -90,7 +91,8 @@ declare const messages: {
       "submit": "Send email",
       "resend": "Request another email",
       "goToLogin": "Go to log in"
-    }
+    },
+    "logout": "Logout"
   },
   "api": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
@@ -120,6 +122,15 @@ declare const messages: {
   "settings": {
     "theme": "Theme",
     "language": "Language"
+  },
+  "Profile": {
+    "fail": "Failed to load user",
+    "userId": "userId",
+    "username": "username"
+  },
+  "me": {
+    "title": "Protected route test",
+    "subtitle": "Click the button. If logged in, you should see user info. If not, you should get 401."
   }
 };
 export default messages;

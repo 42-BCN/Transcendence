@@ -12,6 +12,7 @@ import { glassCardStyles } from '@components/primitives/glass-card/glass-card.st
 import { Drawer } from '@components/composites/drawer';
 import { Button, DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
+import { useTranslations } from 'next-intl';
 
 type NavigationClientProps = {
   locale: string;
@@ -37,6 +38,7 @@ export function useMediaQuery(query: string) {
 
 function MobileNavigation(args: NavigationClientProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const t = useTranslations('navigation');
   const pathname = usePathname();
 
   const closeNavigation = useCallback(() => {
@@ -60,7 +62,7 @@ function MobileNavigation(args: NavigationClientProps) {
   return (
     <NavigationProvider value={value}>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <Button className="md:hidden absolute top-5 left-2 z-20 h-min w-min">Menu</Button>
+        <Button className="md:hidden absolute top-5 left-2 z-20 h-min w-min">{t('menu')}</Button>
 
         <Drawer>
           <Stack

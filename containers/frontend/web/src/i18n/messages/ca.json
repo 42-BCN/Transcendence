@@ -7,7 +7,8 @@
     "robots": "Robots",
     "profile": "Perfil",
     "logout": "Tancar sessió",
-    "settings": "Configuració"
+    "settings": "Configuració",
+    "menu": "Menu"
   },
   "CreateAccountPage": {
     "title": "Crear compte",
@@ -78,7 +79,7 @@
         "resend": "Tornar a enviar",
         "resending": "Enviant...",
         "resent": "Enviat!",
-        "resendSuccess": "✓ Email enviat. Espera per tornar-ho a intentar.",
+        "resendSuccess": "✓ Correu enviat. Espera abans de tornar-ho a intentar.",
         "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar.",
         "backToLogin": "Ja has confirmat? Iniciar sessió"
       }
@@ -89,13 +90,14 @@
     },
     "recover": {
       "title": "Recuperar compte",
-      "submit": "Enviar email",
-      "resend": "Sol·licitar un altre email",
-      "goToLogin": "Anar a l'inici"
-    }
+      "submit": "Enviar correu",
+      "resend": "Sol·licitar un altre correu",
+      "goToLogin": "Anar a l'inici de sessió"
+    },
+    "logout": "Tancar sessió"
   },
   "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
+    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
     "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
   },
   "validation": {
@@ -114,13 +116,22 @@
   },
   "Footer": {
     "appName": "Transcendence",
-    "privacy": "Política de Privacitat",
-    "terms": "Termes de Servei",
+    "privacy": "Política de privacitat",
+    "terms": "Termes del servei",
     "github": "GitHub",
     "copyright": "Tots els drets reservats"
   },
   "settings": {
     "theme": "Tema",
     "language": "Idioma"
+  },
+  "Profile": {
+    "fail": "Error en carregar l'usuari",
+    "userId": "ID d'usuari",
+    "username": "Nom d'usuari"
+  },
+  "me": {
+    "title": "Prova de ruta protegida",
+    "subtitle": "Fes clic al botó. Si estàs autenticat, hauries de veure la informació de l'usuari. Si no, hauries de rebre un 401."
   }
 }

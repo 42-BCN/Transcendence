@@ -16,5 +16,5 @@ export async function createAccountAction(_prevState: unknown, formData: FormDat
 
   if (!res.data.ok) return { ok: false, res };
   const locale = await getLocale();
-  redirect({ href: '/signup/success', locale });
+  redirect({ href: '/create-account/success', locale });
 }

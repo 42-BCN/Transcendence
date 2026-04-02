@@ -7,7 +7,8 @@
     "robots": "Robots",
     "profile": "Perfil",
     "logout": "Cerrar sesión",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "menu": "Menu"
   },
   "CreateAccountPage": {
     "title": "Crear cuenta",
@@ -29,7 +30,9 @@
     "es": "ES",
     "ca": "CA"
   },
-  "TextAreaField": { "counter": "{current} de {max} caracteres" },
+  "TextAreaField": {
+    "counter": "{current} de {max} caracteres"
+  },
   "auth": {
     "common": {
       "appTitle": "Autenticación",
@@ -72,16 +75,16 @@
       "goToLogin": "Iniciar sesión",
       "withGoogle": "Continuar con Google",
       "success": {
-        "title": "Verifica tu email",
+        "title": "Verifica tu correo electrónico",
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
         "check": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
-        "resend": "Volver a enviar",
+        "resend": "Reenviar",
         "resending": "Enviando...",
         "resent": "¡Enviado!",
-        "resendSuccess": "✓ Email enviado. Espera para volver a intentarlo.",
+        "resendSuccess": "✓ Correo enviado. Espera antes de volver a intentarlo.",
         "resendError": "✗ No se pudo enviar. Inténtalo de nuevo.",
-        "backToLogin": "¿Ya confirmaste? Iniciar sesión"
+        "backToLogin": "¿Ya lo confirmaste? Iniciar sesión"
       }
     },
     "status": {
@@ -90,14 +93,15 @@
     },
     "recover": {
       "title": "Recuperar cuenta",
-      "submit": "Enviar email",
-      "resend": "Solicitar otro email",
-      "goToLogin": "Ir a inicio"
-    }
+      "submit": "Enviar correo",
+      "resend": "Solicitar otro correo",
+      "goToLogin": "Ir al inicio de sesión"
+    },
+    "logout": "Cerrar sesión"
   },
   "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
+    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales no válidas"
   },
   "validation": {
     "REQUIRED": "Este campo es obligatorio.",
@@ -115,13 +119,22 @@
   },
   "Footer": {
     "appName": "Transcendence",
-    "privacy": "Política de Privacidad",
-    "terms": "Términos de Servicio",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de servicio",
     "github": "GitHub",
     "copyright": "Todos los derechos reservados"
   },
   "settings": {
     "theme": "Tema",
     "language": "Idioma"
+  },
+  "Profile": {
+    "fail": "Error al cargar el usuario",
+    "userId": "ID de usuario",
+    "username": "Nombre de usuario"
+  },
+  "me": {
+    "title": "Prueba de ruta protegida",
+    "subtitle": "Haz clic en el botón. Si has iniciado sesión, deberías ver la información del usuario. Si no, deberías recibir un 401."
   }
 }
