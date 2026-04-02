@@ -83,3 +83,8 @@ pnpm-debug.log*
 # Misc
 # ------------------------------
 .make/
+
+#------------------------------
+# Prisma Generated 
+#------------------------------
+containers/backend/app/generated

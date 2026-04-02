@@ -13,16 +13,22 @@ enum AuthProvider {
 }
 
 model User {
-  id                String        @id @default(uuid()) @db.Uuid
-  email             String        @unique
-  username          String        @unique
-  password_hash     String?
-  google_id         String?       @unique
-  provider          AuthProvider  @default(local)
-  is_blocked        Boolean       @default(false)
-  email_verified_at DateTime?     @db.Timestamptz(6)
-  created_at        DateTime      @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime      @default(now()) @db.Timestamptz(6)
+  id                 String              @id @default(uuid()) @db.Uuid
+  email              String              @unique
+  username           String              @unique
+  passwordHash       String?             @map("password_hash")
+  googleId           String?             @unique @map("google_id")
+  provider           AuthProvider        @default(local)
+  isBlocked          Boolean             @default(false) @map("is_blocked")
+  failedAttempts     Int                 @default(0) @map("failed_attempts")
+  lockedUntil        DateTime?           @map("locked_until") @db.Timestamptz(6)
+  lastLoginAt        DateTime?           @map("last_login_at") @db.Timestamptz(6)
+  emailVerifiedAt    DateTime?           @map("email_verified_at") @db.Timestamptz(6)
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  passwordResets     PasswordReset[]     @relation("UserPasswordResets")
+  emailVerifications EmailVerification[] @relation("UserEmailVerifications")
 
   friendships_as_user1 Friendship[] @relation("FriendshipUser1")
   friendships_as_user2 Friendship[] @relation("FriendshipUser2")
@@ -53,4 +59,34 @@ model Friendship {
   @@index([user_id_1, status], name: "friendships_user1_status_idx")
   @@index([user_id_2, status], name: "friendships_user2_status_idx")
   @@map("friendships")
+}
+
+model PasswordReset {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash")
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt     DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation("UserPasswordResets", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_resets")
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash")
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt     DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation("UserEmailVerifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("email_verifications")
 }

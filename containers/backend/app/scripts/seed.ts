@@ -15,10 +15,12 @@ async function insertSeedUser(): Promise<boolean> {
       data: {
         email,
         username,
-        password_hash: passwordHash,
+        passwordHash,
         provider: "local",
-        email_verified_at: new Date(),
-        is_blocked: false,
+        emailVerifiedAt: new Date(),
+        isBlocked: false,
+        failedAttempts: 0,
+        lastLoginAt: new Date(),
       },
       select: { id: true },
     });
@@ -46,8 +48,12 @@ async function insertSpecificUser(user: string): Promise<void> {
     create: {
       email: `${user}@fakemail.com`,
       username: user,
-      password_hash: passwordHash,
+      passwordHash,
       provider: "local",
+      emailVerifiedAt: new Date(),
+      isBlocked: false,
+      failedAttempts: 0,
+      lastLoginAt: new Date(),
     },
   });
 }

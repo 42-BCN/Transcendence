@@ -6,7 +6,7 @@ import type { AuthUserRow } from "./auth.model";
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
 type UserWithPassword = Pick<
   AuthUserRow,
-  "id" | "email" | "username" | "password_hash"
+  "id" | "email" | "username" | "passwordHash"
 >;
 
 const userPublicSelect = {
@@ -19,7 +19,7 @@ const userWithPasswordSelect = {
   id: true,
   email: true,
   username: true,
-  password_hash: true,
+  passwordHash: true,
 } as const;
 
 export function findUserByEmail(
@@ -51,7 +51,7 @@ export function findUserByGoogleId(
   googleId: string,
 ): Promise<UserPublic | null> {
   return prisma.user.findUnique({
-    where: { google_id: googleId },
+    where: { googleId },
     select: userPublicSelect,
   });
 }
@@ -81,7 +81,7 @@ export async function insertUser(
       data: {
         email,
         username,
-        password_hash: passwordHash,
+        passwordHash,
         provider: "local",
       },
       select: userPublicSelect,
@@ -106,7 +106,7 @@ export async function linkGoogleIdToEmailUser(
     return await prisma.user.update({
       where: { email },
       data: {
-        google_id: googleId,
+        googleId,
       },
       select: userPublicSelect,
     });
@@ -133,7 +133,7 @@ export async function insertGoogleUser(
       data: {
         email,
         username,
-        google_id: googleId,
+        googleId,
         provider: "google",
       },
       select: userPublicSelect,
