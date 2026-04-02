@@ -4,10 +4,10 @@ export type AuthUserRow = {
   id: string;
   email: string;
   username: string;
-  password_hash: string | null;
+  passwordHash: string | null;
   provider: "local" | "google";
-  google_id: string | null;
-  is_blocked: boolean;
+  googleId: string | null;
+  isBlocked: boolean;
 };
 
 export function toAuthUser(row: {
