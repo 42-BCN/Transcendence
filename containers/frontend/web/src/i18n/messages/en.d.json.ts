@@ -59,7 +59,7 @@ declare const messages: {
       "submit": "Log in",
       "forgotPassword": "Forgot password?",
       "noAccount": "Don’t have an account?",
-      "goToSignup": "Create one",
+      "goToCreateAccount": "Create one",
       "withGoogle": "Continue with Google"
     },
     "createAccount": {

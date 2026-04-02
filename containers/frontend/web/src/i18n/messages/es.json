@@ -9,7 +9,7 @@
     "logout": "Cerrar sesión",
     "settings": "Configuración"
   },
-  "SignupPage": {
+  "CreateAccountPage": {
     "title": "Crear cuenta",
     "email": "Correo electrónico",
     "password": "Contraseña",
@@ -62,7 +62,7 @@
       "submit": "Iniciar sesión",
       "forgotPassword": "¿Has olvidado la contraseña?",
       "noAccount": "¿No tienes cuenta?",
-      "goToSignup": "Crear una",
+      "goToCreateAccount": "Crear una",
       "withGoogle": "Continuar con Google"
     },
     "createAccount": {

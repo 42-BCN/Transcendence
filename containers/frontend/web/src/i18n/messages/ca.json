@@ -9,7 +9,7 @@
     "logout": "Tancar sessió",
     "settings": "Configuració"
   },
-  "SignupPage": {
+  "CreateAccountPage": {
     "title": "Crear compte",
     "email": "Correu electrònic",
     "password": "Contrasenya",
@@ -61,7 +61,7 @@
       "submit": "Iniciar sessió",
       "forgotPassword": "Has oblidat la contrasenya?",
       "noAccount": "No tens compte?",
-      "goToSignup": "Crear-ne un",
+      "goToCreateAccount": "Crear-ne un",
       "withGoogle": "Continuar amb Google"
     },
     "createAccount": {

@@ -10,7 +10,7 @@ import { Form } from '@components/composites/form';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
 
-import { signupAction } from './create-account.action';
+import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
 
 type StateActionProps = {
@@ -40,7 +40,7 @@ function APIError({ state }: StateActionProps) {
 export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
   const t = useTranslations('auth');
-  const [state, formAction] = useActionState(signupAction, null);
+  const [state, formAction] = useActionState(createAccountAction, null);
   return (
     <>
       <APIError state={state} />

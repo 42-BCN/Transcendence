@@ -15,8 +15,8 @@ export const routing = defineRouting({
 
   pathnames: {
     '/': '/',
-    '/signup': {
-      en: '/signup',
+    '/create-account': {
+      en: '/create-account',
       es: '/registro',
       ca: '/crear-compte',
     },
@@ -25,8 +25,8 @@ export const routing = defineRouting({
       es: '/iniciar-sesion',
       ca: '/iniciar-sessio',
     },
-    '/signup/success': {
-      en: '/signup/success',
+    '/create-account/success': {
+      en: '/create-account/success',
       es: '/registro/exito',
       ca: '/crear-compte/exit',
     },

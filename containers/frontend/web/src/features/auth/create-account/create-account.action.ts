@@ -5,7 +5,7 @@ import { fetchServer } from '@/lib/http/fetcher.server';
 import { redirect } from '@/i18n/navigation';
 import { getLocale } from 'next-intl/server';
 
-export async function signupAction(_prevState: unknown, formData: FormData) {
+export async function createAccountAction(_prevState: unknown, formData: FormData) {
   const email = String(formData?.get('email') ?? '');
   const password = String(formData?.get('password') ?? '');
 
