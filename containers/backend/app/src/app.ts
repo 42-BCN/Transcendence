@@ -8,6 +8,7 @@ import { usersRouter } from "./users/users.routes";
 import "./auth/auth.passport";
 import { authRouter } from "./auth/auth.routes";
 import { protectedRouter } from "./protected/protected.route";
+import { friendshipsRouter } from "./friendships/friendships.routes";
 
 export const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 export const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
@@ -43,6 +44,7 @@ app.get("/health", (_req, res) => {
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/protected", protectedRouter);
+app.use("/friendships", friendshipsRouter);
 
 app.use(errorMiddleware);
 
