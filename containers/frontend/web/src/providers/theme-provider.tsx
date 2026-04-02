@@ -16,8 +16,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // 1. Synchronous initialization based on current state (matches FOUC script)
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark';
-    const stored = localStorage.getItem('theme') as Theme | null;
-    if (stored === 'light' || stored === 'dark') return stored;
+
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light' || stored === 'dark') {
+      return stored as Theme;
+    }
+
+    // If there is garbage in localStorage, clean it up to restore auto-mode
+    if (stored) {
+      localStorage.removeItem('theme');
+    }
+
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
