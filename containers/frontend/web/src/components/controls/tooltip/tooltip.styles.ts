@@ -2,10 +2,11 @@ import { cn } from '@/lib/styles/cn';
 
 const tooltipBase = `
   font-caption
-  text-white dark:text-black
+  text-text-primary
   group
-  bg-slate-100
-  border border-slate-200 
+  bg-bg-primary
+  border border-border-primary 
+
   
   rounded-md
   will-change-transform
@@ -38,10 +39,10 @@ export const tooltipStyles = {
 
   arrow: cn(`
     block
-    fill-slate-100 
+    fill-[var(--color-bg-primary)]
     forced-colors:fill-[Canvas]
 
-    stroke-slate-200 
+    stroke-[var(--color-border-primary)]
     forced-colors:stroke-[ButtonBorder]
 
     group-data-[placement=bottom]:rotate-180

@@ -9,19 +9,19 @@ const itemBase = [
 
   'first:rounded-s-md last:rounded-e-md',
   '[&:not(:first-child)]:border-s-0',
-  'text-black dark:text-white',
+  'text-text-primary',
   'transition-colors',
   'focus-visible:outline-none',
   'overflow-hidden',
 ];
 
 const itemRACState = [
-  'data-[hovered]:bg-black data-[hovered]:text-white',
-  'data-[selected]:bg-black data-[selected]:text-white ',
+  'data-[hovered]:bg-black data-[hovered]:text-white dark:data-[hovered]:bg-white dark:data-[hovered]:text-black',
+  'data-[selected]:bg-black data-[selected]:text-white dark:data-[selected]:bg-white dark:data-[selected]:text-black',
   'data-[disabled]:opacity-40 data-[disabled]:cursor-not-allowed',
 ];
 
-const indicatorBase = ['absolute inset-0', 'bg-black'];
+const indicatorBase = ['absolute inset-0', 'bg-black dark:bg-white'];
 
 const indicatorRACState = ['data-[selected]:opacity-100 opacity-0 transition-opacity'];
 
