@@ -1,6 +1,6 @@
 'use client';
 
-import type { forwardRef, Ref } from 'react';
+import { forwardRef, type Ref } from 'react';
 import type { InputProps as AriaInputProps } from 'react-aria-components';
 import { Input as AriaInput } from 'react-aria-components';
 
