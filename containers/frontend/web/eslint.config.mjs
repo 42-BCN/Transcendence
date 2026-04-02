@@ -13,6 +13,7 @@ import uiArchitectureRules from './.eslint/ui-architecture.mjs';
 import importRules from './.eslint/import.mjs';
 import unusedImportsRules from './.eslint/unused-imports.mjs';
 import unicornRules from './.eslint/unicorn.mjs';
+import noLiteralUiStrings from './.eslint/only-i18n-strings.mjs';
 
 const sharedRules = {
   rules: {
@@ -145,6 +146,20 @@ export default [
     },
   },
   {
+    plugins: {
+      local: {
+        rules: {
+          'no-literal-ui-strings': noLiteralUiStrings,
+        },
+      },
+    },
+    files: ['./src/**/*.{ts, tsx}'],
+    ignores: ['./src/app/[locale]/(public)/ui/'],
+    rules: {
+      'local/no-literal-ui-strings': 'error',
+    },
+  },
+  {
     files: ['scripts/**/*.{js,cjs,mjs,ts}'],
     languageOptions: {
       parser: tsParser,
@@ -181,9 +196,9 @@ export default [
   {
     files: ['src/features/game/**/*.{ts,tsx}'],
     rules: {
-      'complexity': 'off',
+      complexity: 'off',
       'no-unused-expressions': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off'
+      '@typescript-eslint/no-unused-expressions': 'off',
     },
-  }
+  },
 ];
