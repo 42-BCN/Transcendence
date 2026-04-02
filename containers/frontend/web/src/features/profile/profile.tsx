@@ -1,10 +1,8 @@
-// import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { protectedMeProfileAction } from './profile.action';
 
 // TODO WIP
 export async function Profile() {
-  // const t = (a: string) => a;
   const t = await getTranslations('Profile');
   const data = await protectedMeProfileAction();
   return !data.ok ? (

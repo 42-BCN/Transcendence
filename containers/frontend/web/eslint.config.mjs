@@ -153,8 +153,8 @@ export default [
         },
       },
     },
-    files: ['./src/**/*.{ts, tsx}'],
-    ignores: ['./src/app/[locale]/(public)/ui/'],
+    files: ['./src/**/*.{ts,tsx}'],
+    ignores: ['src/app/\\[locale\\]/(public)/ui/**'],
     rules: {
       'local/no-literal-ui-strings': 'error',
     },

@@ -125,8 +125,8 @@ declare const messages: {
   },
   "Profile": {
     "fail": "Failed to load user",
-    "userId": "userId",
-    "username": "username"
+    "userId": "User ID",
+    "username": "Username"
   },
   "me": {
     "title": "Protected route test",
