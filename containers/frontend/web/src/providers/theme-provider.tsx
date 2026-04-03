@@ -17,14 +17,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark';
 
-    const stored = localStorage.getItem('theme');
-    if (stored === 'light' || stored === 'dark') {
-      return stored as Theme;
-    }
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'light' || stored === 'dark') {
+        return stored as Theme;
+      }
 
-    // If there is garbage in localStorage, clean it up to restore auto-mode
-    if (stored) {
-      localStorage.removeItem('theme');
+      // If there is garbage in localStorage, clean it up to restore auto-mode
+      if (stored) {
+        localStorage.removeItem('theme');
+      }
+    } catch (e) {
+      // Storage might be blocked (e.g. Incognito mode in some browsers)
+      console.warn('ThemeProvider: localStorage access failed during init', e);
     }
 
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -37,7 +42,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
       // Only follow system if NO manual override exists in localStorage
-      if (!localStorage.getItem('theme')) {
+      try {
+        if (!localStorage.getItem('theme')) {
+          setThemeState(e.matches ? 'dark' : 'light');
+        }
+      } catch (_) {
+        // Fallback: if storage is blocked, we follow system anyway
         setThemeState(e.matches ? 'dark' : 'light');
       }
     };
@@ -63,13 +73,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
+    try {
+      localStorage.setItem('theme', newTheme);
+    } catch (e) {
+      console.warn('ThemeProvider: Failed to save theme to localStorage', e);
+    }
   };
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     setThemeState(nextTheme);
-    localStorage.setItem('theme', nextTheme);
+    try {
+      localStorage.setItem('theme', nextTheme);
+    } catch (e) {
+      console.warn('ThemeProvider: Failed to toggle theme in localStorage', e);
+    }
   };
 
   return (
