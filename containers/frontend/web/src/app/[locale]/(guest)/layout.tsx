@@ -4,14 +4,11 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { protectedMeAction } from '@/features/auth/me/protected.action';
 
-export default async function ProtectedLayout({ children }: { children: ReactNode }) {
+export default async function GuestOnlyLayout({ children }: { children: ReactNode }) {
   const cookieStore = await cookies();
-  const sid = cookieStore.get('sid')?.value;
-
-  if (!sid) redirect('/login');
-
-  const me = await protectedMeAction().catch(() => null);
-  if (!me) redirect('/login');
+  const sid = cookieStore.get('sid');
+  const me = sid ? await protectedMeAction().catch(() => null) : null;
+  if (me) redirect('/');
 
   return <>{children}</>;
 }
