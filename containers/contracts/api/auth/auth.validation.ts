@@ -7,6 +7,10 @@ export const emailSchema = z
   .email({ message: V.INVALID_EMAIL })
   .transform((val) => val.toLowerCase().trim());
 
+export function normalizeEmail(email: string): string {
+  return emailSchema.parse(email);
+}
+
 export const usernameSchema = z
   .string()
   .trim()
@@ -24,7 +28,7 @@ export const identifierSchema = z.string().superRefine((val, ctx) => {
 export const LoginReqSchema = z
   .object({
     identifier: identifierSchema.transform((val) =>
-      val.includes("@") ? val.toLowerCase().trim() : val,
+      val.includes("@") ? normalizeEmail(val) : val,
     ),
     password: z.string().min(1, { message: V.REQUIRED }),
   })
@@ -34,7 +38,7 @@ export type LoginReq = z.infer<typeof LoginReqSchema>;
 
 export const SignupReqSchema = z
   .object({
-    email: emailSchema.transform((val) => val.toLowerCase().trim()),
+    email: emailSchema,
     password: z.string().min(1, { message: V.REQUIRED }),
   })
   .strict();
