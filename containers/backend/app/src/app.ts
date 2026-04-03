@@ -9,7 +9,10 @@ import { usersRouter } from "./users/users.routes";
 import { protectedRouter } from "./protected/protected.route";
 import "./auth/auth.passport";
 import { authRouter } from "./auth/auth.routes";
-import { friendshipsRouter } from "./friendships/friendships.routes";
+import {
+  friendsRouter,
+  friendshipsRouter,
+} from "./friendships/friendships.routes";
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
@@ -61,7 +64,7 @@ app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/protected", protectedRouter);
 app.use("/friendships", friendshipsRouter);
-app.use("/friends", friendshipsRouter);
+app.use("/friends", friendsRouter);
 
 app.use(errorMiddleware);
 

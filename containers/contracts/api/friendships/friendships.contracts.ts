@@ -8,8 +8,23 @@ export type FriendshipPublic = {
   friendUsername: string;
   status: "pending" | "accepted";
   isSender: boolean;
-  created_at: Date;
+  createdAt: Date;
 };
+
+/** Accepted friend row for GET /friends (other user only, no session tokens). */
+export type FriendPublic = {
+  id: string;
+  username: string;
+  avatar: string | null;
+  isOnline: boolean;
+};
+
+export type GetFriendsListOk = { friends: FriendPublic[] };
+export type GetFriendsListResponse = ApiResponse<
+  GetFriendsListOk,
+  FriendshipsErrorName,
+  ValidationErrorDetails
+>;
 
 export type GetFriendshipsOk = { friendships: FriendshipPublic[] };
 export type GetFriendshipsResponse = ApiResponse<

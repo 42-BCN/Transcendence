@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import type {
+  GetFriendsListResponse,
   GetFriendshipsResponse,
   GetReceivedRequestsResponse,
   GetSentRequestsResponse,
@@ -15,12 +16,22 @@ import type {
 
 import {
   getFriendships,
+  getFriendsList,
   getReceivedRequests,
   getSentRequests,
   sendFriendRequest,
   acceptRequest,
   respondToFriendRequest,
 } from "./friendships.service";
+
+export async function getFriendsListController(
+  req: Request,
+  res: Response<GetFriendsListResponse>,
+): Promise<void> {
+  const userId = req.session.userId!;
+  const friends = await getFriendsList(userId);
+  res.status(200).json({ ok: true, data: { friends } });
+}
 
 export async function getFriendshipsController(
   req: Request,

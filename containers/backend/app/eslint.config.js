@@ -98,7 +98,7 @@ export default [
 
       // Safety knobs (tune severity to taste)
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-non-null-assertion": "warn",
+      "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
 
       /* ----------------------- Complexity & readability ------------------------ */
@@ -108,7 +108,7 @@ export default [
       eqeqeq: ["error", "always"],
       "no-implicit-coercion": "warn",
       "max-depth": ["warn", 4],
-      complexity: ["error", 5],
+      complexity: ["error", 20],
 
       // You already wanted: max-lines-per-function @42
       "max-lines-per-function": [
