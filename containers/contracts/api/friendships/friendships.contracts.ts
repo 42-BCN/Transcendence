@@ -49,3 +49,13 @@ export type AcceptRequestResponse = ApiResponse<
   FriendshipsErrorName,
   ValidationErrorDetails
 >;
+
+export type RespondFriendRequestOk = {
+  friendship?: FriendshipPublic;
+  action: "accept" | "reject";
+};
+export type RespondFriendRequestResponse = ApiResponse<
+  RespondFriendRequestOk,
+  FriendshipsErrorName,
+  ValidationErrorDetails
+>;
