@@ -37,7 +37,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                const theme = localStorage.getItem('theme');
+                const support = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (theme === 'dark' || (theme !== 'light' && support)) {
                   document.documentElement.classList.add('dark');
                 } else {
                   document.documentElement.classList.remove('dark');
