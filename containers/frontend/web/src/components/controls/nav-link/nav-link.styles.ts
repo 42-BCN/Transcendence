@@ -5,7 +5,7 @@ const navBase = [
   // layout
   'inline-flex items-center justify-center rounded-md min-h-6 min-w-6',
   // behavior
-  'transition outline-none',
+  'outline-none',
   // default visual - will be overridden
   'opacity-80',
 ];

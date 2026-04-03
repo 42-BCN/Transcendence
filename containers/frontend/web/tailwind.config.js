@@ -1,4 +1,5 @@
 export default {
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
@@ -40,6 +41,13 @@ export default {
           tertiary: 'var(--color-text-tertiary)',
           disabled: 'var(--color-text-disabled)',
           inverse: 'var(--color-text-inverse)',
+        },
+        bg: {
+          primary: 'var(--color-bg-primary)',
+          secondary: 'var(--color-bg-secondary)',
+        },
+        border: {
+          primary: 'var(--color-border-primary)',
         },
       },
 

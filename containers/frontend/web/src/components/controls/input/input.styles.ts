@@ -3,14 +3,14 @@ import { cn } from '@/lib/styles/cn';
 const inputBase = [
   'font-body-sm',
   // layout
-  'w-full border bg-white px-2 py-2',
+  'w-full border border-border-primary bg-bg-primary text-text-primary px-2 py-2',
   // behavior
   'outline-none transition',
 ];
 
 const inputVariants = {
-  default: 'border-gray-300',
-  subtle: 'border-transparent bg-gray-50',
+  default: 'border-border-primary',
+  subtle: 'border-transparent bg-bg-secondary',
   danger: 'border-red-500',
 } as const;
 
@@ -25,8 +25,8 @@ const inputRacStates = [
   'data-[focus-visible]:ring-2 data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-blue-500',
   'data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
   'data-[invalid]:border-red-500',
-  'data-[focused]:bg-white data-[focused]:border-black',
-  'data-[hovered]:border-black',
+  'data-[focused]:bg-bg-primary data-[focused]:border-text-primary',
+  'data-[hovered]:border-text-primary',
 ];
 
 export type InputVariant = keyof typeof inputVariants;

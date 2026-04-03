@@ -2,14 +2,15 @@ import { cn } from '@/lib/styles/cn';
 
 const buttonBase = [
   // layout
-  'border inline-flex items-center justify-center font-medium text-gray-900 gap-3 min-h-6 min-w-6',
+  'border inline-flex items-center justify-center font-medium gap-3 min-h-6 min-w-6',
+  'text-text-primary',
   // behavior
   'transition outline-none',
 ];
 
 const buttonVariants = {
-  primary: 'border-gray-900 bg-white data-[hovered]:bg-slate-100',
-  secondary: 'border-gray-400 data-[hovered]:bg-slate-100',
+  primary: 'border-text-primary bg-bg-primary data-[hovered]:bg-bg-secondary',
+  secondary: 'border-border-primary data-[hovered]:bg-bg-secondary',
   ghost: 'border-transparent',
   danger: 'border-red-600 data-[hovered]:bg-red-700',
 } as const;
