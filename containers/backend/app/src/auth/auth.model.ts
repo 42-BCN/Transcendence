@@ -8,6 +8,9 @@ export type AuthUserRow = {
   provider: "local" | "google";
   googleId: string | null;
   isBlocked: boolean;
+  failedAttempts: number;
+  lockedUntil: Date | null;
+  emailVerifiedAt: Date | null;
 };
 
 export function toAuthUser(row: {

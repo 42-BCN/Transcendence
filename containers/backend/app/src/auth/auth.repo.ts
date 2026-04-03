@@ -6,7 +6,14 @@ import type { AuthUserRow } from "./auth.model";
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
 type UserWithPassword = Pick<
   AuthUserRow,
-  "id" | "email" | "username" | "passwordHash"
+  | "id"
+  | "email"
+  | "username"
+  | "passwordHash"
+  | "isBlocked"
+  | "failedAttempts"
+  | "lockedUntil"
+  | "emailVerifiedAt"
 >;
 
 const userPublicSelect = {
@@ -20,6 +27,10 @@ const userWithPasswordSelect = {
   email: true,
   username: true,
   passwordHash: true,
+  isBlocked: true,
+  failedAttempts: true,
+  lockedUntil: true,
+  emailVerifiedAt: true,
 } as const;
 
 export function findUserByEmail(
