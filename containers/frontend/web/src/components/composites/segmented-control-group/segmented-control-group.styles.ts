@@ -16,12 +16,12 @@ const itemBase = [
 ];
 
 const itemRACState = [
-  'data-[hovered]:bg-black data-[hovered]:text-white dark:data-[hovered]:bg-white dark:data-[hovered]:text-black',
-  'data-[selected]:bg-black data-[selected]:text-white dark:data-[selected]:bg-white dark:data-[selected]:text-black',
+  'data-[hovered]:bg-text-primary data-[hovered]:text-bg-primary',
+  'data-[selected]:bg-text-primary data-[selected]:text-bg-primary',
   'data-[disabled]:opacity-40 data-[disabled]:cursor-not-allowed',
 ];
 
-const indicatorBase = ['absolute inset-0', 'bg-black dark:bg-white'];
+const indicatorBase = ['absolute inset-0', 'bg-text-primary'];
 
 const indicatorRACState = ['data-[selected]:opacity-100 opacity-0 transition-opacity'];
 
