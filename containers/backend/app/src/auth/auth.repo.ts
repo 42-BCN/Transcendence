@@ -175,43 +175,46 @@ export async function recordFailedPasswordAttempt(
   const { userId, now, maxFailedAttempts, lockoutDurationMs } = input;
 
   return prisma.$transaction(async (tx) => {
-    const updated = await tx.user.update({
-      where: { id: userId },
-      data: { failedAttempts: { increment: 1 } },
-      select: { failedAttempts: true, lockedUntil: true },
-    });
+    const { failedAttempts, lockedUntil: initialLocked } =
+      await tx.user.update({
+        where: { id: userId },
+        data: { failedAttempts: { increment: 1 } },
+        select: { failedAttempts: true, lockedUntil: true },
+      });
 
+    let lockedUntil = initialLocked;
     let lockoutTriggered = false;
-    let lockedUntil = updated.lockedUntil;
 
-    const shouldLock =
-      updated.failedAttempts >= maxFailedAttempts &&
-      (lockedUntil === null || lockedUntil <= now);
+    const overLimit = failedAttempts >= maxFailedAttempts;
+    const notLocked = lockedUntil === null || lockedUntil <= now;
 
-    if (shouldLock) {
-      const nextLockedUntil = new Date(now.getTime() + lockoutDurationMs);
-      const lockResult = await tx.user.updateMany({
+    if (overLimit && notLocked) {
+      const nextLock = new Date(now.getTime() + lockoutDurationMs);
+
+      const { count } = await tx.user.updateMany({
         where: {
           id: userId,
           OR: [{ lockedUntil: null }, { lockedUntil: { lte: now } }],
         },
-        data: { lockedUntil: nextLockedUntil },
+        data: { lockedUntil: nextLock },
       });
 
-      if (lockResult.count > 0) {
+      if (count > 0) {
         lockoutTriggered = true;
-        lockedUntil = nextLockedUntil;
+        lockedUntil = nextLock;
       } else {
-        const latest = await tx.user.findUnique({
-          where: { id: userId },
-          select: { lockedUntil: true },
-        });
-        lockedUntil = latest?.lockedUntil ?? lockedUntil;
+        const { lockedUntil: latestLocked } =
+          (await tx.user.findUnique({
+            where: { id: userId },
+            select: { lockedUntil: true },
+          })) ?? {};
+
+        lockedUntil = latestLocked ?? lockedUntil;
       }
     }
 
     return {
-      failedAttempts: updated.failedAttempts,
+      failedAttempts,
       lockedUntil,
       lockoutTriggered,
     };
