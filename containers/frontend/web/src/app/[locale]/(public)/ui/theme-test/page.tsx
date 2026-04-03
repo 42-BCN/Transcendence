@@ -3,7 +3,7 @@ import { Stack } from '@components/primitives/stack';
 export default function ThemeTestPage() {
   return (
     <div className="min-h-screen p-8 text-text-primary">
-      <Stack gap="xl">
+      <Stack gap="lg">
         <Stack gap="md">
           <Text as="h1" variant="heading-xl">
             Theme Test Page

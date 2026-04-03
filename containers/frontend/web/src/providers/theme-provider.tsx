@@ -71,23 +71,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.add(theme);
   }, [theme, isInitialized]);
 
+  const persistTheme = (value: Theme) => {
+    try {
+      localStorage.setItem('theme', value);
+    } catch (e) {
+      // Ignore storage persistence failures so the UI theme still updates.
+      console.warn('ThemeProvider: Failed to persist theme to localStorage', e);
+    }
+  };
+
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
-    try {
-      localStorage.setItem('theme', newTheme);
-    } catch (e) {
-      console.warn('ThemeProvider: Failed to save theme to localStorage', e);
-    }
+    persistTheme(newTheme);
   };
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     setThemeState(nextTheme);
-    try {
-      localStorage.setItem('theme', nextTheme);
-    } catch (e) {
-      console.warn('ThemeProvider: Failed to toggle theme in localStorage', e);
-    }
+    persistTheme(nextTheme);
   };
 
   return (
