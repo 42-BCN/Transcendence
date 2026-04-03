@@ -1,5 +1,6 @@
 'use client';
 
+import type { Ref } from 'react';
 import { FieldError, Label, Text, TextField as AriaTextField } from 'react-aria-components';
 import type { TextFieldProps as AriaTextFieldProps } from 'react-aria-components';
 
@@ -16,6 +17,7 @@ export type TextFieldProps = Omit<AriaTextFieldProps, 'children' | 'className'> 
   descriptionKey?: I18nKey;
   errorKey?: I18nKey;
   inputProps?: InputProps;
+  inputRef?: Ref<HTMLInputElement>;
 };
 
 export function TextField({
@@ -23,6 +25,7 @@ export function TextField({
   descriptionKey,
   errorKey,
   inputProps,
+  inputRef,
   ...props
 }: TextFieldProps) {
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
@@ -30,7 +33,7 @@ export function TextField({
   return (
     <AriaTextField {...props} className={textFieldStyles.root()} isInvalid={isInvalid}>
       <Label className={textFieldStyles.label()}>{t(labelKey)}</Label>
-      <Input {...inputProps} />
+      <Input {...inputProps} ref={inputRef} />
       {descriptionKey && (
         <Text slot="description" className={textFieldStyles.description()}>
           {t(descriptionKey)}

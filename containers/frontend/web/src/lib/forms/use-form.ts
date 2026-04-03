@@ -5,12 +5,16 @@ import { useState, useCallback, useMemo } from 'react';
 import { validate, validateAll } from './validation';
 import type { z } from 'zod';
 
+type DirtyOf<T> = Partial<Record<keyof T, true>>;
+
 type FormApi<T extends Record<string, unknown>> = {
   values: T;
   setValue: <K extends keyof T>(name: K, value: T[K]) => void;
 
   touched: TouchedOf<T>;
   setTouch: <K extends keyof T>(name: K) => void;
+
+  dirty: DirtyOf<T>;
 
   errors: Partial<Record<keyof T, string>>;
 
@@ -28,21 +32,36 @@ export function useForm<T extends Record<string, unknown>>(args: UseFormProps<T>
 
   const [values, setValues] = useState<T>(() => defaultValues);
   const [touched, setTouched] = useState<TouchedOf<T>>(() => ({}));
+  const [dirty, setDirty] = useState<DirtyOf<T>>(() => ({}));
   const [errors, setErrors] = useState<FieldErrorsOf<T>>(() => ({}));
 
   const setValue = useCallback(
-    <K extends keyof T>(name: K, value: T[K]) => setValues((p) => ({ ...p, [name]: value })),
-    [],
+    <K extends keyof T>(name: K, value: T[K]) =>
+      setValues((prevValues) => {
+        const nextValues = { ...prevValues, [name]: value };
+
+        setDirty((prevDirty) => ({ ...prevDirty, [name]: true }));
+
+        if (touched[name]) {
+          setErrors(validate(schema, nextValues, touched, fieldNames).errors);
+        }
+
+        return nextValues;
+      }),
+    [schema, touched, fieldNames],
   );
 
   const setTouch = useCallback(
-    <K extends keyof T>(name: K) =>
-      setTouched((p) => {
-        const next = { ...p, [name]: true };
-        setErrors(validate(schema, values, next, fieldNames).errors);
-        return next;
-      }),
-    [schema, values, fieldNames],
+    <K extends keyof T>(name: K) => {
+      if (!dirty[name]) return;
+
+      setTouched((prevTouched) => {
+        const nextTouched = { ...prevTouched, [name]: true };
+        setErrors(validate(schema, values, nextTouched, fieldNames).errors);
+        return nextTouched;
+      });
+    },
+    [dirty, schema, values, fieldNames],
   );
 
   const validateBeforeSubmit = useCallback(() => {
@@ -53,7 +72,7 @@ export function useForm<T extends Record<string, unknown>>(args: UseFormProps<T>
   }, [schema, values, fieldNames]);
 
   return useMemo(
-    () => ({ values, setValue, touched, setTouch, errors, validateBeforeSubmit }),
-    [values, setValue, touched, setTouch, errors, validateBeforeSubmit],
+    () => ({ values, setValue, touched, setTouch, dirty, errors, validateBeforeSubmit }),
+    [values, setValue, touched, setTouch, dirty, errors, validateBeforeSubmit],
   );
 }

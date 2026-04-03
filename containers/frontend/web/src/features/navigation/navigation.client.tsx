@@ -104,23 +104,21 @@ function DesktopNavigation(args: NavigationClientProps) {
 
   return (
     <NavigationProvider value={value}>
-      <div className="absolute inset-0 pointer-events-none">
-        <Stack
-          as="nav"
-          aria-label="main"
-          className={glassCardStyles({
-            intensity: 'medium',
-            blur: 'sm',
-            className:
-              'group py-4 z-10 h-screen overflow-y-auto w-min px-0 sticky top-0 rounded-s-none rounded-e-md pointer-events-auto',
-          })}
-          align="start"
-        >
-          <NavigationHeader />
-          <NavigationMain {...args} />
-          <NavigationFooter />
-        </Stack>
-      </div>
+      <Stack
+        as="nav"
+        aria-label="main"
+        className={glassCardStyles({
+          intensity: 'medium',
+          blur: 'sm',
+          className:
+            'group py-4 z-10 fixed h-screen overflow-y-auto w-min px-0 top-0 rounded-s-none rounded-e-md',
+        })}
+        align="start"
+      >
+        <NavigationHeader />
+        <NavigationMain {...args} />
+        <NavigationFooter />
+      </Stack>
     </NavigationProvider>
   );
 }

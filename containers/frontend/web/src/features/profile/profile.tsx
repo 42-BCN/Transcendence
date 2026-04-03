@@ -6,9 +6,9 @@ export async function Profile() {
   const t = await getTranslations('Profile');
   const data = await protectedMeProfileAction();
   return !data.ok ? (
-    <div>{t('fail')}</div>
+    <div className="p-8">{t('fail')}</div>
   ) : (
-    <div>
+    <div className="p-8">
       <h3>{t('userId')}</h3>
       <p>{data.data.id}</p>
       <h3>{t('username')}</h3>
