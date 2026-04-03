@@ -61,6 +61,7 @@ app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/protected", protectedRouter);
 app.use("/friendships", friendshipsRouter);
+app.use("/friends", friendshipsRouter);
 
 app.use(errorMiddleware);
 

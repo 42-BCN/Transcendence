@@ -24,6 +24,12 @@ friendshipsRouter.get("/requests/received", getReceivedRequestsController);
 friendshipsRouter.get("/requests/sent", getSentRequestsController);
 
 friendshipsRouter.post(
+  "/request",
+  validateBody(SendFriendRequestBodySchema),
+  sendFriendRequestController,
+);
+
+friendshipsRouter.post(
   "/requests",
   validateBody(SendFriendRequestBodySchema),
   sendFriendRequestController,

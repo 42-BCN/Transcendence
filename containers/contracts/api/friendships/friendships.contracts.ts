@@ -33,7 +33,10 @@ export type GetSentRequestsResponse = ApiResponse<
 >;
 
 export type SendFriendRequestBody = { targetUserId: string };
-export type SendFriendRequestOk = { friendship: FriendshipPublic };
+export type SendFriendRequestOk = {
+  friendship: FriendshipPublic;
+  wasAutoAccepted: boolean;
+};
 export type SendFriendRequestResponse = ApiResponse<
   SendFriendRequestOk,
   FriendshipsErrorName,

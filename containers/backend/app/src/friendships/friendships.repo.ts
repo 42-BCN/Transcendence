@@ -13,6 +13,12 @@ type FriendshipRow = {
   user2: { username: string };
 };
 
+export type FriendshipPairRow = {
+  id: string;
+  status: "pending" | "accepted";
+  sender_id: string;
+};
+
 function toPublic(
   row: FriendshipRow,
   currentUserId: string,
@@ -31,12 +37,15 @@ function toPublic(
   };
 }
 
-export async function findExistingFriendship(
+function sortedPair(userId1: string, userId2: string): [string, string] {
+  return userId1 < userId2 ? [userId1, userId2] : [userId2, userId1];
+}
+
+export async function findFriendshipByPair(
   userId1: string,
   userId2: string,
-): Promise<boolean> {
-  const smaller = userId1 < userId2 ? userId1 : userId2;
-  const larger = userId1 < userId2 ? userId2 : userId1;
+): Promise<FriendshipPairRow | null> {
+  const [smaller, larger] = sortedPair(userId1, userId2);
 
   const friendship = await prisma.friendship.findUnique({
     where: {
@@ -45,9 +54,14 @@ export async function findExistingFriendship(
         user_id_2: larger,
       },
     },
+    select: {
+      id: true,
+      status: true,
+      sender_id: true,
+    },
   });
 
-  return !!friendship;
+  return friendship;
 }
 
 export async function createFriendRequest(
@@ -71,6 +85,45 @@ export async function createFriendRequest(
   });
 
   return toPublic(friendship as FriendshipRow, senderId);
+}
+
+/** Pending row must exist with a different sender; upgrades to accepted. */
+export async function autoAcceptMutualRequest(
+  currentUserId: string,
+  targetId: string,
+): Promise<FriendshipPublic | null> {
+  const [smaller, larger] = sortedPair(currentUserId, targetId);
+
+  const updated = await prisma.friendship.updateMany({
+    where: {
+      user_id_1: smaller,
+      user_id_2: larger,
+      status: "pending",
+      NOT: { sender_id: currentUserId },
+    },
+    data: {
+      status: "accepted",
+      updated_at: new Date(),
+    },
+  });
+
+  if (updated.count === 0) return null;
+
+  const row = await prisma.friendship.findUnique({
+    where: {
+      friendships_pair_uniq: {
+        user_id_1: smaller,
+        user_id_2: larger,
+      },
+    },
+    include: {
+      user1: { select: { username: true } },
+      user2: { select: { username: true } },
+    },
+  });
+
+  if (!row) return null;
+  return toPublic(row as FriendshipRow, currentUserId);
 }
 
 export async function listAcceptedFriendships(
@@ -173,4 +226,13 @@ export async function findUserById(userId: string): Promise<boolean> {
     select: { id: true },
   });
   return !!user;
+}
+
+export async function findUserBrief(
+  userId: string,
+): Promise<{ id: string; username: string } | null> {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, username: true },
+  });
 }

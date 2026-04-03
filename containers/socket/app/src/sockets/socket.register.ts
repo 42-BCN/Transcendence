@@ -1,9 +1,11 @@
-import type { Server } from 'socket.io';
+import type { Server } from "socket.io";
 
-import { registerRobotsSocket } from '../features/robots.socket';
-import { registerChatSocket } from '../features/chat.socket';
+import { registerFriendsSocket } from "../features/friends.socket";
+import { registerChatSocket } from "../features/chat.socket";
+import { registerRobotsSocket } from "../features/robots.socket";
 
 export function registerSockets(io: Server) {
-  registerRobotsSocket(io.of('/robots'));
-  registerChatSocket(io.of('/chat'));
+  registerFriendsSocket(io);
+  registerRobotsSocket(io.of("/robots"));
+  registerChatSocket(io.of("/chat"));
 }

@@ -82,6 +82,7 @@ services:
         condition: service_healthy
     environment:
       REDIS_URL: redis://redis:6379
+      SOCKET_SERVICE_URL: http://socket:3100
     env_file:
       - ./backend/docker/.env.development
     volumes:
