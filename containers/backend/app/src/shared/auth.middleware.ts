@@ -5,8 +5,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({
       ok: false,
       error: {
-        code: "UNAUTHORIZED",
-        message: "Authentication required",
+        code: "AUTH_UNAUTHORIZED",
       },
     });
   }

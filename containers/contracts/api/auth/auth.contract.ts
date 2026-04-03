@@ -18,7 +18,7 @@ export type SignupOk = {
 
 export const AUTH_SIGNUP_ERRORS = [
   "AUTH_INTERNAL_ERROR",
-  "AUTH_EMAIL_ALREADY_EXISTS",
+  "AUTH_INVALID_CREDENTIALS",
   "AUTH_EMAIL_NOT_VERIFIED",
   "VALIDATION_ERROR",
 ] as const satisfies readonly AuthErrorName[];
