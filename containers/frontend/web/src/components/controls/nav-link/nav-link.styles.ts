@@ -1,7 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
 const navBase = [
-  'min-h-6, min-w-6',
   'font-caption',
   // layout
   'inline-flex items-center justify-center rounded-md min-h-6 min-w-6',

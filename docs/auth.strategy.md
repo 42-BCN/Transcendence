@@ -25,55 +25,26 @@ Reasons:
 JWT tokens are self-contained and typically stateless.
 Our system is intentionally stateful.
 
----
-
 ## 3. Session Storage
 
-Sessions are stored in **PostgreSQL**.
+Sessions are stored in **Redis**.
 
-Each session record contains:
-
-- sessionId (UUID)
-- userId
-- createdAt
-- lastActivityAt
-- expiresAt (sliding)
-- absoluteExpiresAt (hard cap) -> good practice, but won't apply
-- optional metadata (IP, user agent)
-
-The cookie stores only the sessionId.
+The cookie contains only the session identifier.
+All session state lives in Redis and is managed server-side.
 
 On every authenticated request:
 
 1. Extract cookie
-2. Validate session existence
+2. Validate session existence in Redis
 3. Validate expiration
-4. Update sliding expiration
+4. Refresh idle expiration if applicable
 5. Continue request
 
 ---
 
-## 4. Cookie Configuration
+## 4. Session Lifecycle
 
-Session cookie properties:
-
-- HttpOnly
-- Secure
-- SameSite=Strict
-- Path=/
-- Persistent
-- Sliding expiration enabled
-
-If OAuth is introduced:
-
-- Switch SameSite to Lax
-- Implement CSRF token protection for state-changing requests
-
----
-
-## 5. Session Lifecycle
-
-### 5.1 Sliding Expiration (Auto-Slide)
+### 4.1 Sliding Expiration (Auto-Slide)
 
 We use sliding expiration:
 
@@ -83,13 +54,13 @@ We use sliding expiration:
 Example policy:
 
 - Idle timeout: 2 days since last activity
-- Absolute timeout: defined hard cap (team-defined) -> No apply
+- Absolute timeout: defined hard cap (team-defined) -> No applied
 
 Both must be validated server-side.
 
 ---
 
-### 5.3 Expiration Handling
+### 4.2 Expiration Handling
 
 When a session expires:
 
@@ -100,7 +71,7 @@ Backend is always the source of truth.
 
 ---
 
-## 6. Single Session Policy
+## 5. Single Session Policy
 
 We allow only **one active session per user**.
 
@@ -125,7 +96,7 @@ Possible future extensions:
 
 ---
 
-## 7. ID Rotation
+## 6. ID Rotation
 
 On login or privilege change:
 
@@ -140,7 +111,7 @@ Purpose:
 
 ---
 
-## 8. WebSocket (WSS) Authentication
+## 7. WebSocket (WSS) Authentication
 
 WebSocket authentication uses the same session cookie.
 
@@ -166,47 +137,33 @@ If a session is revoked:
 
 ## 1. CSRF Strategy
 
-Default configuration:
-
-- SameSite=Strict
-- No CSRF token required for first-party flows
-
-If OAuth or cross-site flows are introduced:
+Because OAuth is enabled:
 
 - SameSite=Lax
-- Implement CSRF token validation for:
+- CSRF token validation is required for:
   - POST
   - PUT
   - PATCH
   - DELETE
 
 CSRF applies to HTTP requests where cookies are automatically included.
-
 CSRF does not apply to WebSocket messages the same way as form-based HTTP requests.
 
----
-
-## 2. Redis Migration Path
+## 2. Session Storage Architecture
 
 Current architecture:
-
-Client → Backend → PostgreSQL (sessions)
-
-Future architecture:
 
 Client → Backend → Redis (sessions)
 ↓
 PostgreSQL (user data)
 
-Redis advantages:
+Why Redis:
 
 - Lower latency
 - Native TTL
 - Better horizontal scaling
-- Improved WebSocket performance
+- Better fit for ephemeral session state
 - Cleaner session invalidation across instances
-
-PostgreSQL is sufficient for phase 1.
-Redis is a scalability optimization.
+- Better alignment with WebSocket/session sharing
 
 ---

@@ -1,5 +1,11 @@
 # [AUTH][SPIKE] Security Baseline Definition — Resolution
 
+This document is the security single source of truth for AUTH_V1.
+
+If another auth document conflicts with this one on security-related behavior
+(for example cookie policy, hashing strategy, lockout rules, or abuse controls),
+this document takes precedence.
+
 ## Threat → Mitigation Table
 
 | Threat               | Description                                         | Attacker Goal                   | Mitigation                              |
@@ -103,10 +109,8 @@ Hashed with argon2.
 
 ## Session Security and CSRF Protection
 
-Session must:
-
-- regenerate on login
-- use secure cookies
+Session state is stored in Redis.
+The cookie contains only the session identifier.
 
 ### Cookie Policy
 
@@ -115,6 +119,8 @@ Session cookies must use the following configuration:
 HttpOnly = true
 Secure = true
 SameSite = Lax
+
+OAuth is enabled in AUTH_V1, so SameSite=Lax is required.
 
 ### CSRF Token Validation
 

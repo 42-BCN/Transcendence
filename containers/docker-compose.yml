@@ -1,7 +1,6 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: app_postgres
     restart: unless-stopped
     env_file:
       - ./database/docker/.env.development
@@ -15,6 +14,18 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   socket:
     build:
       context: ./socket
@@ -67,6 +78,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_URL: redis://redis:6379
+      SOCKET_SERVICE_URL: http://socket:3100
     env_file:
       - ./backend/docker/.env.development
     volumes:
@@ -111,6 +127,7 @@ volumes:
   node_modules_socket:
   frontend_next_cache:
   postgres_data:
+  redis_data:
 # - [ ] not using container-name for services to avoid conflicts when multiple projects are run on the same host
 # networks are not defined to use default bridge network
 
