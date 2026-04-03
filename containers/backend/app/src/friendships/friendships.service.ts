@@ -49,7 +49,7 @@ export async function sendFriendRequest(
     if (existing.status === "accepted") {
       throw new ApiError("FRIENDSHIP_ALREADY_EXISTS");
     }
-    if (existing.sender_id === senderId) {
+    if (existing.senderId === senderId) {
       throw new ApiError("FRIENDSHIP_REQUEST_ALREADY_SENT");
     }
 
@@ -88,7 +88,7 @@ export async function sendFriendRequest(
     if (afterRace.status === "accepted") {
       throw new ApiError("FRIENDSHIP_ALREADY_EXISTS");
     }
-    if (afterRace.sender_id === senderId) {
+    if (afterRace.senderId === senderId) {
       throw new ApiError("FRIENDSHIP_REQUEST_ALREADY_SENT");
     }
 
@@ -159,7 +159,7 @@ export async function respondToFriendRequest(
   if (!row) throw new ApiError("FRIENDSHIP_REQUEST_NOT_FOUND");
 
   const inPair =
-    row.user_id_1 === currentUserId || row.user_id_2 === currentUserId;
+    row.userId1 === currentUserId || row.userId2 === currentUserId;
   if (!inPair) throw new ApiError("FRIENDSHIP_REQUEST_NOT_FOUND");
 
   if (row.status === "accepted") {
@@ -168,7 +168,7 @@ export async function respondToFriendRequest(
   if (row.status !== "pending") {
     throw new ApiError("FRIENDSHIP_ALREADY_ACCEPTED");
   }
-  if (row.sender_id === currentUserId) {
+  if (row.senderId === currentUserId) {
     throw new ApiError("UNAUTHORIZED_ACTION");
   }
 
@@ -177,11 +177,11 @@ export async function respondToFriendRequest(
     if (!friendship) throw new ApiError("INTERNAL_ERROR");
 
     const receiverBrief = await findUserBrief(currentUserId);
-    const senderBrief = await findUserBrief(row.sender_id);
+    const senderBrief = await findUserBrief(row.senderId);
     if (receiverBrief && senderBrief) {
       await notifyFriendAccepted(
         { userId: currentUserId, username: receiverBrief.username },
-        { userId: row.sender_id, username: senderBrief.username },
+        { userId: row.senderId, username: senderBrief.username },
       );
     }
 
@@ -191,7 +191,7 @@ export async function respondToFriendRequest(
   const deleted = await rejectFriendRequest(friendshipId, currentUserId);
   if (!deleted) throw new ApiError("INTERNAL_ERROR");
 
-  await notifyFriendRejected(row.sender_id, {
+  await notifyFriendRejected(row.senderId, {
     rejectedByUserId: currentUserId,
     friendshipId,
   });

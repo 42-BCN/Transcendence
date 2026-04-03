@@ -43,21 +43,21 @@ enum FriendshipStatus {
 }
 
 model Friendship {
-  id         String           @id @default(uuid()) @db.Uuid
-  user_id_1  String           @db.Uuid
-  user_id_2  String           @db.Uuid
-  sender_id  String           @db.Uuid
-  status     FriendshipStatus @default(pending)
-  created_at DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  id        String           @id @default(uuid()) @db.Uuid
+  userId1   String           @map("user_id_1") @db.Uuid
+  userId2   String           @map("user_id_2") @db.Uuid
+  senderId  String           @map("sender_id") @db.Uuid
+  status    FriendshipStatus @default(pending)
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  user1  User @relation("FriendshipUser1", fields: [user_id_1], references: [id], onDelete: Cascade)
-  user2  User @relation("FriendshipUser2", fields: [user_id_2], references: [id], onDelete: Cascade)
-  sender User @relation("FriendshipSender", fields: [sender_id], references: [id], onDelete: Cascade)
+  user1  User @relation("FriendshipUser1", fields: [userId1], references: [id], onDelete: Cascade)
+  user2  User @relation("FriendshipUser2", fields: [userId2], references: [id], onDelete: Cascade)
+  sender User @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
 
-  @@unique([user_id_1, user_id_2], name: "friendships_pair_uniq")
-  @@index([user_id_1, status], name: "friendships_user1_status_idx")
-  @@index([user_id_2, status], name: "friendships_user2_status_idx")
+  @@unique([userId1, userId2], name: "friendships_pair_uniq")
+  @@index([userId1, status], name: "friendships_user1_status_idx")
+  @@index([userId2, status], name: "friendships_user2_status_idx")
   @@map("friendships")
 }
 

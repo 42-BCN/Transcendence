@@ -3,12 +3,12 @@ import type { FriendshipPublic } from "@contracts/friendships/friendships.contra
 
 type FriendshipRow = {
   id: string;
-  user_id_1: string;
-  user_id_2: string;
-  sender_id: string;
+  userId1: string;
+  userId2: string;
+  senderId: string;
   status: "pending" | "accepted";
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
   user1: { username: string };
   user2: { username: string };
 };
@@ -16,24 +16,24 @@ type FriendshipRow = {
 export type FriendshipPairRow = {
   id: string;
   status: "pending" | "accepted";
-  sender_id: string;
+  senderId: string;
 };
 
 function toPublic(
   row: FriendshipRow,
   currentUserId: string,
 ): FriendshipPublic {
-  const friendId = row.user_id_1 === currentUserId ? row.user_id_2 : row.user_id_1;
+  const friendId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
   const friendUsername =
-    row.user_id_1 === currentUserId ? row.user2.username : row.user1.username;
+    row.userId1 === currentUserId ? row.user2.username : row.user1.username;
 
   return {
     id: row.id,
     friendUserId: friendId,
     friendUsername,
     status: row.status,
-    isSender: row.sender_id === currentUserId,
-    created_at: row.created_at,
+    isSender: row.senderId === currentUserId,
+    createdAt: row.createdAt,
   };
 }
 
@@ -50,14 +50,14 @@ export async function findFriendshipByPair(
   const friendship = await prisma.friendship.findUnique({
     where: {
       friendships_pair_uniq: {
-        user_id_1: smaller,
-        user_id_2: larger,
+        userId1: smaller,
+        userId2: larger,
       },
     },
     select: {
       id: true,
       status: true,
-      sender_id: true,
+      senderId: true,
     },
   });
 
@@ -73,9 +73,9 @@ export async function createFriendRequest(
 
   const friendship = await prisma.friendship.create({
     data: {
-      user_id_1: smaller,
-      user_id_2: larger,
-      sender_id: senderId,
+      userId1: smaller,
+      userId2: larger,
+      senderId,
       status: "pending",
     },
     include: {
@@ -96,14 +96,14 @@ export async function autoAcceptMutualRequest(
 
   const updated = await prisma.friendship.updateMany({
     where: {
-      user_id_1: smaller,
-      user_id_2: larger,
+      userId1: smaller,
+      userId2: larger,
       status: "pending",
-      NOT: { sender_id: currentUserId },
+      NOT: { senderId: currentUserId },
     },
     data: {
       status: "accepted",
-      updated_at: new Date(),
+      updatedAt: new Date(),
     },
   });
 
@@ -112,8 +112,8 @@ export async function autoAcceptMutualRequest(
   const row = await prisma.friendship.findUnique({
     where: {
       friendships_pair_uniq: {
-        user_id_1: smaller,
-        user_id_2: larger,
+        userId1: smaller,
+        userId2: larger,
       },
     },
     include: {
@@ -131,11 +131,11 @@ export async function listFriendsForUser(
 ): Promise<{ id: string; username: string }[]> {
   const friendships = await prisma.friendship.findMany({
     where: {
-      OR: [{ user_id_1: userId }, { user_id_2: userId }],
+      OR: [{ userId1: userId }, { userId2: userId }],
       status: "accepted",
     },
     orderBy: {
-      created_at: "desc",
+      createdAt: "desc",
     },
     include: {
       user1: { select: { id: true, username: true } },
@@ -144,7 +144,7 @@ export async function listFriendsForUser(
   });
 
   return friendships.map((f) => {
-    const friend = f.user_id_1 === userId ? f.user2 : f.user1;
+    const friend = f.userId1 === userId ? f.user2 : f.user1;
     return {
       id: friend.id,
       username: friend.username,
@@ -157,11 +157,11 @@ export async function listAcceptedFriendships(
 ): Promise<FriendshipPublic[]> {
   const friendships = await prisma.friendship.findMany({
     where: {
-      OR: [{ user_id_1: userId }, { user_id_2: userId }],
+      OR: [{ userId1: userId }, { userId2: userId }],
       status: "accepted",
     },
     orderBy: {
-      created_at: "desc",
+      createdAt: "desc",
     },
     include: {
       user1: { select: { username: true } },
@@ -177,14 +177,14 @@ export async function listReceivedRequests(
 ): Promise<FriendshipPublic[]> {
   const requests = await prisma.friendship.findMany({
     where: {
-      OR: [{ user_id_1: userId }, { user_id_2: userId }],
+      OR: [{ userId1: userId }, { userId2: userId }],
       status: "pending",
       NOT: {
-        sender_id: userId,
+        senderId: userId,
       },
     },
     orderBy: {
-      created_at: "desc",
+      createdAt: "desc",
     },
     include: {
       user1: { select: { username: true } },
@@ -200,12 +200,12 @@ export async function listSentRequests(
 ): Promise<FriendshipPublic[]> {
   const requests = await prisma.friendship.findMany({
     where: {
-      OR: [{ user_id_1: userId }, { user_id_2: userId }],
+      OR: [{ userId1: userId }, { userId2: userId }],
       status: "pending",
-      sender_id: userId,
+      senderId: userId,
     },
     orderBy: {
-      created_at: "desc",
+      createdAt: "desc",
     },
     include: {
       user1: { select: { username: true } },
@@ -219,18 +219,18 @@ export async function listSentRequests(
 export async function findFriendshipRowById(friendshipId: string): Promise<{
   id: string;
   status: "pending" | "accepted";
-  sender_id: string;
-  user_id_1: string;
-  user_id_2: string;
+  senderId: string;
+  userId1: string;
+  userId2: string;
 } | null> {
   return prisma.friendship.findUnique({
     where: { id: friendshipId },
     select: {
       id: true,
       status: true,
-      sender_id: true,
-      user_id_1: true,
-      user_id_2: true,
+      senderId: true,
+      userId1: true,
+      userId2: true,
     },
   });
 }
@@ -245,10 +245,10 @@ export async function rejectFriendRequest(
 
   if (!friendship) return false;
   if (friendship.status !== "pending") return false;
-  if (friendship.sender_id === receiverId) return false;
+  if (friendship.senderId === receiverId) return false;
   if (
-    friendship.user_id_1 !== receiverId &&
-    friendship.user_id_2 !== receiverId
+    friendship.userId1 !== receiverId &&
+    friendship.userId2 !== receiverId
   ) {
     return false;
   }
@@ -270,8 +270,8 @@ export async function acceptFriendRequest(
 
   if (!friendship) return null;
   if (friendship.status !== "pending") return null;
-  if (friendship.sender_id === userId) return null;
-  if (friendship.user_id_1 !== userId && friendship.user_id_2 !== userId) {
+  if (friendship.senderId === userId) return null;
+  if (friendship.userId1 !== userId && friendship.userId2 !== userId) {
     return null;
   }
 
@@ -279,7 +279,7 @@ export async function acceptFriendRequest(
     where: { id: requestId },
     data: {
       status: "accepted",
-      updated_at: new Date(),
+      updatedAt: new Date(),
     },
     include: {
       user1: { select: { username: true } },

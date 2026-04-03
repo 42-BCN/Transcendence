@@ -225,6 +225,9 @@ set_env_var "$BACKEND_ENV" "REDIS_PORT" "6379"
 set_env_var "$BACKEND_ENV" "REDIS_URL" "redis://redis:6379"
 set_env_var "$BACKEND_ENV" "SESSION_TTL" "604800000"
 
+set_env_var "$BACKEND_ENV" "SOCKET_SERVICE_URL" "http://socket:3100"
+append_if_missing "$BACKEND_ENV" "SOCKET_INTERNAL_SECRET" ""
+
 current_google="$(get_env_value "$BACKEND_ENV" "GOOGLE_CLIENT_ID")"
 if [ -z "$current_google" ]; then
   echo

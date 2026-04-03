@@ -8,7 +8,7 @@ export type FriendshipPublic = {
   friendUsername: string;
   status: "pending" | "accepted";
   isSender: boolean;
-  created_at: Date;
+  createdAt: Date;
 };
 
 /** Accepted friend row for GET /friends (other user only, no session tokens). */
