@@ -71,3 +71,18 @@ export async function notifyFriendAccepted(
     console.error("[friendships.notify] friends:accepted", e);
   }
 }
+
+export async function notifyFriendRejected(
+  senderId: string,
+  payload: { rejectedByUserId: string; friendshipId: string },
+): Promise<void> {
+  try {
+    await postNotify({
+      event: "friends:rejected",
+      userId: senderId,
+      payload,
+    });
+  } catch (e) {
+    console.error("[friendships.notify] friends:rejected", e);
+  }
+}

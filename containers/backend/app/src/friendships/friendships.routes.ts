@@ -3,6 +3,7 @@ import { validateBody, validateParams, requireAuth } from "@shared";
 import {
   SendFriendRequestBodySchema,
   AcceptRequestParamSchema,
+  RespondFriendRequestBodySchema,
 } from "@contracts/friendships/friendships.validation";
 
 import {
@@ -11,6 +12,7 @@ import {
   getSentRequestsController,
   sendFriendRequestController,
   acceptRequestController,
+  respondFriendRequestController,
 } from "./friendships.controller";
 
 export const friendshipsRouter = Router();
@@ -39,4 +41,10 @@ friendshipsRouter.patch(
   "/requests/:requestId/accept",
   validateParams(AcceptRequestParamSchema),
   acceptRequestController,
+);
+
+friendshipsRouter.post(
+  "/respond",
+  validateBody(RespondFriendRequestBodySchema),
+  respondFriendRequestController,
 );

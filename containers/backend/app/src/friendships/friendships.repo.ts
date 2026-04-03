@@ -190,6 +190,50 @@ export async function listSentRequests(
   return requests.map((r) => toPublic(r as FriendshipRow, userId));
 }
 
+export async function findFriendshipRowById(friendshipId: string): Promise<{
+  id: string;
+  status: "pending" | "accepted";
+  sender_id: string;
+  user_id_1: string;
+  user_id_2: string;
+} | null> {
+  return prisma.friendship.findUnique({
+    where: { id: friendshipId },
+    select: {
+      id: true,
+      status: true,
+      sender_id: true,
+      user_id_1: true,
+      user_id_2: true,
+    },
+  });
+}
+
+export async function rejectFriendRequest(
+  friendshipId: string,
+  receiverId: string,
+): Promise<boolean> {
+  const friendship = await prisma.friendship.findUnique({
+    where: { id: friendshipId },
+  });
+
+  if (!friendship) return false;
+  if (friendship.status !== "pending") return false;
+  if (friendship.sender_id === receiverId) return false;
+  if (
+    friendship.user_id_1 !== receiverId &&
+    friendship.user_id_2 !== receiverId
+  ) {
+    return false;
+  }
+
+  await prisma.friendship.delete({
+    where: { id: friendshipId },
+  });
+
+  return true;
+}
+
 export async function acceptFriendRequest(
   requestId: string,
   userId: string,
