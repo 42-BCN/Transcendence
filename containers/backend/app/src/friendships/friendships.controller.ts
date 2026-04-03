@@ -49,8 +49,15 @@ export async function sendFriendRequestController(
   res: Response<SendFriendRequestResponse>,
 ): Promise<void> {
   const userId = req.session.userId!;
-  const friendship = await sendFriendRequest(userId, req.body.targetUserId);
-  res.status(201).json({ ok: true, data: { friendship } });
+  const { friendship, wasAutoAccepted } = await sendFriendRequest(
+    userId,
+    req.body.targetUserId,
+  );
+  const status = wasAutoAccepted ? 200 : 201;
+  res.status(status).json({
+    ok: true,
+    data: { friendship, wasAutoAccepted },
+  });
 }
 
 export async function acceptRequestController(
