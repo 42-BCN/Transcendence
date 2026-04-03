@@ -30,7 +30,35 @@ model User {
   passwordResets     PasswordReset[]     @relation("UserPasswordResets")
   emailVerifications EmailVerification[] @relation("UserEmailVerifications")
 
+  friendships_as_user1 Friendship[] @relation("FriendshipUser1")
+  friendships_as_user2 Friendship[] @relation("FriendshipUser2")
+  friendships_sent     Friendship[] @relation("FriendshipSender")
+
   @@map("users")
+}
+
+enum FriendshipStatus {
+  pending
+  accepted
+}
+
+model Friendship {
+  id         String           @id @default(uuid()) @db.Uuid
+  user_id_1  String           @db.Uuid
+  user_id_2  String           @db.Uuid
+  sender_id  String           @db.Uuid
+  status     FriendshipStatus @default(pending)
+  created_at DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user1  User @relation("FriendshipUser1", fields: [user_id_1], references: [id], onDelete: Cascade)
+  user2  User @relation("FriendshipUser2", fields: [user_id_2], references: [id], onDelete: Cascade)
+  sender User @relation("FriendshipSender", fields: [sender_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id_1, user_id_2], name: "friendships_pair_uniq")
+  @@index([user_id_1, status], name: "friendships_user1_status_idx")
+  @@index([user_id_2, status], name: "friendships_user2_status_idx")
+  @@map("friendships")
 }
 
 model PasswordReset {

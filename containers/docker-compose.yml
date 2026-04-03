@@ -80,6 +80,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    environment:
+      REDIS_URL: redis://redis:6379
     env_file:
       - ./backend/docker/.env.development
     volumes:
