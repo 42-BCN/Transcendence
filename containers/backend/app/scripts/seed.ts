@@ -1,14 +1,13 @@
 import { faker } from "@faker-js/faker";
-import bcrypt from "bcrypt";
-
 import { prisma } from "../src/lib/prisma";
 import { generateUsername } from "../src/shared/utils/username-generator";
+import { hashPassword } from "../src/auth/auth.service";
 
 async function insertSeedUser(): Promise<boolean> {
   const email = faker.internet.email().toLowerCase();
   const username = generateUsername();
   const plainPassword = "Password123!";
-  const passwordHash = await bcrypt.hash(plainPassword, 12);
+  const passwordHash = await hashPassword(plainPassword);
 
   try {
     await prisma.user.create({
@@ -40,7 +39,7 @@ async function insertSeedUser(): Promise<boolean> {
 }
 
 async function insertSpecificUser(user: string): Promise<void> {
-  const passwordHash = await bcrypt.hash("Password123!", 12);
+  const passwordHash = await hashPassword("Password123!");
 
   await prisma.user.upsert({
     where: { email: `${user}@fakemail.com` },
