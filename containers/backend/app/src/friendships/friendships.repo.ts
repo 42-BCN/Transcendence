@@ -126,6 +126,32 @@ export async function autoAcceptMutualRequest(
   return toPublic(row as FriendshipRow, currentUserId);
 }
 
+export async function listFriendsForUser(
+  userId: string,
+): Promise<{ id: string; username: string }[]> {
+  const friendships = await prisma.friendship.findMany({
+    where: {
+      OR: [{ user_id_1: userId }, { user_id_2: userId }],
+      status: "accepted",
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+    include: {
+      user1: { select: { id: true, username: true } },
+      user2: { select: { id: true, username: true } },
+    },
+  });
+
+  return friendships.map((f) => {
+    const friend = f.user_id_1 === userId ? f.user2 : f.user1;
+    return {
+      id: friend.id,
+      username: friend.username,
+    };
+  });
+}
+
 export async function listAcceptedFriendships(
   userId: string,
 ): Promise<FriendshipPublic[]> {

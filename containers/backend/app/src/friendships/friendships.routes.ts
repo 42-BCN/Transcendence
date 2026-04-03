@@ -1,3 +1,4 @@
+import type { RequestHandler } from "express";
 import { Router } from "express";
 import { validateBody, validateParams, requireAuth } from "@shared";
 import {
@@ -7,6 +8,7 @@ import {
 } from "@contracts/friendships/friendships.validation";
 
 import {
+  getFriendsListController,
   getFriendshipsController,
   getReceivedRequestsController,
   getSentRequestsController,
@@ -15,36 +17,45 @@ import {
   respondFriendRequestController,
 } from "./friendships.controller";
 
-export const friendshipsRouter = Router();
+function buildFriendshipsRouter(listController: RequestHandler): Router {
+  const router = Router();
+  router.use(requireAuth);
 
-friendshipsRouter.use(requireAuth);
+  router.get("/", listController);
 
-friendshipsRouter.get("/", getFriendshipsController);
+  router.get("/requests/received", getReceivedRequestsController);
 
-friendshipsRouter.get("/requests/received", getReceivedRequestsController);
+  router.get("/requests/sent", getSentRequestsController);
 
-friendshipsRouter.get("/requests/sent", getSentRequestsController);
+  router.post(
+    "/request",
+    validateBody(SendFriendRequestBodySchema),
+    sendFriendRequestController,
+  );
 
-friendshipsRouter.post(
-  "/request",
-  validateBody(SendFriendRequestBodySchema),
-  sendFriendRequestController,
-);
+  router.post(
+    "/requests",
+    validateBody(SendFriendRequestBodySchema),
+    sendFriendRequestController,
+  );
 
-friendshipsRouter.post(
-  "/requests",
-  validateBody(SendFriendRequestBodySchema),
-  sendFriendRequestController,
-);
+  router.patch(
+    "/requests/:requestId/accept",
+    validateParams(AcceptRequestParamSchema),
+    acceptRequestController,
+  );
 
-friendshipsRouter.patch(
-  "/requests/:requestId/accept",
-  validateParams(AcceptRequestParamSchema),
-  acceptRequestController,
-);
+  router.post(
+    "/respond",
+    validateBody(RespondFriendRequestBodySchema),
+    respondFriendRequestController,
+  );
 
-friendshipsRouter.post(
-  "/respond",
-  validateBody(RespondFriendRequestBodySchema),
-  respondFriendRequestController,
-);
+  return router;
+}
+
+/** GET / → FriendPublic[] (issue); same sub-routes as /friendships */
+export const friendsRouter = buildFriendshipsRouter(getFriendsListController);
+
+/** GET / → FriendshipPublic[] (legacy detailed shape) */
+export const friendshipsRouter = buildFriendshipsRouter(getFriendshipsController);

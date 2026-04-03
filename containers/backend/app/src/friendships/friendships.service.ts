@@ -1,10 +1,14 @@
 import { ApiError } from "@shared";
-import type { FriendshipPublic } from "@contracts/friendships/friendships.contracts";
+import type {
+  FriendshipPublic,
+  FriendPublic,
+} from "@contracts/friendships/friendships.contracts";
 
 import {
   findFriendshipByPair,
   createFriendRequest,
   listAcceptedFriendships,
+  listFriendsForUser,
   listReceivedRequests,
   listSentRequests,
   acceptFriendRequest,
@@ -19,6 +23,7 @@ import {
   notifyFriendRequest,
   notifyFriendRejected,
 } from "./friendships.notify";
+import { resolveOnlineStatus } from "./friendships.presence";
 
 function isUniqueViolation(err: unknown): boolean {
   return (
@@ -107,6 +112,21 @@ export async function getFriendships(
   userId: string,
 ): Promise<FriendshipPublic[]> {
   return await listAcceptedFriendships(userId);
+}
+
+export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
+  const friends = await listFriendsForUser(userId);
+  if (friends.length === 0) return [];
+
+  const friendIds = friends.map((f) => f.id);
+  const onlineStatus = await resolveOnlineStatus(friendIds);
+
+  return friends.map((f) => ({
+    id: f.id,
+    username: f.username,
+    avatar: null,
+    isOnline: onlineStatus[f.id] ?? false,
+  }));
 }
 
 export async function getReceivedRequests(
