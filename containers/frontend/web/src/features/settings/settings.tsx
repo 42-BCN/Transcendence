@@ -28,7 +28,11 @@ export function Settings() {
         <SegmentedControlGroup
           aria-label={'theme switcher'}
           selectedKey={theme}
-          onSelectionChange={(key) => setTheme(key as 'light' | 'dark')}
+          onSelectionChange={(key) => {
+            if (key === 'light' || key === 'dark') {
+              setTheme(key);
+            }
+          }}
           options={options}
         />
       </Stack>
