@@ -53,14 +53,14 @@
   --color-text-inverse: #ffffff;
 
   /* background colors */
-  --color-bg-primary: #f1f5f9; /* Corresponde a slate-100 (original) */
-  --color-bg-secondary: #e2e8f0; /* Corresponde a slate-200 */
+  --color-bg-primary: #f1f5f9; /* Corresponds to slate-100 (original) */
+  --color-bg-secondary: #e2e8f0; /* Corresponds to slate-200 */
 
   /* border colors */
   --color-border-primary: #cbd5e1; /* slate-300 (original) */
 
   /* decorative */
-  --color-grid-line: rgba(0, 0, 0, 0.02); /* Gris muy sutil para modo claro */
+  --color-grid-line: rgba(0, 0, 0, 0.02); /* Very subtle gray for light mode */
 
   /* spacing */
   --space-0: 0px;
@@ -89,10 +89,10 @@
   --color-text-secondary: #94a3b8; /* slate-400 */
   --color-text-tertiary: #64748b; /* slate-500 */
   --color-text-disabled: #475569; /* slate-600 */
-  --color-bg-primary: #0f172a; /* slate-900 (Azul oscuro) */
+  --color-bg-primary: #0f172a; /* slate-900 (Dark blue) */
   --color-bg-secondary: #1e293b; /* slate-800 */
   --color-border-primary: #334155; /* slate-700 */
-  --color-grid-line: rgba(255, 255, 255, 0.02); /* Blanco muy sutil para modo oscuro */
+  --color-grid-line: rgba(255, 255, 255, 0.02); /* Very subtle white for dark mode */
 }
 
 .font-caption {
