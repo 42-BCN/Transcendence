@@ -1,16 +1,25 @@
 import app from "./app";
-import { bootstrap } from "./bootstrap";
+import { connectRedis } from "./shared/redis.client";
 
 const PORT = Number(process.env.PORT ?? 4000);
 
-async function start(): Promise<void> {
-  await bootstrap();
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+function listen(port: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const server = app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+      resolve();
+    });
+
+    server.on("error", reject);
   });
 }
 
-start().catch((err) => {
+async function start(): Promise<void> {
+  await connectRedis();
+  await listen(PORT);
+}
+
+void start().catch((err: unknown) => {
   console.error("Startup failed:", err);
-  //   process.exit(1);
+  process.exitCode = 1;
 });

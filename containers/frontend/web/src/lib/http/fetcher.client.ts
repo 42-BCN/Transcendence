@@ -1,4 +1,3 @@
-import { FetcherError } from './errors';
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 
@@ -7,7 +6,11 @@ export async function fetchClient<T>(
   method: HttpMethod,
   data?: unknown,
   opts?: { withAuth?: boolean },
-): Promise<T> {
+): Promise<{
+  data: T;
+  headers: Headers;
+  status: number;
+}> {
   const res = await fetch(endpoint, {
     method,
     headers: {
@@ -18,8 +21,12 @@ export async function fetchClient<T>(
     credentials: opts?.withAuth ? 'include' : 'omit',
   });
 
-  const json = await res.json();
-  if (!res.ok) throw new FetcherError(res.status, json);
+  const text = await res.text();
+  const json = text ? (JSON.parse(text) as T) : (null as T);
 
-  return json as T;
+  return {
+    data: json,
+    headers: res.headers,
+    status: res.status,
+  };
 }

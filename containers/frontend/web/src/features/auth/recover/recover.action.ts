@@ -1,7 +1,7 @@
 'use server';
 
 import { fetchServer } from '@/lib/http/fetcher.server';
-import { RecoverReqSchema, type RecoverRes } from '@/contracts/auth/auth.recover.caro';
+import { RecoverReqSchema, type RecoverRes } from '@/contracts/api/auth/auth.recover.caro';
 
 function parseInput(formData: FormData) {
   const result = RecoverReqSchema.safeParse({

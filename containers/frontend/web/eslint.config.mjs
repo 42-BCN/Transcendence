@@ -177,4 +177,13 @@ export default [
       'no-restricted-syntax': 'off',
     },
   },
+
+  {
+    files: ['src/features/game/**/*.{ts,tsx}'],
+    rules: {
+      'complexity': 'off',
+      'no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off'
+    },
+  }
 ];

@@ -26,10 +26,15 @@ const variantClasses: Record<TextVariant, string> = {
 };
 
 const colorVariant = {
-  primary: 'text-black',
+  primary: 'text-text-primary',
+  secondary: 'text-text-secondary',
+  tertiary: 'text-text-tertiary',
+  disabled: 'text-text-disabled',
+  inverse: 'text-text-inverse',
   info: 'text-blue-400',
   danger: 'text-red-700',
   success: 'text-green-700',
+  muted: 'text-slate-600',
 };
 
 export type TextColor = keyof typeof colorVariant;

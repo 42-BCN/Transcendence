@@ -1,126 +1,146 @@
-import { pool, sql, ApiError } from "@shared";
+import { ApiError } from "@shared";
+import { prisma } from "@/lib/prisma";
 
 import type { AuthUserRow } from "./auth.model";
 
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
 type UserWithPassword = Pick<
   AuthUserRow,
-  "id" | "email" | "username" | "password_hash"
+  "id" | "email" | "username" | "passwordHash"
 >;
 
-const USER_PUBLIC_SELECT = `id, email, username`;
-const USER_WITH_PASSWORD_SELECT = `id, email, username, password_hash`;
+const userPublicSelect = {
+  id: true,
+  email: true,
+  username: true,
+} as const;
 
-export async function findUserByEmail(
+const userWithPasswordSelect = {
+  id: true,
+  email: true,
+  username: true,
+  passwordHash: true,
+} as const;
+
+export function findUserByEmail(
   email: string,
-): Promise<AuthUserRow | null> {
-  const res = await pool.query<AuthUserRow>(
-    sql`
-    SELECT id, email, username, password_hash
-    FROM public.users
-    WHERE email = $1
-    LIMIT 1;
-    `,
-    [email],
-  );
-  return res.rows[0] ?? null;
+): Promise<UserWithPassword | null> {
+  return prisma.user.findUnique({
+    where: { email },
+    select: userWithPasswordSelect,
+  });
 }
 
-export async function findUserByUsername(
+export function findUserByUsername(
   username: string,
 ): Promise<UserWithPassword | null> {
-  const res = await pool.query<UserWithPassword>(
-    sql`
-    SELECT ${USER_WITH_PASSWORD_SELECT}
-    FROM public.users
-    WHERE username = $1
-    LIMIT 1;
-    `,
-    [username],
-  );
-  return res.rows[0] ?? null;
+  return prisma.user.findUnique({
+    where: { username },
+    select: userWithPasswordSelect,
+  });
 }
 
-export async function findUserById(id: string): Promise<UserPublic | null> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    SELECT ${USER_PUBLIC_SELECT}
-    FROM public.users
-    WHERE id = $1
-    LIMIT 1;
-    `,
-    [id],
-  );
-  return res.rows[0] ?? null;
+export function findUserById(id: string): Promise<UserPublic | null> {
+  return prisma.user.findUnique({
+    where: { id },
+    select: userPublicSelect,
+  });
 }
 
-export async function findUserByGoogleId(
+export function findUserByGoogleId(
   googleId: string,
 ): Promise<UserPublic | null> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    SELECT ${USER_PUBLIC_SELECT}
-    FROM public.users
-    WHERE google_id = $1
-    LIMIT 1;
-    `,
-    [googleId],
-  );
-
-  return res.rows[0] ?? null;
+  return prisma.user.findUnique({
+    where: { googleId },
+    select: userPublicSelect,
+  });
 }
 
-export async function insertGoogleUser(input: {
-  email: string;
-  googleId: string;
-  username: string;
-}): Promise<UserPublic> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    INSERT INTO public.users (email, username, google_id, provider)
-    VALUES ($1, $2, $3, $4)
-    RETURNING ${USER_PUBLIC_SELECT};
-    `,
-    [input.email, input.username, input.googleId, "google"],
+function isPrismaErrorCode(error: unknown, code: string): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === code
   );
-
-  const row = res.rows[0];
-  if (!row) throw new ApiError("AUTH_GOOGLE_USER_INSERT_FAILED");
-  return row;
 }
 
-export async function insertUser(input: {
+type InsertUserInput = {
   email: string;
   username: string;
   passwordHash: string;
-}): Promise<UserPublic | null> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    INSERT INTO public.users (email, username, password_hash)
-    VALUES ($1, $2, $3)
-    ON CONFLICT DO NOTHING
-    RETURNING ${USER_PUBLIC_SELECT};
-    `,
-    [input.email, input.username, input.passwordHash],
-  );
-  return res.rows[0] ?? null;
+};
+
+export async function insertUser(
+  input: InsertUserInput,
+): Promise<UserPublic | null> {
+  const { email, username, passwordHash } = input;
+
+  try {
+    return await prisma.user.create({
+      data: {
+        email,
+        username,
+        passwordHash,
+        provider: "local",
+      },
+      select: userPublicSelect,
+    });
+  } catch (error) {
+    if (isPrismaErrorCode(error, "P2002")) return null;
+    throw error;
+  }
 }
 
-export async function linkGoogleIdToEmailUser(input: {
+type LinkGoogleIdToEmailUserInput = {
   email: string;
   googleId: string;
-}): Promise<UserPublic> {
-  const res = await pool.query<UserPublic>(
-    sql`
-    UPDATE public.users
-    SET google_id = $1
-    WHERE email = $2
-    RETURNING ${USER_PUBLIC_SELECT};
-    `,
-    [input.googleId, input.email],
-  );
+};
 
-  const row = res.rows[0];
-  if (!row) throw new ApiError("AUTH_GOOGLE_LINK_FAILED");
-  return row;
+export async function linkGoogleIdToEmailUser(
+  input: LinkGoogleIdToEmailUserInput,
+): Promise<UserPublic> {
+  const { email, googleId } = input;
+
+  try {
+    return await prisma.user.update({
+      where: { email },
+      data: {
+        googleId,
+      },
+      select: userPublicSelect,
+    });
+  } catch (error) {
+    if (isPrismaErrorCode(error, "P2025") || isPrismaErrorCode(error, "P2002"))
+      throw new ApiError("AUTH_GOOGLE_LINK_FAILED");
+    throw error;
+  }
+}
+
+type InsertGoogleUserInput = {
+  email: string;
+  googleId: string;
+  username: string;
+};
+
+export async function insertGoogleUser(
+  input: InsertGoogleUserInput,
+): Promise<UserPublic> {
+  const { email, googleId, username } = input;
+
+  try {
+    return await prisma.user.create({
+      data: {
+        email,
+        username,
+        googleId,
+        provider: "google",
+      },
+      select: userPublicSelect,
+    });
+  } catch (error) {
+    if (isPrismaErrorCode(error, "P2002"))
+      throw new ApiError("AUTH_GOOGLE_USER_INSERT_FAILED");
+    throw error;
+  }
 }

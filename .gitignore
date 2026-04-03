@@ -78,3 +78,13 @@ pnpm-debug.log*
 # TypeScript
 # ------------------------------
 **/*.tsbuildinfo
+
+# ------------------------------
+# Misc
+# ------------------------------
+.make/
+
+#------------------------------
+# Prisma Generated 
+#------------------------------
+containers/backend/app/generated

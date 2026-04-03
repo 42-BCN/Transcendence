@@ -9,7 +9,8 @@ declare const messages: {
     "UI": "UI",
     "robots": "Robots",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "settings": "Settings"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -107,6 +108,17 @@ declare const messages: {
     "FIELD_TOO_SHORT": "Too short.",
     "FIELD_TOO_LONG": "Too long.",
     "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+  },
+  "Footer": {
+    "appName": "Transcendence",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "github": "GitHub",
+    "copyright": "All rights reserved"
+  },
+  "settings": {
+    "theme": "Theme",
+    "language": "Language"
   }
 };
 export default messages;

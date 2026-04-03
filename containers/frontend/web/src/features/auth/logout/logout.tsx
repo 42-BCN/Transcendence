@@ -2,11 +2,32 @@
 
 import { Button } from '@components/controls/button';
 import { logoutAction } from './logout.action';
+import { useRouter } from '@/i18n/navigation';
+import { Icon } from '@components/primitives/icon';
 
-export function Logout() {
+export function Logout({ onPress }: { onPress?: () => void }) {
+  const router = useRouter();
+  const logoutHandler = async () => {
+    const { data } = await logoutAction();
+    if (!data.ok) {
+      // TODO handle error
+      console.error('Failed to log out');
+    }
+
+    router.push('/login');
+    router.refresh();
+    onPress?.();
+  };
+  const logoutIcon = <Icon name="logOut" />;
   return (
-    <Button w="default" onPress={logoutAction}>
-      Log out
-    </Button>
+    // TODO add tooltip. Add on expanse. Unify Link and button styles
+    <Button
+      w="default"
+      onPress={logoutHandler}
+      icon={logoutIcon}
+      variant="ghost"
+      className="p-2"
+      aria-label="Log out"
+    />
   );
 }

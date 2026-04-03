@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthProvider {
+  local
+  google
+}
+
+model User {
+  id                 String              @id @default(uuid()) @db.Uuid
+  email              String              @unique
+  username           String              @unique
+  passwordHash       String?             @map("password_hash")
+  googleId           String?             @unique @map("google_id")
+  provider           AuthProvider        @default(local)
+  isBlocked          Boolean             @default(false) @map("is_blocked")
+  failedAttempts     Int                 @default(0) @map("failed_attempts")
+  lockedUntil        DateTime?           @map("locked_until") @db.Timestamptz(6)
+  lastLoginAt        DateTime?           @map("last_login_at") @db.Timestamptz(6)
+  emailVerifiedAt    DateTime?           @map("email_verified_at") @db.Timestamptz(6)
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  passwordResets     PasswordReset[]     @relation("UserPasswordResets")
+  emailVerifications EmailVerification[] @relation("UserEmailVerifications")
+
+  friendships_as_user1 Friendship[] @relation("FriendshipUser1")
+  friendships_as_user2 Friendship[] @relation("FriendshipUser2")
+  friendships_sent     Friendship[] @relation("FriendshipSender")
+
+  @@map("users")
+}
+
+enum FriendshipStatus {
+  pending
+  accepted
+}
+
+model Friendship {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId1   String           @map("user_id_1") @db.Uuid
+  userId2   String           @map("user_id_2") @db.Uuid
+  senderId  String           @map("sender_id") @db.Uuid
+  status    FriendshipStatus @default(pending)
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user1  User @relation("FriendshipUser1", fields: [userId1], references: [id], onDelete: Cascade)
+  user2  User @relation("FriendshipUser2", fields: [userId2], references: [id], onDelete: Cascade)
+  sender User @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@unique([userId1, userId2], name: "friendships_pair_uniq")
+  @@index([userId1, status], name: "friendships_user1_status_idx")
+  @@index([userId2, status], name: "friendships_user2_status_idx")
+  @@map("friendships")
+}
+
+model PasswordReset {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash")
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt     DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation("UserPasswordResets", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_resets")
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash")
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt     DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation("UserEmailVerifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("email_verifications")
+}

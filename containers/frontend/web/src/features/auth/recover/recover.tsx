@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import { Form } from '@components/composites/form';
 import { TextField } from '@components/composites/text-field';
 import { Button } from '@components/controls/button';
@@ -9,7 +11,7 @@ import { recoverAction } from './recover.action';
 import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 
-import { RecoverReqSchema, type RecoverReq } from '@/contracts/auth/auth.recover.caro';
+import { RecoverReqSchema, type RecoverReq } from '@/contracts/api/auth/auth.recover.caro';
 import { Text } from '@components/primitives/text';
 import { Stack } from '@components/primitives/stack';
 
@@ -31,9 +33,24 @@ const formApiReq = {
   defaultValues,
 } as const;
 
+function useRecoverFieldNavigation() {
+  const identifierRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    identifierRef.current?.focus();
+  }, []);
+
+  return {
+    identifierRef,
+  };
+}
+
 export function RecoverFeature() {
   const form = useForm<RecoverReq>(formApiReq);
   const t = useTranslations('auth');
+
+  const { identifierRef } = useRecoverFieldNavigation();
+
   return (
     <Stack justify="center">
       <Text as="h1" variant="heading-md">
@@ -52,6 +69,7 @@ export function RecoverFeature() {
           errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
           onChange={(v) => form.setValue('identifier', v)}
           onBlur={() => form.setTouch('identifier')}
+          inputRef={identifierRef}
           {...fieldsBase.identifier}
         />
 

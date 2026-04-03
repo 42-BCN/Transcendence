@@ -1,10 +1,13 @@
 import { cn } from '@/lib/styles/cn';
 
-const messageBubbleBase = 'p-3 rounded-xl gap-2 flex flex-col';
+const messageBubbleBase = 'p-3 rounded-xl gap-2 flex flex-col max-w-[90%] md:max-w-[80%]';
 
 const messageVariant = {
-  default: 'rounded-br-none bg-slate-300',
-  reverse: 'rounded-bl-none bg-slate-100',
+  me: 'rounded-br-none bg-slate-300 ms-auto',
+  user: 'rounded-bl-none bg-slate-100',
+  system: 'bg-yellow-400',
+  error: 'bg-red-400 text-white',
+  'game-event': 'bg-green-400 text-white',
 };
 
 export type messageVariantType = keyof typeof messageVariant;
@@ -12,7 +15,7 @@ type messageBubbleStylesProps = {
   variant?: messageVariantType;
 };
 export function messageBubbleStyles(args?: messageBubbleStylesProps) {
-  const { variant = 'default' } = args ?? {};
+  const { variant = 'user' } = args ?? {};
 
   return cn(messageBubbleBase, messageVariant[variant]);
 }

@@ -52,6 +52,16 @@
   --color-text-disabled: #b3b3b3;
   --color-text-inverse: #ffffff;
 
+  /* background colors */
+  --color-bg-primary: #f1f5f9; /* Corresponds to slate-100 (original) */
+  --color-bg-secondary: #e2e8f0; /* Corresponds to slate-200 */
+
+  /* border colors */
+  --color-border-primary: #cbd5e1; /* slate-300 (original) */
+
+  /* decorative */
+  --color-grid-line: rgba(0, 0, 0, 0.02); /* Very subtle gray for light mode */
+
   /* spacing */
   --space-0: 0px;
   --space-1: 4px;
@@ -74,6 +84,17 @@
   --space-xl: var(--space-7);
 }
 
+.dark {
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8; /* slate-400 */
+  --color-text-tertiary: #64748b; /* slate-500 */
+  --color-text-disabled: #475569; /* slate-600 */
+  --color-bg-primary: #0f172a; /* slate-900 (Dark blue) */
+  --color-bg-secondary: #1e293b; /* slate-800 */
+  --color-border-primary: #334155; /* slate-700 */
+  --color-grid-line: rgba(255, 255, 255, 0.02); /* Very subtle white for dark mode */
+}
+
 .font-caption {
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-medium);
@@ -86,7 +107,7 @@
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-regular);
   font-size: var(--font-size-xs);
-  line-height: var(--line-height-sm);
+  line-height: var(--line-height-xs);
   letter-spacing: var(--letter-spacing-normal);
 }
 

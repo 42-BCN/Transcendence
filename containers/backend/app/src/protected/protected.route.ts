@@ -1,5 +1,7 @@
 import { Router } from "express";
+
 import { requireAuth } from "@shared";
+
 import { getMeProfile } from "./protected.controller";
 
 export const protectedRouter = Router();

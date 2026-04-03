@@ -31,8 +31,32 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const locale = await getLocale();
 
   return (
-    <html lang={locale} className={`${primary.variable} ${mono.variable}`}>
-      <body className="h-screen flex">{children}</body>
+    <html lang={locale} className={`${primary.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('theme');
+                const support = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (theme === 'dark' || (theme !== 'light' && support)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
+
+      <body className="min-h-screen flex text-text-primary bg-bg-primary transition-colors duration-300">
+        <div
+          className="fixed inset-0 -z-10 bg-[linear-gradient(var(--color-grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-grid-line)_1px,transparent_1px)] bg-[size:30px_30px]"
+          aria-hidden="true"
+        />
+        {children}
+      </body>
     </html>
   );
 }

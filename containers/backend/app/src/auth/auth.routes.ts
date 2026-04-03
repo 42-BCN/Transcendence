@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+
 import { validateBody } from "@shared/validation.middleware";
 import {
   LoginReqSchema,
@@ -19,7 +20,10 @@ authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
 authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
 authRouter.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account", }),
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+  }),
 );
 authRouter.get("/callback/google", getGoogleCallback);
 authRouter.post("/logout", postLogout);

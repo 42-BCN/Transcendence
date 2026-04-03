@@ -5,7 +5,7 @@ import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/se
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
 import { envPublic } from '@/lib/config/env.public';
 import { Providers } from '@/app/providers';
-import { NavigationServer } from '@/features/main-nav';
+import { NavigationServer } from '@/features/navigation';
 
 export async function generateMetadata({
   params,
@@ -48,6 +48,7 @@ export default async function LocaleLayout({
         <HtmlLangSync />
 
         <NavigationServer locale={locale} />
+
         {children}
       </Providers>
     </NextIntlClientProvider>

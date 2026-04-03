@@ -6,7 +6,8 @@
     "UI": "UI",
     "robots": "Robots",
     "profile": "Perfil",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "settings": "Configuración"
   },
   "SignupPage": {
     "title": "Crear cuenta",
@@ -110,5 +111,16 @@
     "FIELD_TOO_SHORT": "Demasiado corto.",
     "FIELD_TOO_LONG": "Demasiado largo.",
     "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden."
+  },
+  "Footer": {
+    "appName": "Transcendence",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "github": "GitHub",
+    "copyright": "Todos los derechos reservados"
+  },
+  "settings": {
+    "theme": "Tema",
+    "language": "Idioma"
   }
 }
