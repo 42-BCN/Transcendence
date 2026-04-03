@@ -25,8 +25,6 @@ Reasons:
 JWT tokens are self-contained and typically stateless.
 Our system is intentionally stateful.
 
----
-
 ## 3. Session Storage
 
 Sessions are stored in **Redis**.
@@ -44,26 +42,9 @@ On every authenticated request:
 
 ---
 
-## 3. Session Storage
+## 4. Session Lifecycle
 
-Sessions are stored in **Redis**.
-
-The cookie contains only the session identifier.
-All session state lives in Redis and is managed server-side.
-
-On every authenticated request:
-
-1. Extract cookie
-2. Validate session existence in Redis
-3. Validate expiration
-4. Refresh idle expiration if applicable
-5. Continue request
-
----
-
-## 5. Session Lifecycle
-
-### 5.1 Sliding Expiration (Auto-Slide)
+### 4.1 Sliding Expiration (Auto-Slide)
 
 We use sliding expiration:
 
@@ -73,13 +54,13 @@ We use sliding expiration:
 Example policy:
 
 - Idle timeout: 2 days since last activity
-- Absolute timeout: defined hard cap (team-defined) -> No apply
+- Absolute timeout: defined hard cap (team-defined) -> No applied
 
 Both must be validated server-side.
 
 ---
 
-### 5.3 Expiration Handling
+### 4.2 Expiration Handling
 
 When a session expires:
 
@@ -90,7 +71,7 @@ Backend is always the source of truth.
 
 ---
 
-## 6. Single Session Policy
+## 5. Single Session Policy
 
 We allow only **one active session per user**.
 
@@ -115,7 +96,7 @@ Possible future extensions:
 
 ---
 
-## 7. ID Rotation
+## 6. ID Rotation
 
 On login or privilege change:
 
@@ -130,7 +111,7 @@ Purpose:
 
 ---
 
-## 8. WebSocket (WSS) Authentication
+## 7. WebSocket (WSS) Authentication
 
 WebSocket authentication uses the same session cookie.
 
@@ -167,16 +148,6 @@ Because OAuth is enabled:
 
 CSRF applies to HTTP requests where cookies are automatically included.
 CSRF does not apply to WebSocket messages the same way as form-based HTTP requests.
-Change: Redis migration path
-
-It currently says:
-
-current architecture = PostgreSQL sessions
-future architecture = Redis sessions.
-
-That is no longer true.
-
-Replace “## 2. Redis Migration Path” with:
 
 ## 2. Session Storage Architecture
 

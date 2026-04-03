@@ -14,7 +14,7 @@ export function CreateAccount() {
         {t('createAccount.title')}
       </Text>
       <CreateAccountForm />
-      <div className="flex items-center gap-4 before:h-px before:flex-1 before:bg-slate-300 after:h-px after:flex-1 after:bg-slate-300">
+      <div className="flex items-center gap-4 before:h-px before:flex-1 before:bg-border-primary after:h-px after:flex-1 after:bg-border-primary">
         <Text variant="caption">{t('common.or')}</Text>
       </div>
       <Oauth>{t('createAccount.withGoogle')}</Oauth>

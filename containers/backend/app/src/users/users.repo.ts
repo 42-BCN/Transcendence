@@ -24,7 +24,7 @@ export async function listUsers(
 ): Promise<UserPublic[]> {
   const rows = await prisma.user.findMany({
     orderBy: {
-      created_at: "desc",
+      createdAt: "desc",
     },
     take: limit,
     skip: offset,
