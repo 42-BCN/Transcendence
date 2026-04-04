@@ -117,7 +117,7 @@
   "Footer": {
     "appName": "Transcendence",
     "privacy": "Política de privacitat",
-    "terms": "Termes del servei",
+    "terms": "Termes de servei",
     "github": "GitHub",
     "copyright": "Tots els drets reservats"
   },
@@ -126,7 +126,7 @@
     "language": "Idioma"
   },
   "Profile": {
-    "fail": "Error en carregar l'usuari",
+    "fail": "Error al carregar l'usuari",
     "userId": "ID d'usuari",
     "username": "Nom d'usuari"
   },
