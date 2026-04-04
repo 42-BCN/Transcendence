@@ -63,10 +63,8 @@ export async function recordFailedPasswordAttempt(
   const { maxFailedAttempts, lockoutDurationMs } = authSecurityConfig;
   const now = new Date();
 
-  const { failedAttempts, lockedUntil } = await Repo.incrementFailedAttempts(
-    userId,
-    now,
-  );
+  const { failedAttempts, lockedUntil } =
+    await Repo.incrementFailedAttempts(userId);
 
   const maxed = failedAttempts >= maxFailedAttempts;
   const unlocked = !lockedUntil || lockedUntil <= now;
