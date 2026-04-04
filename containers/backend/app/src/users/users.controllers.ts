@@ -9,7 +9,7 @@ import type {
   GetUsersQuery,
 } from "@contracts/users/users.validation";
 
-import { getUsers, findUserById } from "./users.service";
+import { getUsers, findUserById, userByUsername } from "./users.service";
 
 type Locals = { query: GetUsersQuery };
 
@@ -39,5 +39,14 @@ export async function getUserById(
   res: Response<UserPublicResponse>,
 ): Promise<void> {
   const result = await findUserById(req.params.userId);
+  res.status(200).json({ ok: true, data: result });
+}
+
+export async function getUserByUsername(
+  req: Request<{ username: string }>,
+  res: Response<UserPublicResponse>,
+): Promise<void> {
+  const result = await userByUsername(req.params.username);
+
   res.status(200).json({ ok: true, data: result });
 }

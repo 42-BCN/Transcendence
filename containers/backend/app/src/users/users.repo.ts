@@ -42,3 +42,14 @@ export async function selectUserData(id: string): Promise<UserPublic | null> {
 
   return row ? mapUserRow(row) : null;
 }
+
+export async function selectUserDataByUsername(
+  username: string,
+): Promise<UserPublic | null> {
+  const row = await prisma.user.findUnique({
+    where: { username },
+    select: userPublicSelect,
+  });
+
+  return row ? mapUserRow(row) : null;
+}

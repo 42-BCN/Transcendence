@@ -6,7 +6,11 @@ import {
   GetUsersQuerySchema,
 } from "@contracts/users/users.validation";
 
-import { getUsersController, getUserById } from "./users.controllers";
+import {
+  getUsersController,
+  getUserById,
+  getUserByUsername,
+} from "./users.controllers";
 
 export const usersRouter = Router();
 
@@ -19,3 +23,4 @@ usersRouter.get(
   validateParams(GetUserByIdParamSchema),
   getUserById,
 );
+usersRouter.get("/username/:username", getUserByUsername);
