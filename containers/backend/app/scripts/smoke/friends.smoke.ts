@@ -18,30 +18,42 @@ const FRIENDSHIP_TEST_EMAIL =
 const FRIENDSHIP_TEST_PASSWORD =
   process.env.FRIENDSHIP_TEST_PASSWORD ?? TEST_PASSWORD;
 
-type UserSummary = {
+type UserLookup = {
   id: string;
   username: string;
 };
 
-type FriendshipListItem = {
+type FriendshipPublic = {
   id: string;
+  friendUserId: string;
+  friendUsername: string;
   status: "pending" | "accepted";
-  senderId: string;
-  user: UserSummary;
+  isSender: boolean;
+  createdAt: string | Date;
 };
 
-type FriendsListData = {
-  friends: FriendshipListItem[];
+type FriendPublic = {
+  id: string;
+  username: string;
+  avatar: string | null;
+  isOnline: boolean;
 };
 
-type SendFriendRequestSuccess = {
-  friendship: {
-    id: string;
-    status: "pending" | "accepted";
-    senderId: string;
-    userId1: string;
-    userId2: string;
-  };
+type GetFriendsListOk = {
+  friends: FriendPublic[];
+};
+
+type GetReceivedRequestsOk = {
+  requests: FriendshipPublic[];
+};
+
+type GetSentRequestsOk = {
+  requests: FriendshipPublic[];
+};
+
+type SendFriendRequestOk = {
+  friendship: FriendshipPublic;
+  wasAutoAccepted: boolean;
 };
 
 const results: TestResult[] = [];
@@ -60,15 +72,13 @@ async function loginAsSeedUser(): Promise<void> {
     }),
   });
 
-  // logResponse(login.res, login.body, login.text);
-
   assert(login.res.status === 200, "Login should return 200");
   assert(login.body?.ok === true, "Login should return ok=true");
   assert(hasCookie("sid"), "Login should set sid cookie");
 }
 
-async function getUserByUsername(username: string): Promise<UserSummary> {
-  const res = await request<ApiResponse<UserSummary>>(
+async function getUserByUsername(username: string): Promise<UserLookup> {
+  const res = await request<ApiResponse<UserLookup>>(
     `users/username/${encodeURIComponent(username)}`,
     { method: "GET" },
   );
@@ -81,8 +91,12 @@ async function getUserByUsername(username: string): Promise<UserSummary> {
   return res.body.data;
 }
 
-function usernamesOf(items: FriendshipListItem[]): string[] {
-  return items.map((item) => item.user.username).sort();
+function friendUsernamesOf(items: FriendPublic[]): string[] {
+  return items.map((item) => item.username).sort();
+}
+
+function requestUsernamesOf(items: FriendshipPublic[]): string[] {
+  return items.map((item) => item.friendUsername).sort();
 }
 
 async function testListAcceptedFriends(): Promise<void> {
@@ -90,7 +104,7 @@ async function testListAcceptedFriends(): Promise<void> {
 
   logStep("list accepted friends for pikachu");
 
-  const res = await request<ApiResponse<FriendsListData>>("friends", {
+  const res = await request<ApiResponse<GetFriendsListOk>>("friends", {
     method: "GET",
   });
 
@@ -99,7 +113,7 @@ async function testListAcceptedFriends(): Promise<void> {
   assert(res.res.status === 200, "Friends list should return 200");
   assert(res.body?.ok === true, "Friends list should return ok=true");
 
-  const names = usernamesOf(res.body.data.friends);
+  const names = friendUsernamesOf(res.body.data.friends);
 
   assert(names.includes("bulbasaur"), "Friends list should include bulbasaur");
   assert(names.includes("squirtle"), "Friends list should include squirtle");
@@ -110,9 +124,11 @@ async function testListPendingSent(): Promise<void> {
 
   logStep("list sent pending requests for pikachu");
 
-  const res = await request<ApiResponse<FriendsListData>>(
+  const res = await request<ApiResponse<GetSentRequestsOk>>(
     "friends/requests/sent",
-    { method: "GET" },
+    {
+      method: "GET",
+    },
   );
 
   logResponse(res.res, res.body, res.text);
@@ -120,7 +136,7 @@ async function testListPendingSent(): Promise<void> {
   assert(res.res.status === 200, "Sent pending list should return 200");
   assert(res.body?.ok === true, "Sent pending list should return ok=true");
 
-  const names = usernamesOf(res.body.data.friends);
+  const names = requestUsernamesOf(res.body.data.requests);
 
   assert(
     names.includes("charmander"),
@@ -133,21 +149,19 @@ async function testListPendingReceived(): Promise<void> {
 
   logStep("list received pending requests for pikachu");
 
-  const res = await request<ApiResponse<FriendsListData>>(
+  const res = await request<ApiResponse<GetReceivedRequestsOk>>(
     "friends/requests/received",
     {
       method: "GET",
     },
   );
 
-  console.log("Received pending requests response:");
-  console.log(res.body);
   logResponse(res.res, res.body, res.text);
 
   assert(res.res.status === 200, "Received pending list should return 200");
   assert(res.body?.ok === true, "Received pending list should return ok=true");
 
-  const names = usernamesOf(res.body.data.items);
+  const names = requestUsernamesOf(res.body.data.requests);
 
   assert(names.includes("eevee"), "Received pending should include eevee");
 }
@@ -159,7 +173,7 @@ async function testSendRequestToIsolatedUser(): Promise<void> {
 
   const snorlax = await getUserByUsername("snorlax");
 
-  const send = await request<ApiResponse<SendFriendRequestSuccess>>(
+  const send = await request<ApiResponse<SendFriendRequestOk>>(
     "friends/request",
     {
       method: "POST",
@@ -179,6 +193,10 @@ async function testSendRequestToIsolatedUser(): Promise<void> {
   assert(
     send.body.data.friendship.status === "pending",
     "New friend request should be pending",
+  );
+  assert(
+    send.body.data.wasAutoAccepted === false,
+    "New friend request should not auto-accept",
   );
 }
 
@@ -212,7 +230,7 @@ async function testReverseRequestAutoAccept(): Promise<void> {
 
   const eevee = await getUserByUsername("eevee");
 
-  const send = await request<ApiResponse<SendFriendRequestSuccess>>(
+  const send = await request<ApiResponse<SendFriendRequestOk>>(
     "friends/request",
     {
       method: "POST",
@@ -233,6 +251,10 @@ async function testReverseRequestAutoAccept(): Promise<void> {
     send.body.data.friendship.status === "accepted",
     "Reverse request should auto-accept",
   );
+  assert(
+    send.body.data.wasAutoAccepted === true,
+    "Reverse request should set wasAutoAccepted=true",
+  );
 }
 
 async function testSelfRequestRejected(): Promise<void> {
@@ -249,7 +271,6 @@ async function testSelfRequestRejected(): Promise<void> {
   assert(me.res.status === 200, "/protected/me should return 200");
   assert(me.body?.ok === true, "/protected/me should return ok=true");
 
-  console.log("Current user:", me.body.data.userId);
   const send = await request<ApiResponse<unknown>>("friends/request", {
     method: "POST",
     body: JSON.stringify({
