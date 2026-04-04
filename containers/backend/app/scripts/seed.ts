@@ -206,8 +206,13 @@ async function seedFriendships(users: UserMap): Promise<void> {
 export async function seed(): Promise<void> {
   console.log("Seeding Database");
 
-  if (process.env.NODE_ENV !== "development") {
-    throw new Error("Seeding is only allowed in development.");
+  if (
+    process.env.NODE_ENV !== "development" &&
+    process.env.NODE_ENV !== "test"
+  ) {
+    throw new Error(
+      "Seeding is only allowed in development or test environments.",
+    );
   }
 
   try {
