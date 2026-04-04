@@ -271,7 +271,6 @@ print_section_if_empty "$FRONTEND_ENV" "Frontend environment"
 
 set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_APP_URL" "https://localhost:8443"
 set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_API_BASE_URL" "/api"
-set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_ENABLED" "false"
 set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_NAME" "locale"
 set_env_var "$FRONTEND_ENV" "NODE_ENV" "development"
 set_env_var "$FRONTEND_ENV" "API_BASE_URL" "http://backend:4000"
