@@ -158,7 +158,7 @@ export async function insertGoogleUser(
 
 // -------------------------- Failed Password Attempt start --------------------------
 
-export async function incrementFailedAttempts(userId: string, now: Date) {
+export async function incrementFailedAttempts(userId: string) {
   return prisma.user.update({
     where: { id: userId },
     data: {

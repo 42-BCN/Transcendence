@@ -39,7 +39,7 @@ export const passwordSchema = z
 export const LoginReqSchema = z
   .object({
     identifier: identifierSchema.transform((val) =>
-      val.includes('@') ? normalizeEmail(val) : val,
+      val.includes('@') ? normalizeEmail(val) : usernameSchema.parse(val),
     ),
     password: z.string().min(1, { message: V.REQUIRED }),
   })

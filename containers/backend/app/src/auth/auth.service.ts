@@ -47,9 +47,13 @@ async function verifyPassword(
   if (!passwordHash.startsWith("$argon2id$"))
     return { ok: false, reason: "missing_password_hash" };
 
-  const ok = await argon2.verify(passwordHash, password);
-  if (!ok) return { ok: false, reason: "invalid_password" };
-  return { ok: true };
+  try {
+    const ok = await argon2.verify(passwordHash, password);
+    if (!ok) return { ok: false, reason: "invalid_password" };
+    return { ok: true };
+  } catch {
+    return { ok: false, reason: "missing_password_hash" };
+  }
 }
 
 export async function recordFailedPasswordAttempt(
