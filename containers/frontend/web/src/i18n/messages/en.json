@@ -7,7 +7,8 @@
     "robots": "Robots",
     "profile": "Profile",
     "logout": "Logout",
-    "settings": "Settings"
+    "settings": "Settings",
+    "menu": "Menu"
   },
   "home": {
     "title": "Hello from Next in Docker 👋",
@@ -56,7 +57,7 @@
       "submit": "Log in",
       "forgotPassword": "Forgot password?",
       "noAccount": "Don’t have an account?",
-      "goToSignup": "Create one",
+      "goToCreateAccount": "Create one",
       "withGoogle": "Continue with Google"
     },
     "createAccount": {
@@ -87,7 +88,8 @@
       "submit": "Send email",
       "resend": "Request another email",
       "goToLogin": "Go to log in"
-    }
+    },
+    "logout": "Logout"
   },
   "api": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
@@ -104,7 +106,8 @@
     "INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
     "FIELD_TOO_SHORT": "Too short.",
     "FIELD_TOO_LONG": "Too long.",
-    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match."
+    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+    "OUT_OF_RANGE": "Query out of range"
   },
   "Footer": {
     "appName": "Transcendence",
@@ -116,5 +119,14 @@
   "settings": {
     "theme": "Theme",
     "language": "Language"
+  },
+  "Profile": {
+    "fail": "Failed to load user",
+    "userId": "User ID",
+    "username": "Username"
+  },
+  "me": {
+    "title": "Protected route test",
+    "subtitle": "Click the button. If logged in, you should see user info. If not, you should get 401."
   }
 }

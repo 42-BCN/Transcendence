@@ -27,7 +27,6 @@ Frontend environment variables are defined in:
 ```sh
 NEXT_PUBLIC_APP_URL=https://localhost:8443
 NEXT_PUBLIC_API_BASE_URL=/api
-NEXT_PUBLIC_LOCALE_COOKIE_ENABLED=false
 NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
 NODE_ENV=development
