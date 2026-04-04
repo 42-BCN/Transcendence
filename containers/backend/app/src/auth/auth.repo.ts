@@ -156,70 +156,40 @@ export async function insertGoogleUser(
   }
 }
 
-type FailedPasswordAttemptInput = {
-  userId: string;
-  now: Date;
-  maxFailedAttempts: number;
-  lockoutDurationMs: number;
-};
+// -------------------------- Failed Password Attempt start --------------------------
 
-export type FailedPasswordAttemptResult = {
-  failedAttempts: number;
-  lockedUntil: Date | null;
-  lockoutTriggered: boolean;
-};
-
-export async function recordFailedPasswordAttempt(
-  input: FailedPasswordAttemptInput,
-): Promise<FailedPasswordAttemptResult> {
-  const { userId, now, maxFailedAttempts, lockoutDurationMs } = input;
-
-  return prisma.$transaction(async (tx) => {
-    const { failedAttempts, lockedUntil: initialLocked } =
-      await tx.user.update({
-        where: { id: userId },
-        data: { failedAttempts: { increment: 1 } },
-        select: { failedAttempts: true, lockedUntil: true },
-      });
-
-    let lockedUntil = initialLocked;
-    let lockoutTriggered = false;
-
-    const overLimit = failedAttempts >= maxFailedAttempts;
-    const notLocked = lockedUntil === null || lockedUntil <= now;
-
-    if (overLimit && notLocked) {
-      const nextLock = new Date(now.getTime() + lockoutDurationMs);
-
-      const { count } = await tx.user.updateMany({
-        where: {
-          id: userId,
-          OR: [{ lockedUntil: null }, { lockedUntil: { lte: now } }],
-        },
-        data: { lockedUntil: nextLock },
-      });
-
-      if (count > 0) {
-        lockoutTriggered = true;
-        lockedUntil = nextLock;
-      } else {
-        const { lockedUntil: latestLocked } =
-          (await tx.user.findUnique({
-            where: { id: userId },
-            select: { lockedUntil: true },
-          })) ?? {};
-
-        lockedUntil = latestLocked ?? lockedUntil;
-      }
-    }
-
-    return {
-      failedAttempts,
-      lockedUntil,
-      lockoutTriggered,
-    };
+export async function incrementFailedAttempts(userId: string, now: Date) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      failedAttempts: { increment: 1 },
+    },
+    select: {
+      failedAttempts: true,
+      lockedUntil: true,
+    },
   });
 }
+
+export async function tryLockUser(
+  userId: string,
+  now: Date,
+  lockoutDurationMs: number,
+) {
+  const lockedUntil = new Date(now.getTime() + lockoutDurationMs);
+
+  const result = await prisma.user.updateMany({
+    where: {
+      id: userId,
+      OR: [{ lockedUntil: null }, { lockedUntil: { lte: now } }],
+    },
+    data: { lockedUntil },
+  });
+
+  return result.count > 0 ? lockedUntil : null;
+}
+
+// -------------------------- Failed Password Attempt end --------------------------
 
 export async function registerSuccessfulPasswordLogin(
   userId: string,

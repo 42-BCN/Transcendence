@@ -52,26 +52,32 @@ async function verifyPassword(
   return { ok: true };
 }
 
-async function registerFailedLoginAttempt(
+export async function recordFailedPasswordAttempt(
   userId: string,
-  idHash: string,
+  userHash: string,
 ): Promise<void> {
+  const { maxFailedAttempts, lockoutDurationMs } = authSecurityConfig;
   const now = new Date();
-  const failedAttempt = await Repo.recordFailedPasswordAttempt({
+
+  const { failedAttempts, lockedUntil } = await Repo.incrementFailedAttempts(
     userId,
     now,
-    maxFailedAttempts: authSecurityConfig.maxFailedAttempts,
-    lockoutDurationMs: authSecurityConfig.lockoutDurationMs,
-  });
+  );
 
-  if (failedAttempt.lockoutTriggered) {
-    logEvents.lockoutTriggered(
-      userId,
-      idHash,
-      failedAttempt.failedAttempts,
-      failedAttempt.lockedUntil?.toISOString(),
-    );
-  }
+  const maxed = failedAttempts >= maxFailedAttempts;
+  const unlocked = !lockedUntil || lockedUntil <= now;
+
+  if (!(maxed && unlocked)) return;
+
+  const newLock = await Repo.tryLockUser(userId, now, lockoutDurationMs);
+  if (!newLock) return;
+
+  logEvents.lockoutTriggered(
+    userId,
+    userHash,
+    failedAttempts,
+    newLock.toISOString(),
+  );
 }
 
 // -------------------------- LOGIN --------------------------
@@ -94,7 +100,7 @@ export async function login(input: LoginReq): Promise<AuthUser> {
 
   const verifyResult = await verifyPassword(input.password, user.passwordHash);
   if (!verifyResult.ok) {
-    await registerFailedLoginAttempt(user.id, idHash);
+    await recordFailedPasswordAttempt(user.id, idHash);
     failLogin(verifyResult.reason, idHash, user.id);
   }
 
