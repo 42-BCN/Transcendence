@@ -17,11 +17,6 @@ function fingerprint(value: string): string {
   return createHash("sha256").update(value).digest("hex").slice(0, 16);
 }
 
-function normalizeLoginIdentifier(identifier: string): string {
-  const trimmed = identifier.trim();
-  return trimmed.includes("@") ? normalizeEmail(trimmed) : trimmed;
-}
-
 function getClientIp(req: Request): string {
   const value = req.ip || req.socket.remoteAddress || "unknown";
   return value.startsWith("::ffff:") ? value.slice(7) : value;
@@ -98,7 +93,6 @@ export const loginIdentifierRateLimit = createHashedLimiter({
     const identifier = req.body?.identifier;
     return typeof identifier === "string" ? identifier : undefined;
   },
-  normalize: normalizeLoginIdentifier,
 });
 
 export function createEmailFlowRateLimit(
@@ -110,7 +104,6 @@ export function createEmailFlowRateLimit(
     max: authSecurityConfig.rateLimit.emailFlow.max,
     windowMs: authSecurityConfig.rateLimit.emailFlow.windowMs,
     extractRaw: extractEmail,
-    normalize: normalizeEmail,
   });
 }
 
