@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import type { AuthUserRow } from "./auth.model";
 
 type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
+type UserVerification = Pick<
+  AuthUserRow,
+  "id" | "email" | "username" | "emailVerifiedAt"
+>;
 type UserWithPassword = Pick<
   AuthUserRow,
   | "id"
@@ -20,6 +24,13 @@ const userPublicSelect = {
   id: true,
   email: true,
   username: true,
+} as const;
+
+const userVerificationSelect = {
+  id: true,
+  email: true,
+  username: true,
+  emailVerifiedAt: true,
 } as const;
 
 const userWithPasswordSelect = {
@@ -55,6 +66,15 @@ export function findUserById(id: string): Promise<UserPublic | null> {
   return prisma.user.findUnique({
     where: { id },
     select: userPublicSelect,
+  });
+}
+
+export function findUserByIdForVerification(
+  id: string,
+): Promise<UserVerification | null> {
+  return prisma.user.findUnique({
+    where: { id },
+    select: userVerificationSelect,
   });
 }
 
@@ -200,6 +220,53 @@ export async function registerSuccessfulPasswordLogin(
       failedAttempts: 0,
       lockedUntil: null,
       lastLoginAt: new Date(),
+    },
+  });
+}
+
+type CreateEmailVerificationInput = {
+  userId: string;
+  tokenHash: string;
+  expiresAt: Date;
+};
+
+export async function createEmailVerificationToken(
+  input: CreateEmailVerificationInput,
+): Promise<void> {
+  await prisma.emailVerification.create({
+    data: {
+      userId: input.userId,
+      tokenHash: input.tokenHash,
+      expiresAt: input.expiresAt,
+    },
+  });
+}
+
+export async function deleteUnusedEmailVerificationTokens(
+  userId: string,
+): Promise<void> {
+  await prisma.emailVerification.deleteMany({
+    where: {
+      userId,
+      usedAt: null,
+    },
+  });
+}
+
+type CreatePasswordResetInput = {
+  userId: string;
+  tokenHash: string;
+  expiresAt: Date;
+};
+
+export async function createPasswordResetToken(
+  input: CreatePasswordResetInput,
+): Promise<void> {
+  await prisma.passwordReset.create({
+    data: {
+      userId: input.userId,
+      tokenHash: input.tokenHash,
+      expiresAt: input.expiresAt,
     },
   });
 }

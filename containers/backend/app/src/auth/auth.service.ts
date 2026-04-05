@@ -1,15 +1,22 @@
-import { createHash } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import argon2 from "argon2";
 import type { Profile } from "passport";
 
 import type { AuthUser } from "@contracts/auth/auth.contract";
+import type { RecoverReq } from "@contracts/auth/auth.recover.caro";
 import { normalizeEmail, type LoginReq } from "@contracts/auth/auth.validation";
 import { generateUsername, ApiError } from "@shared";
+import { MailServiceError, isMailServiceConfigured } from "@lib/mail.service";
 
 import { authSecurityConfig } from "./auth.security.config";
 import { toAuthUser } from "./auth.model";
 import * as Repo from "./auth.repo";
 import { logEvents, type LoginFailureReason } from "./auth.logs";
+import {
+  type EmailLocale,
+  sendPasswordResetEmail,
+  sendSignupVerificationEmail,
+} from "./auth.mail";
 
 function fingerprint(value: string): string {
   return createHash("sha256").update(value).digest("hex").slice(0, 16);
@@ -20,6 +27,109 @@ export async function hashPassword(password: string): Promise<string> {
     type: argon2.argon2id,
     ...authSecurityConfig.argon2,
   });
+}
+
+function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function createRawToken(): string {
+  return randomBytes(32).toString("hex");
+}
+
+function expiresAt(ttlMs: number): Date {
+  return new Date(Date.now() + ttlMs);
+}
+
+async function createEmailVerificationToken(userId: string): Promise<string> {
+  const token = createRawToken();
+  await Repo.createEmailVerificationToken({
+    userId,
+    tokenHash: hashToken(token),
+    expiresAt: expiresAt(24 * 60 * 60 * 1000),
+  });
+  return token;
+}
+
+async function createPasswordResetToken(userId: string): Promise<string> {
+  const token = createRawToken();
+  await Repo.createPasswordResetToken({
+    userId,
+    tokenHash: hashToken(token),
+    expiresAt: expiresAt(60 * 60 * 1000),
+  });
+  return token;
+}
+
+async function dispatchSignupVerificationMail(
+  user: AuthUser,
+  locale: EmailLocale,
+): Promise<void> {
+  if (!isMailServiceConfigured()) {
+    logEvents.info({
+      event: "signup_verification_skipped",
+      reason: "mail_not_configured",
+      userId: user.id,
+    });
+    return;
+  }
+
+  try {
+    const verificationToken = await createEmailVerificationToken(user.id);
+    await sendSignupVerificationEmail({
+      toEmail: user.email,
+      username: user.username,
+      verificationToken,
+      locale,
+    });
+  } catch (error) {
+    logEvents.info({
+      event: "signup_verification_mail_failed",
+      userId: user.id,
+      error:
+        error instanceof MailServiceError
+          ? `${error.code}:${error.message}`
+          : String(error),
+    });
+  }
+}
+
+async function dispatchPasswordResetMailByIdentifier(
+  identifier: string,
+  locale: EmailLocale,
+): Promise<void> {
+  const user = identifier.includes("@")
+    ? await Repo.findUserByEmail(identifier)
+    : await Repo.findUserByUsername(identifier);
+
+  if (!user) return;
+  if (!isMailServiceConfigured()) {
+    logEvents.info({
+      event: "password_reset_skipped",
+      reason: "mail_not_configured",
+      userId: user.id,
+    });
+    return;
+  }
+
+  try {
+    const resetToken = await createPasswordResetToken(user.id);
+    await sendPasswordResetEmail({
+      toEmail: user.email,
+      username: user.username,
+      resetToken,
+      locale,
+    });
+  } catch (error) {
+    logEvents.info({
+      event: "password_reset_mail_failed",
+      userId: user.id,
+      error:
+        error instanceof MailServiceError
+          ? `${error.code}:${error.message}`
+          : String(error),
+    });
+  }
 }
 
 // -------------------------- LOGIN HELPER FUNCTIONS --------------------------
@@ -145,10 +255,13 @@ async function createUserWithRetries(input: {
 }
 
 // -------------------------- SIGNUP --------------------------
-export async function signup(input: {
-  email: string;
-  password: string;
-}): Promise<AuthUser> {
+export async function signup(
+  input: {
+    email: string;
+    password: string;
+  },
+  locale: EmailLocale = "en",
+): Promise<AuthUser> {
   const email = input.email;
   const idHash = fingerprint(email);
   logEvents.signupAttempt(idHash);
@@ -165,7 +278,17 @@ export async function signup(input: {
     signupFailure("username_collision_exhausted", idHash);
   }
 
+  await dispatchSignupVerificationMail(result.user, locale);
   return result.user;
+}
+
+export async function recover(
+  input: RecoverReq,
+  locale: EmailLocale = "en",
+): Promise<{ identifier: string }> {
+  const identifier = input.identifier;
+  await dispatchPasswordResetMailByIdentifier(identifier, locale);
+  return { identifier };
 }
 
 // -------------------------- GOOGLE OAUTH --------------------------

@@ -55,3 +55,11 @@ export const SignupReqSchema = z
   .strict();
 
 export type SignupReq = z.infer<typeof SignupReqSchema>;
+
+export const ResendVerificationReqSchema = z
+  .object({
+    email: emailSchema.optional(),
+  })
+  .strict();
+
+export type ResendVerificationReq = z.infer<typeof ResendVerificationReqSchema>;

@@ -1,11 +1,22 @@
 import type { NextFunction, Request, Response } from "express";
 import passport from "passport";
 
-import type { LoginRes, SignupRes } from "@contracts/auth/auth.contract";
+import type {
+  LoginRes,
+  ResendVerificationRes,
+  SignupRes,
+} from "@contracts/auth/auth.contract";
+import type { RecoverReq, RecoverRes } from "@contracts/auth/auth.recover.caro";
 import { AUTH_ERRORS, type AuthErrorName } from "@contracts/auth/auth.errors";
-import type { SignupReq, LoginReq } from "@contracts/auth/auth.validation";
+import type {
+  ResendVerificationReq,
+  SignupReq,
+  LoginReq,
+} from "@contracts/auth/auth.validation";
 import { HttpStatus } from "@contracts/http";
 
+import { normalizeEmailLocale } from "./auth.mail";
+import { resendVerification } from "./auth.resend-verification";
 import * as Service from "./auth.service";
 
 // TODO this is repeated at error middleware - make a helper
@@ -28,7 +39,10 @@ export async function postSignup(
   req: Request<unknown, unknown, SignupReq>,
   res: Response<SignupRes>,
 ): Promise<void> {
-  const result = await Service.signup(req.body);
+  const locale = normalizeEmailLocale(
+    req.headers["accept-language"]?.toString(),
+  );
+  const result = await Service.signup(req.body, locale);
 
   res.status(200).json({
     ok: true,
@@ -55,6 +69,41 @@ export async function postLogin(
         data: { user: result },
       });
     });
+  });
+}
+
+export async function postRecover(
+  req: Request<unknown, unknown, RecoverReq>,
+  res: Response<RecoverRes>,
+): Promise<void> {
+  const locale = normalizeEmailLocale(
+    req.headers["accept-language"]?.toString(),
+  );
+  const result = await Service.recover(req.body, locale);
+
+  res.status(200).json({
+    ok: true,
+    data: result,
+  });
+}
+
+export async function postResendVerification(
+  req: Request<unknown, unknown, ResendVerificationReq>,
+  res: Response<ResendVerificationRes>,
+): Promise<void> {
+  const locale = normalizeEmailLocale(
+    req.headers["accept-language"]?.toString(),
+  );
+
+  await resendVerification({
+    email: req.body.email,
+    userId: req.session.userId,
+    locale,
+  });
+
+  res.status(200).json({
+    ok: true,
+    data: null,
   });
 }
 
