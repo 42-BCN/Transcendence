@@ -6,9 +6,9 @@ import caMessages from '@/i18n/messages/ca.json';
 import { getLocaleFromDocument } from '@/i18n/get-locale-from-document';
 
 const globalMessages = {
-  en: enMessages.errors.global,
-  es: esMessages.errors.global,
-  ca: caMessages.errors.global,
+  en: enMessages.common.globalError,
+  es: esMessages.common.globalError,
+  ca: caMessages.common.globalError,
 } as const;
 
 export default function GlobalError({

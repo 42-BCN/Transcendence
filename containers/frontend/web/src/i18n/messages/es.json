@@ -1,5 +1,10 @@
 {
-  "common": {},
+  "common": {
+    "globalError": {
+      "title": "Algo salió mal",
+      "tryAgain": "Intentar de nuevo"
+    }
+  },
   "components": {
     "localeSwitcher": {
       "ariaLabel": "Idioma",
@@ -103,7 +108,7 @@
         "userOne": "John Doe",
         "userTwo": "Jane Doe",
         "messageOne": "¡Hola! Mi nombre es ...",
-        "messageTwo": "¡Hola! esta es una prueba de vista previa de mensaje"
+        "messageTwo": "¡Hola! Esta es una prueba de vista previa de mensaje"
       },
       "meter": {
         "title": "Medidor",
@@ -235,10 +240,6 @@
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
-    "global": {
-      "title": "Algo salió mal",
-      "tryAgain": "Intentar de nuevo"
-    }
+    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
   }
 }

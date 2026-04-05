@@ -2,7 +2,12 @@
 // See: https://next-intl.dev/docs/workflows/typescript#messages-arguments
 
 declare const messages: {
-  "common": {},
+  "common": {
+    "globalError": {
+      "title": "Something went wrong",
+      "tryAgain": "Try again"
+    }
+  },
   "components": {
     "localeSwitcher": {
       "ariaLabel": "Language",
@@ -106,7 +111,7 @@ declare const messages: {
         "userOne": "John Doe",
         "userTwo": "Jane Doe",
         "messageOne": "Hello! My name is ...",
-        "messageTwo": "Hello! this is a test for message preview"
+        "messageTwo": "Hello! This is a test for message preview"
       },
       "meter": {
         "title": "Meter",
@@ -238,11 +243,7 @@ declare const messages: {
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
-    "global": {
-      "title": "Something went wrong",
-      "tryAgain": "Try again"
-    }
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
   }
 };
 export default messages;

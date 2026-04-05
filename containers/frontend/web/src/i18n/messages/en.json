@@ -1,5 +1,10 @@
 {
-  "common": {},
+  "common": {
+    "globalError": {
+      "title": "Something went wrong",
+      "tryAgain": "Try again"
+    }
+  },
   "components": {
     "localeSwitcher": {
       "ariaLabel": "Language",
@@ -103,7 +108,7 @@
         "userOne": "John Doe",
         "userTwo": "Jane Doe",
         "messageOne": "Hello! My name is ...",
-        "messageTwo": "Hello! this is a test for message preview"
+        "messageTwo": "Hello! This is a test for message preview"
       },
       "meter": {
         "title": "Meter",
@@ -235,10 +240,6 @@
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
-    "global": {
-      "title": "Something went wrong",
-      "tryAgain": "Try again"
-    }
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
   }
 }

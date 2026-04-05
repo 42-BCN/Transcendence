@@ -1,5 +1,10 @@
 {
-  "common": {},
+  "common": {
+    "globalError": {
+      "title": "Alguna cosa ha anat malament",
+      "tryAgain": "Torna-ho a provar"
+    }
+  },
   "components": {
     "localeSwitcher": {
       "ariaLabel": "Idioma",
@@ -103,7 +108,7 @@
         "userOne": "John Doe",
         "userTwo": "Jane Doe",
         "messageOne": "Hola! El meu nom és ...",
-        "messageTwo": "Hola! això és una prova de previsualització de missatge"
+        "messageTwo": "Hola! Això és una prova de previsualització de missatge"
       },
       "meter": {
         "title": "Mesurador",
@@ -235,10 +240,6 @@
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
-    "global": {
-      "title": "Alguna cosa ha anat malament",
-      "tryAgain": "Torna-ho a provar"
-    }
+    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
   }
 }
