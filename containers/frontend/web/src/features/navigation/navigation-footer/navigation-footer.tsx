@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 
 export function NavigationFooter() {
   const { isExpanded } = useNavigationContext();
-  const t = useTranslations('navigation');
+  const t = useTranslations('features.navigation');
 
   return (
     <>

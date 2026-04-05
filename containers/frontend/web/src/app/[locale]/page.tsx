@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 
 export default async function HomePage() {
-  const t = await getTranslations('home');
+  const t = await getTranslations('pages.home');
 
   return (
     <main className="p-8">

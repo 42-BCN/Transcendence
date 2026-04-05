@@ -1,99 +1,110 @@
 {
-  "navigation": {
-    "home": "Home",
-    "createAccount": "Create account",
-    "login": "Log in",
-    "UI": "UI",
-    "robots": "Robots",
-    "profile": "Profile",
-    "logout": "Logout",
-    "settings": "Settings",
-    "menu": "Menu"
-  },
-  "home": {
-    "title": "Hello from Next in Docker 👋",
-    "subtitle": "If you can see this, routing + dev server work."
-  },
-  "LocaleLayout": {
-    "description": "This is an example of using next-intl in the `app` directory.",
-    "title": "next-intl example"
-  },
-  "LocaleSwitcher": {
-    "ariaLabel": "Language",
-    "en": "EN",
-    "es": "ES",
-    "ca": "CA"
-  },
-  "TextAreaField": { "counter": "{current} of {max} characters" },
-  "auth": {
-    "common": {
-      "appTitle": "Auth",
-      "or": "OR",
-      "identifier": {
-        "label": "Email or username",
-        "placeholder": "name@example.com or username",
-        "description": "Use the email address or username you signed up with."
-      },
-      "email": {
-        "label": "Email",
-        "placeholder": "name@example.com"
-      },
-      "username": {
-        "label": "Username",
-        "placeholder": "your_username"
-      },
-      "password": {
-        "label": "Password",
-        "placeholder": "Enter your password",
-        "description": "Min 8 characters long."
-      },
-      "confirmPassword": {
-        "label": "Confirm password",
-        "placeholder": "Re-enter your password"
-      }
+  "common": {},
+  "components": {
+    "localeSwitcher": {
+      "ariaLabel": "Language",
+      "en": "EN",
+      "es": "ES",
+      "ca": "CA"
     },
-    "login": {
-      "title": "Log in",
-      "submit": "Log in",
-      "forgotPassword": "Forgot password?",
-      "noAccount": "Don’t have an account?",
-      "goToCreateAccount": "Create one",
-      "withGoogle": "Continue with Google"
+    "textAreaField": {
+      "characterCount": "{current} of {max} characters"
     },
-    "createAccount": {
-      "title": "Create account",
-      "submit": "Create account",
-      "haveAccount": "Already have an account?",
-      "goToLogin": "Log in",
-      "withGoogle": "Continue with Google",
-      "success": {
+    "footer": {
+      "appName": "Transcendence",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "github": "GitHub",
+      "copyright": "All rights reserved"
+    }
+  },
+  "layouts": {
+    "locale": {
+      "description": "This is an example of using next-intl in the `app` directory.",
+      "title": "next-intl example"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Hello from Next in Docker 👋",
+      "subtitle": "If you can see this, routing + dev server work."
+    }
+  },
+  "features": {
+    "auth": {
+      "fields": {
+        "identifier": {
+          "label": "Email or username",
+          "placeholder": "name@example.com or username",
+          "description": "Use the email address or username you signed up with."
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "name@example.com"
+        },
+        "username": {
+          "label": "Username",
+          "placeholder": "your_username"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "Enter your password",
+          "description": "Min 8 characters long."
+        },
+        "confirmPassword": {
+          "label": "Confirm password",
+          "placeholder": "Re-enter your password"
+        }
+      },
+      "actions": {
+        "login": "Log in",
+        "signup": "Create account",
+        "continueWithGoogle": "Continue with Google",
+        "sendEmail": "Send email",
+        "resendEmail": "Resend email"
+      },
+      "login": {
+        "title": "Log in",
+        "submit": "Log in",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don’t have an account?",
+        "goToSignup": "Create one"
+      },
+      "signup": {
+        "title": "Create account",
+        "haveAccount": "Already have an account?",
+        "goToLogin": "Log in"
+      },
+      "verification": {
         "title": "Check your email",
         "sent": "We've sent you an email to confirm your account.",
-        "check": "Check your inbox and follow the instructions to activate your account.",
+        "checkInbox": "Check your inbox and follow the instructions to activate your account.",
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
-        "resend": "Resend email",
         "resending": "Sending...",
-        "resent": "Email sent!",
+        "backToLogin": "Already confirmed? Sign in",
+        "recoverTitle": "Recover account"
+      },
+      "messages": {
+        "or": "OR",
         "resendSuccess": "✓ Email sent. Wait before trying again.",
-        "resendError": "✗ Could not send email. Please try again.",
-        "backToLogin": "Already confirmed? Sign in"
+        "resendError": "✗ Could not send email. Please try again."
       }
     },
-    "status": {
-      "success": "Success",
-      "error": "Something went wrong. Please try again."
+    "navigation": {
+      "home": "Home",
+      "createAccount": "Create account",
+      "login": "Log in",
+      "menu": "Menu",
+      "ui": "UI",
+      "robots": "Robots",
+      "profile": "Profile",
+      "logout": "Logout",
+      "settings": "Settings"
     },
-    "recover": {
-      "title": "Recover account",
-      "submit": "Send email",
-      "resend": "Request another email",
-      "goToLogin": "Go to log in"
-    },
-    "logout": "Logout"
-  },
-  "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
+    "settings": {
+      "theme": "Theme",
+      "language": "Language"
+    }
   },
   "validation": {
     "REQUIRED": "This field is required.",
@@ -109,24 +120,8 @@
     "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
     "OUT_OF_RANGE": "Query out of range"
   },
-  "Footer": {
-    "appName": "Transcendence",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "github": "GitHub",
-    "copyright": "All rights reserved"
-  },
-  "settings": {
-    "theme": "Theme",
-    "language": "Language"
-  },
-  "Profile": {
-    "fail": "Failed to load user",
-    "userId": "User ID",
-    "username": "Username"
-  },
-  "me": {
-    "title": "Protected route test",
-    "subtitle": "Click the button. If logged in, you should see user info. If not, you should get 401."
+  "errors": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
   }
 }

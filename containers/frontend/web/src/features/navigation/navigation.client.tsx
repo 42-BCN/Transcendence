@@ -38,7 +38,7 @@ export function useMediaQuery(query: string) {
 
 function MobileNavigation(args: NavigationClientProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const t = useTranslations('navigation');
+  const t = useTranslations('features.navigation');
   const pathname = usePathname();
 
   const closeNavigation = useCallback(() => {

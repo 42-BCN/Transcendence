@@ -1,104 +1,110 @@
 {
-  "navigation": {
-    "home": "Inici",
-    "createAccount": "Crear compte",
-    "login": "Iniciar sessió",
-    "UI": "UI",
-    "robots": "Robots",
-    "profile": "Perfil",
-    "logout": "Tancar sessió",
-    "settings": "Configuració",
-    "menu": "Menú"
-  },
-  "CreateAccountPage": {
-    "title": "Crear compte",
-    "email": "Correu electrònic",
-    "password": "Contrasenya",
-    "submit": "Crear compte"
-  },
-  "home": {
-    "title": "Hola des de Next en Docker 👋",
-    "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
-  },
-  "LocaleLayout": {
-    "description": "Aquest és un exemple de com utilitzar next-intl al directori app.",
-    "title": "Exemple next-intl"
-  },
-  "LocaleSwitcher": {
-    "ariaLabel": "Idioma",
-    "en": "EN",
-    "es": "ES",
-    "ca": "CA"
-  },
-  "auth": {
-    "common": {
-      "appTitle": "Autenticació",
-      "or": "O",
-      "identifier": {
-        "label": "Correu o nom d'usuari",
-        "placeholder": "nom@exemple.com o usuari",
-        "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar."
-      },
-      "email": {
-        "label": "Correu electrònic",
-        "placeholder": "nom@exemple.com"
-      },
-      "username": {
-        "label": "Nom d'usuari",
-        "placeholder": "el_teu_usuari"
-      },
-      "password": {
-        "label": "Contrasenya",
-        "placeholder": "Introdueix la teva contrasenya",
-        "description": "Mínim 8 caràcters."
-      },
-      "confirmPassword": {
-        "label": "Confirmar contrasenya",
-        "placeholder": "Torna a introduir la teva contrasenya"
-      }
+  "common": {},
+  "components": {
+    "localeSwitcher": {
+      "ariaLabel": "Idioma",
+      "en": "EN",
+      "es": "ES",
+      "ca": "CA"
     },
-    "login": {
-      "title": "Iniciar sessió",
-      "submit": "Iniciar sessió",
-      "forgotPassword": "Has oblidat la contrasenya?",
-      "noAccount": "No tens compte?",
-      "goToCreateAccount": "Crear-ne un",
-      "withGoogle": "Continuar amb Google"
+    "textAreaField": {
+      "characterCount": "{current} de {max} caràcters"
     },
-    "createAccount": {
-      "title": "Crear compte",
-      "submit": "Crear compte",
-      "haveAccount": "Ja tens compte?",
-      "goToLogin": "Iniciar sessió",
-      "withGoogle": "Continuar amb Google",
-      "success": {
+    "footer": {
+      "appName": "Transcendence",
+      "privacy": "Política de Privacitat",
+      "terms": "Termes de Servei",
+      "github": "GitHub",
+      "copyright": "Tots els drets reservats"
+    }
+  },
+  "layouts": {
+    "locale": {
+      "description": "Aquest és un exemple de com utilitzar next-intl al directori app.",
+      "title": "Exemple next-intl"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Hola des de Next en Docker 👋",
+      "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
+    }
+  },
+  "features": {
+    "auth": {
+      "fields": {
+        "identifier": {
+          "label": "Correu o nom d'usuari",
+          "placeholder": "nom@exemple.com o usuari",
+          "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar."
+        },
+        "email": {
+          "label": "Correu electrònic",
+          "placeholder": "nom@exemple.com"
+        },
+        "username": {
+          "label": "Nom d'usuari",
+          "placeholder": "el_teu_usuari"
+        },
+        "password": {
+          "label": "Contrasenya",
+          "placeholder": "Introdueix la teva contrasenya",
+          "description": "Mínim 8 caràcters."
+        },
+        "confirmPassword": {
+          "label": "Confirmar contrasenya",
+          "placeholder": "Torna a introduir la teva contrasenya"
+        }
+      },
+      "actions": {
+        "login": "Iniciar sessió",
+        "signup": "Crear compte",
+        "continueWithGoogle": "Continuar amb Google",
+        "sendEmail": "Enviar email",
+        "resendEmail": "Tornar a enviar"
+      },
+      "login": {
+        "title": "Iniciar sessió",
+        "submit": "Iniciar sessió",
+        "forgotPassword": "Has oblidat la contrasenya?",
+        "noAccount": "No tens compte?",
+        "goToSignup": "Crear-ne un"
+      },
+      "signup": {
+        "title": "Crear compte",
+        "haveAccount": "Ja tens compte?",
+        "goToLogin": "Iniciar sessió"
+      },
+      "verification": {
         "title": "Verifica el teu email",
         "sent": "T'hem enviat un correu per confirmar el teu compte.",
-        "check": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
-        "resend": "Tornar a enviar",
         "resending": "Enviant...",
-        "resent": "Enviat!",
-        "resendSuccess": "✓ Correu enviat. Espera abans de tornar-ho a intentar.",
-        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar.",
-        "backToLogin": "Ja has confirmat? Iniciar sessió"
+        "backToLogin": "Ja has confirmat? Iniciar sessió",
+        "recoverTitle": "Recuperar compte"
+      },
+      "messages": {
+        "or": "O",
+        "resendSuccess": "✓ Email enviat. Espera per tornar-ho a intentar.",
+        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar."
       }
     },
-    "status": {
-      "success": "Correcte",
-      "error": "Alguna cosa ha anat malament. Torna-ho a intentar."
+    "navigation": {
+      "home": "Inici",
+      "createAccount": "Crear compte",
+      "login": "Iniciar sessió",
+      "menu": "Menú",
+      "ui": "UI",
+      "robots": "Robots",
+      "profile": "Perfil",
+      "logout": "Tancar sessió",
+      "settings": "Configuració"
     },
-    "recover": {
-      "title": "Recuperar compte",
-      "submit": "Enviar correu",
-      "resend": "Sol·licitar un altre correu",
-      "goToLogin": "Anar a l'inici de sessió"
-    },
-    "logout": "Tancar sessió"
-  },
-  "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
+    "settings": {
+      "theme": "Tema",
+      "language": "Idioma"
+    }
   },
   "validation": {
     "REQUIRED": "Aquest camp és obligatori.",
@@ -114,24 +120,8 @@
     "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen.",
     "OUT_OF_RANGE": "Sol·licitud fora de rang"
   },
-  "Footer": {
-    "appName": "Transcendence",
-    "privacy": "Política de privacitat",
-    "terms": "Termes de servei",
-    "github": "GitHub",
-    "copyright": "Tots els drets reservats"
-  },
-  "settings": {
-    "theme": "Tema",
-    "language": "Idioma"
-  },
-  "Profile": {
-    "fail": "Error al carregar l'usuari",
-    "userId": "ID d'usuari",
-    "username": "Nom d'usuari"
-  },
-  "me": {
-    "title": "Prova de ruta protegida",
-    "subtitle": "Fes clic al botó. Si estàs autenticat, hauries de veure la informació de l'usuari. Si no, hauries de rebre un 401."
+  "errors": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
+    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
   }
 }
