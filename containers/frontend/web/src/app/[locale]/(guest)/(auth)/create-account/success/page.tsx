@@ -4,7 +4,7 @@ import { InternalLink } from '@components/controls/link/link';
 import { Text } from '@components/primitives/text';
 import { Stack } from '@components/primitives/stack';
 
-export default async function SignupSuccessPage() {
+export default async function CreateAccountSuccessPage() {
   const t = await getTranslations('features.auth');
 
   return (
