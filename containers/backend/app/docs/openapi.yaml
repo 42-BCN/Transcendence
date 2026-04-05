@@ -1,0 +1,1281 @@
+openapi: 3.0.3
+info:
+  title: Backend API
+  version: 1.0.0
+  description: OpenAPI specification for the current Express API routes.
+servers:
+  - url: /
+tags:
+  - name: Health
+  - name: Auth
+  - name: Protected
+  - name: Users
+  - name: Friendships
+  - name: Friends
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      operationId: getHealth
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthOkResponse"
+        "500":
+          description: Redis is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthErrorResponse"
+
+  /auth/signup:
+    post:
+      tags: [Auth]
+      summary: Create a new account
+      operationId: postAuthSignup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        "200":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignupResponse"
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate a user and create a session
+      operationId: postAuthLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login succeeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+        "403":
+          description: Account locked or email not verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+
+  /auth/recover:
+    post:
+      tags: [Auth]
+      summary: Start the password recovery flow
+      operationId: postAuthRecover
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecoverRequest"
+      responses:
+        "200":
+          description: Recovery email flow accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecoverResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+
+  /auth/resend-verification:
+    post:
+      tags: [Auth]
+      summary: Resend the account verification email
+      operationId: postAuthResendVerification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendVerificationRequest"
+      responses:
+        "200":
+          description: Verification email sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NullResponse"
+        "404":
+          description: User not found or already verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+        "429":
+          description: Cooldown not expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+
+  /auth/google:
+    get:
+      tags: [Auth]
+      summary: Start Google OAuth login
+      operationId: getAuthGoogle
+      responses:
+        "302":
+          description: Redirect to Google OAuth
+
+  /auth/callback/google:
+    get:
+      tags: [Auth]
+      summary: Handle Google OAuth callback
+      operationId: getAuthGoogleCallback
+      responses:
+        "302":
+          description: Redirect to profile on success
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Destroy the active session
+      operationId: postAuthLogout
+      responses:
+        "200":
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NullResponse"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+
+  /protected/me:
+    get:
+      tags: [Protected]
+      summary: Get the current session user id
+      operationId: getProtectedMe
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Current user id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionMeResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /protected/me/profile:
+    get:
+      tags: [Protected]
+      summary: Get the current user's public profile
+      operationId: getProtectedMeProfile
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Public profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List public users
+      operationId: getUsers
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          required: false
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+          required: false
+      responses:
+        "200":
+          description: Paginated user list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersListResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get a user by id
+      operationId: getUserById
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Public user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /users/username/{username}:
+    get:
+      tags: [Users]
+      summary: Get a user by username
+      operationId: getUserByUsername
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Public user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friendships:
+    get:
+      tags: [Friendships]
+      summary: List accepted friendships
+      operationId: getFriendships
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Friendship list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipsListResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friendships/requests/received:
+    get:
+      tags: [Friendships]
+      summary: List received friend requests
+      operationId: getFriendshipsReceivedRequests
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Received requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipsRequestsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friendships/requests/sent:
+    get:
+      tags: [Friendships]
+      summary: List sent friend requests
+      operationId: getFriendshipsSentRequests
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Sent requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipsRequestsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friendships/request:
+    post:
+      tags: [Friendships]
+      summary: Create a friend request
+      operationId: postFriendshipsRequest
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendRequestCreateRequest"
+      responses:
+        "200":
+          description: Friend request auto-accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "201":
+          description: Friend request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "403":
+          description: Forbidden action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Target user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friendships/requests:
+    post:
+      tags: [Friendships]
+      summary: Create a friend request alias
+      operationId: postFriendshipsRequestsAlias
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendRequestCreateRequest"
+      responses:
+        "200":
+          description: Friend request auto-accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "201":
+          description: Friend request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "403":
+          description: Forbidden action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Target user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friendships/requests/{requestId}/accept:
+    patch:
+      tags: [Friendships]
+      summary: Accept a friend request
+      operationId: patchFriendshipsRequestAccept
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipActionResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friendships/respond:
+    post:
+      tags: [Friendships]
+      summary: Accept or reject a pending request
+      operationId: postFriendshipsRespond
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendshipRespondRequest"
+      responses:
+        "200":
+          description: Request handled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipRespondResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "403":
+          description: Forbidden action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friends:
+    get:
+      tags: [Friends]
+      summary: List accepted friends
+      operationId: getFriends
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Friends list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendsListResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friends/requests/received:
+    get:
+      tags: [Friends]
+      summary: List received friend requests alias
+      operationId: getFriendsReceivedRequests
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Received requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipsRequestsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friends/requests/sent:
+    get:
+      tags: [Friends]
+      summary: List sent friend requests alias
+      operationId: getFriendsSentRequests
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Sent requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipsRequestsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+
+  /friends/request:
+    post:
+      tags: [Friends]
+      summary: Create a friend request alias
+      operationId: postFriendsRequest
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendRequestCreateRequest"
+      responses:
+        "200":
+          description: Friend request auto-accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "201":
+          description: Friend request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "403":
+          description: Forbidden action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Target user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friends/requests:
+    post:
+      tags: [Friends]
+      summary: Create a friend request alias
+      operationId: postFriendsRequestsAlias
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendRequestCreateRequest"
+      responses:
+        "200":
+          description: Friend request auto-accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "201":
+          description: Friend request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestCreateResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "403":
+          description: Forbidden action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Target user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friends/requests/{requestId}/accept:
+    patch:
+      tags: [Friends]
+      summary: Accept a friend request alias
+      operationId: patchFriendsRequestAccept
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipActionResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+  /friends/respond:
+    post:
+      tags: [Friends]
+      summary: Accept or reject a pending request alias
+      operationId: postFriendsRespond
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FriendshipRespondRequest"
+      responses:
+        "200":
+          description: Request handled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendshipRespondResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "403":
+          description: Forbidden action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "404":
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenericErrorResponse"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sid
+  schemas:
+    ApiError:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+        details:
+          nullable: true
+    ValidationErrorDetails:
+      type: object
+      required: [fields]
+      properties:
+        fields:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    GenericErrorResponse:
+      type: object
+      required: [ok, error]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+        error:
+          $ref: "#/components/schemas/ApiError"
+    ValidationErrorResponse:
+      type: object
+      required: [ok, error]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+        error:
+          allOf:
+            - $ref: "#/components/schemas/ApiError"
+            - type: object
+              properties:
+                details:
+                  $ref: "#/components/schemas/ValidationErrorDetails"
+    HealthOkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+    HealthErrorResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+    NullResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          nullable: true
+    AuthUser:
+      type: object
+      required: [id, email, username]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+    SignupRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+    LoginRequest:
+      type: object
+      required: [identifier, password]
+      properties:
+        identifier:
+          type: string
+        password:
+          type: string
+          minLength: 1
+    RecoverRequest:
+      type: object
+      required: [identifier]
+      properties:
+        identifier:
+          type: string
+    ResendVerificationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      additionalProperties: false
+    SignupResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [user]
+          properties:
+            user:
+              $ref: "#/components/schemas/AuthUser"
+    LoginResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [user]
+          properties:
+            user:
+              $ref: "#/components/schemas/AuthUser"
+    RecoverResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [identifier]
+          properties:
+            identifier:
+              type: string
+    SessionMeResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [userId]
+          properties:
+            userId:
+              type: string
+    UserPublic:
+      type: object
+      required: [id, username]
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+    UserResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/UserPublic"
+    UsersListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [users, meta]
+          properties:
+            users:
+              type: array
+              items:
+                $ref: "#/components/schemas/UserPublic"
+            meta:
+              type: object
+              required: [limit, offset, count]
+              properties:
+                limit:
+                  type: integer
+                offset:
+                  type: integer
+                count:
+                  type: integer
+    FriendshipPublic:
+      type: object
+      required: [id, friendUserId, friendUsername, status, isSender, createdAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        friendUserId:
+          type: string
+          format: uuid
+        friendUsername:
+          type: string
+        status:
+          type: string
+          enum: [pending, accepted]
+        isSender:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    FriendPublic:
+      type: object
+      required: [id, username, avatar, isOnline]
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        avatar:
+          nullable: true
+        isOnline:
+          type: boolean
+    FriendshipsListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [friendships]
+          properties:
+            friendships:
+              type: array
+              items:
+                $ref: "#/components/schemas/FriendshipPublic"
+    FriendshipsRequestsResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [requests]
+          properties:
+            requests:
+              type: array
+              items:
+                $ref: "#/components/schemas/FriendshipPublic"
+    FriendsListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [friends]
+          properties:
+            friends:
+              type: array
+              items:
+                $ref: "#/components/schemas/FriendPublic"
+    FriendRequestCreateRequest:
+      type: object
+      required: [targetUserId]
+      properties:
+        targetUserId:
+          type: string
+          format: uuid
+    FriendRequestCreateResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [friendship, wasAutoAccepted]
+          properties:
+            friendship:
+              $ref: "#/components/schemas/FriendshipPublic"
+            wasAutoAccepted:
+              type: boolean
+    FriendshipActionResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [friendship]
+          properties:
+            friendship:
+              $ref: "#/components/schemas/FriendshipPublic"
+    FriendshipRespondRequest:
+      type: object
+      required: [friendshipId, action]
+      properties:
+        friendshipId:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum: [accept, reject]
+    FriendshipRespondResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [action]
+          properties:
+            action:
+              type: string
+              enum: [accept, reject]
+            friendship:
+              allOf:
+                - $ref: "#/components/schemas/FriendshipPublic"
+              nullable: true
+    AuthErrorResponse:
+      type: object
+      required: [ok, error]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+        error:
+          type: object
+          required: [code]
+          properties:
+            code:
+              type: string
