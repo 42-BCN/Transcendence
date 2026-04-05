@@ -18,7 +18,7 @@ declare const messages: {
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",
       "github": "GitHub",
-      "copyright": "All rights reserved"
+      "copyright": "© {year} {appName}. All rights reserved"
     }
   },
   "layouts": {

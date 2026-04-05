@@ -15,7 +15,7 @@
       "privacy": "Política de Privacidad",
       "terms": "Términos de Servicio",
       "github": "GitHub",
-      "copyright": "Todos los derechos reservados"
+      "copyright": "© {year} {appName}. Todos los derechos reservados"
     }
   },
   "layouts": {
