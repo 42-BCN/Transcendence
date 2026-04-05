@@ -1,7 +1,10 @@
 import { GlassCard } from '@components/primitives/glass-card';
 import { Button } from '@components/controls/button';
+import { getTranslations } from 'next-intl/server';
 
-export default function GlassCardAnimatedV2Page() {
+export default async function GlassCardAnimatedV2Page() {
+  const t = await getTranslations('pages.ui.glassCardAnimatedV2');
+
   return (
     <div className="w-full h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden">
       {/* ⚠️ INLINE CSS STYLE FOR REAL ANIMATIONS WITHOUT TOUCHING CONFIGS ⚠️ */}
@@ -38,22 +41,22 @@ export default function GlassCardAnimatedV2Page() {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       <GlassCard className="w-96 z-10" intensity="medium" blur="xl">
-        <h3 className="text-2xl font-bold text-white mb-2">Dynamic Reflection</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">{t('title')}</h3>
         <p className="text-white/80 text-sm leading-relaxed mb-4">
-          Here the spheres{' '}
-          <span className="text-yellow-400 font-semibold">move behind the glass</span>.
+          {t('descriptionPrefix')}{' '}
+          <span className="text-yellow-400 font-semibold">{t('highlight')}</span>.
           <br />
-          The color flows and refracts smoothly as it crosses the edges.
+          {t('descriptionSuffix')}
         </p>
         <div className="flex flex-col gap-3 w-full">
           <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-none">
-            Option 1
+            {t('option1')}
           </Button>
           <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-2xl">
-            Option 2
+            {t('option2')}
           </Button>
           <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-full">
-            Option 3
+            {t('option3')}
           </Button>
         </div>
       </GlassCard>

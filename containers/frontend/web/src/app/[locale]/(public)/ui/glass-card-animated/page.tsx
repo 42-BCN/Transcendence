@@ -1,7 +1,10 @@
 import { GlassCard } from '@components/primitives/glass-card';
 import { Button } from '@components/controls/button';
+import { getTranslations } from 'next-intl/server';
 
-export default function GlassCardAnimatedPage() {
+export default async function GlassCardAnimatedPage() {
+  const t = await getTranslations('pages.ui.glassCardAnimated');
+
   return (
     <div className="w-full h-screen bg-slate-950 flex items-center justify-center relative overflow-hidden">
       {/* Animated Colored Spheres (Glow Ambient) */}
@@ -13,14 +16,14 @@ export default function GlassCardAnimatedPage() {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       <GlassCard className="w-96 z-10" saturate={true} intensity="medium" blur="xl">
-        <h3 className="text-2xl font-bold text-white mb-2">Probando la saturación</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">{t('title')}</h3>
         <p className="text-white/80 text-sm leading-relaxed mb-4">
-          Esta tarjeta utiliza{' '}
-          <span className="text-cyan-400 font-semibold">backdrop-saturate</span>. Las esferas de luz
-          cobran más vida y color al pasar detrás del cristal.
+          {t('descriptionPrefix')}{' '}
+          <span className="text-cyan-400 font-semibold">{t('highlight')}</span>.{' '}
+          {t('descriptionSuffix')}
         </p>
         <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-full">
-          Activar
+          {t('activate')}
         </Button>
       </GlassCard>
     </div>

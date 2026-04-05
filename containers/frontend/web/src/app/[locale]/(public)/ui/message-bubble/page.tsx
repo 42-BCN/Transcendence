@@ -1,26 +1,29 @@
 import { MessageBubble } from '@components/primitives/message-bubble';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { getTranslations } from 'next-intl/server';
 
-export default function MessageBubblePage() {
+export default async function MessageBubblePage() {
+  const t = await getTranslations('pages.ui.messageBubble');
+
   return (
     <Stack className="p-4">
       <Text as="h1" variant="heading-lg">
-        Bubble message
+        {t('title')}
       </Text>
 
       <Stack className="h-[400px] w-[400px]">
         <MessageBubble>
           <Text as="h2" variant="caption">
-            John Doe
+            {t('userOne')}
           </Text>
-          <Text as="p">Hello! My name is ...</Text>
+          <Text as="p">{t('messageOne')}</Text>
         </MessageBubble>
         <MessageBubble variant="me">
           <Text as="h2" variant="caption">
-            Jane Doe
+            {t('userTwo')}
           </Text>
-          <Text as="p">Hello! this is a test for message preview</Text>
+          <Text as="p">{t('messageTwo')}</Text>
         </MessageBubble>
       </Stack>
     </Stack>

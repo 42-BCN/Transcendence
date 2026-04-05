@@ -48,3 +48,10 @@ features.friendships.messages.requestSent
 validation.REQUIRED
 errors.AUTH_INVALID_CREDENTIALS
 ```
+
+Shared UI copy that is not a backend error code should live under `common`, for example:
+
+```txt
+common.globalError.title
+common.globalError.tryAgain
+```

@@ -1,5 +1,10 @@
 {
-  "common": {},
+  "common": {
+    "globalError": {
+      "title": "Alguna cosa ha anat malament",
+      "tryAgain": "Torna-ho a provar"
+    }
+  },
   "components": {
     "localeSwitcher": {
       "ariaLabel": "Idioma",
@@ -15,7 +20,7 @@
       "privacy": "Política de Privacitat",
       "terms": "Termes de Servei",
       "github": "GitHub",
-      "copyright": "Tots els drets reservats"
+      "copyright": "© {year} {appName}. Tots els drets reservats"
     }
   },
   "layouts": {
@@ -29,9 +34,103 @@
       "title": "Hola des de Next en Docker 👋",
       "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
     },
+    "notFound": {
+      "title": "Pàgina no trobada",
+      "description": "La pàgina que busques no existeix."
+    },
     "me": {
       "title": "El Meu Compte",
       "subtitle": "Accedeix als detalls protegits del teu compte."
+    },
+    "ui": {
+      "index": {
+        "controlComponents": "Components de control",
+        "buttons": "Botons",
+        "input": "Entrada",
+        "sampleButtonText": "Hola",
+        "viewerTitles": {
+          "buttonPrimitive": "Botó primitiu",
+          "ariaButton": "Botó Aria",
+          "uiButton": "Botó UI",
+          "inputPrimitive": "Input primitiu",
+          "ariaInput": "Input Aria",
+          "uiInput": "Input UI"
+        }
+      },
+      "glassCard": {
+        "title": "Targeta de Glassmorphism",
+        "cardTitle": "Glassmorphism",
+        "description": "Un component de targeta glassmorphic que utilitza filtres de fons, vores transparents i ombres subtils per integrar-se amb fons texturitzats.",
+        "cta": "Començar"
+      },
+      "glassCardAnimated": {
+        "title": "Provant la saturació",
+        "descriptionPrefix": "Aquesta targeta utilitza",
+        "highlight": "backdrop-saturate",
+        "descriptionSuffix": "Les esferes de llum guanyen més vida i color en passar darrere del vidre.",
+        "activate": "Activar"
+      },
+      "glassCardAnimatedV2": {
+        "title": "Reflex dinàmic",
+        "descriptionPrefix": "Aquí les esferes",
+        "highlight": "es mouen darrere del vidre",
+        "descriptionSuffix": "El color flueix i es refracta suaument en travessar les vores.",
+        "option1": "Opció 1",
+        "option2": "Opció 2",
+        "option3": "Opció 3"
+      },
+      "glassCardAnimatedV3": {
+        "title": "Esferes sòlides",
+        "descriptionPrefix": "Aquí les esferes són",
+        "highlight": "100% sòlides",
+        "descriptionMiddle": "Tota la distorsió ve exclusivament del vidre.",
+        "nestedPrefix": "Exemple d'un component glass imbricat:",
+        "activate": "Activar"
+      },
+      "textArea": {
+        "title": "Component d'àrea de text",
+        "ariaLabel": "Missatge"
+      },
+      "typography": {
+        "caption": "Text de peu utilitzat per a informació de suport o metadades.",
+        "bodyXs": "Text de cos extra petit útil per a interfícies denses amb espai limitat.",
+        "bodySm": "El text de cos petit sovint apareix en descripcions secundàries, pistes o contingut d'ajuda.",
+        "body": "Aquest paràgraf mostra l'estil de cos per defecte. És intencionadament més llarg per avaluar la llegibilitat, el ritme i la llargada de línia del sistema tipogràfic. Quan el text s'estén massa a la pantalla, llegir es fa més difícil, per això limitar la mesura millora la lectura.",
+        "bodyLg": "El text de cos gran funciona bé per a paràgrafs introductoris o descripcions destacades que necessiten més èmfasi sense convertir-se en un títol.",
+        "headingSm": "Estil de títol petit renderitzat com a paràgraf per a proves visuals.",
+        "headingMd": "Estil de títol mitjà renderitzat com a paràgraf per a inspecció.",
+        "headingLg": "Estil de títol gran renderitzat com a paràgraf.",
+        "headingXl": "Estil de títol extra gran renderitzat com a contingut de paràgraf.",
+        "code": "const message = \"Text d'estil codi renderitzat en un paràgraf.\";"
+      },
+      "messageBubble": {
+        "title": "Bombolla de missatge",
+        "userOne": "John Doe",
+        "userTwo": "Jane Doe",
+        "messageOne": "Hola! El meu nom és ...",
+        "messageTwo": "Hola! Això és una prova de previsualització de missatge"
+      },
+      "meter": {
+        "title": "Mesurador",
+        "label": "HP"
+      },
+      "themeTest": {
+        "title": "Pàgina de prova de tema",
+        "description": "Aquesta pàgina demostra la implementació del mode clar/fosc. Tots els colors utilitzen variables CSS sincronitzades amb Tailwind.",
+        "secondaryBackground": "Fons secundari",
+        "secondaryBackgroundDescription": "Aquesta targeta utilitza `bg-bg-secondary`. S'hauria de veure lleugerament diferent del fons principal en tots dos modes.",
+        "textVariants": "Variants de text",
+        "primaryText": "Text principal",
+        "secondaryText": "Text secundari",
+        "tertiaryText": "Text terciari",
+        "disabledText": "Text deshabilitat"
+      },
+      "scrollArea": {
+        "title": "Àrea de desplaçament",
+        "description": "Aquest component és un div que ocupa una alçada del 100% i crea una àrea de desplaçament.",
+        "example": "Exemple",
+        "itemLabel": "Element"
+      }
     }
   },
   "features": {
@@ -65,7 +164,8 @@
         "signup": "Crear compte",
         "continueWithGoogle": "Continuar amb Google",
         "sendEmail": "Enviar email",
-        "resendEmail": "Tornar a enviar"
+        "resendEmail": "Tornar a enviar",
+        "logoutAriaLabel": "Tancar sessió"
       },
       "login": {
         "title": "Iniciar sessió",
@@ -99,11 +199,20 @@
       "createAccount": "Crear compte",
       "login": "Iniciar sessió",
       "menu": "Menú",
+      "mainAriaLabel": "Navegació principal",
       "ui": "UI",
       "robots": "Robots",
       "profile": "Perfil",
       "logout": "Tancar sessió",
       "settings": "Configuració"
+    },
+    "chat": {
+      "messageAriaLabel": "Missatge"
+    },
+    "game": {
+      "resetPlan": "Reiniciar pla",
+      "endTurn": "Acabar torn",
+      "healthLabel": "HP"
     },
     "settings": {
       "theme": "Tema",

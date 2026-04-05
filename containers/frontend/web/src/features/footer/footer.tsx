@@ -11,11 +11,24 @@ export const footerLinks = [
   { key: 'github', href: 'https://github.com/42-BCN/Transcendence', label: 'github' },
 ] as const;
 
-const internalFooterLinks = footerLinks.filter((link) => !link.href.startsWith('http'));
-const externalFooterLinks = footerLinks.filter((link) => link.href.startsWith('http'));
+type FooterLink = (typeof footerLinks)[number];
+
+function isExternalFooterLink(link: FooterLink): link is FooterLink & { href: `http${string}` } {
+  return link.href.startsWith('http');
+}
+
+function isInternalFooterLink(
+  link: FooterLink,
+): link is Exclude<FooterLink, FooterLink & { href: `http${string}` }> {
+  return !isExternalFooterLink(link);
+}
+
+const internalFooterLinks = footerLinks.filter(isInternalFooterLink);
+const externalFooterLinks = footerLinks.filter(isExternalFooterLink);
 
 export function Footer() {
   const t = useTranslations('components.footer');
+  const year = new Date().getFullYear();
 
   return (
     <Stack gap="sm" as="footer">
@@ -29,9 +42,7 @@ export function Footer() {
           {t(label)}
         </ExternalLink>
       ))}
-      <Text variant="caption">
-        © {new Date().getFullYear()} {t('appName')}
-      </Text>
+      <Text variant="caption">{t('copyright', { year, appName: t('appName') })}</Text>
     </Stack>
   );
 }

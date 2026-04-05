@@ -1,33 +1,36 @@
 import { ScrollArea } from '@components/primitives/scroll-area';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { getTranslations } from 'next-intl/server';
 
-function Item({ index }: { index: number }) {
+function Item({ index, label }: { index: number; label: string }) {
   return (
-    <div className="min-h-6 min-w-6 rounded-sm bg-slate-500 px-2 py-1 text-white">Item {index}</div>
+    <div className="min-h-6 min-w-6 rounded-sm bg-slate-500 px-2 py-1 text-white">
+      {label} {index}
+    </div>
   );
 }
 
-export default function ScrollAreaPage() {
+export default async function ScrollAreaPage() {
+  const t = await getTranslations('pages.ui.scrollArea');
+
   return (
     <Stack className="p-4">
       <Text as="h1" variant="heading-lg">
-        Scroll Area
+        {t('title')}
       </Text>
 
-      <Text as="p">
-        This component is a div that takes a height of 100% and creates a scrollable area.
-      </Text>
+      <Text as="p">{t('description')}</Text>
 
       <Text as="h2" variant="heading-md">
-        Example
+        {t('example')}
       </Text>
 
       <div className="h-[400px] w-[400px]">
         <ScrollArea>
           <Stack gap="sm" className="p-2">
             {Array.from({ length: 30 }, (_, index) => (
-              <Item key={index} index={index + 1} />
+              <Item key={index} index={index + 1} label={t('itemLabel')} />
             ))}
           </Stack>
         </ScrollArea>
