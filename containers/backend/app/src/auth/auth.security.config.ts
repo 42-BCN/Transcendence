@@ -8,6 +8,21 @@ const KB = 1024;
 type AuthSecurityConfig = {
   maxFailedAttempts: number;
   lockoutDurationMs: number;
+  resendVerificationCooldownMs: number;
+  rateLimit: {
+    loginIp: {
+      max: number;
+      windowMs: number;
+    };
+    loginIdentifier: {
+      max: number;
+      windowMs: number;
+    };
+    emailFlow: {
+      max: number;
+      windowMs: number;
+    };
+  };
   argon2: {
     memoryCost: number;
     timeCost: number;
@@ -19,6 +34,21 @@ type AuthSecurityConfig = {
 export const authSecurityConfig: AuthSecurityConfig = {
   maxFailedAttempts: 5,
   lockoutDurationMs: 15 * MINUTE,
+  resendVerificationCooldownMs: 60 * SECOND,
+  rateLimit: {
+    loginIp: {
+      max: 20,
+      windowMs: MINUTE,
+    },
+    loginIdentifier: {
+      max: 8,
+      windowMs: 10 * MINUTE,
+    },
+    emailFlow: {
+      max: 5,
+      windowMs: 15 * MINUTE,
+    },
+  },
   argon2: {
     memoryCost: 64 * KB,
     timeCost: 3,
