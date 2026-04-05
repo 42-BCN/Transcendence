@@ -12,7 +12,7 @@ type LocaleKey = 'en' | 'es' | 'ca';
 
 export function LocaleSwitcher() {
   const locale = useLocale() as LocaleKey;
-  const t = useTranslations('LocaleSwitcher');
+  const t = useTranslations('components.localeSwitcher');
   const router = useRouter();
   const pathname = usePathname();
 

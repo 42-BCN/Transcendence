@@ -1,107 +1,119 @@
 {
-  "navigation": {
-    "home": "Inicio",
-    "createAccount": "Crear cuenta",
-    "login": "Iniciar sesión",
-    "UI": "UI",
-    "robots": "Robots",
-    "profile": "Perfil",
-    "logout": "Cerrar sesión",
-    "settings": "Configuración",
-    "menu": "Menú"
-  },
-  "CreateAccountPage": {
-    "title": "Crear cuenta",
-    "email": "Correo electrónico",
-    "password": "Contraseña",
-    "submit": "Crear cuenta"
-  },
-  "home": {
-    "title": "Hola desde Next en Docker 👋",
-    "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan."
-  },
-  "LocaleLayout": {
-    "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
-    "title": "Ejemplo next-intl"
-  },
-  "LocaleSwitcher": {
-    "ariaLabel": "Idioma",
-    "en": "EN",
-    "es": "ES",
-    "ca": "CA"
-  },
-  "TextAreaField": {
-    "counter": "{current} de {max} caracteres"
-  },
-  "auth": {
-    "common": {
-      "appTitle": "Autenticación",
-      "or": "O",
-      "identifier": {
-        "label": "Correo o nombre de usuario",
-        "placeholder": "nombre@ejemplo.com o usuario",
-        "description": "Usa el correo o el nombre de usuario con el que te registraste."
-      },
-      "email": {
-        "label": "Correo electrónico",
-        "placeholder": "nombre@ejemplo.com"
-      },
-      "username": {
-        "label": "Nombre de usuario",
-        "placeholder": "tu_usuario"
-      },
-      "password": {
-        "label": "Contraseña",
-        "placeholder": "Introduce tu contraseña",
-        "description": "Mínimo 8 caracteres."
-      },
-      "confirmPassword": {
-        "label": "Confirmar contraseña",
-        "placeholder": "Vuelve a introducir tu contraseña"
-      }
+  "common": {},
+  "components": {
+    "localeSwitcher": {
+      "ariaLabel": "Idioma",
+      "en": "EN",
+      "es": "ES",
+      "ca": "CA"
     },
-    "login": {
-      "title": "Iniciar sesión",
-      "submit": "Iniciar sesión",
-      "forgotPassword": "¿Has olvidado la contraseña?",
-      "noAccount": "¿No tienes cuenta?",
-      "goToCreateAccount": "Crear una",
-      "withGoogle": "Continuar con Google"
+    "textAreaField": {
+      "characterCount": "{current} de {max} caracteres"
     },
-    "createAccount": {
-      "title": "Crear cuenta",
-      "submit": "Crear cuenta",
-      "haveAccount": "¿Ya tienes cuenta?",
-      "goToLogin": "Iniciar sesión",
-      "withGoogle": "Continuar con Google",
-      "success": {
-        "title": "Verifica tu correo electrónico",
+    "footer": {
+      "appName": "Transcendence",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio",
+      "github": "GitHub",
+      "copyright": "Todos los derechos reservados"
+    }
+  },
+  "layouts": {
+    "locale": {
+      "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
+      "title": "Ejemplo next-intl"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Hola desde Next en Docker 👋",
+      "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan."
+    },
+    "me": {
+      "title": "Mi Cuenta",
+      "subtitle": "Accede a los detalles protegidos de tu cuenta."
+    }
+  },
+  "features": {
+    "auth": {
+      "fields": {
+        "identifier": {
+          "label": "Correo o nombre de usuario",
+          "placeholder": "nombre@ejemplo.com o usuario",
+          "description": "Usa el correo o el nombre de usuario con el que te registraste."
+        },
+        "email": {
+          "label": "Correo electrónico",
+          "placeholder": "nombre@ejemplo.com"
+        },
+        "username": {
+          "label": "Nombre de usuario",
+          "placeholder": "tu_usuario"
+        },
+        "password": {
+          "label": "Contraseña",
+          "placeholder": "Introduce tu contraseña",
+          "description": "Mínimo 8 caracteres."
+        },
+        "confirmPassword": {
+          "label": "Confirmar contraseña",
+          "placeholder": "Vuelve a introducir tu contraseña"
+        }
+      },
+      "actions": {
+        "login": "Iniciar sesión",
+        "signup": "Crear cuenta",
+        "continueWithGoogle": "Continuar con Google",
+        "sendEmail": "Enviar email",
+        "resendEmail": "Volver a enviar"
+      },
+      "login": {
+        "title": "Iniciar sesión",
+        "submit": "Iniciar sesión",
+        "forgotPassword": "¿Has olvidado la contraseña?",
+        "noAccount": "¿No tienes cuenta?",
+        "goToSignup": "Crear una"
+      },
+      "signup": {
+        "title": "Crear cuenta",
+        "haveAccount": "¿Ya tienes cuenta?",
+        "goToLogin": "Iniciar sesión"
+      },
+      "verification": {
+        "title": "Verifica tu email",
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
-        "check": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
+        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
-        "resend": "Reenviar",
         "resending": "Enviando...",
-        "resent": "¡Enviado!",
-        "resendSuccess": "✓ Correo enviado. Espera antes de volver a intentarlo.",
-        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo.",
-        "backToLogin": "¿Ya lo confirmaste? Iniciar sesión"
+        "backToLogin": "¿Ya confirmaste? Iniciar sesión",
+        "recoverTitle": "Recuperar cuenta"
+      },
+      "messages": {
+        "or": "O",
+        "resendSuccess": "✓ Email enviado. Espera para volver a intentarlo.",
+        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo."
       }
     },
-    "status": {
-      "success": "Correcto",
-      "error": "Algo salió mal. Inténtalo de nuevo."
+    "navigation": {
+      "home": "Inicio",
+      "createAccount": "Crear cuenta",
+      "login": "Iniciar sesión",
+      "menu": "Menú",
+      "ui": "UI",
+      "robots": "Robots",
+      "profile": "Perfil",
+      "logout": "Cerrar sesión",
+      "settings": "Configuración"
     },
-    "recover": {
-      "title": "Recuperar cuenta",
-      "submit": "Enviar correo",
-      "resend": "Solicitar otro correo",
-      "goToLogin": "Ir al inicio de sesión"
+    "settings": {
+      "theme": "Tema",
+      "language": "Idioma"
     },
-    "logout": "Cerrar sesión"
-  },
-  "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales no válidas"
+    "profile": {
+      "fail": "No se pudo cargar tu perfil.",
+      "userId": "ID de usuario",
+      "username": "Nombre de usuario"
+    }
   },
   "validation": {
     "REQUIRED": "Este campo es obligatorio.",
@@ -117,24 +129,8 @@
     "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden.",
     "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
-  "Footer": {
-    "appName": "Transcendence",
-    "privacy": "Política de privacidad",
-    "terms": "Términos de servicio",
-    "github": "GitHub",
-    "copyright": "Todos los derechos reservados"
-  },
-  "settings": {
-    "theme": "Tema",
-    "language": "Idioma"
-  },
-  "Profile": {
-    "fail": "Error al cargar el usuario",
-    "userId": "ID de usuario",
-    "username": "Nombre de usuario"
-  },
-  "me": {
-    "title": "Prueba de ruta protegida",
-    "subtitle": "Haz clic en el botón. Si has iniciado sesión, deberías ver la información del usuario. Si no, deberías recibir un 401."
+  "errors": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
   }
 }

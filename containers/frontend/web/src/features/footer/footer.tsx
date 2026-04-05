@@ -11,22 +11,24 @@ export const footerLinks = [
   { key: 'github', href: 'https://github.com/42-BCN/Transcendence', label: 'github' },
 ] as const;
 
+const internalFooterLinks = footerLinks.filter((link) => !link.href.startsWith('http'));
+const externalFooterLinks = footerLinks.filter((link) => link.href.startsWith('http'));
+
 export function Footer() {
-  const t = useTranslations('Footer');
+  const t = useTranslations('components.footer');
 
   return (
     <Stack gap="sm" as="footer">
-      {footerLinks.map(({ href, label }) =>
-        href.startsWith('http') ? (
-          <ExternalLink href={href} key={label} as="link">
-            {t(label)}
-          </ExternalLink>
-        ) : (
-          <InternalLink href={href} key={label}>
-            {t(label)}
-          </InternalLink>
-        ),
-      )}
+      {internalFooterLinks.map(({ href, label }) => (
+        <InternalLink href={href} key={label}>
+          {t(label)}
+        </InternalLink>
+      ))}
+      {externalFooterLinks.map(({ href, label }) => (
+        <ExternalLink href={href} key={label} as="link">
+          {t(label)}
+        </ExternalLink>
+      ))}
       <Text variant="caption">
         © {new Date().getFullYear()} {t('appName')}
       </Text>

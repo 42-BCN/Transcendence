@@ -20,7 +20,7 @@ type StateActionProps = {
 };
 
 function APIError({ err }: StateActionProps) {
-  const t = useTranslations('api');
+  const t = useTranslations('errors');
   return err?.ok === false ? (
     <div role="alert" className="mb-4">
       {t(err.error.code)}
@@ -41,7 +41,7 @@ function useLoginFieldNavigation() {
 }
 
 export function LoginForm() {
-  const t = useTranslations('auth');
+  const t = useTranslations('features.auth');
   const form = useForm<LoginReq>(formApiReq);
   const [state, formAction] = useActionState(loginAction, null);
 

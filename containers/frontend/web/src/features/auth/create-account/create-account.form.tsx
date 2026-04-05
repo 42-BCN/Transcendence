@@ -39,7 +39,7 @@ function useCreateAccountFieldNavigation() {
 
 // TODO make a component
 function APIError({ state }: StateActionProps) {
-  const t2 = useTranslations('api');
+  const t2 = useTranslations('errors');
   return state?.ok === false ? (
     <div role="alert" className="mb-4">
       {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
@@ -49,7 +49,7 @@ function APIError({ state }: StateActionProps) {
 
 export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
-  const t = useTranslations('auth');
+  const t = useTranslations('features.auth');
   const [state, formAction] = useActionState(createAccountAction, null);
   const { emailRef } = useCreateAccountFieldNavigation();
 
@@ -78,7 +78,7 @@ export function CreateAccountForm() {
           onBlur={() => form.setTouch('password')}
           {...fieldsBase.password}
         />
-        <Button type="submit">{t('createAccount.submit')}</Button>
+        <Button type="submit">{t('actions.signup')}</Button>
       </Form>
     </>
   );

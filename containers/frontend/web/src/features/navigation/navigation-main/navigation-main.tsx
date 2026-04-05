@@ -48,7 +48,7 @@ function NavLinkItem(args: NavLinkItemProps) {
   const { navItem } = args;
   const { isExpanded, locale, closeNavigation } = useNavigationContext();
 
-  const t = useTranslations('navigation');
+  const t = useTranslations('features.navigation');
   const label = t(navItem.key);
 
   const pathname = usePathname();

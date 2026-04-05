@@ -5,26 +5,26 @@ import { Text } from '@components/primitives/text';
 import { Stack } from '@components/primitives/stack';
 
 export default async function CreateAccountSuccessPage() {
-  const t = await getTranslations('auth');
+  const t = await getTranslations('features.auth');
 
   return (
     <Stack>
       <Text as="h1" variant="heading-md">
-        {t('createAccount.success.title')}
+        {t('verification.title')}
       </Text>
       <Stack>
         <Text as="p" variant="body-sm">
-          {t('createAccount.success.sent')}
+          {t('verification.sent')}
         </Text>
         <Text as="p" variant="body-sm">
-          {t('createAccount.success.check')}
+          {t('verification.checkInbox')}
         </Text>
         <Text as="p" variant="body-sm">
-          {t('createAccount.success.checkSpam')}
+          {t('verification.checkSpam')}
         </Text>
       </Stack>
       <ResendVerification />
-      <InternalLink href="/login">{t('createAccount.success.backToLogin')}</InternalLink>
+      <InternalLink href="/login">{t('verification.backToLogin')}</InternalLink>
     </Stack>
   );
 }

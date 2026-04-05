@@ -13,7 +13,7 @@ import { useTheme } from '@/providers/theme-provider';
 
 export function Settings() {
   const { theme, setTheme } = useTheme();
-  const t = useTranslations('settings');
+  const t = useTranslations('features.settings');
   const options = [
     { id: 'dark', label: <Icon name="darkMode" size={16} /> },
     { id: 'light', label: <Icon name="lightMode" size={16} /> },

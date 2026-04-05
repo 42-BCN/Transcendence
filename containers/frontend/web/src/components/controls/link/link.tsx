@@ -9,7 +9,7 @@ import type {
   ButtonVariant as Variant,
   ButtonW as W,
 } from '../button/button.styles';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { LinkStyles } from './link.styles';
 
 export type LinkProps = {
@@ -55,7 +55,7 @@ export function ExternalLink(args: LinkProps) {
 
 export type InternalLinkProps = {
   children: ReactNode;
-  href: string;
+  href: ComponentProps<typeof Link>['href'];
 };
 
 export function InternalLink(args: InternalLinkProps) {

@@ -18,8 +18,8 @@ import { Stack } from '@components/primitives/stack';
 const fieldsBase = {
   identifier: {
     name: 'identifier',
-    labelKey: 'auth.common.identifier.label',
-    placeholderKey: 'auth.common.identifier.placeholder',
+    labelKey: 'features.auth.fields.identifier.label',
+    placeholderKey: 'features.auth.fields.identifier.placeholder',
     isRequired: true,
   },
 } as const;
@@ -47,14 +47,14 @@ function useRecoverFieldNavigation() {
 
 export function RecoverFeature() {
   const form = useForm<RecoverReq>(formApiReq);
-  const t = useTranslations('auth');
+  const t = useTranslations('features.auth');
 
   const { identifierRef } = useRecoverFieldNavigation();
 
   return (
     <Stack justify="center">
       <Text as="h1" variant="heading-md">
-        {t('recover.title')}
+        {t('verification.recoverTitle')}
       </Text>
 
       <Form
@@ -73,7 +73,7 @@ export function RecoverFeature() {
           {...fieldsBase.identifier}
         />
 
-        <Button type="submit">{t('recover.submit')}</Button>
+        <Button type="submit">{t('actions.sendEmail')}</Button>
       </Form>
     </Stack>
   );
