@@ -22,7 +22,7 @@ export function Login() {
         <Text as="span" variant="caption">
           {t('login.noAccount')}
         </Text>
-        <InternalLink href={'/create-account'}>{t('login.goToCreateAccount')}</InternalLink>
+        <InternalLink href={'/create-account'}>{t('login.goToSignup')}</InternalLink>
       </Stack>
     </Stack>
   );

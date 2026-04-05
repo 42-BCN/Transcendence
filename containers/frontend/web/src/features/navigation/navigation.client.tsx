@@ -67,7 +67,7 @@ function MobileNavigation(args: NavigationClientProps) {
         <Drawer>
           <Stack
             as="nav"
-            aria-label="main"
+            aria-label={t('mainAriaLabel')}
             className="group z-10 flex max-h-[100dvh] w-full overflow-y-auto overscroll-contain px-0 py-4 rounded-s-none rounded-e-md"
             align="start"
           >
@@ -82,6 +82,7 @@ function MobileNavigation(args: NavigationClientProps) {
 }
 
 function DesktopNavigation(args: NavigationClientProps) {
+  const t = useTranslations('features.navigation');
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpanded = useCallback(() => {
@@ -106,7 +107,7 @@ function DesktopNavigation(args: NavigationClientProps) {
     <NavigationProvider value={value}>
       <Stack
         as="nav"
-        aria-label="main"
+        aria-label={t('mainAriaLabel')}
         className={glassCardStyles({
           intensity: 'medium',
           blur: 'sm',

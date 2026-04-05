@@ -1,14 +1,17 @@
 import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { getTranslations } from 'next-intl/server';
 
-export default function MeterPage() {
+export default async function MeterPage() {
+  const t = await getTranslations('pages.ui.meter');
+
   return (
     <Stack>
       <Text as="h1" variant="heading-md">
-        Meter
+        {t('title')}
       </Text>
-      <Meter label="hp" value={25} max={100} />
+      <Meter label={t('label')} value={25} max={100} />
     </Stack>
   );
 }

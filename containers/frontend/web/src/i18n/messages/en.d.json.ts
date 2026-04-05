@@ -32,9 +32,103 @@ declare const messages: {
       "title": "Hello from Next in Docker 👋",
       "subtitle": "If you can see this, routing + dev server work."
     },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist."
+    },
     "me": {
       "title": "My Account",
       "subtitle": "Access your protected account details."
+    },
+    "ui": {
+      "index": {
+        "controlComponents": "Control components",
+        "buttons": "Buttons",
+        "input": "Input",
+        "sampleButtonText": "Hello",
+        "viewerTitles": {
+          "buttonPrimitive": "Button primitive",
+          "ariaButton": "Aria Button",
+          "uiButton": "UI button",
+          "inputPrimitive": "Input primitive",
+          "ariaInput": "Aria Input",
+          "uiInput": "UI Input"
+        }
+      },
+      "glassCard": {
+        "title": "Glassmorphism Card",
+        "cardTitle": "Glassmorphism",
+        "description": "A glassmorphic card component using backdrop-filters, transparent borders and subtle shadows to blend with any rich textured background.",
+        "cta": "Get Started"
+      },
+      "glassCardAnimated": {
+        "title": "Testing saturation",
+        "descriptionPrefix": "This card uses",
+        "highlight": "backdrop-saturate",
+        "descriptionSuffix": "The light spheres gain more life and color as they pass behind the glass.",
+        "activate": "Activate"
+      },
+      "glassCardAnimatedV2": {
+        "title": "Dynamic Reflection",
+        "descriptionPrefix": "Here the spheres",
+        "highlight": "move behind the glass",
+        "descriptionSuffix": "The color flows and refracts smoothly as it crosses the edges.",
+        "option1": "Option 1",
+        "option2": "Option 2",
+        "option3": "Option 3"
+      },
+      "glassCardAnimatedV3": {
+        "title": "Solid Spheres",
+        "descriptionPrefix": "Here the spheres are",
+        "highlight": "100% solid",
+        "descriptionMiddle": "All the distortion comes exclusively from the glass.",
+        "nestedPrefix": "Example of a nested glass component:",
+        "activate": "Activate"
+      },
+      "textArea": {
+        "title": "Text area component",
+        "ariaLabel": "Message"
+      },
+      "typography": {
+        "caption": "Caption text used for small supporting information or metadata.",
+        "bodyXs": "Extra small body text useful for dense UI areas where space is limited.",
+        "bodySm": "Small body text often appears in secondary descriptions, hints, or helper content.",
+        "body": "This paragraph demonstrates the default body style. It is intentionally longer so you can evaluate the readability, rhythm, and line length of the typography system. When text stretches too wide across the screen, reading becomes harder, so limiting the measure helps maintain comfortable scanning and improves the overall reading experience.",
+        "bodyLg": "Larger body text works well for introductory paragraphs or highlighted descriptions that need a little more visual emphasis without becoming a heading.",
+        "headingSm": "Small heading style rendered as a paragraph for visual testing.",
+        "headingMd": "Medium heading style rendered as a paragraph for inspection.",
+        "headingLg": "Large heading style rendered as a paragraph.",
+        "headingXl": "Extra large heading style rendered as paragraph content.",
+        "code": "const message = \"Code styled text rendered in a paragraph.\";"
+      },
+      "messageBubble": {
+        "title": "Bubble message",
+        "userOne": "John Doe",
+        "userTwo": "Jane Doe",
+        "messageOne": "Hello! My name is ...",
+        "messageTwo": "Hello! this is a test for message preview"
+      },
+      "meter": {
+        "title": "Meter",
+        "label": "HP"
+      },
+      "themeTest": {
+        "title": "Theme Test Page",
+        "description": "This page demonstrates the dark/light mode implementation. All colors here use CSS variables synchronized with Tailwind.",
+        "secondaryBackground": "Secondary Background",
+        "secondaryBackgroundDescription": "This card uses `bg-bg-secondary`. It should look slightly different from the main background in both modes.",
+        "textVariants": "Text Variants",
+        "primaryText": "Primary Text",
+        "secondaryText": "Secondary Text",
+        "tertiaryText": "Tertiary Text",
+        "disabledText": "Disabled Text"
+      },
+      "scrollArea": {
+        "title": "Scroll Area",
+        "description": "This component is a div that takes a height of 100% and creates a scrollable area.",
+        "example": "Example",
+        "itemLabel": "Item"
+      }
     }
   },
   "features": {
@@ -68,7 +162,8 @@ declare const messages: {
         "signup": "Create account",
         "continueWithGoogle": "Continue with Google",
         "sendEmail": "Send email",
-        "resendEmail": "Resend email"
+        "resendEmail": "Resend email",
+        "logoutAriaLabel": "Log out"
       },
       "login": {
         "title": "Log in",
@@ -102,11 +197,20 @@ declare const messages: {
       "createAccount": "Create account",
       "login": "Log in",
       "menu": "Menu",
+      "mainAriaLabel": "Main navigation",
       "ui": "UI",
       "robots": "Robots",
       "profile": "Profile",
       "logout": "Logout",
       "settings": "Settings"
+    },
+    "chat": {
+      "messageAriaLabel": "Message"
+    },
+    "game": {
+      "resetPlan": "Reset plan",
+      "endTurn": "End turn",
+      "healthLabel": "HP"
     },
     "settings": {
       "theme": "Theme",
@@ -134,7 +238,11 @@ declare const messages: {
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
+    "global": {
+      "title": "Something went wrong",
+      "tryAgain": "Try again"
+    }
   }
 };
 export default messages;
