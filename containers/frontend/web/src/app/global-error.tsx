@@ -21,11 +21,12 @@ export default function GlobalError({
   const t = globalMessages[locale];
 
   return (
-    // eslint-disable-next-line jsx-a11y/html-has-lang
-    <html>
+    <html lang={locale}>
       <body>
         <h1>{t.title}</h1>
-        <button onClick={() => reset()}>{t.tryAgain}</button>
+        <button type="button" onClick={() => reset()}>
+          {t.tryAgain}
+        </button>
       </body>
     </html>
   );
