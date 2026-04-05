@@ -28,6 +28,10 @@
     "home": {
       "title": "Hola des de Next en Docker 👋",
       "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
+    },
+    "me": {
+      "title": "El Meu Compte",
+      "subtitle": "Accedeix als detalls protegits del teu compte."
     }
   },
   "features": {
@@ -104,6 +108,11 @@
     "settings": {
       "theme": "Tema",
       "language": "Idioma"
+    },
+    "profile": {
+      "fail": "No s'ha pogut carregar el teu perfil.",
+      "userId": "ID d'usuari",
+      "username": "Nom d'usuari"
     }
   },
   "validation": {

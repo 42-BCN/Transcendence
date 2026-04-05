@@ -31,6 +31,10 @@ declare const messages: {
     "home": {
       "title": "Hello from Next in Docker 👋",
       "subtitle": "If you can see this, routing + dev server work."
+    },
+    "me": {
+      "title": "My Account",
+      "subtitle": "Access your protected account details."
     }
   },
   "features": {
@@ -107,6 +111,11 @@ declare const messages: {
     "settings": {
       "theme": "Theme",
       "language": "Language"
+    },
+    "profile": {
+      "fail": "Could not load your profile.",
+      "userId": "User ID",
+      "username": "Username"
     }
   },
   "validation": {
