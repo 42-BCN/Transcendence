@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 
-import { normalizeEmail } from "@contracts/auth/auth.validation";
 import { ApiError, getRedisClient } from "@shared";
 
 import { authSecurityConfig } from "./auth.security.config";
