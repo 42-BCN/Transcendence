@@ -48,6 +48,19 @@
         "buttons": "Botons",
         "input": "Entrada",
         "sampleButtonText": "Hola",
+        "links": {
+          "chat": "Xat",
+          "glassCard": "Targeta de vidre",
+          "glassCardAnimated": "Targeta de vidre animada",
+          "glassCardAnimatedV2": "Targeta de vidre animada V2",
+          "glassCardAnimatedV3": "Targeta de vidre animada V3",
+          "messageBubble": "Bombolla de missatge",
+          "meter": "Mesurador",
+          "scrollArea": "Àrea de desplaçament",
+          "textArea": "Àrea de text",
+          "themeTest": "Prova del tema",
+          "typography": "Tipografia"
+        },
         "viewerTitles": {
           "buttonPrimitive": "Botó primitiu",
           "ariaButton": "Botó Aria",

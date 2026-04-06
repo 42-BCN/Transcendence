@@ -51,6 +51,19 @@ declare const messages: {
         "buttons": "Buttons",
         "input": "Input",
         "sampleButtonText": "Hello",
+        "links": {
+          "chat": "Chat",
+          "glassCard": "Glass Card",
+          "glassCardAnimated": "Glass Card Animated",
+          "glassCardAnimatedV2": "Glass Card Animated V2",
+          "glassCardAnimatedV3": "Glass Card Animated V3",
+          "messageBubble": "Message Bubble",
+          "meter": "Meter",
+          "scrollArea": "Scroll Area",
+          "textArea": "Text Area",
+          "themeTest": "Theme Test",
+          "typography": "Typography"
+        },
         "viewerTitles": {
           "buttonPrimitive": "Button primitive",
           "ariaButton": "Aria Button",

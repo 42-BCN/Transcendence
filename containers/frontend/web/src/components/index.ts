@@ -23,7 +23,6 @@ export { TooltipTrigger } from './composites/tooltip-trigger';
 
 export { AuthPageLayout, type AuthPageLayoutProps } from './primitives/auth-page-layout';
 export { Columns12Overlay, Grid4Overlay, Grid8Overlay } from './primitives/base-grid';
-export { ComponentViewer, type ComponentViewerProps } from './primitives/componentViewer';
 export { GlassCard, type GlassCardProps } from './primitives/glass-card';
 export {
   glassBackgroundStyles,

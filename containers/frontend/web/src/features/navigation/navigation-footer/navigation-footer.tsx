@@ -12,7 +12,9 @@ import { useTranslations } from 'next-intl';
 export function NavigationFooter() {
   const { isExpanded } = useNavigationContext();
   const t = useTranslations('features.navigation');
-  const navLinkClassName = isExpanded ? 'w-full justify-start py-0 ps-2 pe-0' : 'size-6 p-0';
+  const navLinkClassName = isExpanded
+    ? 'w-full h-6 min-h-6 justify-start py-0 ps-2 pe-0'
+    : 'size-6 p-0 justify-center';
 
   const settingsButton = (
     <Button
