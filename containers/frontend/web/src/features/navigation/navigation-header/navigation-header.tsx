@@ -16,7 +16,7 @@ export function NavigationHeader() {
   };
 
   return (
-    <Button className={headerStyles.wrapper} variant="ghost" onPress={handlePress}>
+    <Button variant="ghost" size="icon" w="auto" className="group relative" onPress={handlePress}>
       <Icon name="app" className={headerStyles.app} size={20} />
       <Icon
         name={isExpanded ? 'collapse' : 'expand'}

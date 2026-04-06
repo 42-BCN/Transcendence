@@ -32,6 +32,7 @@ export function NavLink({
     <RacLink
       href={href}
       aria-current={isCurrent ? 'page' : undefined}
+      data-current={isCurrent ? 'true' : undefined}
       className={navLinkStyles({ size, w, className })}
       {...props}
     >

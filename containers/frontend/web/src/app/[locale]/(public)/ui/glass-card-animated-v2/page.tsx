@@ -49,13 +49,13 @@ export default async function GlassCardAnimatedV2Page() {
           {t('descriptionSuffix')}
         </p>
         <div className="flex flex-col gap-3 w-full">
-          <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-none">
+          <Button variant="primary" w="full">
             {t('option1')}
           </Button>
-          <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-2xl">
+          <Button variant="primary" w="full">
             {t('option2')}
           </Button>
-          <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-full">
+          <Button variant="primary" w="full">
             {t('option3')}
           </Button>
         </div>

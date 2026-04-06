@@ -15,7 +15,7 @@ const interactiveControlBase = [
 ];
 
 const interactiveControlVariants: Record<InteractiveControlVariant, string> = {
-  primary: 'border-text-primary bg-bg-primary data-[hovered]:bg-bg-secondary',
+  primary: 'border-text-primary data-[hovered]:bg-bg-secondary',
   secondary: 'border-border-primary data-[hovered]:bg-bg-secondary',
   ghost: 'border-transparent data-[hovered]:bg-bg-secondary/60',
 };
@@ -24,6 +24,7 @@ const interactiveControlSizes: Record<InteractiveControlSize, string> = {
   sm: 'h-5 px-2 text-sm',
   md: 'h-6 px-3 text-sm',
   lg: 'h-7 px-4 text-base',
+  icon: 'size-6 p-0',
 };
 
 const interactiveControlWidths: Record<InteractiveControlW, string> = {
@@ -39,17 +40,20 @@ const interactiveControlStates = [
 ];
 
 const textLinkBase = [
-  'inline-flex items-center gap-2 font-caption underline text-blue-500',
+  'inline-flex items-center gap-2 rounded-sm px-1 -mx-1 font-caption underline text-blue-500',
   'transition-[color,opacity,box-shadow] duration-150 ease-out outline-none',
-  'data-[hovered]:opacity-90',
+  'hover:bg-bg-secondary/60 hover:text-text-primary hover:opacity-100',
+  'data-[hovered]:bg-bg-secondary/60 data-[hovered]:text-text-primary data-[hovered]:opacity-100',
+  'focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2',
   'data-[focus-visible]:ring-2 data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2',
   'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
 ];
 
 const navLinkBase = [
   'font-caption opacity-80',
-  'data-[current]:font-semibold data-[current]:opacity-100',
-  'data-[hovered]:opacity-100',
+  'data-[current=true]:bg-white/10 data-[current=true]:border-border-primary data-[current=true]:font-semibold data-[current=true]:opacity-100',
+  'aria-[current=page]:bg-white/10 aria-[current=page]:border-border-primary aria-[current=page]:font-semibold aria-[current=page]:opacity-100',
+  'data-[hovered]:bg-white/5 data-[hovered]:opacity-100',
 ];
 
 export function interactiveControlStyles(args?: InteractiveControlStyleProps) {

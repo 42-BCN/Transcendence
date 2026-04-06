@@ -17,7 +17,7 @@ export function Tooltip({ children, ...props }: TooltipProps) {
   return (
     <AriaTooltip
       {...props}
-      offset={10}
+      offset={14}
       className={composeRenderProps(
         props.className,
         (className) => `${tooltipStyles.tooltip} ${className ?? ''}`,

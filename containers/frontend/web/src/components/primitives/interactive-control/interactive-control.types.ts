@@ -1,6 +1,6 @@
 export type InteractiveControlVariant = 'primary' | 'secondary' | 'ghost';
 
-export type InteractiveControlSize = 'sm' | 'md' | 'lg';
+export type InteractiveControlSize = 'sm' | 'md' | 'lg' | 'icon';
 
 export type InteractiveControlW = 'auto' | 'full';
 

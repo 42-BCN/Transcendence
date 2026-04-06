@@ -15,13 +15,23 @@ export function Settings() {
   const { theme, setTheme } = useTheme();
   const t = useTranslations('features.settings');
   const options = [
-    { id: 'dark', label: <Icon name="darkMode" size={16} /> },
-    { id: 'light', label: <Icon name="lightMode" size={16} /> },
+    {
+      id: 'dark',
+      label: <Icon name="darkMode" size={17} />,
+      tooltipLabel: t('dark'),
+      tooltipPlacement: 'top' as const,
+    },
+    {
+      id: 'light',
+      label: <Icon name="lightMode" size={17} />,
+      tooltipLabel: t('light'),
+      tooltipPlacement: 'top' as const,
+    },
   ] as const;
 
   return (
     <Stack align="start" className={settingsStyles.wrapper} gap="md">
-      <Stack gap="xs">
+      <Stack gap="sm">
         <Text as="p" variant="caption">
           {t('theme')}
         </Text>
@@ -36,7 +46,7 @@ export function Settings() {
           options={options}
         />
       </Stack>
-      <Stack gap="xs">
+      <Stack gap="sm">
         <Text as="p" variant="caption">
           {t('language')}
         </Text>

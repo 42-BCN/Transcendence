@@ -8,9 +8,10 @@ import { NavigationHeader } from './navigation-header';
 import { NavigationMain } from './navigation-main';
 import { NavigationFooter } from './navigation-footer';
 import { Stack } from '@components/primitives/stack';
+import { Button as UiButton } from '@components/controls/button';
 import { glassCardStyles } from '@components/primitives/glass-card/glass-card.styles';
 import { Drawer } from '@components/composites/drawer';
-import { Button, DialogTrigger } from 'react-aria-components';
+import { DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
 import { useTranslations } from 'next-intl';
 
@@ -19,6 +20,22 @@ type NavigationClientProps = {
   mainNavItems: NavItem[];
   isAuthenticated: boolean;
 };
+
+function getMobileNavigationValue(locale: string, closeNavigation: () => void) {
+  return {
+    locale,
+    isExpanded: true,
+    toggleExpanded: () => {},
+    closeNavigation,
+  };
+}
+
+const mobileNavigationClassName = glassCardStyles({
+  intensity: 'medium',
+  blur: 'sm',
+  className:
+    'group z-10 flex max-h-[100dvh] w-full overflow-y-auto overscroll-contain px-2 py-4 rounded-s-none rounded-e-md',
+});
 
 export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState<boolean | null>(null);
@@ -40,35 +57,29 @@ function MobileNavigation(args: NavigationClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations('features.navigation');
   const pathname = usePathname();
-
   const closeNavigation = useCallback(() => {
     setIsOpen(false);
   }, []);
-
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
-
   const value = useMemo(
-    () => ({
-      locale: args.locale,
-      isExpanded: true,
-      toggleExpanded: () => {},
-      closeNavigation,
-    }),
+    () => getMobileNavigationValue(args.locale, closeNavigation),
     [args.locale, closeNavigation],
   );
-
   return (
     <NavigationProvider value={value}>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <Button className="md:hidden absolute top-5 left-2 z-20 h-min w-min">{t('menu')}</Button>
-
+        <div className="md:hidden absolute top-5 left-2 z-20">
+          <UiButton variant="ghost" w="auto">
+            {t('menu')}
+          </UiButton>
+        </div>
         <Drawer>
           <Stack
             as="nav"
             aria-label={t('mainAriaLabel')}
-            className="group z-10 flex max-h-[100dvh] w-full overflow-y-auto overscroll-contain px-0 py-4 rounded-s-none rounded-e-md"
+            className={mobileNavigationClassName}
             align="start"
           >
             <NavigationHeader />
@@ -111,8 +122,7 @@ function DesktopNavigation(args: NavigationClientProps) {
         className={glassCardStyles({
           intensity: 'medium',
           blur: 'sm',
-          className:
-            'group py-4 z-10 fixed h-screen overflow-y-auto w-min px-0 top-0 rounded-s-none rounded-e-md',
+          className: `group py-4 z-10 fixed h-screen overflow-y-auto ${isExpanded ? 'w-44' : 'w-min'} px-2 top-0 rounded-s-none rounded-e-md`,
         })}
         align="start"
       >

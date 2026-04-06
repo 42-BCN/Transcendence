@@ -219,7 +219,9 @@ declare const messages: {
     },
     "settings": {
       "theme": "Theme",
-      "language": "Language"
+      "language": "Language",
+      "dark": "Dark",
+      "light": "Light"
     },
     "profile": {
       "fail": "Could not load your profile.",
