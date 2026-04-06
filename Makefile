@@ -65,6 +65,9 @@ logs-nginx:
 logs-db:
 	$(COMPOSE) logs -f postgres
 
+logs-socket:
+	$(COMPOSE) logs -f socket
+
 logs-last:
 	$(COMPOSE) logs --tail=100
 

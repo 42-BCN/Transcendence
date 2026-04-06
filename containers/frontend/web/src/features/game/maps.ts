@@ -138,8 +138,8 @@ export const parseMap = (map: string) => {
           case 's':
             ++info.planum;
             info.entities.push({
-              id: `player_${info.planum}`,
-              type: 'scientist',
+              id: `alchemist`,
+              type: 'alchemist',
               position
             });
             break;

@@ -194,23 +194,23 @@ export const useGame = create<gameState>()((set, get) => ({
   endTurn: () => {
     const state = get();
     const updatedPlayers = { ...state.players };
-    for (const id in updatedPlayers) {
+    Object.keys(updatedPlayers).forEach((id) => {
       updatedPlayers[id] = {
         ...updatedPlayers[id],
         dice: [...updatedPlayers[id].dice, ...updatedPlayers[id].usedDice].sort((a, b) => a - b),
         usedDice: [],
         hasMoved: false,
       };
-    }
+    });
     const updatedEnemies = { ...state.enemies };
-    for (const id in updatedEnemies) {
+    Object.keys(updatedEnemies).forEach((id) => {
       updatedEnemies[id] = {
         ...updatedEnemies[id],
         dice: [...updatedEnemies[id].dice, ...updatedEnemies[id].usedDice].sort((a, b) => a - b),
         usedDice: [],
         hasMoved: false,
       };
-    }
+    });
     set({
       ...clean,
       turn: state.turn + 1,
@@ -497,7 +497,7 @@ export const useGame = create<gameState>()((set, get) => ({
             hasMoved: false,
           }
           break;
-        case "scientist":
+        case "alchemist":
           playEnt[entity.id] = {
             ...entity, type: "player", hp: 10, maxHp: 10,
             abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],

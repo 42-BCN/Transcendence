@@ -11,31 +11,52 @@ import type { ValidationCode } from '../../../../contracts/api/http/validation';
 // crea unos helpers para la creacion del mensaje y el propio
 // registerChatSocket function donde maneja socket.on
 
+import type { } from '../../../../contracts/sockets/game/game.schema';
+
+const playerids: string[] = ['assassin', 'paladin', 'mage', 'alchemist'].reverse();
+const users: Record<string, string> = {};
+
 export function registerGameSocket(
-  nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>,
+  nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>
 ) {
   nsp.on('connection', (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
-    console.log('[Game Socket] User connected:', socket.name);
-
-    // socket.emit('chat:history', chatHistory.slice(-MAX_HISTORY));
-    // socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', socket.id));
-    //
-    // socket.on('chat:send', (payload: unknown) => {
-    //   const res = ChatSendSchema.safeParse(payload);
-    //
-    //   if (res.success) {
-    //     socket.broadcast.emit('chat:message', chatMessage(socket.id, res.data.text));
-    //     return;
-    //   }
-    //
-    //   socket.emit('chat:error', errorMessage(res.error));
-    // });
-    //
-    // socket.on('disconnect', () => {
-    //   socket.broadcast.emit('chat:system', systemMessage('USER_LEFT', socket.id));
-    // });
-  });
+    if (playerids.length === 0) {
+      console.log("Room full, spectator joined:", socket.id);
+      return;
+    }
+    users[socket.id] = playerids.pop();
+    console.log(socket.id, " joined with ", users[socket.id]);
+    socket.on('testEvent', (payload: unknown) => {
+      socket.emit('message', "epa");
+    })
+    socket.on('disconnect', () => {
+      const free = users[socket.id];
+      if (free) {
+        playerids.push(free);
+        delete users[socket.id];
+        console.log(freedRole, " disconnected, role is available again.");
+      }
+    })
+  })
 }
+
+// socket.emit('chat:history', chatHistory.slice(-MAX_HISTORY));
+// socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', socket.id));
+//
+// socket.on('chat:send', (payload: unknown) => {
+//   const res = ChatSendSchema.safeParse(payload);
+//
+//   if (res.success) {
+//     socket.broadcast.emit('chat:message', chatMessage(socket.id, res.data.text));
+//     return;
+//   }
+//
+//   socket.emit('chat:error', errorMessage(res.error));
+// });
+//
+// socket.on('disconnect', () => {
+//   socket.broadcast.emit('chat:system', systemMessage('USER_LEFT', socket.id));
+// });
 
 // const MAX_HISTORY = 50;
 // const chatHistory: ChatHistoryType = [];
