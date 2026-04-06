@@ -1,8 +1,5 @@
 import { cn } from '@/lib/styles/cn';
-import {
-  glassBackgroundStyles,
-  glassBorderStyles,
-} from '@components/primitives/glass-card/glass-card.styles';
+import { glassBackgroundStyles, glassBorderStyles } from '@components';
 
 const groupBase = ['inline-flex'];
 

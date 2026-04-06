@@ -25,6 +25,17 @@ export { AuthPageLayout, type AuthPageLayoutProps } from './primitives/auth-page
 export { Columns12Overlay, Grid4Overlay, Grid8Overlay } from './primitives/base-grid';
 export { ComponentViewer, type ComponentViewerProps } from './primitives/componentViewer';
 export { GlassCard, type GlassCardProps } from './primitives/glass-card';
+export {
+  glassBackgroundStyles,
+  glassBorderStyles,
+  glassCardStyles,
+  type GlassBackgroundStylesOpts,
+  type GlassBorderStylesOpts,
+  type GlassCardStylesOpts,
+  type GlassBlur,
+  type GlassBorder,
+  type GlassIntensity,
+} from './primitives/glass-card/glass-card.styles';
 export { Icon, type IconName } from './primitives/icon';
 export { MessageBubble, type MessageBubbleProps } from './primitives/message-bubble';
 export { ScrollArea, type ScrollAreaProps } from './primitives/scroll-area';
