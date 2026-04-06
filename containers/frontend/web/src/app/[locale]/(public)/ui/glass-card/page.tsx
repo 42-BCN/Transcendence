@@ -18,7 +18,7 @@ export default async function GlassCardPage() {
         <GlassCard className="w-96" intensity="medium">
           <h3 className="text-2xl font-bold text-black mb-2">{t('cardTitle')}</h3>
           <p className="text-black/80 text-sm leading-relaxed mb-4">{t('description')}</p>
-          <Button className="w-full bg-black text-white hover:bg-black/90 rounded-2xl">
+          <Button variant="primary" w="full">
             {t('cta')}
           </Button>
         </GlassCard>

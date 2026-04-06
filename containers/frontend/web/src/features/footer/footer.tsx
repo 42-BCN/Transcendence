@@ -29,6 +29,7 @@ const externalFooterLinks = footerLinks.filter(isExternalFooterLink);
 export function Footer() {
   const t = useTranslations('components.footer');
   const year = new Date().getFullYear();
+  const copyright = t('copyright', { year, appName: t('appName') }).replace('. ', '.\n');
 
   return (
     <Stack gap="sm" as="footer">
@@ -42,7 +43,9 @@ export function Footer() {
           {t(label)}
         </ExternalLink>
       ))}
-      <Text variant="caption">{t('copyright', { year, appName: t('appName') })}</Text>
+      <Text variant="caption" className="whitespace-pre-line">
+        {copyright}
+      </Text>
     </Stack>
   );
 }

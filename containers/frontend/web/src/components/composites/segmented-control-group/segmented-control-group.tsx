@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { segmentedControlGroupStyles } from './segmented-control-group.styles';
+import { TooltipTrigger } from '@components/composites/tooltip-trigger';
 import {
   ToggleButtonGroup,
   ToggleButton,
@@ -15,7 +16,10 @@ import {
 type SegmentedOption = {
   id: Key;
   label: ReactNode;
+  ariaLabel?: string;
   isDisabled?: boolean;
+  tooltipLabel?: string;
+  tooltipPlacement?: 'left' | 'right' | 'top' | 'bottom';
 };
 
 export type SegmentedControlGroupProps = {
@@ -70,11 +74,32 @@ export function SegmentedControlGroup({
       disallowEmptySelection
       {...selectionModeProps}
     >
-      {options.map((opt) => (
-        <SegmentedControlItem key={String(opt.id)} id={opt.id} isDisabled={opt.isDisabled}>
-          {opt.label}
-        </SegmentedControlItem>
-      ))}
+      {options.map((opt) => {
+        const item = (
+          <SegmentedControlItem
+            key={String(opt.id)}
+            id={opt.id}
+            isDisabled={opt.isDisabled}
+            aria-label={opt.ariaLabel}
+          >
+            {opt.label}
+          </SegmentedControlItem>
+        );
+
+        if (!opt.tooltipLabel) {
+          return item;
+        }
+
+        return (
+          <TooltipTrigger
+            key={`tooltip-${String(opt.id)}`}
+            label={opt.tooltipLabel}
+            placement={opt.tooltipPlacement ?? 'top'}
+          >
+            {item}
+          </TooltipTrigger>
+        );
+      })}
     </ToggleButtonGroup>
   );
 }

@@ -22,7 +22,7 @@ export default async function GlassCardAnimatedPage() {
           <span className="text-cyan-400 font-semibold">{t('highlight')}</span>.{' '}
           {t('descriptionSuffix')}
         </p>
-        <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-full">
+        <Button variant="primary" w="full">
           {t('activate')}
         </Button>
       </GlassCard>

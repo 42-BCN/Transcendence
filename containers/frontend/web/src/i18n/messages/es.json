@@ -216,7 +216,9 @@
     },
     "settings": {
       "theme": "Tema",
-      "language": "Idioma"
+      "language": "Idioma",
+      "dark": "Oscuro",
+      "light": "Claro"
     },
     "profile": {
       "fail": "No se pudo cargar tu perfil.",

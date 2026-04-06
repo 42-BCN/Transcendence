@@ -49,7 +49,7 @@ export default async function GlassCardAnimatedV3Page() {
           <br />
           {t('nestedPrefix')} <GlassCard />
         </div>
-        <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-2xl">
+        <Button variant="primary" w="full">
           {t('activate')}
         </Button>
       </GlassCard>
