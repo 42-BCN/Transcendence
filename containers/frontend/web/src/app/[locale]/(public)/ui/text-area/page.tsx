@@ -1,8 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { TextAreaField } from '@components/composites/text-area-field';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { Stack, Text, TextAreaField } from '@components';
 import { useTranslations } from 'next-intl';
 
 export default function TextAreaPage() {

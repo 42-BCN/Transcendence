@@ -1,9 +1,8 @@
 'use client';
 
-import { Button } from '@components/controls/button';
+import { Button, Icon } from '@components';
 import { logoutAction } from './logout.action';
 import { useRouter } from '@/i18n/navigation';
-import { Icon } from '@components/primitives/icon';
 import { useTranslations } from 'next-intl';
 
 export function Logout({ onPress }: { onPress?: () => void }) {

@@ -3,10 +3,7 @@
 import { useActionState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { InternalLink } from '@components/controls/link/link';
-import { Form } from '@components/composites/form';
-import { TextField } from '@components/composites/text-field';
-import { Button } from '@components/controls/button';
+import { Button, Form, InternalLink, TextField } from '@components';
 import { fieldsBase, formApiReq } from './login.schema';
 import { useForm } from '@/lib/forms/use-form';
 import { type LoginReq } from '@/contracts/api/auth/auth.validation';

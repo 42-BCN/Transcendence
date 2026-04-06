@@ -1,8 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { ResendVerification } from '@/features/auth/resend-verification';
-import { InternalLink } from '@components/controls/link/link';
-import { Text } from '@components/primitives/text';
-import { Stack } from '@components/primitives/stack';
+import { InternalLink, Stack, Text } from '@components';
 
 export default async function CreateAccountSuccessPage() {
   const t = await getTranslations('features.auth');

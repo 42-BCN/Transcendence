@@ -1,13 +1,9 @@
 'use client';
 
-import { Text } from '@components/primitives/text';
-import { SegmentedControlGroup } from '@components/composites/segmented-control-group';
+import { Icon, SegmentedControlGroup, Stack, Text } from '@components';
 import { LocaleSwitcher } from '@/features/locale-switcher';
 import { Footer } from '../footer';
-import { Icon } from '@components/primitives/icon';
 import { useTranslations } from 'next-intl';
-
-import { Stack } from '@components/primitives/stack';
 import { settingsStyles } from './settings.styles';
 import { useTheme } from '@/providers/theme-provider';
 

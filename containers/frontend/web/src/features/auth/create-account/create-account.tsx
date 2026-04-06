@@ -2,9 +2,7 @@ import { CreateAccountForm } from './create-account.form';
 import { Oauth } from '../oauth';
 import { useTranslations } from 'next-intl';
 
-import { InternalLink } from '@components/controls/link/link';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { InternalLink, Stack, Text } from '@components';
 
 export function CreateAccount() {
   const t = useTranslations('features.auth');

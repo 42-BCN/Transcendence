@@ -1,6 +1,7 @@
+'use client';
+
 import { headerStyles } from './navigation-header.styles';
-import { Button } from '@components/controls/button';
-import { Icon } from '@components/primitives/icon';
+import { Button, Icon } from '@components';
 import { useNavigationContext } from '../navigation.context';
 
 export function NavigationHeader() {

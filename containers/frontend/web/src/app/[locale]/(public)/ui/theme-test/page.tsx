@@ -1,5 +1,4 @@
-import { Text } from '@components/primitives/text';
-import { Stack } from '@components/primitives/stack';
+import { Stack, Text } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 export default async function ThemeTestPage() {

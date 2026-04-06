@@ -1,2 +1,12 @@
-export * from './interactive-control.styles';
-export * from './interactive-control.types';
+export {
+  interactiveControlStyles,
+  interactiveIconSlotStyles,
+  interactiveNavLinkStyles,
+  interactiveTextLinkStyles,
+} from './interactive-control.styles';
+export type {
+  InteractiveControlSize,
+  InteractiveControlStyleProps,
+  InteractiveControlVariant,
+  InteractiveControlW,
+} from './interactive-control.types';

@@ -1,7 +1,4 @@
-import { GlassCard } from '@components/primitives/glass-card';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
-import { Button } from '@components/controls/button';
+import { Button, GlassCard, Stack, Text } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 export default async function GlassCardPage() {

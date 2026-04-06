@@ -1,9 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Stack } from '@components/primitives/stack';
-import { ExternalLink, InternalLink } from '@components/controls/link/link';
-import { Text } from '@components/primitives/text';
+import { ExternalLink, InternalLink, Stack, Text } from '@components';
 
 export const footerLinks = [
   { key: 'privacy', href: '/privacy', label: 'privacy' },

@@ -1,4 +1,4 @@
-import { ExternalLink } from '@components/controls/link/link';
+import { ExternalLink } from '@components';
 import type { ReactNode } from 'react';
 
 function GoogleLogo() {

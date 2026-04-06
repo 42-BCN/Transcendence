@@ -1,6 +1,4 @@
-import { Meter } from '@components/composites/meter';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { Meter, Stack, Text } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 export default async function MeterPage() {
