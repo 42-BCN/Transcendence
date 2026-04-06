@@ -3,14 +3,11 @@
 import { type ReactNode } from 'react';
 import { getPathname } from '@/i18n/navigation';
 import { usePathname } from 'next/navigation';
-import { NavLink } from '@components/controls/nav-link';
+import { Icon, NavLink, Stack, TooltipTrigger } from '@components';
 import { type NavItem } from '../navigation.config';
 import { useTranslations } from 'next-intl';
 import { Logout } from '../../auth/logout';
-import { TooltipTrigger } from '@components/composites/tooltip-trigger';
-import { Icon } from '@components/primitives/icon';
 import { useNavigationContext } from '../navigation.context';
-import { Stack } from '@components/primitives/stack';
 import { headerStyles } from '../navigation-header/navigation-header.styles';
 
 type NavLinkItemProps = {

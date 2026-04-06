@@ -1,6 +1,4 @@
-import { ScrollArea } from '@components/primitives/scroll-area';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { ScrollArea, Stack, Text } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 function Item({ index, label }: { index: number; label: string }) {

@@ -1,9 +1,11 @@
+'use client';
+
 import { useNavigationContext } from '@/features/navigation/navigation.context';
 import { RenderNavLinkContent } from '../navigation-main/navigation-main';
 import { navLinkStyles } from '@components/controls/nav-link/nav-link.styles';
 
 import { Button, DialogTrigger, Popover } from 'react-aria-components';
-import { GlassCard } from '@components/primitives/glass-card';
+import { GlassCard } from '@components';
 import { Settings } from '@/features/settings';
 import { useTranslations } from 'next-intl';
 

@@ -1,5 +1,4 @@
-import { GlassCard } from '@components/primitives/glass-card';
-import { Button } from '@components/controls/button';
+import { Button, GlassCard } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 export default async function GlassCardAnimatedV2Page() {

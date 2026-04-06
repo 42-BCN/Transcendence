@@ -1,6 +1,4 @@
-import { MessageBubble } from '@components/primitives/message-bubble';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { MessageBubble, Stack, Text } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 export default async function MessageBubblePage() {

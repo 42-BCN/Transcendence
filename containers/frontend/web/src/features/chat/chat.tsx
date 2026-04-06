@@ -1,8 +1,6 @@
 'use client';
 
-import { Stack } from '@components/primitives/stack';
-import { Form } from '@components/composites/form';
-import { TextAreaField } from '@components/composites/text-area-field';
+import { Form, Stack, TextAreaField } from '@components';
 
 import { ChatHeader } from './chat.header';
 import { ChatMain } from './chat.main';

@@ -2,9 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import { Form } from '@components/composites/form';
-import { TextField } from '@components/composites/text-field';
-import { Button } from '@components/controls/button';
+import { Button, Form, TextField } from '@components';
 import { useTranslations } from 'next-intl';
 import { recoverAction } from './recover.action';
 
@@ -12,8 +10,7 @@ import { createEmptyValues } from '@/lib/forms/defaults';
 import { useForm } from '@/lib/forms/use-form';
 
 import { RecoverReqSchema, type RecoverReq } from '@/contracts/api/auth/auth.recover.caro';
-import { Text } from '@components/primitives/text';
-import { Stack } from '@components/primitives/stack';
+import { Stack, Text } from '@components';
 
 const fieldsBase = {
   identifier: {

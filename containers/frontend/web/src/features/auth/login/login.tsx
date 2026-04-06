@@ -2,9 +2,7 @@ import { LoginForm } from './login.form';
 import { Oauth } from '../oauth';
 import { useTranslations } from 'next-intl';
 
-import { InternalLink } from '@components/controls/link/link';
-import { Text } from '@components/primitives/text';
-import { Stack } from '@components/primitives/stack';
+import { InternalLink, Stack, Text } from '@components';
 
 export function Login() {
   const t = useTranslations('features.auth');

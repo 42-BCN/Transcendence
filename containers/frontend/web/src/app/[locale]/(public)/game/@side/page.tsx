@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-import { Button } from '@components/controls/button';
+import { Button } from '@components';
 import { ChatFeature } from '@/features/chat';
 
 export default function GameSidePage() {

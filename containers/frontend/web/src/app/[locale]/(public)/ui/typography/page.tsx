@@ -1,4 +1,4 @@
-import { Text } from '@components/primitives/text';
+import { Text } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 export default async function TypographyPage() {
@@ -18,7 +18,9 @@ export default async function TypographyPage() {
         {t('bodySm')}
       </Text>
 
-      <Text as="p" variant="body">{t('body')}</Text>
+      <Text as="p" variant="body">
+        {t('body')}
+      </Text>
 
       <Text as="p" variant="body-lg">
         {t('bodyLg')}

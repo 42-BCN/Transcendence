@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@components/controls/button';
+import { Button, Stack } from '@components';
 import { resendVerificationAction } from './resend-verification.action';
 
 import { feedbackStyles } from './resend-verification.styles';
-import { Stack } from '@components/primitives/stack';
 
 type ResendState = 'idle' | 'sending' | 'cooldown';
 type Feedback = 'success' | 'error' | null;

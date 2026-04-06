@@ -1,4 +1,4 @@
-import type { IconName } from '@components/primitives/icon/icons';
+import type { IconName } from '@components';
 
 // features/navigation/navigation.config.ts
 type NavHref = '/' | '/robots' | '/ui' | '/login' | '/profile';

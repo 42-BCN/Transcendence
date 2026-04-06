@@ -1,8 +1,6 @@
 'use client';
-import { Button } from '@components/controls/button';
+import { Button, ComponentViewer, Input } from '@components';
 import { Button as AButton, Input as Ainput } from 'react-aria-components';
-import { ComponentViewer } from '@components/primitives/componentViewer';
-import { Input } from '@components/controls/input';
 import { useTranslations } from 'next-intl';
 
 export default function UiPage() {
