@@ -257,6 +257,10 @@
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
+    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
+    "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
+    "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
+    "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar."
   }
 }

@@ -8,21 +8,22 @@ import { fieldsBase, formApiReq } from './login.schema';
 import { useForm } from '@/lib/forms/use-form';
 import { type LoginReq } from '@/contracts/api/auth/auth.validation';
 import { type LoginRes } from '@/contracts/api/auth/auth.contract';
-import { type ApiResponse } from '@/contracts/api/http';
 
 import { loginAction } from './login.action';
 
 type StateActionProps = {
-  err: ApiResponse<LoginRes> | null | undefined;
+  err: LoginRes | null | undefined;
 };
 
 function APIError({ err }: StateActionProps) {
   const t = useTranslations('errors');
-  return err?.ok === false ? (
+  if (err?.ok !== false) return null;
+
+  return (
     <div role="alert" className="mb-4">
       {t(err.error.code)}
     </div>
-  ) : null;
+  );
 }
 
 function useLoginFieldNavigation() {

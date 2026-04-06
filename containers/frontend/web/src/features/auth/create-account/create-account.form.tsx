@@ -12,17 +12,7 @@ import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
 
 type StateActionProps = {
-  state:
-    | {
-        ok: boolean;
-        res: {
-          data: SignupRes;
-          headers: Headers;
-          status: number;
-        };
-      }
-    | null
-    | undefined;
+  state: SignupRes | null | undefined;
 };
 
 function useCreateAccountFieldNavigation() {
@@ -38,11 +28,13 @@ function useCreateAccountFieldNavigation() {
 // TODO make a component
 function APIError({ state }: StateActionProps) {
   const t2 = useTranslations('errors');
-  return state?.ok === false ? (
+  if (state?.ok !== false) return null;
+
+  return (
     <div role="alert" className="mb-4">
-      {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
+      {t2(state.error.code)}
     </div>
-  ) : null;
+  );
 }
 
 export function CreateAccountForm() {

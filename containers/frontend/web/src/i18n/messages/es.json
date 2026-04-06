@@ -257,6 +257,10 @@
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
+    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
+    "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
+    "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
+    "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo."
   }
 }

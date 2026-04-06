@@ -260,7 +260,11 @@ declare const messages: {
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
+    "AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
+    "AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+    "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again."
   }
 };
 export default messages;

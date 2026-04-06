@@ -1,11 +1,11 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { getLocale } from 'next-intl/server';
+import { redirect } from '@/i18n/navigation';
 import { fetchServer } from '@/lib/http/fetcher.server';
 import { LoginReqSchema } from '@/contracts/api/auth/auth.validation';
 import { type LoginRes } from '@/contracts/api/auth/auth.contract';
-import { type ApiResponse } from '@/contracts/api/http';
-import { redirect } from 'next/navigation';
 
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 7;
 
@@ -55,13 +55,10 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
   const result = parseInput(formData);
   if (!result.ok) return;
 
-  const { data, headers } = await fetchServer<ApiResponse<LoginRes>>(
-    '/auth/login',
-    'POST',
-    result.data,
-  );
+  const { data, headers } = await fetchServer<LoginRes>('/auth/login', 'POST', result.data);
 
   if (!data.ok) return data;
   if (data.ok) await setAuthCookies(headers);
-  redirect('/profile');
+  const locale = await getLocale();
+  redirect({ href: '/profile', locale });
 }
