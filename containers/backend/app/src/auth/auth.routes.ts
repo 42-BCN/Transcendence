@@ -1,13 +1,13 @@
-import { Router } from "express";
-import passport from "passport";
+import { Router } from 'express';
+import passport from 'passport';
 
-import { validateBody } from "@shared/validation.middleware";
+import { validateBody } from '@shared/validation.middleware';
 import {
   LoginReqSchema,
   ResendVerificationReqSchema,
   SignupReqSchema,
-} from "@contracts/auth/auth.validation";
-import { RecoverReqSchema } from "@contracts/auth/auth.recover.caro";
+} from '@contracts/auth/auth.validation';
+import { RecoverReqSchema } from '@contracts/auth/auth.recover.caro';
 
 import {
   postLogin,
@@ -16,53 +16,46 @@ import {
   postSignup,
   postLogout,
   getGoogleCallback,
-} from "./auth.controller";
+} from './auth.controller';
 import {
   createEmailFlowRateLimit,
   loginIdentifierRateLimit,
   loginIpRateLimit,
   resendVerificationEmailRateLimit,
   signupEmailRateLimit,
-} from "./auth.rate-limit";
+} from './auth.rate-limit';
 
 export const authRouter = Router();
 
+authRouter.post('/signup', validateBody(SignupReqSchema), signupEmailRateLimit, postSignup);
 authRouter.post(
-  "/signup",
-  validateBody(SignupReqSchema),
-  signupEmailRateLimit,
-  postSignup,
-);
-authRouter.post(
-  "/login",
+  '/login',
   loginIpRateLimit,
   validateBody(LoginReqSchema),
   loginIdentifierRateLimit,
   postLogin,
 );
 authRouter.post(
-  "/recover",
+  '/recover',
   validateBody(RecoverReqSchema),
   createEmailFlowRateLimit((req) => {
     const identifier = req.body?.identifier;
-    return typeof identifier === "string" && identifier.includes("@")
-      ? identifier
-      : undefined;
+    return typeof identifier === 'string' && identifier.includes('@') ? identifier : undefined;
   }),
   postRecover,
 );
 authRouter.post(
-  "/resend-verification",
+  '/resend-verification',
   validateBody(ResendVerificationReqSchema),
   resendVerificationEmailRateLimit,
   postResendVerification,
 );
 authRouter.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-    prompt: "select_account",
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account',
   }),
 );
-authRouter.get("/callback/google", getGoogleCallback);
-authRouter.post("/logout", postLogout);
+authRouter.get('/callback/google', getGoogleCallback);
+authRouter.post('/logout', postLogout);

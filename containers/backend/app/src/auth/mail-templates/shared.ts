@@ -1,4 +1,4 @@
-export type EmailLocale = "ca" | "es" | "en";
+export type EmailLocale = 'ca' | 'es' | 'en';
 
 export type MailCopy = {
   subject: string;

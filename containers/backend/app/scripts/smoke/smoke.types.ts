@@ -3,9 +3,7 @@ export type ApiError = {
   details?: unknown;
 };
 
-export type ApiResponse<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: ApiError };
+export type ApiResponse<T> = { ok: true; data: T } | { ok: false; error: ApiError };
 
 export type AuthUser = {
   id: string;

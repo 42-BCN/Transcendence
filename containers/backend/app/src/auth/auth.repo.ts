@@ -1,23 +1,20 @@
-import { ApiError } from "@shared";
-import { prisma } from "@/lib/prisma";
+import { ApiError } from '@shared';
+import { prisma } from '@/lib/prisma';
 
-import type { AuthUserRow } from "./auth.model";
+import type { AuthUserRow } from './auth.model';
 
-type UserPublic = Pick<AuthUserRow, "id" | "email" | "username">;
-type UserVerification = Pick<
-  AuthUserRow,
-  "id" | "email" | "username" | "emailVerifiedAt"
->;
+type UserPublic = Pick<AuthUserRow, 'id' | 'email' | 'username'>;
+type UserVerification = Pick<AuthUserRow, 'id' | 'email' | 'username' | 'emailVerifiedAt'>;
 type UserWithPassword = Pick<
   AuthUserRow,
-  | "id"
-  | "email"
-  | "username"
-  | "passwordHash"
-  | "isBlocked"
-  | "failedAttempts"
-  | "lockedUntil"
-  | "emailVerifiedAt"
+  | 'id'
+  | 'email'
+  | 'username'
+  | 'passwordHash'
+  | 'isBlocked'
+  | 'failedAttempts'
+  | 'lockedUntil'
+  | 'emailVerifiedAt'
 >;
 
 const userPublicSelect = {
@@ -44,18 +41,14 @@ const userWithPasswordSelect = {
   emailVerifiedAt: true,
 } as const;
 
-export function findUserByEmail(
-  email: string,
-): Promise<UserWithPassword | null> {
+export function findUserByEmail(email: string): Promise<UserWithPassword | null> {
   return prisma.user.findUnique({
     where: { email },
     select: userWithPasswordSelect,
   });
 }
 
-export function findUserByUsername(
-  username: string,
-): Promise<UserWithPassword | null> {
+export function findUserByUsername(username: string): Promise<UserWithPassword | null> {
   return prisma.user.findUnique({
     where: { username },
     select: userWithPasswordSelect,
@@ -69,18 +62,14 @@ export function findUserById(id: string): Promise<UserPublic | null> {
   });
 }
 
-export function findUserByIdForVerification(
-  id: string,
-): Promise<UserVerification | null> {
+export function findUserByIdForVerification(id: string): Promise<UserVerification | null> {
   return prisma.user.findUnique({
     where: { id },
     select: userVerificationSelect,
   });
 }
 
-export function findUserByGoogleId(
-  googleId: string,
-): Promise<UserPublic | null> {
+export function findUserByGoogleId(googleId: string): Promise<UserPublic | null> {
   return prisma.user.findUnique({
     where: { googleId },
     select: userPublicSelect,
@@ -88,12 +77,7 @@ export function findUserByGoogleId(
 }
 
 function isPrismaErrorCode(error: unknown, code: string): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    error.code === code
-  );
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === code;
 }
 
 type InsertUserInput = {
@@ -102,9 +86,7 @@ type InsertUserInput = {
   passwordHash: string;
 };
 
-export async function insertUser(
-  input: InsertUserInput,
-): Promise<UserPublic | null> {
+export async function insertUser(input: InsertUserInput): Promise<UserPublic | null> {
   const { email, username, passwordHash } = input;
 
   try {
@@ -113,12 +95,12 @@ export async function insertUser(
         email,
         username,
         passwordHash,
-        provider: "local",
+        provider: 'local',
       },
       select: userPublicSelect,
     });
   } catch (error) {
-    if (isPrismaErrorCode(error, "P2002")) return null;
+    if (isPrismaErrorCode(error, 'P2002')) return null;
     throw error;
   }
 }
@@ -142,8 +124,8 @@ export async function linkGoogleIdToEmailUser(
       select: userPublicSelect,
     });
   } catch (error) {
-    if (isPrismaErrorCode(error, "P2025") || isPrismaErrorCode(error, "P2002"))
-      throw new ApiError("AUTH_GOOGLE_LINK_FAILED");
+    if (isPrismaErrorCode(error, 'P2025') || isPrismaErrorCode(error, 'P2002'))
+      throw new ApiError('AUTH_GOOGLE_LINK_FAILED');
     throw error;
   }
 }
@@ -154,9 +136,7 @@ type InsertGoogleUserInput = {
   username: string;
 };
 
-export async function insertGoogleUser(
-  input: InsertGoogleUserInput,
-): Promise<UserPublic> {
+export async function insertGoogleUser(input: InsertGoogleUserInput): Promise<UserPublic> {
   const { email, googleId, username } = input;
 
   try {
@@ -165,13 +145,12 @@ export async function insertGoogleUser(
         email,
         username,
         googleId,
-        provider: "google",
+        provider: 'google',
       },
       select: userPublicSelect,
     });
   } catch (error) {
-    if (isPrismaErrorCode(error, "P2002"))
-      throw new ApiError("AUTH_GOOGLE_USER_INSERT_FAILED");
+    if (isPrismaErrorCode(error, 'P2002')) throw new ApiError('AUTH_GOOGLE_USER_INSERT_FAILED');
     throw error;
   }
 }
@@ -191,11 +170,7 @@ export async function incrementFailedAttempts(userId: string) {
   });
 }
 
-export async function tryLockUser(
-  userId: string,
-  now: Date,
-  lockoutDurationMs: number,
-) {
+export async function tryLockUser(userId: string, now: Date, lockoutDurationMs: number) {
   const lockedUntil = new Date(now.getTime() + lockoutDurationMs);
 
   const result = await prisma.user.updateMany({
@@ -211,9 +186,7 @@ export async function tryLockUser(
 
 // -------------------------- Failed Password Attempt end --------------------------
 
-export async function registerSuccessfulPasswordLogin(
-  userId: string,
-): Promise<void> {
+export async function registerSuccessfulPasswordLogin(userId: string): Promise<void> {
   await prisma.user.update({
     where: { id: userId },
     data: {
@@ -242,9 +215,7 @@ export async function createEmailVerificationToken(
   });
 }
 
-export async function deleteUnusedEmailVerificationTokens(
-  userId: string,
-): Promise<void> {
+export async function deleteUnusedEmailVerificationTokens(userId: string): Promise<void> {
   await prisma.emailVerification.deleteMany({
     where: {
       userId,
@@ -259,9 +230,7 @@ type CreatePasswordResetInput = {
   expiresAt: Date;
 };
 
-export async function createPasswordResetToken(
-  input: CreatePasswordResetInput,
-): Promise<void> {
+export async function createPasswordResetToken(input: CreatePasswordResetInput): Promise<void> {
   await prisma.passwordReset.create({
     data: {
       userId: input.userId,

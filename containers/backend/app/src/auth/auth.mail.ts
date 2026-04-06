@@ -1,20 +1,20 @@
-import { sendMail } from "@lib/mail.service";
+import { sendMail } from '@lib/mail.service';
 
-import { mailTemplates, type EmailLocale } from "./mail-templates";
+import { mailTemplates, type EmailLocale } from './mail-templates';
 
-export type { EmailLocale } from "./mail-templates";
+export type { EmailLocale } from './mail-templates';
 
 function getPublicAppBaseUrl(): string {
-  return process.env.APP_BASE_URL?.trim() || "http://localhost:3000";
+  return process.env.APP_BASE_URL?.trim() || 'http://localhost:3000';
 }
 
 export function normalizeEmailLocale(value: string | undefined): EmailLocale {
   const normalized = value?.trim().toLowerCase();
 
-  if (!normalized) return "en";
-  if (normalized.startsWith("ca")) return "ca";
-  if (normalized.startsWith("es")) return "es";
-  return "en";
+  if (!normalized) return 'en';
+  if (normalized.startsWith('ca')) return 'ca';
+  if (normalized.startsWith('es')) return 'es';
+  return 'en';
 }
 
 export type SignupVerificationMailInput = {
@@ -33,7 +33,7 @@ export type PasswordResetMailInput = {
 
 function interpolate(template: string, values: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_match, key: string) => {
-    return values[key] ?? "";
+    return values[key] ?? '';
   });
 }
 
@@ -43,7 +43,7 @@ function verificationMailContent(input: SignupVerificationMailInput): {
   html: string;
 } {
   const verifyUrl = `${getPublicAppBaseUrl()}/auth/verify-email?token=${encodeURIComponent(input.verificationToken)}`;
-  const locale = input.locale ?? "en";
+  const locale = input.locale ?? 'en';
   const copy = mailTemplates[locale].signupVerification;
 
   return {
@@ -59,7 +59,7 @@ function passwordResetMailContent(input: PasswordResetMailInput): {
   html: string;
 } {
   const resetUrl = `${getPublicAppBaseUrl()}/auth/reset-password?token=${encodeURIComponent(input.resetToken)}`;
-  const locale = input.locale ?? "en";
+  const locale = input.locale ?? 'en';
   const copy = mailTemplates[locale].passwordReset;
 
   return {
@@ -81,9 +81,7 @@ export async function sendSignupVerificationEmail(
   });
 }
 
-export async function sendPasswordResetEmail(
-  input: PasswordResetMailInput,
-): Promise<void> {
+export async function sendPasswordResetEmail(input: PasswordResetMailInput): Promise<void> {
   const content = passwordResetMailContent(input);
   await sendMail({
     to: input.toEmail,

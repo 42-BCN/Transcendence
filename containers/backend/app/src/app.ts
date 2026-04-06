@@ -1,30 +1,27 @@
-import express from "express";
-import session from "express-session";
-import passport from "passport";
-import { RedisStore } from "connect-redis";
+import express from 'express';
+import session from 'express-session';
+import passport from 'passport';
+import { RedisStore } from 'connect-redis';
 
-import { errorMiddleware, getRedisClient } from "@shared";
+import { errorMiddleware, getRedisClient } from '@shared';
 
-import { usersRouter } from "./users/users.routes";
-import { protectedRouter } from "./protected/protected.route";
-import "./auth/auth.passport";
-import { authRouter } from "./auth/auth.routes";
-import {
-  friendsRouter,
-  friendshipsRouter,
-} from "./friendships/friendships.routes";
+import { usersRouter } from './users/users.routes';
+import { protectedRouter } from './protected/protected.route';
+import './auth/auth.passport';
+import { authRouter } from './auth/auth.routes';
+import { friendsRouter, friendshipsRouter } from './friendships/friendships.routes';
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
 const sessionSecret = process.env.SESSION_SECRET;
-if (!sessionSecret) throw new Error("SESSION_SECRET is required");
+if (!sessionSecret) throw new Error('SESSION_SECRET is required');
 
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
 
 const app = express();
 
-app.set("trust proxy", 1);
+app.set('trust proxy', 1);
 
 app.use(express.json());
 
@@ -35,16 +32,16 @@ app.use(
       ttl: Math.floor(SEVEN_DAYS_MS / 1000),
       disableTouch: false,
     }),
-    name: "sid",
+    name: 'sid',
     secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
     rolling: true,
     cookie: {
       httpOnly: true,
-      secure: "auto",
-      sameSite: "lax",
-      path: "/",
+      secure: 'auto',
+      sameSite: 'lax',
+      path: '/',
       maxAge: SEVEN_DAYS_MS,
     },
   }),
@@ -52,7 +49,7 @@ app.use(
 
 app.use(passport.initialize());
 
-app.get("/health", async (_req, res) => {
+app.get('/health', async (_req, res) => {
   try {
     await getRedisClient().ping();
     res.json({ ok: true });
@@ -60,11 +57,11 @@ app.get("/health", async (_req, res) => {
     res.status(500).json({ ok: false });
   }
 });
-app.use("/users", usersRouter);
-app.use("/auth", authRouter);
-app.use("/protected", protectedRouter);
-app.use("/friendships", friendshipsRouter);
-app.use("/friends", friendsRouter);
+app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+app.use('/protected', protectedRouter);
+app.use('/friendships', friendshipsRouter);
+app.use('/friends', friendsRouter);
 
 app.use(errorMiddleware);
 
