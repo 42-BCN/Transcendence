@@ -4,18 +4,11 @@ import { Link as AriaLink } from 'react-aria-components';
 import { Link } from '@/i18n/navigation';
 
 import { buttonStyles, iconStyles } from '../button/button.styles';
-import type {
-  ButtonSize as Size,
-  ButtonVariant as Variant,
-  ButtonW as W,
-} from '../button/button.styles';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { LinkStyles } from './link.styles';
+import type { InteractiveControlStyleProps } from '@components/primitives/interactive-control/interactive-control.types';
 
-export type LinkProps = {
-  variant?: Variant;
-  size?: Size;
-  w?: W;
+export type ExternalLinkProps = InteractiveControlStyleProps & {
   icon?: ReactNode;
   href: string;
   children: ReactNode;
@@ -24,12 +17,12 @@ export type LinkProps = {
   as?: 'link' | 'button';
 };
 
-// TODO links and buttons are quite similar may they should be merged into a single component with an "as" prop to determine the underlying element? Or maybe we can have a base component that both extend from? We can discuss this in the next meeting. For now, I'm just going to copy the button styles and add some link specific styles on top of it.
-export function ExternalLink(args: LinkProps) {
+export function ExternalLink(args: ExternalLinkProps) {
   const {
     variant = 'primary',
     size = 'md',
     w = 'full',
+    className,
     children,
     icon,
     href,
@@ -45,7 +38,9 @@ export function ExternalLink(args: LinkProps) {
       href={href}
       target={target}
       rel={computedRel}
-      className={as === 'button' ? buttonStyles({ variant, size, w }) : LinkStyles()}
+      className={
+        as === 'button' ? buttonStyles({ variant, size, w, className }) : LinkStyles(className)
+      }
     >
       {icon && <span className={iconStyles()}>{icon}</span>}
       {children}
@@ -53,15 +48,33 @@ export function ExternalLink(args: LinkProps) {
   );
 }
 
-export type InternalLinkProps = {
+export type InternalLinkProps = InteractiveControlStyleProps & {
   children: ReactNode;
-  href: string;
+  href: ComponentProps<typeof Link>['href'];
+  as?: 'link' | 'button';
+  icon?: ReactNode;
 };
 
 export function InternalLink(args: InternalLinkProps) {
-  const { children, href } = args;
+  const {
+    children,
+    href,
+    variant = 'primary',
+    size = 'md',
+    w = 'full',
+    className,
+    as = 'link',
+    icon,
+  } = args;
+
   return (
-    <Link className={LinkStyles()} href={href}>
+    <Link
+      className={
+        as === 'button' ? buttonStyles({ variant, size, w, className }) : LinkStyles(className)
+      }
+      href={href}
+    >
+      {icon && <span className={iconStyles()}>{icon}</span>}
       {children}
     </Link>
   );

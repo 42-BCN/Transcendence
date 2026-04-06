@@ -10,7 +10,6 @@ import type {
   ClientToServerChatEvents,
   ServerToClientChatEvents,
 } from '../contracts/sockets/chat/chat.schema';
-import type { ValidationCode } from '../contracts/api/http/validation';
 
 const MAX_HISTORY = 50;
 const chatHistory: ChatHistoryType = [];
@@ -77,7 +76,6 @@ export function registerChatSocket(
 ) {
   nsp.on('connection', (socket: Socket<ClientToServerChatEvents, ServerToClientChatEvents>) => {
     console.log('[Chat Socket] User connected:', socket.id);
-
     socket.emit('chat:history', chatHistory.slice(-MAX_HISTORY));
     socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', socket.id));
 

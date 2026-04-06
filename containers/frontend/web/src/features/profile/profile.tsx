@@ -3,7 +3,7 @@ import { protectedMeProfileAction } from './profile.action';
 
 // TODO WIP
 export async function Profile() {
-  const t = await getTranslations('Profile');
+  const t = await getTranslations('features.profile');
   const data = await protectedMeProfileAction();
   return !data.ok ? (
     <div className="p-8">{t('fail')}</div>

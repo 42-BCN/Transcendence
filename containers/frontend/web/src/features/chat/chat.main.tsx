@@ -1,9 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { ScrollArea } from '@components/primitives/scroll-area';
-import { MessageBubble } from '@components/primitives/message-bubble';
-import { Text } from '@components/primitives/text';
-import { Stack } from '@components/primitives/stack';
+import { MessageBubble, ScrollArea, Stack, Text } from '@components';
 import { chatStyles } from './chat.styles';
 import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
 

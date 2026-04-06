@@ -1,1 +1,1 @@
-export * from './stack';
+export { Stack } from './stack';
