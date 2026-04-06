@@ -48,6 +48,19 @@
         "buttons": "Botones",
         "input": "Entrada",
         "sampleButtonText": "Hola",
+        "links": {
+          "chat": "Chat",
+          "glassCard": "Tarjeta de vidrio",
+          "glassCardAnimated": "Tarjeta de vidrio animada",
+          "glassCardAnimatedV2": "Tarjeta de vidrio animada V2",
+          "glassCardAnimatedV3": "Tarjeta de vidrio animada V3",
+          "messageBubble": "Burbuja de mensaje",
+          "meter": "Medidor",
+          "scrollArea": "Área de desplazamiento",
+          "textArea": "Área de texto",
+          "themeTest": "Prueba de tema",
+          "typography": "Tipografía"
+        },
         "viewerTitles": {
           "buttonPrimitive": "Botón primitivo",
           "ariaButton": "Botón Aria",
