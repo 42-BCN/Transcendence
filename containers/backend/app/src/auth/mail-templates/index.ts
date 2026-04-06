@@ -1,7 +1,7 @@
-import { caMailTemplates } from "./ca";
-import { enMailTemplates } from "./en";
-import { esMailTemplates } from "./es";
-import type { MailTemplateTree } from "./shared";
+import { caMailTemplates } from './ca';
+import { enMailTemplates } from './en';
+import { esMailTemplates } from './es';
+import type { MailTemplateTree } from './shared';
 
 export const mailTemplates = {
   ca: caMailTemplates,
@@ -9,9 +9,4 @@ export const mailTemplates = {
   es: esMailTemplates,
 } satisfies MailTemplateTree;
 
-export type {
-  EmailLocale,
-  MailCopy,
-  MailTemplateSet,
-  MailTemplateTree,
-} from "./shared";
+export type { EmailLocale, MailCopy, MailTemplateSet, MailTemplateTree } from './shared';

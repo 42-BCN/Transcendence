@@ -1,15 +1,9 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from 'express';
 
-import type {
-  UserPublicResponse,
-  UsersListResponse,
-} from "@contracts/users/users.contracts";
-import type {
-  GetUserByIdParam,
-  GetUsersQuery,
-} from "@contracts/users/users.validation";
+import type { UserPublicResponse, UsersListResponse } from '@contracts/users/users.contracts';
+import type { GetUserByIdParam, GetUsersQuery } from '@contracts/users/users.validation';
 
-import { getUsers, findUserById, userByUsername } from "./users.service";
+import { getUsers, findUserById, userByUsername } from './users.service';
 
 type Locals = { query: GetUsersQuery };
 

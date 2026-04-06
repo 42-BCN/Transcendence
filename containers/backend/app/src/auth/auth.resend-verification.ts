@@ -1,11 +1,11 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes } from 'node:crypto';
 
-import { ApiError, getRedisClient } from "@shared";
+import { ApiError, getRedisClient } from '@shared';
 
-import { authSecurityConfig } from "./auth.security.config";
-import * as Repo from "./auth.repo";
-import { sendSignupVerificationEmail } from "./auth.mail";
-import type { EmailLocale } from "./mail-templates";
+import { authSecurityConfig } from './auth.security.config';
+import * as Repo from './auth.repo';
+import { sendSignupVerificationEmail } from './auth.mail';
+import type { EmailLocale } from './mail-templates';
 
 type ResendVerificationUser = {
   id: string;
@@ -22,9 +22,7 @@ export type ResendVerificationInput = {
 
 export type ResendVerificationDeps = {
   findUserByEmail: (email: string) => Promise<ResendVerificationUser | null>;
-  findUserByIdForVerification: (
-    userId: string,
-  ) => Promise<ResendVerificationUser | null>;
+  findUserByIdForVerification: (userId: string) => Promise<ResendVerificationUser | null>;
   acquireCooldown: (userId: string) => Promise<boolean>;
   issueVerificationToken: (userId: string) => Promise<string>;
   sendVerificationEmail: (input: {
@@ -36,11 +34,11 @@ export type ResendVerificationDeps = {
 };
 
 function fingerprint(value: string): string {
-  return createHash("sha256").update(value).digest("hex").slice(0, 16);
+  return createHash('sha256').update(value).digest('hex').slice(0, 16);
 }
 
 function createRawToken(): string {
-  return randomBytes(32).toString("hex");
+  return randomBytes(32).toString('hex');
 }
 
 function expiresAt(ttlMs: number): Date {
@@ -52,7 +50,7 @@ async function issueVerificationToken(userId: string): Promise<string> {
   await Repo.deleteUnusedEmailVerificationTokens(userId);
   await Repo.createEmailVerificationToken({
     userId,
-    tokenHash: createHash("sha256").update(token).digest("hex"),
+    tokenHash: createHash('sha256').update(token).digest('hex'),
     expiresAt: expiresAt(24 * 60 * 60 * 1000),
   });
   return token;
@@ -60,16 +58,14 @@ async function issueVerificationToken(userId: string): Promise<string> {
 
 async function acquireCooldown(userId: string): Promise<boolean> {
   const redis = getRedisClient();
-  const ttlSeconds = Math.ceil(
-    authSecurityConfig.resendVerificationCooldownMs / 1000,
-  );
+  const ttlSeconds = Math.ceil(authSecurityConfig.resendVerificationCooldownMs / 1000);
   const key = `rl:auth:resend-verification:${fingerprint(userId)}`;
-  const result = await redis.set(key, "1", {
+  const result = await redis.set(key, '1', {
     EX: ttlSeconds,
     NX: true,
   });
 
-  return result === "OK";
+  return result === 'OK';
 }
 
 const defaultDeps: ResendVerificationDeps = {
@@ -85,7 +81,7 @@ export async function resendVerification(
   deps: ResendVerificationDeps = defaultDeps,
 ): Promise<void> {
   if (!input.email && !input.userId) {
-    throw new ApiError("VALIDATION_ERROR");
+    throw new ApiError('VALIDATION_ERROR');
   }
 
   const user = input.userId
@@ -95,12 +91,12 @@ export async function resendVerification(
       : null;
 
   if (!user || user.emailVerifiedAt) {
-    throw new ApiError("AUTH_RESEND_VERIFICATION_NOT_FOUND");
+    throw new ApiError('AUTH_RESEND_VERIFICATION_NOT_FOUND');
   }
 
   const allowed = await deps.acquireCooldown(user.id);
   if (!allowed) {
-    throw new ApiError("AUTH_RESEND_VERIFICATION_COOLDOWN");
+    throw new ApiError('AUTH_RESEND_VERIFICATION_COOLDOWN');
   }
 
   try {
@@ -112,6 +108,6 @@ export async function resendVerification(
       locale: input.locale,
     });
   } catch {
-    throw new ApiError("AUTH_INTERNAL_ERROR");
+    throw new ApiError('AUTH_INTERNAL_ERROR');
   }
 }

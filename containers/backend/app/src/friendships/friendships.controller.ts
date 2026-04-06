@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response } from 'express';
 import type {
   GetFriendsListResponse,
   GetFriendshipsResponse,
@@ -8,11 +8,11 @@ import type {
   SendFriendRequestResponse,
   AcceptRequestResponse,
   RespondFriendRequestResponse,
-} from "@contracts/friendships/friendships.contracts";
+} from '@contracts/friendships/friendships.contracts';
 import type {
   AcceptRequestParam,
   RespondFriendRequestBody,
-} from "@contracts/friendships/friendships.validation";
+} from '@contracts/friendships/friendships.validation';
 
 import {
   getFriendships,
@@ -22,7 +22,7 @@ import {
   sendFriendRequest,
   acceptRequest,
   respondToFriendRequest,
-} from "./friendships.service";
+} from './friendships.service';
 
 export async function getFriendsListController(
   req: Request,
@@ -65,10 +65,7 @@ export async function sendFriendRequestController(
   res: Response<SendFriendRequestResponse>,
 ): Promise<void> {
   const userId = req.session.userId!;
-  const { friendship, wasAutoAccepted } = await sendFriendRequest(
-    userId,
-    req.body.targetUserId,
-  );
+  const { friendship, wasAutoAccepted } = await sendFriendRequest(userId, req.body.targetUserId);
   const status = wasAutoAccepted ? 200 : 201;
   res.status(status).json({
     ok: true,
@@ -90,10 +87,6 @@ export async function respondFriendRequestController(
   res: Response<RespondFriendRequestResponse>,
 ): Promise<void> {
   const userId = req.session.userId!;
-  const result = await respondToFriendRequest(
-    req.body.friendshipId,
-    userId,
-    req.body.action,
-  );
+  const result = await respondToFriendRequest(req.body.friendshipId, userId, req.body.action);
   res.status(200).json({ ok: true, data: result });
 }

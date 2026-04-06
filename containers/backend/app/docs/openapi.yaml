@@ -19,18 +19,18 @@ paths:
       summary: Health check
       operationId: getHealth
       responses:
-        "200":
+        '200':
           description: Service is healthy
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthOkResponse"
-        "500":
+                $ref: '#/components/schemas/HealthOkResponse'
+        '500':
           description: Redis is unavailable
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthErrorResponse"
+                $ref: '#/components/schemas/HealthErrorResponse'
 
   /auth/signup:
     post:
@@ -42,32 +42,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignupRequest"
+              $ref: '#/components/schemas/SignupRequest'
       responses:
-        "200":
+        '200':
           description: Account created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignupResponse"
-        "409":
+                $ref: '#/components/schemas/SignupResponse'
+        '409':
           description: Email already exists
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
-        "422":
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /auth/login:
     post:
@@ -79,44 +79,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequest"
+              $ref: '#/components/schemas/LoginRequest'
       responses:
-        "200":
+        '200':
           description: Login succeeded
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LoginResponse"
-        "401":
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
           description: Invalid credentials
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
-        "403":
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
           description: Account locked or email not verified
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
-        "429":
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '429':
           description: Rate limited
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
-        "422":
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /auth/recover:
     post:
@@ -128,26 +128,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RecoverRequest"
+              $ref: '#/components/schemas/RecoverRequest'
       responses:
-        "200":
+        '200':
           description: Recovery email flow accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RecoverResponse"
-        "422":
+                $ref: '#/components/schemas/RecoverResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /auth/resend-verification:
     post:
@@ -159,38 +159,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResendVerificationRequest"
+              $ref: '#/components/schemas/ResendVerificationRequest'
       responses:
-        "200":
+        '200':
           description: Verification email sent
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NullResponse"
-        "404":
+                $ref: '#/components/schemas/NullResponse'
+        '404':
           description: User not found or already verified
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
-        "429":
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '429':
           description: Cooldown not expired
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
-        "422":
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /auth/google:
     get:
@@ -198,7 +198,7 @@ paths:
       summary: Start Google OAuth login
       operationId: getAuthGoogle
       responses:
-        "302":
+        '302':
           description: Redirect to Google OAuth
 
   /auth/callback/google:
@@ -207,14 +207,14 @@ paths:
       summary: Handle Google OAuth callback
       operationId: getAuthGoogleCallback
       responses:
-        "302":
+        '302':
           description: Redirect to profile on success
-        "500":
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /auth/logout:
     post:
@@ -222,18 +222,18 @@ paths:
       summary: Destroy the active session
       operationId: postAuthLogout
       responses:
-        "200":
+        '200':
           description: Logged out successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/NullResponse"
-        "500":
+                $ref: '#/components/schemas/NullResponse'
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthErrorResponse"
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /protected/me:
     get:
@@ -243,18 +243,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Current user id
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SessionMeResponse"
-        "401":
+                $ref: '#/components/schemas/SessionMeResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /protected/me/profile:
     get:
@@ -264,24 +264,24 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Public profile
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
-        "401":
+                $ref: '#/components/schemas/UserResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /users:
     get:
@@ -303,24 +303,24 @@ paths:
             minimum: 0
           required: false
       responses:
-        "200":
+        '200':
           description: Paginated user list
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UsersListResponse"
-        "422":
+                $ref: '#/components/schemas/UsersListResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
-        "500":
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
           description: Internal error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /users/{userId}:
     get:
@@ -335,24 +335,24 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Public user
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
-        "404":
+                $ref: '#/components/schemas/UserResponse'
+        '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /users/username/{username}:
     get:
@@ -366,18 +366,18 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Public user
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
-        "404":
+                $ref: '#/components/schemas/UserResponse'
+        '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friendships:
     get:
@@ -387,18 +387,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Friendship list
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipsListResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipsListResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friendships/requests/received:
     get:
@@ -408,18 +408,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Received requests
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipsRequestsResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipsRequestsResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friendships/requests/sent:
     get:
@@ -429,18 +429,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Sent requests
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipsRequestsResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipsRequestsResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friendships/request:
     post:
@@ -454,50 +454,50 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FriendRequestCreateRequest"
+              $ref: '#/components/schemas/FriendRequestCreateRequest'
       responses:
-        "200":
+        '200':
           description: Friend request auto-accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "201":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '201':
           description: Friend request created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "401":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "403":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
           description: Forbidden action
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Target user not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "409":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friendships/requests:
     post:
@@ -511,50 +511,50 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FriendRequestCreateRequest"
+              $ref: '#/components/schemas/FriendRequestCreateRequest'
       responses:
-        "200":
+        '200':
           description: Friend request auto-accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "201":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '201':
           description: Friend request created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "401":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "403":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
           description: Forbidden action
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Target user not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "409":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friendships/requests/{requestId}/accept:
     patch:
@@ -571,30 +571,30 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Request accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipActionResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipActionResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Request not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friendships/respond:
     post:
@@ -608,44 +608,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FriendshipRespondRequest"
+              $ref: '#/components/schemas/FriendshipRespondRequest'
       responses:
-        "200":
+        '200':
           description: Request handled
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipRespondResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipRespondResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "403":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
           description: Forbidden action
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Request not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "409":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friends:
     get:
@@ -655,18 +655,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Friends list
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendsListResponse"
-        "401":
+                $ref: '#/components/schemas/FriendsListResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friends/requests/received:
     get:
@@ -676,18 +676,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Received requests
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipsRequestsResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipsRequestsResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friends/requests/sent:
     get:
@@ -697,18 +697,18 @@ paths:
       security:
         - cookieAuth: []
       responses:
-        "200":
+        '200':
           description: Sent requests
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipsRequestsResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipsRequestsResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /friends/request:
     post:
@@ -722,50 +722,50 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FriendRequestCreateRequest"
+              $ref: '#/components/schemas/FriendRequestCreateRequest'
       responses:
-        "200":
+        '200':
           description: Friend request auto-accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "201":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '201':
           description: Friend request created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "401":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "403":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
           description: Forbidden action
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Target user not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "409":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friends/requests:
     post:
@@ -779,50 +779,50 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FriendRequestCreateRequest"
+              $ref: '#/components/schemas/FriendRequestCreateRequest'
       responses:
-        "200":
+        '200':
           description: Friend request auto-accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "201":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '201':
           description: Friend request created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendRequestCreateResponse"
-        "401":
+                $ref: '#/components/schemas/FriendRequestCreateResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "403":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
           description: Forbidden action
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Target user not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "409":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friends/requests/{requestId}/accept:
     patch:
@@ -839,30 +839,30 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Request accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipActionResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipActionResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Request not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /friends/respond:
     post:
@@ -876,44 +876,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/FriendshipRespondRequest"
+              $ref: '#/components/schemas/FriendshipRespondRequest'
       responses:
-        "200":
+        '200':
           description: Request handled
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendshipRespondResponse"
-        "401":
+                $ref: '#/components/schemas/FriendshipRespondResponse'
+        '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "403":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
           description: Forbidden action
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "404":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
           description: Request not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "409":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GenericErrorResponse"
-        "422":
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidationErrorResponse"
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
 components:
   securitySchemes:
@@ -948,7 +948,7 @@ components:
           type: boolean
           enum: [false]
         error:
-          $ref: "#/components/schemas/ApiError"
+          $ref: '#/components/schemas/ApiError'
     ValidationErrorResponse:
       type: object
       required: [ok, error]
@@ -958,11 +958,11 @@ components:
           enum: [false]
         error:
           allOf:
-            - $ref: "#/components/schemas/ApiError"
+            - $ref: '#/components/schemas/ApiError'
             - type: object
               properties:
                 details:
-                  $ref: "#/components/schemas/ValidationErrorDetails"
+                  $ref: '#/components/schemas/ValidationErrorDetails'
     HealthOkResponse:
       type: object
       required: [ok]
@@ -1042,7 +1042,7 @@ components:
           required: [user]
           properties:
             user:
-              $ref: "#/components/schemas/AuthUser"
+              $ref: '#/components/schemas/AuthUser'
     LoginResponse:
       type: object
       required: [ok, data]
@@ -1055,7 +1055,7 @@ components:
           required: [user]
           properties:
             user:
-              $ref: "#/components/schemas/AuthUser"
+              $ref: '#/components/schemas/AuthUser'
     RecoverResponse:
       type: object
       required: [ok, data]
@@ -1099,7 +1099,7 @@ components:
           type: boolean
           enum: [true]
         data:
-          $ref: "#/components/schemas/UserPublic"
+          $ref: '#/components/schemas/UserPublic'
     UsersListResponse:
       type: object
       required: [ok, data]
@@ -1114,7 +1114,7 @@ components:
             users:
               type: array
               items:
-                $ref: "#/components/schemas/UserPublic"
+                $ref: '#/components/schemas/UserPublic'
             meta:
               type: object
               required: [limit, offset, count]
@@ -1172,7 +1172,7 @@ components:
             friendships:
               type: array
               items:
-                $ref: "#/components/schemas/FriendshipPublic"
+                $ref: '#/components/schemas/FriendshipPublic'
     FriendshipsRequestsResponse:
       type: object
       required: [ok, data]
@@ -1187,7 +1187,7 @@ components:
             requests:
               type: array
               items:
-                $ref: "#/components/schemas/FriendshipPublic"
+                $ref: '#/components/schemas/FriendshipPublic'
     FriendsListResponse:
       type: object
       required: [ok, data]
@@ -1202,7 +1202,7 @@ components:
             friends:
               type: array
               items:
-                $ref: "#/components/schemas/FriendPublic"
+                $ref: '#/components/schemas/FriendPublic'
     FriendRequestCreateRequest:
       type: object
       required: [targetUserId]
@@ -1222,7 +1222,7 @@ components:
           required: [friendship, wasAutoAccepted]
           properties:
             friendship:
-              $ref: "#/components/schemas/FriendshipPublic"
+              $ref: '#/components/schemas/FriendshipPublic'
             wasAutoAccepted:
               type: boolean
     FriendshipActionResponse:
@@ -1237,7 +1237,7 @@ components:
           required: [friendship]
           properties:
             friendship:
-              $ref: "#/components/schemas/FriendshipPublic"
+              $ref: '#/components/schemas/FriendshipPublic'
     FriendshipRespondRequest:
       type: object
       required: [friendshipId, action]
@@ -1264,7 +1264,7 @@ components:
               enum: [accept, reject]
             friendship:
               allOf:
-                - $ref: "#/components/schemas/FriendshipPublic"
+                - $ref: '#/components/schemas/FriendshipPublic'
               nullable: true
     AuthErrorResponse:
       type: object

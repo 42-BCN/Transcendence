@@ -1,6 +1,6 @@
-import type { ApiResponse } from "../http/response";
-import type { ValidationErrorDetails } from "../http/validation";
-import type { UsersErrorName } from "./users.errors"; // create this like auth.errors
+import type { ApiResponse } from '../http/response';
+import type { ValidationErrorDetails } from '../http/validation';
+import type { UsersErrorName } from './users.errors'; // create this like auth.errors
 
 export type UserPublic = {
   id: string; // uuid zod can check for it on validation
@@ -26,20 +26,12 @@ export type UsersListOk = {
 };
 
 export const USERS_LIST_ERRORS = [
-  "INTERNAL_ERROR",
-  "VALIDATION_ERROR",
+  'INTERNAL_ERROR',
+  'VALIDATION_ERROR',
 ] as const satisfies readonly UsersErrorName[];
 
 export type UsersListError = (typeof USERS_LIST_ERRORS)[number];
 
-export type UsersListResponse = ApiResponse<
-  UsersListOk,
-  UsersListError,
-  ValidationErrorDetails
->;
+export type UsersListResponse = ApiResponse<UsersListOk, UsersListError, ValidationErrorDetails>;
 
-export type UserPublicResponse = ApiResponse<
-  UserPublic,
-  UsersListError,
-  ValidationErrorDetails
->;
+export type UserPublicResponse = ApiResponse<UserPublic, UsersListError, ValidationErrorDetails>;

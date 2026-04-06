@@ -1,5 +1,5 @@
-import { BASE_URL } from "./smoke.config";
-import { cookieHeader, storeCookies } from "./smoke.utils";
+import { BASE_URL } from './smoke.config';
+import { cookieHeader, storeCookies } from './smoke.utils';
 
 export async function request<T>(
   path: string,
@@ -7,19 +7,19 @@ export async function request<T>(
 ): Promise<{ res: Response; body: T | null; text: string }> {
   const headers = new Headers(init.headers);
 
-  if (!headers.has("Content-Type") && init.body) {
-    headers.set("Content-Type", "application/json");
+  if (!headers.has('Content-Type') && init.body) {
+    headers.set('Content-Type', 'application/json');
   }
 
   const cookies = cookieHeader();
-  if (cookies) headers.set("Cookie", cookies);
+  if (cookies) headers.set('Cookie', cookies);
 
-  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
 
   const res = await fetch(`${BASE_URL}${normalizedPath}`, {
     ...init,
     headers,
-    redirect: "manual",
+    redirect: 'manual',
   });
 
   storeCookies(res);

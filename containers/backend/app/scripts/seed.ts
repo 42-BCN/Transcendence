@@ -1,24 +1,24 @@
-import { prisma } from "../src/lib/prisma";
-import { hashPassword } from "../src/auth/auth.service";
+import { prisma } from '../src/lib/prisma';
+import { hashPassword } from '../src/auth/auth.service';
 
-import type { FriendshipStatus } from "../src/generated/prisma/enums";
+import type { FriendshipStatus } from '../src/generated/prisma/enums';
 
-const DEFAULT_PASSWORD = "Password123!";
-const LOCKOUT_TEST_EMAIL = "lockout.test@fakemail.com";
-const LOCKOUT_TEST_USERNAME = "lockout_test_user";
-const LOCKOUT_TEST_PASSWORD = "LockoutTest123!";
+const DEFAULT_PASSWORD = 'Password123!';
+const LOCKOUT_TEST_EMAIL = 'lockout.test@fakemail.com';
+const LOCKOUT_TEST_USERNAME = 'lockout_test_user';
+const LOCKOUT_TEST_PASSWORD = 'LockoutTest123!';
 
 const POKEMON_USERNAMES = [
-  "pikachu",
-  "bulbasaur",
-  "squirtle",
-  "charmander",
-  "eevee",
-  "snorlax",
-  "mew",
-  "mewtwo",
-  "dragonite",
-  "lapras",
+  'pikachu',
+  'bulbasaur',
+  'squirtle',
+  'charmander',
+  'eevee',
+  'snorlax',
+  'mew',
+  'mewtwo',
+  'dragonite',
+  'lapras',
 ] as const;
 
 type SeedUserRef = {
@@ -30,16 +30,16 @@ type SeedUserRef = {
 type UserMap = Map<string, SeedUserRef>;
 
 type FriendshipSeed =
-  | { type: "accepted"; a: string; b: string }
-  | { type: "pending"; from: string; to: string };
+  | { type: 'accepted'; a: string; b: string }
+  | { type: 'pending'; from: string; to: string };
 
 const FRIENDSHIP_SEEDS: FriendshipSeed[] = [
-  { type: "accepted", a: "pikachu", b: "bulbasaur" },
-  { type: "accepted", a: "pikachu", b: "squirtle" },
-  { type: "pending", from: "pikachu", to: "charmander" },
-  { type: "pending", from: "eevee", to: "pikachu" },
-  { type: "pending", from: "mew", to: "mewtwo" },
-  { type: "accepted", a: "dragonite", b: "lapras" },
+  { type: 'accepted', a: 'pikachu', b: 'bulbasaur' },
+  { type: 'accepted', a: 'pikachu', b: 'squirtle' },
+  { type: 'pending', from: 'pikachu', to: 'charmander' },
+  { type: 'pending', from: 'eevee', to: 'pikachu' },
+  { type: 'pending', from: 'mew', to: 'mewtwo' },
+  { type: 'accepted', a: 'dragonite', b: 'lapras' },
   // snorlax intentionally isolated
 ];
 
@@ -56,11 +56,11 @@ function requireUser(users: UserMap, username: string): SeedUserRef {
 }
 
 function validateFriendshipSeed(seed: FriendshipSeed): void {
-  if (seed.type === "accepted" && seed.a === seed.b) {
+  if (seed.type === 'accepted' && seed.a === seed.b) {
     throw new Error(`Accepted friendship cannot be self: ${seed.a}`);
   }
 
-  if (seed.type === "pending" && seed.from === seed.to) {
+  if (seed.type === 'pending' && seed.from === seed.to) {
     throw new Error(`Pending friendship cannot be self: ${seed.from}`);
   }
 }
@@ -79,7 +79,7 @@ async function upsertLocalUser(args: {
       username,
       passwordHash,
       googleId: null,
-      provider: "local",
+      provider: 'local',
       emailVerifiedAt: new Date(),
       isBlocked: false,
       failedAttempts: 0,
@@ -91,7 +91,7 @@ async function upsertLocalUser(args: {
       username,
       passwordHash,
       googleId: null,
-      provider: "local",
+      provider: 'local',
       emailVerifiedAt: new Date(),
       isBlocked: false,
       failedAttempts: 0,
@@ -147,13 +147,11 @@ async function upsertFriendship(args: {
   const { aId, bId, senderId, status } = args;
 
   if (aId === bId) {
-    throw new Error(
-      "Cannot create friendship with the same user on both sides",
-    );
+    throw new Error('Cannot create friendship with the same user on both sides');
   }
 
   if (senderId !== aId && senderId !== bId) {
-    throw new Error("senderId must belong to one of the friendship users");
+    throw new Error('senderId must belong to one of the friendship users');
   }
 
   const { userId1, userId2 } = sortPair(aId, bId);
@@ -179,7 +177,7 @@ async function seedFriendships(users: UserMap): Promise<void> {
   for (const seed of FRIENDSHIP_SEEDS) {
     validateFriendshipSeed(seed);
 
-    if (seed.type === "accepted") {
+    if (seed.type === 'accepted') {
       const a = requireUser(users, seed.a);
       const b = requireUser(users, seed.b);
 
@@ -187,7 +185,7 @@ async function seedFriendships(users: UserMap): Promise<void> {
         aId: a.id,
         bId: b.id,
         senderId: a.id,
-        status: "accepted",
+        status: 'accepted',
       });
     } else {
       const from = requireUser(users, seed.from);
@@ -197,29 +195,24 @@ async function seedFriendships(users: UserMap): Promise<void> {
         aId: from.id,
         bId: to.id,
         senderId: from.id,
-        status: "pending",
+        status: 'pending',
       });
     }
   }
 }
 
 export async function seed(): Promise<void> {
-  console.log("Seeding Database");
+  console.log('Seeding Database');
 
-  if (
-    process.env.NODE_ENV !== "development" &&
-    process.env.NODE_ENV !== "test"
-  ) {
-    throw new Error(
-      "Seeding is only allowed in development or test environments.",
-    );
+  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
+    throw new Error('Seeding is only allowed in development or test environments.');
   }
 
   try {
-    await insertSpecificUser("capapes");
-    await insertSpecificUser("mfontser");
-    await insertSpecificUser("joanavar");
-    await insertSpecificUser("cmanica");
+    await insertSpecificUser('capapes');
+    await insertSpecificUser('mfontser');
+    await insertSpecificUser('joanavar');
+    await insertSpecificUser('cmanica');
     await insertLockoutTestUser();
 
     const pokemonUsers = await seedPokemonUsers();
@@ -230,10 +223,10 @@ export async function seed(): Promise<void> {
 
   console.log({
     specificUsers: [
-      "capapes@fakemail.com",
-      "mfontser@fakemail.com",
-      "joanavar@fakemail.com",
-      "cmanica@fakemail.com",
+      'capapes@fakemail.com',
+      'mfontser@fakemail.com',
+      'joanavar@fakemail.com',
+      'cmanica@fakemail.com',
     ],
     lockoutUser: {
       email: LOCKOUT_TEST_EMAIL,
@@ -244,10 +237,10 @@ export async function seed(): Promise<void> {
     friendshipScenarios: FRIENDSHIP_SEEDS.length,
   });
 
-  console.log("Seeded");
+  console.log('Seeded');
 }
 
 seed().catch((err) => {
-  console.error("Database Seed failed: ", err);
+  console.error('Database Seed failed: ', err);
   process.exitCode = 1;
 });

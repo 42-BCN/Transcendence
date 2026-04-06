@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import type { TestResult } from "./smoke.types";
+import type { TestResult } from './smoke.types';
 
 let cookieJar = new Map<string, string>();
 
@@ -13,11 +13,9 @@ export function uniqueEmail(prefix: string): string {
   return `${prefix}_${stamp}@example.com`;
 }
 
-function parseSetCookie(
-  setCookie: string,
-): { name: string; value: string } | null {
-  const firstPart = setCookie.split(";")[0];
-  const eqIndex = firstPart.indexOf("=");
+function parseSetCookie(setCookie: string): { name: string; value: string } | null {
+  const firstPart = setCookie.split(';')[0];
+  const eqIndex = firstPart.indexOf('=');
 
   if (eqIndex <= 0) return null;
 
@@ -33,15 +31,15 @@ export function storeCookies(res: Response): void {
   };
 
   const setCookies =
-    typeof headers.getSetCookie === "function"
+    typeof headers.getSetCookie === 'function'
       ? headers.getSetCookie()
-      : ([res.headers.get("set-cookie")].filter(Boolean) as string[]);
+      : ([res.headers.get('set-cookie')].filter(Boolean) as string[]);
 
   for (const raw of setCookies) {
     const parsed = parseSetCookie(raw);
     if (!parsed) continue;
 
-    if (parsed.value === "") {
+    if (parsed.value === '') {
       cookieJar.delete(parsed.name);
       continue;
     }
@@ -55,7 +53,7 @@ export function cookieHeader(): string | undefined {
 
   return Array.from(cookieJar.entries())
     .map(([name, value]) => `${name}=${value}`)
-    .join("; ");
+    .join('; ');
 }
 
 export function hasCookie(name: string): boolean {
@@ -71,13 +69,10 @@ export function logStep(title: string): void {
 }
 
 export function logResponse(res: Response, body: unknown, text: string): void {
-  console.log("status:", res.status);
+  console.log('status:', res.status);
   // console.log("location:", res.headers.get("location"));
   // console.log("cookies:", cookieHeader() ?? "(none)");
-  console.log(
-    "body:",
-    body ? JSON.stringify(body, null, 2) : text || "(empty)",
-  );
+  console.log('body:', body ? JSON.stringify(body, null, 2) : text || '(empty)');
 }
 
 export async function runTest(
@@ -101,9 +96,9 @@ export function printSummary(results: TestResult[]): void {
   const passed = results.filter((result) => result.ok).length;
   const failed = results.length - passed;
 
-  console.log("\n====================");
-  console.log("SMOKE TEST SUMMARY");
-  console.log("====================");
+  console.log('\n====================');
+  console.log('SMOKE TEST SUMMARY');
+  console.log('====================');
 
   for (const result of results) {
     if (result.ok) {
@@ -113,9 +108,9 @@ export function printSummary(results: TestResult[]): void {
     }
   }
 
-  console.log("\n--------------------");
+  console.log('\n--------------------');
   console.log(`Passed: ${passed}`);
   console.log(`Failed: ${failed}`);
   console.log(`Total:  ${results.length}`);
-  console.log("--------------------");
+  console.log('--------------------');
 }

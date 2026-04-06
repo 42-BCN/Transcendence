@@ -1,23 +1,15 @@
-import type { NextFunction, Request, Response } from "express";
-import passport from "passport";
+import type { NextFunction, Request, Response } from 'express';
+import passport from 'passport';
 
-import type {
-  LoginRes,
-  ResendVerificationRes,
-  SignupRes,
-} from "@contracts/auth/auth.contract";
-import type { RecoverReq, RecoverRes } from "@contracts/auth/auth.recover.caro";
-import { AUTH_ERRORS, type AuthErrorName } from "@contracts/auth/auth.errors";
-import type {
-  ResendVerificationReq,
-  SignupReq,
-  LoginReq,
-} from "@contracts/auth/auth.validation";
-import { HttpStatus } from "@contracts/http";
+import type { LoginRes, ResendVerificationRes, SignupRes } from '@contracts/auth/auth.contract';
+import type { RecoverReq, RecoverRes } from '@contracts/auth/auth.recover.caro';
+import { AUTH_ERRORS, type AuthErrorName } from '@contracts/auth/auth.errors';
+import type { ResendVerificationReq, SignupReq, LoginReq } from '@contracts/auth/auth.validation';
+import { HttpStatus } from '@contracts/http';
 
-import { normalizeEmailLocale } from "./auth.mail";
-import { resendVerification } from "./auth.resend-verification";
-import * as Service from "./auth.service";
+import { normalizeEmailLocale } from './auth.mail';
+import { resendVerification } from './auth.resend-verification';
+import * as Service from './auth.service';
 
 // TODO this is repeated at error middleware - make a helper
 function errorStatus(code: AuthErrorName): number {
@@ -25,10 +17,7 @@ function errorStatus(code: AuthErrorName): number {
 }
 
 // TODO this is repeated at error middleware - make a helper
-export function sendError<TResponse>(
-  res: Response<TResponse>,
-  code: AuthErrorName,
-): void {
+export function sendError<TResponse>(res: Response<TResponse>, code: AuthErrorName): void {
   res.status(errorStatus(code)).json({
     ok: false,
     error: { code },
@@ -39,9 +28,7 @@ export async function postSignup(
   req: Request<unknown, unknown, SignupReq>,
   res: Response<SignupRes>,
 ): Promise<void> {
-  const locale = normalizeEmailLocale(
-    req.headers["accept-language"]?.toString(),
-  );
+  const locale = normalizeEmailLocale(req.headers['accept-language']?.toString());
   const result = await Service.signup(req.body, locale);
 
   res.status(200).json({
@@ -59,10 +46,10 @@ export async function postLogin(
   // this is a callback function, will have another stack so dont throw here!
   // TODO another option is convert the callback to promise form
   req.session.regenerate((err) => {
-    if (err) return sendError(res, "AUTH_INTERNAL_ERROR");
+    if (err) return sendError(res, 'AUTH_INTERNAL_ERROR');
     req.session.userId = result.id;
     req.session.save((saveErr) => {
-      if (saveErr) return sendError(res, "AUTH_INTERNAL_ERROR");
+      if (saveErr) return sendError(res, 'AUTH_INTERNAL_ERROR');
 
       res.status(200).json({
         ok: true,
@@ -76,9 +63,7 @@ export async function postRecover(
   req: Request<unknown, unknown, RecoverReq>,
   res: Response<RecoverRes>,
 ): Promise<void> {
-  const locale = normalizeEmailLocale(
-    req.headers["accept-language"]?.toString(),
-  );
+  const locale = normalizeEmailLocale(req.headers['accept-language']?.toString());
   const result = await Service.recover(req.body, locale);
 
   res.status(200).json({
@@ -91,9 +76,7 @@ export async function postResendVerification(
   req: Request<unknown, unknown, ResendVerificationReq>,
   res: Response<ResendVerificationRes>,
 ): Promise<void> {
-  const locale = normalizeEmailLocale(
-    req.headers["accept-language"]?.toString(),
-  );
+  const locale = normalizeEmailLocale(req.headers['accept-language']?.toString());
 
   await resendVerification({
     email: req.body.email,
@@ -111,11 +94,11 @@ export function postLogout(req: Request, res: Response): void {
   // this is a callback function, will have another stack so dont throw here!
   // TODO another option is convert the callback to promise form
   req.session.destroy((err) => {
-    if (err) return sendError(res, "AUTH_INTERNAL_ERROR");
+    if (err) return sendError(res, 'AUTH_INTERNAL_ERROR');
 
-    res.clearCookie("sid", {
-      path: "/",
-      sameSite: "lax",
+    res.clearCookie('sid', {
+      path: '/',
+      sameSite: 'lax',
       secure: true,
     });
 
@@ -123,16 +106,12 @@ export function postLogout(req: Request, res: Response): void {
   });
 }
 
-export function getGoogleCallback(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function getGoogleCallback(req: Request, res: Response, next: NextFunction): void {
   // this is a callback function, will have another stack so dont throw here!
   // TODO another option is convert the callback to promise form
-  passport.authenticate("google", (err: unknown, userId: string | false) => {
+  passport.authenticate('google', (err: unknown, userId: string | false) => {
     if (err) return next(err);
-    if (!userId) return sendError(res, "AUTH_INTERNAL_ERROR");
+    if (!userId) return sendError(res, 'AUTH_INTERNAL_ERROR');
 
     // this could be a middleware? is repeated
     req.session.regenerate((regenErr) => {
@@ -140,7 +119,7 @@ export function getGoogleCallback(
       req.session.userId = userId;
       req.session.save((saveErr) => {
         if (saveErr) return next(saveErr);
-        return res.status(302).redirect("/profile");
+        return res.status(302).redirect('/profile');
       });
     });
   })(req, res, next);
