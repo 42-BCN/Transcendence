@@ -1,5 +1,8 @@
 'use server';
 
+import { getLocale } from 'next-intl/server';
+
+import { redirect } from '@/i18n/navigation';
 import { fetchServer } from '@/lib/http/fetcher.server';
 import { RecoverReqSchema, type RecoverRes } from '@/contracts/api/auth/auth.recover.caro';
 
@@ -23,7 +26,12 @@ export async function recoverAction(formData: FormData) {
   const result = parseInput(formData);
   if (!result.ok) return;
 
-  await fetchServer<RecoverRes>('/auth/recover', 'POST', result.data);
+  const res = await fetchServer<RecoverRes>('/auth/recover', 'POST', result.data);
+
+  if (!res.data.ok) return res.data;
+
+  const locale = await getLocale();
+  redirect({ href: '/recover/success', locale });
 
   return;
 }

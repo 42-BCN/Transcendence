@@ -87,7 +87,11 @@ export function NavigationMain(args: NavigationMainProps) {
         <NavLinkItem key={item.href} navItem={item} />
       ))}
       {isAuthenticated
-        ? WithTooltip(<Logout onPress={closeNavigation} />, t('logout'), !isExpanded)
+        ? WithTooltip(
+            <Logout onPress={closeNavigation} label={t('logout')} isExpanded={isExpanded} />,
+            t('logout'),
+            !isExpanded,
+          )
         : null}
     </Stack>
   );

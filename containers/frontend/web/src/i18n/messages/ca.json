@@ -205,6 +205,13 @@
         "backToLogin": "Ja has confirmat? Iniciar sessió",
         "recoverTitle": "Recuperar compte"
       },
+      "recover": {
+        "title": "Revisa el teu correu",
+        "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
+        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "backToLogin": "Torna a iniciar sessió"
+      },
       "messages": {
         "or": "O",
         "resendSuccess": "✓ Email enviat. Espera per tornar-ho a intentar.",

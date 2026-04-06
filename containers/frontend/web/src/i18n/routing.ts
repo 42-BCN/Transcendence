@@ -30,6 +30,11 @@ export const routing = defineRouting({
       es: '/recuperar-cuenta',
       ca: '/recuperar-compte',
     },
+    '/recover/success': {
+      en: '/recover/success',
+      es: '/recuperar-cuenta/exito',
+      ca: '/recuperar-compte/exit',
+    },
     '/create-account/success': {
       en: '/create-account/success',
       es: '/registro/exito',
