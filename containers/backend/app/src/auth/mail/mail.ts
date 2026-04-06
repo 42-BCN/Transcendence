@@ -5,7 +5,7 @@ import { mailTemplates, type EmailLocale } from './mail-templates';
 export type { EmailLocale } from './mail-templates';
 
 function getPublicAppBaseUrl(): string {
-  return process.env.APP_BASE_URL?.trim() || 'http://localhost:3000';
+  return process.env.APP_BASE_URL?.trim() || 'https://localhost:8443';
 }
 
 export function normalizeEmailLocale(value: string | undefined): EmailLocale {
@@ -42,7 +42,7 @@ function verificationMailContent(input: SignupVerificationMailInput): {
   text: string;
   html: string;
 } {
-  const verifyUrl = `${getPublicAppBaseUrl()}/auth/verify-email?token=${encodeURIComponent(input.verificationToken)}`;
+  const verifyUrl = `${getPublicAppBaseUrl()}/verify-email?token=${encodeURIComponent(input.verificationToken)}`;
   const locale = input.locale ?? 'en';
   const copy = mailTemplates[locale].signupVerification;
 
