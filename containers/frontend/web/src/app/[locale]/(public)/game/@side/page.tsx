@@ -9,7 +9,7 @@ export default function GameSidePage() {
   const [chatVisible, setChatVisible] = useState(false);
   return (
     <>
-      <Button onPress={() => setChatVisible((v) => !v)} className={gamePageButton} w="default">
+      <Button onPress={() => setChatVisible((v) => !v)} className={gamePageButton} w="auto">
         {chatVisible ? 'Hide Chat' : 'Show Chat'}
       </Button>
       <ChatFeature isVisible={chatVisible} />

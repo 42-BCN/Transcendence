@@ -24,7 +24,7 @@ export function Logout({ onPress }: { onPress?: () => void }) {
   return (
     // TODO add tooltip. Add on expanse. Unify Link and button styles
     <Button
-      w="default"
+      w="auto"
       onPress={logoutHandler}
       icon={logoutIcon}
       variant="ghost"
