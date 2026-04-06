@@ -197,6 +197,10 @@
         "sent": "We've sent you an email to confirm your account.",
         "checkInbox": "Check your inbox and follow the instructions to activate your account.",
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
+        "verifying": "Verifying your email...",
+        "verified": "Email verified. Redirecting to your profile...",
+        "missingToken": "Verification token is missing.",
+        "invalidOrExpired": "Verification link is invalid or expired.",
         "resending": "Sending...",
         "backToLogin": "Already confirmed? Sign in",
         "recoverTitle": "Recover account"
@@ -261,6 +265,8 @@
     "AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
     "AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+    "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
+    "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
     "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again."
   }
 }

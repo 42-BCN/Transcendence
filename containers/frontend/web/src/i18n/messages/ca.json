@@ -197,6 +197,10 @@
         "sent": "T'hem enviat un correu per confirmar el teu compte.",
         "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
+        "verifying": "Verificant el teu correu...",
+        "verified": "Correu verificat. Redirigint al teu perfil...",
+        "missingToken": "Falta el token de verificació.",
+        "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
         "resending": "Enviant...",
         "backToLogin": "Ja has confirmat? Iniciar sessió",
         "recoverTitle": "Recuperar compte"
@@ -261,6 +265,8 @@
     "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
     "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
+    "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar."
   }
 }

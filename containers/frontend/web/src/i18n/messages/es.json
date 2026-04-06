@@ -197,6 +197,10 @@
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
+        "verifying": "Verificando tu correo...",
+        "verified": "Correo verificado. Redirigiendo a tu perfil...",
+        "missingToken": "Falta el token de verificación.",
+        "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
         "resending": "Enviando...",
         "backToLogin": "¿Ya confirmaste? Iniciar sesión",
         "recoverTitle": "Recuperar cuenta"
@@ -261,6 +265,8 @@
     "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
     "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
+    "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
+    "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo."
   }
 }
