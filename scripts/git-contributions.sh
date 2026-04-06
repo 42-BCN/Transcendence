@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -u
 
@@ -66,26 +66,3 @@ fi
 #   ':(exclude).*' \
 #   ':(exclude)**/.*' \
 #   ':(exclude)**/.*/**' \
-
-# git log --author="Ziermax" \
-#   --date=short \
-#   --pretty="--- %ad | %h | %s" \
-#   --numstat \
-# | awk '
-# /^---/ {
-#   if (commit != "") {
-#     printf "%s | +%d -%d (net %d)\n", commit, add, del, add-del
-#   }
-#   commit = substr($0, 5)
-#   add = del = 0
-#   next
-# }
-# NF==3 && $1 != "-" {
-#   add += $1
-#   del += $2
-# }
-# END {
-#   if (commit != "") {
-#     printf "%s | +%d -%d (net %d)\n", commit, add, del, add-del
-#   }
-# }'
