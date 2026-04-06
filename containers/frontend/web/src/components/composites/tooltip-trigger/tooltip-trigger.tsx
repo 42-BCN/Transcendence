@@ -11,14 +11,17 @@ export type TooltipTriggerProps = {
   children: ReactNode;
   label: string;
   placement?: 'left' | 'right' | 'top' | 'bottom';
+  offset?: number;
 };
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
-  const { children, label, placement = 'right' } = props;
+  const { children, label, placement = 'right', offset } = props;
   return (
     <RACTooltipTrigger delay={0}>
       {children}
-      <Tooltip placement={placement}>{label}</Tooltip>
+      <Tooltip placement={placement} offset={offset}>
+        {label}
+      </Tooltip>
     </RACTooltipTrigger>
   );
 }
@@ -26,15 +29,16 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 export type TooltipLinkProps = InternalLinkProps & {
   label: string;
   placement?: 'left' | 'right' | 'top' | 'bottom';
+  offset?: number;
 };
 
 export function TooltipLink(props: TooltipLinkProps) {
-  const { label, placement = 'right', ...linkProps } = props;
+  const { label, placement = 'right', offset, ...linkProps } = props;
 
   return (
     <RACTooltipTrigger>
       <InternalLink {...linkProps} />
-      <Tooltip placement={placement}>
+      <Tooltip placement={placement} offset={offset}>
         <Text variant="caption">{label}</Text>
       </Tooltip>
     </RACTooltipTrigger>

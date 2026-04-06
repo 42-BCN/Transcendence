@@ -1,7 +1,7 @@
 import type { IconName } from '@components/primitives/icon/icons';
 
 // features/navigation/navigation.config.ts
-type NavHref = '/' | '/robots' | '/ui' | '/signup' | '/login' | '/profile';
+type NavHref = '/' | '/robots' | '/ui' | '/login' | '/profile';
 
 export type NavItem = {
   href: NavHref;
@@ -12,13 +12,10 @@ export type NavItem = {
 const baseNavItems: NavItem[] = [
   { href: '/', key: 'home', exact: true, icon: 'home' },
   { href: '/robots', key: 'robots', exact: false, icon: 'gamepad' },
-  { href: '/ui', key: 'UI', exact: false, icon: 'ui' },
+  { href: '/ui', key: 'ui', exact: false, icon: 'ui' },
 ];
 
-const publicNavItems: NavItem[] = [
-  // { href: '/signup', key: 'createAccount', exact: false, icon: 'logIn' },
-  { href: '/login', key: 'login', exact: false, icon: 'logIn' },
-];
+const publicNavItems: NavItem[] = [{ href: '/login', key: 'login', exact: false, icon: 'logIn' }];
 
 const privateNavItems: NavItem[] = [
   { href: '/profile', key: 'profile', exact: false, icon: 'user' },

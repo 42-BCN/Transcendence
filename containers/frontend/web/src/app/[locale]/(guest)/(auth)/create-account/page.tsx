@@ -1,5 +1,5 @@
 import { CreateAccount } from '@/features/auth/create-account';
 
-export default function SignupPage() {
+export default function CreateAccountPage() {
   return <CreateAccount />;
 }

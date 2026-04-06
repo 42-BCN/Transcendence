@@ -11,24 +11,40 @@ export const footerLinks = [
   { key: 'github', href: 'https://github.com/42-BCN/Transcendence', label: 'github' },
 ] as const;
 
+type FooterLink = (typeof footerLinks)[number];
+
+function isExternalFooterLink(link: FooterLink): link is FooterLink & { href: `http${string}` } {
+  return link.href.startsWith('http');
+}
+
+function isInternalFooterLink(
+  link: FooterLink,
+): link is Exclude<FooterLink, FooterLink & { href: `http${string}` }> {
+  return !isExternalFooterLink(link);
+}
+
+const internalFooterLinks = footerLinks.filter(isInternalFooterLink);
+const externalFooterLinks = footerLinks.filter(isExternalFooterLink);
+
 export function Footer() {
-  const t = useTranslations('Footer');
+  const t = useTranslations('components.footer');
+  const year = new Date().getFullYear();
+  const copyright = t('copyright', { year, appName: t('appName') }).replace('. ', '.\n');
 
   return (
     <Stack gap="sm" as="footer">
-      {footerLinks.map(({ href, label }) =>
-        href.startsWith('http') ? (
-          <ExternalLink href={href} key={label} as="link">
-            {t(label)}
-          </ExternalLink>
-        ) : (
-          <InternalLink href={href} key={label}>
-            {t(label)}
-          </InternalLink>
-        ),
-      )}
-      <Text variant="caption">
-        © {new Date().getFullYear()} {t('appName')}
+      {internalFooterLinks.map(({ href, label }) => (
+        <InternalLink href={href} key={label}>
+          {t(label)}
+        </InternalLink>
+      ))}
+      {externalFooterLinks.map(({ href, label }) => (
+        <ExternalLink href={href} key={label} as="link">
+          {t(label)}
+        </ExternalLink>
+      ))}
+      <Text variant="caption" className="whitespace-pre-line">
+        {copyright}
       </Text>
     </Stack>
   );

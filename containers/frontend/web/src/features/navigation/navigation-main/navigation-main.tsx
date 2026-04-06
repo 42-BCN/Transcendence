@@ -48,15 +48,23 @@ function NavLinkItem(args: NavLinkItemProps) {
   const { navItem } = args;
   const { isExpanded, locale, closeNavigation } = useNavigationContext();
 
-  const t = useTranslations('navigation');
+  const t = useTranslations('features.navigation');
   const label = t(navItem.key);
 
   const pathname = usePathname();
   const href = getPathname({ locale, href: navItem.href });
   const isCurrent = isNavItemCurrent(pathname, href, navItem.exact);
+  const navLinkClassName = isExpanded ? 'w-full justify-start py-0 ps-2 pe-0' : 'size-6 p-0';
 
   const link = (
-    <NavLink href={href} isCurrent={isCurrent} aria-label={label} onPress={closeNavigation}>
+    <NavLink
+      href={href}
+      isCurrent={isCurrent}
+      aria-label={label}
+      onPress={closeNavigation}
+      w={isExpanded ? 'full' : 'auto'}
+      className={navLinkClassName}
+    >
       <RenderNavLinkContent icon={navItem.icon} label={label} isExpanded={isExpanded} />
     </NavLink>
   );
@@ -71,14 +79,17 @@ type NavigationMainProps = {
 
 export function NavigationMain(args: NavigationMainProps) {
   const { mainNavItems, isAuthenticated = false } = args;
-  const { closeNavigation } = useNavigationContext();
+  const { isExpanded, closeNavigation } = useNavigationContext();
+  const t = useTranslations('features.navigation');
 
   return (
-    <Stack className="flex-1 list" gap="sm" align="start" role="list">
+    <Stack className="flex-1 list w-full" gap="sm" align="stretch" role="list">
       {mainNavItems.map((item) => (
         <NavLinkItem key={item.href} navItem={item} />
       ))}
-      {isAuthenticated ? <Logout onPress={closeNavigation} /> : null}
+      {isAuthenticated
+        ? WithTooltip(<Logout onPress={closeNavigation} />, t('logout'), !isExpanded)
+        : null}
     </Stack>
   );
 }

@@ -10,6 +10,7 @@ import { Button } from "@components/controls/button"
 import { Meter } from "@components/composites/meter"
 import { Stack } from "@components/primitives/stack";
 import { Text } from "@components/primitives/text";
+import { useTranslations } from 'next-intl';
 
 const s = 0.975;
 
@@ -68,6 +69,7 @@ function DiceButtons() {
 }
 
 function Reset() {
+  const t = useTranslations('features.game');
   const selectedEnt = useGame((state) => state.selectedEnt);
   const history = useGame((state) => state.history);
   const resetHistory = useGame((state) => state.resetHistory);
@@ -81,12 +83,13 @@ function Reset() {
         () => resetHistory(selectedEnt)
       }
     >
-      Reset plan
+      {t('resetPlan')}
     </Button >
   )
 }
 
 function EndTurn() {
+  const t = useTranslations('features.game');
   const nextTurnStage = useGame((state) => state.changeTurnStage);
   const historyLength = useGame((state) => state.history.length);
   return (
@@ -98,13 +101,14 @@ function EndTurn() {
           () => nextTurnStage()
         }
       >
-        End turn
+        {t('endTurn')}
       </Button >
       : null
   )
 }
 
 function HUD() {
+  const t = useTranslations('features.game');
   const typeEnt = useGame((state) => state.typeEnt);
   const canSelect = useGame((state) => state.selectedEnt);
   const ent = useGame((state) => state.getSel());
@@ -113,7 +117,7 @@ function HUD() {
       <Stack className="absolute left-8 bottom-4">
         <AbButtons />
         <div>
-          <Meter label="HP" value={ent.hp}
+          <Meter label={t('healthLabel')} value={ent.hp}
             maxValue={ent.maxHp}
             max={ent.maxHp}
             formatOptions={{ style: "decimal" }} />

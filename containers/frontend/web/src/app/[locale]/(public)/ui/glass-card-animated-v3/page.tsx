@@ -1,7 +1,10 @@
 import { GlassCard } from '@components/primitives/glass-card';
 import { Button } from '@components/controls/button';
+import { getTranslations } from 'next-intl/server';
 
-export default function GlassCardAnimatedV3Page() {
+export default async function GlassCardAnimatedV3Page() {
+  const t = await getTranslations('pages.ui.glassCardAnimatedV3');
+
   return (
     <div className="w-full h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden">
       {/* INLINE CSS STYLE FOR REAL ANIMATIONS WITHOUT TOUCHING CONFIGS */}
@@ -38,15 +41,16 @@ export default function GlassCardAnimatedV3Page() {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       <GlassCard className="w-96 z-10" saturate={true} intensity="medium" blur="xl">
-        <h3 className="text-2xl font-bold text-white mb-2">Solid Spheres</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">{t('title')}</h3>
         <div className="text-white/80 text-sm leading-relaxed mb-4">
-          Here the spheres are <span className="text-yellow-400 font-semibold">100% solid</span>.
-          All the distortion comes exclusively from the glass.
+          {t('descriptionPrefix')}{' '}
+          <span className="text-yellow-400 font-semibold">{t('highlight')}</span>.{' '}
+          {t('descriptionMiddle')}
           <br />
-          Example of a nested glass component: <GlassCard />
+          {t('nestedPrefix')} <GlassCard />
         </div>
-        <Button className="w-full bg-white text-slate-950 hover:bg-white/90 rounded-2xl">
-          Activate
+        <Button variant="primary" w="full">
+          {t('activate')}
         </Button>
       </GlassCard>
     </div>

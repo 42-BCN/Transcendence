@@ -1,13 +1,13 @@
 import { ProtectedButton } from '@/features/auth/me/protected-button';
+import { getTranslations } from 'next-intl/server';
 
-export default function MePage() {
+export default async function MePage() {
+  const t = await getTranslations('pages.me');
   return (
     <main className="p-6 space-y-4">
-      <h1 className="text-xl font-semibold">Protected route test</h1>
+      <h1 className="text-xl font-semibold">{t('title')}</h1>
       <ProtectedButton />
-      <p className="text-sm opacity-70">
-        Click the button. If logged in, you should see user info. If not, you should get 401.
-      </p>
+      <p className="text-sm opacity-70">{t('subtitle')}</p>
     </main>
   );
 }
