@@ -1,5 +1,8 @@
 import { cn } from '@/lib/styles/cn';
-import { glassCardStyles } from '@components/primitives/glass-card/glass-card.styles';
+import {
+  glassBackgroundStyles,
+  glassBorderStyles,
+} from '@components/primitives/glass-card/glass-card.styles';
 
 const groupBase = ['inline-flex'];
 
@@ -30,7 +33,12 @@ const labelBase = 'relative z-10';
 export const segmentedControlGroupStyles = {
   group: () => cn(groupBase),
   item: () =>
-    cn(glassCardStyles({ blur: 'sm', intensity: 'low', border: 'low' }), itemBase, itemRACState),
+    cn(
+      glassBackgroundStyles({ blur: 'sm', intensity: 'low' }),
+      glassBorderStyles({ border: 'low' }),
+      itemBase,
+      itemRACState,
+    ),
   indicator: () => cn(indicatorBase, indicatorRACState),
   label: () => cn(labelBase),
 };
