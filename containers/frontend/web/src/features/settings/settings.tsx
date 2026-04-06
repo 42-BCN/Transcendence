@@ -18,12 +18,14 @@ export function Settings() {
     {
       id: 'dark',
       label: <Icon name="darkMode" size={17} />,
+      ariaLabel: t('dark'),
       tooltipLabel: t('dark'),
       tooltipPlacement: 'top' as const,
     },
     {
       id: 'light',
       label: <Icon name="lightMode" size={17} />,
+      ariaLabel: t('light'),
       tooltipLabel: t('light'),
       tooltipPlacement: 'top' as const,
     },
@@ -39,9 +41,7 @@ export function Settings() {
           aria-label={'theme switcher'}
           selectedKey={theme}
           onSelectionChange={(key) => {
-            if (key === 'light' || key === 'dark') {
-              setTheme(key);
-            }
+            if (key === 'light' || key === 'dark') setTheme(key);
           }}
           options={options}
         />

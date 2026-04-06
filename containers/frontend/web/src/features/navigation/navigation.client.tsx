@@ -70,11 +70,9 @@ function MobileNavigation(args: NavigationClientProps) {
   return (
     <NavigationProvider value={value}>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <div className="md:hidden absolute top-5 left-2 z-20">
-          <UiButton variant="ghost" w="auto">
-            {t('menu')}
-          </UiButton>
-        </div>
+        <UiButton variant="ghost" w="auto" className="md:hidden absolute top-5 left-2 z-20">
+          {t('menu')}
+        </UiButton>
         <Drawer>
           <Stack
             as="nav"

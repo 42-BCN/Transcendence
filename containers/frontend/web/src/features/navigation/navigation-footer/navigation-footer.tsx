@@ -6,7 +6,6 @@ import { Button, DialogTrigger, Popover } from 'react-aria-components';
 import { GlassCard } from '@components/primitives/glass-card';
 import { Settings } from '@/features/settings';
 import { useTranslations } from 'next-intl';
-import { TooltipTrigger } from '@components/composites/tooltip-trigger';
 
 export function NavigationFooter() {
   const { isExpanded } = useNavigationContext();
@@ -16,6 +15,8 @@ export function NavigationFooter() {
   const settingsButton = (
     <Button
       className={navLinkStyles({ w: isExpanded ? 'full' : 'auto', className: navLinkClassName })}
+      aria-label={t('settings')}
+      title={!isExpanded ? t('settings') : undefined}
     >
       <RenderNavLinkContent icon="settings" label={t('settings')} isExpanded={isExpanded} />
     </Button>
@@ -24,13 +25,7 @@ export function NavigationFooter() {
   return (
     <div className={isExpanded ? 'w-full' : undefined}>
       <DialogTrigger>
-        {isExpanded ? (
-          settingsButton
-        ) : (
-          <TooltipTrigger label={t('settings')} offset={28}>
-            {settingsButton}
-          </TooltipTrigger>
-        )}
+        {settingsButton}
 
         {/* This should be moved to its own component of settings/footer */}
         <Popover placement="end" offset={24}>

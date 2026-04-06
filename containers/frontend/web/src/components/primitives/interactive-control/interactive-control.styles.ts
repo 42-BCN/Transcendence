@@ -21,9 +21,9 @@ const interactiveControlVariants: Record<InteractiveControlVariant, string> = {
 };
 
 const interactiveControlSizes: Record<InteractiveControlSize, string> = {
-  sm: 'h-5 px-2 text-sm',
-  md: 'h-6 px-3 text-sm',
-  lg: 'h-7 px-4 text-base',
+  sm: 'h-6 px-2 text-sm',
+  md: 'h-7 px-3 text-sm',
+  lg: 'h-8 px-4 text-base',
   icon: 'size-6 p-0',
 };
 

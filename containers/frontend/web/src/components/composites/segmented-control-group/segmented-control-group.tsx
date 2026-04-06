@@ -16,6 +16,7 @@ import {
 type SegmentedOption = {
   id: Key;
   label: ReactNode;
+  ariaLabel?: string;
   isDisabled?: boolean;
   tooltipLabel?: string;
   tooltipPlacement?: 'left' | 'right' | 'top' | 'bottom';
@@ -75,7 +76,12 @@ export function SegmentedControlGroup({
     >
       {options.map((opt) => {
         const item = (
-          <SegmentedControlItem key={String(opt.id)} id={opt.id} isDisabled={opt.isDisabled}>
+          <SegmentedControlItem
+            key={String(opt.id)}
+            id={opt.id}
+            isDisabled={opt.isDisabled}
+            aria-label={opt.ariaLabel}
+          >
             {opt.label}
           </SegmentedControlItem>
         );

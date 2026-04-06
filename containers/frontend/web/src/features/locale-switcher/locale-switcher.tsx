@@ -66,18 +66,21 @@ export function LocaleSwitcher() {
     {
       id: 'en',
       label: <EnFlag className="h-3 w-[17px] rounded-[2px]" />,
+      ariaLabel: t('en'),
       tooltipLabel: 'EN',
       tooltipPlacement: 'bottom',
     },
     {
       id: 'es',
       label: <EsFlag className="h-3 w-[17px] rounded-[2px]" />,
+      ariaLabel: t('es'),
       tooltipLabel: 'ES',
       tooltipPlacement: 'bottom',
     },
     {
       id: 'ca',
       label: <CaFlag className="h-3 w-[17px] rounded-[2px]" />,
+      ariaLabel: t('ca'),
       tooltipLabel: 'CAT',
       tooltipPlacement: 'bottom',
     },
