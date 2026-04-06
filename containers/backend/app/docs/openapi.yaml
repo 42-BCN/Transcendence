@@ -35,7 +35,7 @@ paths:
   /auth/signup:
     post:
       tags: [Auth]
-      summary: Create a new account
+      summary: Create a new account with email verification token sent
       operationId: postAuthSignup
       requestBody:
         required: true
@@ -45,7 +45,7 @@ paths:
               $ref: '#/components/schemas/SignupRequest'
       responses:
         '200':
-          description: Account created
+          description: Account created; verification token sent to email
           content:
             application/json:
               schema:
@@ -72,7 +72,7 @@ paths:
   /auth/login:
     post:
       tags: [Auth]
-      summary: Authenticate a user and create a session
+      summary: Authenticate a user with credentials and create a session
       operationId: postAuthLogin
       requestBody:
         required: true
@@ -82,25 +82,25 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: Login succeeded
+          description: Login succeeded; session created via sid cookie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
-          description: Invalid credentials
+          description: Invalid credentials or email not verified
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '403':
-          description: Account locked or email not verified
+          description: Account locked
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '429':
-          description: Rate limited
+          description: Rate limited (too many failed attempts)
           content:
             application/json:
               schema:
@@ -121,7 +121,7 @@ paths:
   /auth/recover:
     post:
       tags: [Auth]
-      summary: Start the password recovery flow
+      summary: Request password reset email by email or username (public endpoint)
       operationId: postAuthRecover
       requestBody:
         required: true
@@ -131,7 +131,7 @@ paths:
               $ref: '#/components/schemas/RecoverRequest'
       responses:
         '200':
-          description: Recovery email flow accepted
+          description: Request accepted; password reset email sent if user exists
           content:
             application/json:
               schema:
@@ -152,8 +152,9 @@ paths:
   /auth/resend-verification:
     post:
       tags: [Auth]
-      summary: Resend the account verification email
+      summary: Resend account verification email (public endpoint, non-enumerating)
       operationId: postAuthResendVerification
+      description: Public endpoint that does not reveal whether an email exists or verification status. Returns 200 for unknown emails when unauthenticated.
       requestBody:
         required: true
         content:
@@ -162,23 +163,11 @@ paths:
               $ref: '#/components/schemas/ResendVerificationRequest'
       responses:
         '200':
-          description: Verification email sent
+          description: Request accepted (verification email sent or hidden for privacy)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NullResponse'
-        '404':
-          description: User not found or already verified
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthErrorResponse'
-        '429':
-          description: Cooldown not expired
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthErrorResponse'
         '422':
           description: Validation error
           content:
@@ -195,7 +184,7 @@ paths:
   /auth/verify-email:
     post:
       tags: [Auth]
-      summary: Verify an email using a verification token
+      summary: Verify email address with token and create session
       operationId: postAuthVerifyEmail
       requestBody:
         required: true
@@ -205,13 +194,13 @@ paths:
               $ref: '#/components/schemas/VerifyEmailRequest'
       responses:
         '200':
-          description: Email verified and session created
+          description: Email verified and session created via sid cookie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NullResponse'
         '401':
-          description: Invalid, used, or expired token
+          description: Invalid, already used, or expired token
           content:
             application/json:
               schema:
@@ -269,28 +258,41 @@ paths:
   /auth/google:
     get:
       tags: [Auth]
-      summary: Start Google OAuth login
+      summary: Initiate Google OAuth flow (redirect to Google consent screen)
       operationId: getAuthGoogle
       responses:
         '302':
-          description: Redirect to Google OAuth
+          description: Redirect to Google OAuth consent screen with state parameter for CSRF protection
 
   /auth/callback/google:
     get:
       tags: [Auth]
-      summary: Handle Google OAuth callback
+      summary: Google OAuth callback handler; creates or links account and session
       operationId: getAuthGoogleCallback
+      parameters:
+        - in: query
+          name: code
+          required: true
+          schema:
+            type: string
+          description: OAuth authorization code from Google
+        - in: query
+          name: state
+          required: true
+          schema:
+            type: string
+          description: State parameter for CSRF validation
       responses:
         '302':
-          description: Redirect to profile on success
+          description: Login successful; redirect to /profile with session created
         '403':
-          description: OAuth state validation failed (CSRF)
+          description: OAuth state validation failed (CSRF attack detected)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '500':
-          description: Internal error
+          description: Internal error (OAuth exchange failed or user creation failed)
           content:
             application/json:
               schema:
@@ -299,11 +301,11 @@ paths:
   /auth/logout:
     post:
       tags: [Auth]
-      summary: Destroy the active session
+      summary: Destroy the active session and clear cookie
       operationId: postAuthLogout
       responses:
         '200':
-          description: Logged out successfully
+          description: Session destroyed; sid cookie cleared
           content:
             application/json:
               schema:
