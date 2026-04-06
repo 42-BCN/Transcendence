@@ -26,27 +26,43 @@ const border = {
   high: 'border border-white/[0.40] dark:border-white/[0.15]',
 } as const;
 
+const cardLayout = [
+  'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
+  'rounded-3xl p-8',
+  'transition-all duration-300',
+];
+
 export type GlassBlur = keyof typeof blur;
 export type GlassIntensity = keyof typeof intensity;
 export type GlassBorder = keyof typeof border;
 
-type GlassStylesOpts = {
+export type GlassBackgroundStylesOpts = {
   blur?: GlassBlur;
   intensity?: GlassIntensity;
-  border?: GlassBorder;
   saturate?: boolean;
-  className?: string;
 };
 
-export function glassCardStyles(opts: GlassStylesOpts = {}) {
+export type GlassBorderStylesOpts = {
+  border?: GlassBorder;
+};
+
+export type GlassCardStylesOpts = GlassBackgroundStylesOpts &
+  GlassBorderStylesOpts & {
+    className?: string;
+  };
+
+export function glassBackgroundStyles(opts: GlassBackgroundStylesOpts = {}) {
   return cn(
     blur[opts.blur ?? 'sm2'],
     intensity[opts.intensity ?? 'medium'],
     opts.saturate !== false && 'backdrop-saturate-[150%]',
-    border[opts.border ?? 'medium'],
-    'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
-    'rounded-3xl p-8',
-    'transition-all duration-300',
-    opts.className,
   );
+}
+
+export function glassBorderStyles(opts: GlassBorderStylesOpts = {}) {
+  return cn(border[opts.border ?? 'medium']);
+}
+
+export function glassCardStyles(opts: GlassCardStylesOpts = {}) {
+  return cn(glassBackgroundStyles(opts), glassBorderStyles(opts), cardLayout, opts.className);
 }
