@@ -32,7 +32,7 @@ export function RenderNavLinkContent(args: RenderNavLinkContentProps) {
       <div className={headerStyles.wrapper}>
         <Icon name={icon} size={20} />
       </div>
-      {isExpanded ? <span className="whitespace-nowrap pe-3">{label}</span> : null}
+      {isExpanded ? <span className="whitespace-nowrap pe-3 leading-none">{label}</span> : null}
     </>
   );
 }
@@ -51,7 +51,9 @@ function NavLinkItem(args: NavLinkItemProps) {
   const pathname = usePathname();
   const href = getPathname({ locale, href: navItem.href });
   const isCurrent = isNavItemCurrent(pathname, href, navItem.exact);
-  const navLinkClassName = isExpanded ? 'w-full justify-start py-0 ps-2 pe-0' : 'size-6 p-0';
+  const navLinkClassName = isExpanded
+    ? 'w-full h-6 min-h-6 justify-start py-0 ps-2 pe-0'
+    : 'size-6 p-0 justify-center';
 
   const link = (
     <NavLink
