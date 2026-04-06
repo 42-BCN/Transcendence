@@ -1,107 +1,245 @@
 {
-  "navigation": {
-    "home": "Inicio",
-    "createAccount": "Crear cuenta",
-    "login": "Iniciar sesión",
-    "UI": "UI",
-    "robots": "Robots",
-    "profile": "Perfil",
-    "logout": "Cerrar sesión",
-    "settings": "Configuración",
-    "menu": "Menú"
+  "common": {
+    "globalError": {
+      "title": "Algo salió mal",
+      "tryAgain": "Intentar de nuevo"
+    }
   },
-  "CreateAccountPage": {
-    "title": "Crear cuenta",
-    "email": "Correo electrónico",
-    "password": "Contraseña",
-    "submit": "Crear cuenta"
+  "components": {
+    "localeSwitcher": {
+      "ariaLabel": "Idioma",
+      "en": "EN",
+      "es": "ES",
+      "ca": "CA"
+    },
+    "textAreaField": {
+      "characterCount": "{current} de {max} caracteres"
+    },
+    "footer": {
+      "appName": "Transcendence",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio",
+      "github": "GitHub",
+      "copyright": "© {year} {appName}. Todos los derechos reservados"
+    }
   },
-  "home": {
-    "title": "Hola desde Next en Docker 👋",
-    "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan."
+  "layouts": {
+    "locale": {
+      "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
+      "title": "Ejemplo next-intl"
+    }
   },
-  "LocaleLayout": {
-    "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
-    "title": "Ejemplo next-intl"
-  },
-  "LocaleSwitcher": {
-    "ariaLabel": "Idioma",
-    "en": "EN",
-    "es": "ES",
-    "ca": "CA"
-  },
-  "TextAreaField": {
-    "counter": "{current} de {max} caracteres"
-  },
-  "auth": {
-    "common": {
-      "appTitle": "Autenticación",
-      "or": "O",
-      "identifier": {
-        "label": "Correo o nombre de usuario",
-        "placeholder": "nombre@ejemplo.com o usuario",
-        "description": "Usa el correo o el nombre de usuario con el que te registraste."
+  "pages": {
+    "home": {
+      "title": "Hola desde Next en Docker 👋",
+      "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan."
+    },
+    "notFound": {
+      "title": "Página no encontrada",
+      "description": "La página que buscas no existe."
+    },
+    "me": {
+      "title": "Mi Cuenta",
+      "subtitle": "Accede a los detalles protegidos de tu cuenta."
+    },
+    "ui": {
+      "index": {
+        "controlComponents": "Componentes de control",
+        "buttons": "Botones",
+        "input": "Entrada",
+        "sampleButtonText": "Hola",
+        "links": {
+          "chat": "Chat",
+          "glassCard": "Tarjeta de vidrio",
+          "glassCardAnimated": "Tarjeta de vidrio animada",
+          "glassCardAnimatedV2": "Tarjeta de vidrio animada V2",
+          "glassCardAnimatedV3": "Tarjeta de vidrio animada V3",
+          "messageBubble": "Burbuja de mensaje",
+          "meter": "Medidor",
+          "scrollArea": "Área de desplazamiento",
+          "textArea": "Área de texto",
+          "themeTest": "Prueba de tema",
+          "typography": "Tipografía"
+        },
+        "viewerTitles": {
+          "buttonPrimitive": "Botón primitivo",
+          "ariaButton": "Botón Aria",
+          "uiButton": "Botón UI",
+          "inputPrimitive": "Input primitivo",
+          "ariaInput": "Input Aria",
+          "uiInput": "Input UI"
+        }
       },
-      "email": {
-        "label": "Correo electrónico",
-        "placeholder": "nombre@ejemplo.com"
+      "glassCard": {
+        "title": "Tarjeta de Glassmorphism",
+        "cardTitle": "Glassmorphism",
+        "description": "Un componente de tarjeta glassmorphic que usa filtros de fondo, bordes transparentes y sombras sutiles para integrarse con fondos texturizados.",
+        "cta": "Empezar"
       },
-      "username": {
-        "label": "Nombre de usuario",
-        "placeholder": "tu_usuario"
+      "glassCardAnimated": {
+        "title": "Probando la saturación",
+        "descriptionPrefix": "Esta tarjeta utiliza",
+        "highlight": "backdrop-saturate",
+        "descriptionSuffix": "Las esferas de luz cobran más vida y color al pasar detrás del cristal.",
+        "activate": "Activar"
       },
-      "password": {
-        "label": "Contraseña",
-        "placeholder": "Introduce tu contraseña",
-        "description": "Mínimo 8 caracteres."
+      "glassCardAnimatedV2": {
+        "title": "Reflejo dinámico",
+        "descriptionPrefix": "Aquí las esferas",
+        "highlight": "se mueven detrás del cristal",
+        "descriptionSuffix": "El color fluye y se refracta suavemente al cruzar los bordes.",
+        "option1": "Opción 1",
+        "option2": "Opción 2",
+        "option3": "Opción 3"
       },
-      "confirmPassword": {
-        "label": "Confirmar contraseña",
-        "placeholder": "Vuelve a introducir tu contraseña"
+      "glassCardAnimatedV3": {
+        "title": "Esferas sólidas",
+        "descriptionPrefix": "Aquí las esferas son",
+        "highlight": "100% sólidas",
+        "descriptionMiddle": "Toda la distorsión viene exclusivamente del cristal.",
+        "nestedPrefix": "Ejemplo de un componente glass anidado:",
+        "activate": "Activar"
+      },
+      "textArea": {
+        "title": "Componente de área de texto",
+        "ariaLabel": "Mensaje"
+      },
+      "typography": {
+        "caption": "Texto de pie usado para información de apoyo o metadatos.",
+        "bodyXs": "Texto de cuerpo extra pequeño útil para interfaces densas con espacio limitado.",
+        "bodySm": "El texto de cuerpo pequeño suele aparecer en descripciones secundarias, pistas o contenido de ayuda.",
+        "body": "Este párrafo demuestra el estilo de cuerpo predeterminado. Es intencionalmente más largo para evaluar la legibilidad, el ritmo y el largo de línea del sistema tipográfico. Cuando el texto se extiende demasiado en pantalla, leer se vuelve más difícil, por eso limitar la medida mejora la lectura.",
+        "bodyLg": "El texto de cuerpo grande funciona bien para párrafos introductorios o descripciones destacadas que necesitan más énfasis sin convertirse en título.",
+        "headingSm": "Estilo de título pequeño renderizado como párrafo para pruebas visuales.",
+        "headingMd": "Estilo de título mediano renderizado como párrafo para inspección.",
+        "headingLg": "Estilo de título grande renderizado como párrafo.",
+        "headingXl": "Estilo de título extra grande renderizado como contenido de párrafo.",
+        "code": "const message = \"Texto estilo código renderizado en un párrafo.\";"
+      },
+      "messageBubble": {
+        "title": "Burbuja de mensaje",
+        "userOne": "John Doe",
+        "userTwo": "Jane Doe",
+        "messageOne": "¡Hola! Mi nombre es ...",
+        "messageTwo": "¡Hola! Esta es una prueba de vista previa de mensaje"
+      },
+      "meter": {
+        "title": "Medidor",
+        "label": "HP"
+      },
+      "themeTest": {
+        "title": "Página de prueba de tema",
+        "description": "Esta página demuestra la implementación de modo claro/oscuro. Todos los colores usan variables CSS sincronizadas con Tailwind.",
+        "secondaryBackground": "Fondo secundario",
+        "secondaryBackgroundDescription": "Esta tarjeta usa `bg-bg-secondary`. Debe verse ligeramente diferente del fondo principal en ambos modos.",
+        "textVariants": "Variantes de texto",
+        "primaryText": "Texto primario",
+        "secondaryText": "Texto secundario",
+        "tertiaryText": "Texto terciario",
+        "disabledText": "Texto deshabilitado"
+      },
+      "scrollArea": {
+        "title": "Área desplazable",
+        "description": "Este componente es un div que ocupa una altura del 100% y crea un área desplazable.",
+        "example": "Ejemplo",
+        "itemLabel": "Elemento"
       }
-    },
-    "login": {
-      "title": "Iniciar sesión",
-      "submit": "Iniciar sesión",
-      "forgotPassword": "¿Has olvidado la contraseña?",
-      "noAccount": "¿No tienes cuenta?",
-      "goToCreateAccount": "Crear una",
-      "withGoogle": "Continuar con Google"
-    },
-    "createAccount": {
-      "title": "Crear cuenta",
-      "submit": "Crear cuenta",
-      "haveAccount": "¿Ya tienes cuenta?",
-      "goToLogin": "Iniciar sesión",
-      "withGoogle": "Continuar con Google",
-      "success": {
-        "title": "Verifica tu correo electrónico",
+    }
+  },
+  "features": {
+    "auth": {
+      "fields": {
+        "identifier": {
+          "label": "Correo o nombre de usuario",
+          "placeholder": "nombre@ejemplo.com o usuario",
+          "description": "Usa el correo o el nombre de usuario con el que te registraste."
+        },
+        "email": {
+          "label": "Correo electrónico",
+          "placeholder": "nombre@ejemplo.com"
+        },
+        "username": {
+          "label": "Nombre de usuario",
+          "placeholder": "tu_usuario"
+        },
+        "password": {
+          "label": "Contraseña",
+          "placeholder": "Introduce tu contraseña",
+          "description": "Mínimo 8 caracteres."
+        },
+        "confirmPassword": {
+          "label": "Confirmar contraseña",
+          "placeholder": "Vuelve a introducir tu contraseña"
+        }
+      },
+      "actions": {
+        "login": "Iniciar sesión",
+        "signup": "Crear cuenta",
+        "continueWithGoogle": "Continuar con Google",
+        "sendEmail": "Enviar email",
+        "resendEmail": "Volver a enviar",
+        "logoutAriaLabel": "Cerrar sesión"
+      },
+      "login": {
+        "title": "Iniciar sesión",
+        "submit": "Iniciar sesión",
+        "forgotPassword": "¿Has olvidado la contraseña?",
+        "noAccount": "¿No tienes cuenta?",
+        "goToSignup": "Crear una"
+      },
+      "signup": {
+        "title": "Crear cuenta",
+        "haveAccount": "¿Ya tienes cuenta?",
+        "goToLogin": "Iniciar sesión"
+      },
+      "verification": {
+        "title": "Verifica tu email",
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
-        "check": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
+        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
-        "resend": "Reenviar",
         "resending": "Enviando...",
-        "resent": "¡Enviado!",
-        "resendSuccess": "✓ Correo enviado. Espera antes de volver a intentarlo.",
-        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo.",
-        "backToLogin": "¿Ya lo confirmaste? Iniciar sesión"
+        "backToLogin": "¿Ya confirmaste? Iniciar sesión",
+        "recoverTitle": "Recuperar cuenta"
+      },
+      "messages": {
+        "or": "O",
+        "resendSuccess": "✓ Email enviado. Espera para volver a intentarlo.",
+        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo."
       }
     },
-    "status": {
-      "success": "Correcto",
-      "error": "Algo salió mal. Inténtalo de nuevo."
+    "navigation": {
+      "home": "Inicio",
+      "createAccount": "Crear cuenta",
+      "login": "Iniciar sesión",
+      "menu": "Menú",
+      "mainAriaLabel": "Navegación principal",
+      "ui": "UI",
+      "robots": "Robots",
+      "profile": "Perfil",
+      "logout": "Cerrar sesión",
+      "settings": "Configuración"
     },
-    "recover": {
-      "title": "Recuperar cuenta",
-      "submit": "Enviar correo",
-      "resend": "Solicitar otro correo",
-      "goToLogin": "Ir al inicio de sesión"
+    "chat": {
+      "messageAriaLabel": "Mensaje",
+      "showChat": "Mostrar chat",
+      "hideChat": "Ocultar chat"
     },
-    "logout": "Cerrar sesión"
-  },
-  "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales no válidas"
+    "game": {
+      "resetPlan": "Reiniciar plan",
+      "endTurn": "Terminar turno",
+      "healthLabel": "HP"
+    },
+    "settings": {
+      "theme": "Tema",
+      "language": "Idioma",
+      "dark": "Oscuro",
+      "light": "Claro"
+    },
+    "profile": {
+      "fail": "No se pudo cargar tu perfil.",
+      "userId": "ID de usuario",
+      "username": "Nombre de usuario"
+    }
   },
   "validation": {
     "REQUIRED": "Este campo es obligatorio.",
@@ -117,24 +255,8 @@
     "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden.",
     "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
-  "Footer": {
-    "appName": "Transcendence",
-    "privacy": "Política de privacidad",
-    "terms": "Términos de servicio",
-    "github": "GitHub",
-    "copyright": "Todos los derechos reservados"
-  },
-  "settings": {
-    "theme": "Tema",
-    "language": "Idioma"
-  },
-  "Profile": {
-    "fail": "Error al cargar el usuario",
-    "userId": "ID de usuario",
-    "username": "Nombre de usuario"
-  },
-  "me": {
-    "title": "Prueba de ruta protegida",
-    "subtitle": "Haz clic en el botón. Si has iniciado sesión, deberías ver la información del usuario. Si no, deberías recibir un 401."
+  "errors": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
   }
 }

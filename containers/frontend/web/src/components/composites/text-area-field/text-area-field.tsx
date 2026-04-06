@@ -55,7 +55,7 @@ export function TextAreaField(props: TextAreaFieldProps) {
           slot="description"
           className={textAreaFieldStyles.counter}
           aria-live="polite"
-          aria-label={t('TextAreaField.counter', {
+          aria-label={t('components.textAreaField.characterCount', {
             current: value.length,
             max: maxLength,
           })}

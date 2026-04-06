@@ -1,16 +1,16 @@
 'use client';
 
-import { Stack } from '@components/primitives/stack';
-import { Form } from '@components/composites/form';
-import { TextAreaField } from '@components/composites/text-area-field';
+import { Form, Stack, TextAreaField } from '@components';
 
 import { ChatHeader } from './chat.header';
 import { ChatMain } from './chat.main';
 import { chatStyles } from './chat.styles';
 import { useChat } from './chat.provider';
+import { useTranslations } from 'next-intl';
 
 function ChatContent() {
   const { messages, value, setValue, sendMessage } = useChat();
+  const t = useTranslations('features.chat');
 
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
@@ -28,7 +28,7 @@ function ChatContent() {
           value={value}
           onChange={setValue}
           className={chatStyles.footer.input}
-          aria-label="message"
+          aria-label={t('messageAriaLabel')}
           maxLength={300}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

@@ -1,18 +1,23 @@
 'use client';
 import { useState } from 'react';
-import { TextAreaField } from '@components/composites/text-area-field';
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { Stack, Text, TextAreaField } from '@components';
+import { useTranslations } from 'next-intl';
 
 export default function TextAreaPage() {
+  const t = useTranslations('pages.ui.textArea');
   const [value, setValue] = useState('');
   const handleChange = (value: string) => setValue(value);
   return (
     <Stack className="p-6 w-[400px]">
       <Text as="h1" variant="heading-lg">
-        Text area component
+        {t('title')}
       </Text>
-      <TextAreaField value={value} onChange={handleChange} aria-label="message" maxLength={300} />
+      <TextAreaField
+        value={value}
+        onChange={handleChange}
+        aria-label={t('ariaLabel')}
+        maxLength={300}
+      />
     </Stack>
   );
 }

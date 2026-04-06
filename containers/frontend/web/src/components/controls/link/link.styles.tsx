@@ -1,7 +1,5 @@
-import { cn } from '@/lib/styles/cn';
+import { interactiveTextLinkStyles } from '@components/primitives/interactive-control/interactive-control.styles';
 
-const linkBase = ['font-caption text-blue-500 underline'];
-
-export function LinkStyles() {
-  return cn(linkBase);
+export function LinkStyles(className?: string) {
+  return interactiveTextLinkStyles(className);
 }

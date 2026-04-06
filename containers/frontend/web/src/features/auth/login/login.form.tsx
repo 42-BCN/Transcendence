@@ -3,10 +3,7 @@
 import { useActionState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { InternalLink } from '@components/controls/link/link';
-import { Form } from '@components/composites/form';
-import { TextField } from '@components/composites/text-field';
-import { Button } from '@components/controls/button';
+import { Button, Form, InternalLink, TextField } from '@components';
 import { fieldsBase, formApiReq } from './login.schema';
 import { useForm } from '@/lib/forms/use-form';
 import { type LoginReq } from '@/contracts/api/auth/auth.validation';
@@ -20,7 +17,7 @@ type StateActionProps = {
 };
 
 function APIError({ err }: StateActionProps) {
-  const t = useTranslations('api');
+  const t = useTranslations('errors');
   return err?.ok === false ? (
     <div role="alert" className="mb-4">
       {t(err.error.code)}
@@ -41,7 +38,7 @@ function useLoginFieldNavigation() {
 }
 
 export function LoginForm() {
-  const t = useTranslations('auth');
+  const t = useTranslations('features.auth');
   const form = useForm<LoginReq>(formApiReq);
   const [state, formAction] = useActionState(loginAction, null);
 

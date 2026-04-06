@@ -4,20 +4,20 @@ import { createEmptyValues } from '@/lib/forms/defaults';
 export const fieldsBase = {
   email: {
     name: 'email',
-    labelKey: 'auth.common.email.label',
-    placeholderKey: 'auth.common.email.placeholder',
+    labelKey: 'features.auth.fields.email.label',
+    placeholderKey: 'features.auth.fields.email.placeholder',
     type: 'email',
     isRequired: true,
     autoComplete: 'email',
   },
   password: {
     name: 'password',
-    labelKey: 'auth.common.password.label',
-    placeholderKey: 'auth.common.password.placeholder',
+    labelKey: 'features.auth.fields.password.label',
+    placeholderKey: 'features.auth.fields.password.placeholder',
     type: 'password',
     isRequired: true,
     minLength: 8,
-    descriptionKey: 'auth.common.password.description',
+    descriptionKey: 'features.auth.fields.password.description',
     autoComplete: 'new-password',
   },
 } as const;
