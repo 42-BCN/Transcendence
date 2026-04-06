@@ -259,6 +259,9 @@ fi
 
 append_if_missing "$BACKEND_ENV" "GOOGLE_CLIENT_ID" "YOUR_GOOGLE_CLIENT_ID"
 append_if_missing "$BACKEND_ENV" "GOOGLE_CLIENT_SECRET" "YOUR_GOOGLE_CLIENT_SECRET"
+append_if_missing "$BACKEND_ENV" "GMAIL_REFRESH_TOKEN" "YOUR_GMAIL_REFRESH_TOKEN"
+append_if_missing "$BACKEND_ENV" "GMAIL_SENDER_EMAIL" "YOUR_GMAIL_SENDER_EMAIL"
+append_if_missing "$BACKEND_ENV" "GMAIL_SENDER_NAME" "YOUR_GMAIL_SENDER_NAME"
 set_env_var "$BACKEND_ENV" "GOOGLE_CALLBACK_URL" "https://localhost:8443/api/auth/callback/google"
 
 echo
