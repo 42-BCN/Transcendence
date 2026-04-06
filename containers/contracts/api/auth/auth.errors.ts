@@ -3,7 +3,6 @@ import { VALIDATION_ERROR } from '../http';
 
 export const AUTH_ERRORS = {
   // Auth module errors
-  AUTH_ACCOUNT_LOCKED: HttpStatus.FORBIDDEN,
   AUTH_RATE_LIMITED: HttpStatus.TOO_MANY_REQUESTS,
   AUTH_UNAUTHORIZED: HttpStatus.UNAUTHORIZED,
   AUTH_FORBIDDEN: HttpStatus.FORBIDDEN,

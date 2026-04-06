@@ -192,6 +192,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
 
+  /auth/verify-email:
+    post:
+      tags: [Auth]
+      summary: Verify an email using a verification token
+      operationId: postAuthVerifyEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+      responses:
+        '200':
+          description: Email verified and session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullResponse'
+        '401':
+          description: Invalid, used, or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Set a new password using a reset token
+      operationId: postAuthResetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullResponse'
+        '401':
+          description: Invalid, used, or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+
   /auth/google:
     get:
       tags: [Auth]
@@ -209,6 +283,12 @@ paths:
       responses:
         '302':
           description: Redirect to profile on success
+        '403':
+          description: OAuth state validation failed (CSRF)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '500':
           description: Internal error
           content:
@@ -1025,11 +1105,33 @@ components:
           type: string
     ResendVerificationRequest:
       type: object
+      additionalProperties: false
       properties:
         email:
           type: string
           format: email
+
+    VerifyEmailRequest:
+      type: object
       additionalProperties: false
+      required: [token]
+      properties:
+        token:
+          type: string
+          minLength: 1
+
+    ResetPasswordRequest:
+      type: object
+      additionalProperties: false
+      required: [token, password]
+      properties:
+        token:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
     SignupResponse:
       type: object
       required: [ok, data]

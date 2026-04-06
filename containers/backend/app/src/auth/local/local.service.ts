@@ -1,18 +1,18 @@
 import { createHash, randomBytes } from 'node:crypto';
 import argon2 from 'argon2';
-import type { Profile } from 'passport';
 
 import type { AuthUser } from '@contracts/auth/auth.contract';
-import type { RecoverReq } from '@contracts/auth/auth.recover.caro';
-import { normalizeEmail, type LoginReq } from '@contracts/auth/auth.validation';
+import { type LoginReq } from '@contracts/auth/auth.validation';
 import { generateUsername, ApiError } from '@shared';
 import { MailServiceError, isMailServiceConfigured } from '@lib/mail.service';
 
-import { authSecurityConfig } from './auth.security.config';
-import { toAuthUser } from './auth.model';
-import * as Repo from './auth.repo';
-import { logEvents, type LoginFailureReason } from './auth.logs';
-import { type EmailLocale, sendPasswordResetEmail, sendSignupVerificationEmail } from './auth.mail';
+import { authSecurityConfig } from '../security.config';
+import { toAuthUser } from '../auth.model';
+import { logEvents, type LoginFailureReason } from '../auth.logs';
+import { type EmailLocale, sendSignupVerificationEmail } from '../mail';
+import * as LocalRepo from './local.repo';
+import * as SharedRepo from '../shared.repo';
+import * as VerificationRepo from '../verification/verification.repo';
 
 function fingerprint(value: string): string {
   return createHash('sha256').update(value).digest('hex').slice(0, 16);
@@ -39,20 +39,11 @@ function expiresAt(ttlMs: number): Date {
 
 async function createEmailVerificationToken(userId: string): Promise<string> {
   const token = createRawToken();
-  await Repo.createEmailVerificationToken({
+  await VerificationRepo.deleteUnusedEmailVerificationTokens(userId);
+  await VerificationRepo.createEmailVerificationToken({
     userId,
     tokenHash: hashToken(token),
     expiresAt: expiresAt(24 * 60 * 60 * 1000),
-  });
-  return token;
-}
-
-async function createPasswordResetToken(userId: string): Promise<string> {
-  const token = createRawToken();
-  await Repo.createPasswordResetToken({
-    userId,
-    tokenHash: hashToken(token),
-    expiresAt: expiresAt(60 * 60 * 1000),
   });
   return token;
 }
@@ -84,42 +75,6 @@ async function dispatchSignupVerificationMail(user: AuthUser, locale: EmailLocal
   }
 }
 
-async function dispatchPasswordResetMailByIdentifier(
-  identifier: string,
-  locale: EmailLocale,
-): Promise<void> {
-  const user = identifier.includes('@')
-    ? await Repo.findUserByEmail(identifier)
-    : await Repo.findUserByUsername(identifier);
-
-  if (!user) return;
-  if (!isMailServiceConfigured()) {
-    logEvents.info({
-      event: 'password_reset_skipped',
-      reason: 'mail_not_configured',
-      userId: user.id,
-    });
-    return;
-  }
-
-  try {
-    const resetToken = await createPasswordResetToken(user.id);
-    await sendPasswordResetEmail({
-      toEmail: user.email,
-      username: user.username,
-      resetToken,
-      locale,
-    });
-  } catch (error) {
-    logEvents.info({
-      event: 'password_reset_mail_failed',
-      userId: user.id,
-      error: error instanceof MailServiceError ? `${error.code}:${error.message}` : String(error),
-    });
-  }
-}
-
-// -------------------------- LOGIN HELPER FUNCTIONS --------------------------
 function failLogin(reason: LoginFailureReason, idHash: string, userId?: string): never {
   logEvents.loginFailure(reason, idHash, userId);
   throw new ApiError('AUTH_INVALID_CREDENTIALS');
@@ -150,28 +105,27 @@ export async function recordFailedPasswordAttempt(userId: string, userHash: stri
   const { maxFailedAttempts, lockoutDurationMs } = authSecurityConfig;
   const now = new Date();
 
-  const { failedAttempts, lockedUntil } = await Repo.incrementFailedAttempts(userId);
+  const { failedAttempts, lockedUntil } = await LocalRepo.incrementFailedAttempts(userId);
 
   const maxed = failedAttempts >= maxFailedAttempts;
   const unlocked = !lockedUntil || lockedUntil <= now;
 
   if (!(maxed && unlocked)) return;
 
-  const newLock = await Repo.tryLockUser(userId, now, lockoutDurationMs);
+  const newLock = await LocalRepo.tryLockUser(userId, now, lockoutDurationMs);
   if (!newLock) return;
 
   logEvents.lockoutTriggered(userId, userHash, failedAttempts, newLock.toISOString());
 }
 
-// -------------------------- LOGIN --------------------------
 export async function login(input: LoginReq): Promise<AuthUser> {
   const identifier = input.identifier;
   const isEmailIdentifier = identifier.includes('@');
   const idHash = fingerprint(identifier);
 
   const user = isEmailIdentifier
-    ? await Repo.findUserByEmail(identifier)
-    : await Repo.findUserByUsername(identifier);
+    ? await SharedRepo.findUserByEmail(identifier)
+    : await SharedRepo.findUserByUsername(identifier);
 
   if (!user) failLogin('unknown_identifier', idHash);
   if (!user.passwordHash) failLogin('missing_password_hash', idHash, user.id);
@@ -186,12 +140,13 @@ export async function login(input: LoginReq): Promise<AuthUser> {
     failLogin(verifyResult.reason, idHash, user.id);
   }
 
-  await Repo.registerSuccessfulPasswordLogin(user.id);
+  if (!user.emailVerifiedAt) throw new ApiError('AUTH_EMAIL_NOT_VERIFIED');
+
+  await LocalRepo.registerSuccessfulPasswordLogin(user.id);
   logEvents.loginSuccess(user.id, idHash);
   return toAuthUser(user);
 }
 
-// -------------------------- SIGNUP HELPER FUNCTIONS --------------------------
 function signupFailure(reason: string, emailHash: string): never {
   logEvents.signupFailure(reason, emailHash);
   if (reason === 'email_already_exists') throw new ApiError('AUTH_EMAIL_ALREADY_EXISTS');
@@ -209,7 +164,7 @@ async function createUserWithRetries(input: {
   const { email, passwordHash } = input;
 
   for (let attempt = 0; attempt < 5; attempt++) {
-    const created = await Repo.insertUser({
+    const created = await LocalRepo.insertUser({
       email,
       username: generateUsername(),
       passwordHash,
@@ -223,7 +178,6 @@ async function createUserWithRetries(input: {
   return { ok: false, reason: 'username_collision_exhausted' };
 }
 
-// -------------------------- SIGNUP --------------------------
 export async function signup(
   input: {
     email: string;
@@ -235,57 +189,18 @@ export async function signup(
   const idHash = fingerprint(email);
   logEvents.signupAttempt(idHash);
 
-  const existing = await Repo.findUserByEmail(email);
+  const existing = await SharedRepo.findUserByEmail(email);
   if (existing) signupFailure('email_already_exists', idHash);
 
   const passwordHash = await hashPassword(input.password);
 
   const result = await createUserWithRetries({ email, passwordHash });
   if (!result.ok) {
-    const duplicate = await Repo.findUserByEmail(email);
+    const duplicate = await SharedRepo.findUserByEmail(email);
     if (duplicate) signupFailure('email_already_exists', idHash);
     signupFailure('username_collision_exhausted', idHash);
   }
 
   await dispatchSignupVerificationMail(result.user, locale);
   return result.user;
-}
-
-export async function recover(
-  input: RecoverReq,
-  locale: EmailLocale = 'en',
-): Promise<{ identifier: string }> {
-  const identifier = input.identifier;
-  await dispatchPasswordResetMailByIdentifier(identifier, locale);
-  return { identifier };
-}
-
-// -------------------------- GOOGLE OAUTH --------------------------
-function getUserProfile(profile: Profile) {
-  const googleId = profile.id;
-  const email = profile.emails?.[0]?.value;
-  const username = generateUsername();
-  return {
-    googleId,
-    email: email ? normalizeEmail(email) : undefined,
-    username,
-  };
-}
-
-export async function findOrCreateGoogleUser(profile: Profile): Promise<AuthUser> {
-  const { googleId, email, username } = getUserProfile(profile);
-
-  if (!email) throw new ApiError('AUTH_EMAIL_NOT_VERIFIED');
-
-  const byGoogle = await Repo.findUserByGoogleId(googleId);
-  if (byGoogle) return toAuthUser(byGoogle);
-
-  const byEmail = await Repo.findUserByEmail(email);
-  if (byEmail) {
-    const linked = await Repo.linkGoogleIdToEmailUser({ email, googleId });
-    return toAuthUser(linked);
-  }
-
-  const created = await Repo.insertGoogleUser({ email, googleId, username });
-  return toAuthUser(created);
 }

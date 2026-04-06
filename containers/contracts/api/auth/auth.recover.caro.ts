@@ -10,6 +10,7 @@ export type RecoverOk = {
 };
 
 export const AUTH_RECOVER_ERRORS = [
+  'AUTH_RATE_LIMITED',
   'AUTH_INTERNAL_ERROR',
   'VALIDATION_ERROR',
 ] as const satisfies readonly AuthErrorName[];

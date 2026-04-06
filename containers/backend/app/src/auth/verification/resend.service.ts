@@ -2,10 +2,10 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import { ApiError, getRedisClient } from '@shared';
 
-import { authSecurityConfig } from './auth.security.config';
-import * as Repo from './auth.repo';
-import { sendSignupVerificationEmail } from './auth.mail';
-import type { EmailLocale } from './mail-templates';
+import { authSecurityConfig } from '../security.config';
+import * as SharedRepo from '../shared.repo';
+import * as VerificationRepo from './verification.repo';
+import { sendSignupVerificationEmail, type EmailLocale } from '../mail';
 
 type ResendVerificationUser = {
   id: string;
@@ -14,13 +14,13 @@ type ResendVerificationUser = {
   emailVerifiedAt: Date | null;
 };
 
-export type ResendVerificationInput = {
+type ResendVerificationInput = {
   email?: string;
   userId?: string;
   locale: EmailLocale;
 };
 
-export type ResendVerificationDeps = {
+type ResendVerificationDeps = {
   findUserByEmail: (email: string) => Promise<ResendVerificationUser | null>;
   findUserByIdForVerification: (userId: string) => Promise<ResendVerificationUser | null>;
   acquireCooldown: (userId: string) => Promise<boolean>;
@@ -47,8 +47,8 @@ function expiresAt(ttlMs: number): Date {
 
 async function issueVerificationToken(userId: string): Promise<string> {
   const token = createRawToken();
-  await Repo.deleteUnusedEmailVerificationTokens(userId);
-  await Repo.createEmailVerificationToken({
+  await VerificationRepo.deleteUnusedEmailVerificationTokens(userId);
+  await VerificationRepo.createEmailVerificationToken({
     userId,
     tokenHash: createHash('sha256').update(token).digest('hex'),
     expiresAt: expiresAt(24 * 60 * 60 * 1000),
@@ -69,8 +69,8 @@ async function acquireCooldown(userId: string): Promise<boolean> {
 }
 
 const defaultDeps: ResendVerificationDeps = {
-  findUserByEmail: Repo.findUserByEmail,
-  findUserByIdForVerification: Repo.findUserByIdForVerification,
+  findUserByEmail: SharedRepo.findUserByEmail,
+  findUserByIdForVerification: SharedRepo.findUserByIdForVerification,
   acquireCooldown,
   issueVerificationToken,
   sendVerificationEmail: sendSignupVerificationEmail,
@@ -84,11 +84,12 @@ export async function resendVerification(
     throw new ApiError('VALIDATION_ERROR');
   }
 
-  const user = input.userId
-    ? await deps.findUserByIdForVerification(input.userId)
-    : input.email
-      ? await deps.findUserByEmail(input.email)
-      : null;
+  let user: ResendVerificationUser | null = null;
+  if (input.userId) {
+    user = await deps.findUserByIdForVerification(input.userId);
+  } else if (input.email) {
+    user = await deps.findUserByEmail(input.email);
+  }
 
   if (!user || user.emailVerifiedAt) {
     throw new ApiError('AUTH_RESEND_VERIFICATION_NOT_FOUND');
