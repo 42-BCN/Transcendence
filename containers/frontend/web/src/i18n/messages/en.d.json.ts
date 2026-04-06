@@ -223,7 +223,9 @@ declare const messages: {
       "settings": "Settings"
     },
     "chat": {
-      "messageAriaLabel": "Message"
+      "messageAriaLabel": "Message",
+      "showChat": "Show Chat",
+      "hideChat": "Hide Chat"
     },
     "game": {
       "resetPlan": "Reset plan",
