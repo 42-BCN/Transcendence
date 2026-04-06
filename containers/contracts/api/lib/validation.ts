@@ -1,9 +1,9 @@
-import type { z } from "zod";
+import type { z } from 'zod';
 
 function addZodIssuesToCtx(ctx: z.RefinementCtx, issues: z.ZodIssue[]) {
   for (const issue of issues) {
     ctx.addIssue({
-      code: "custom",
+      code: 'custom',
       message: issue.message,
       path: issue.path,
     });

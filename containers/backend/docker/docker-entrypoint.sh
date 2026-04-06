@@ -23,7 +23,7 @@ npm run prisma:generate
 
 if [ "$NODE_ENV" = "development" ]; then
 echo "🗄️ Syncing database schema with Prisma..."
-npm run prisma:db:push
+npm run prisma:db:push:dev
 echo ""
 
 else

@@ -1,8 +1,8 @@
-import { AUTH_ERRORS } from "../auth/auth.errors";
-import { USERS_ERRORS } from "../users/users.errors";
-import { FRIENDSHIPS_ERROR_STATUS } from "../friendships/friendships.errors";
-import { HttpStatus } from "./status";
-import { VALIDATION_ERROR } from "./validation";
+import { AUTH_ERRORS } from '../auth/auth.errors';
+import { USERS_ERRORS } from '../users/users.errors';
+import { FRIENDSHIPS_ERROR_STATUS } from '../friendships/friendships.errors';
+import { HttpStatus } from './status';
+import { VALIDATION_ERROR } from './validation';
 
 export const RES_ERRORS = {
   // Auth module errors

@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { VALIDATION } from "../http/validation";
+import { VALIDATION } from '../http/validation';
 
 const firstQueryValue = (v: unknown) => {
   if (Array.isArray(v)) return v[0];
@@ -30,11 +30,11 @@ export const GetUsersQuerySchema = z
   }))
   .refine((q) => q.limit >= 1 && q.limit <= 100, {
     message: VALIDATION.OUT_OF_RANGE,
-    path: ["limit"],
+    path: ['limit'],
   })
   .refine((q) => q.offset >= 0, {
     message: VALIDATION.OUT_OF_RANGE,
-    path: ["offset"],
+    path: ['offset'],
   });
 
 export const GetUserByIdParamSchema = z.strictObject({
