@@ -6,11 +6,12 @@ import { MapControls, OrthographicCamera } from '@react-three/drei';
 import type { pos, parse_entity, tile } from './maps';
 import { testMap, parseMap } from './maps';
 import { useGame } from './store';
+import { useGameStore } from './game.zustand';
+import { useGameSocketManager } from './hooks';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
-import { gameSocket } from '@/lib/sockets/socket';
 
 const s = 0.975;
 
@@ -33,35 +34,52 @@ function AbButtons() {
 
 function DiceButtons() {
   const ent = useGame((state) => state.getSel());
-  const handleDiceClick = (quantity: number) => {
-    gameSocket.emit('game:client:rolls', quantity);
-  };
   const canSelect = useGame((state) => state.canSelect);
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectDice);
+
+  // Zustand store
+  const rollQuantity = useGameStore((state) => state.rollQuantity);
+  const rollDice = useGameStore((state) => state.rollDice);
+
+  // Initialize socket listeners on mount
+  useGameSocketManager();
+
+  const handleDiceClick = (quantity: number) => {
+    rollDice(quantity);
+    console.log('Emitted roll dice event with quantity:', quantity);
+  };
+
   return (
-    <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
-      {ent?.usedDice.map((diceNum, i) => (
-        <Button key={i} className={`px-4 py-2 bg-gray-500 text-white transition-all`}>
-          {`d${diceNum}`}
-        </Button>
-      ))}
-      {ent?.dice.map((diceNum, i) => (
-        <Button
-          key={i}
-          onPress={() => {
-            ability ? selectDice(diceNum) : movDice(diceNum);
-            const rolled = Math.floor(Math.random() * 6) + 1;
-            handleDiceClick(rolled);
-            console.log('Emitted roll dice event with quantity:', rolled);
-          }}
-          className={`px-4 py-2 bg-blue-500 text-white transition-all
-    ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : ''}`}
-        >
-          {`d${diceNum}`}
-        </Button>
-      ))}
+    <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
+      <div className="flex gap-4">
+        {ent?.usedDice.map((diceNum, i) => (
+          <Button key={i} className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}>
+            {`d${diceNum}`}
+          </Button>
+        ))}
+      </div>
+      <div className="flex gap-4">
+        {ent?.dice.map((diceNum, i) => (
+          <Button
+            key={i}
+            onPress={() => {
+              ability ? selectDice(diceNum) : movDice(diceNum);
+              const rolled = Math.floor(Math.random() * 6) + 1;
+              handleDiceClick(rolled);
+            }}
+            className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
+              ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
+          >
+            {`d${diceNum}`}
+          </Button>
+        ))}
+      </div>
+      {/* Roll Total Display */}
+      <div className="px-4 py-2 bg-purple-600 text-white rounded font-bold text-center">
+        Total Rolls: {rollQuantity}
+      </div>
     </div>
   );
 }
