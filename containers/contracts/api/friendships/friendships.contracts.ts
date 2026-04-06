@@ -1,12 +1,12 @@
-import type { ApiResponse } from "../http/response";
-import type { ValidationErrorDetails } from "../http/validation";
-import type { FriendshipsErrorName } from "./friendships.errors";
+import type { ApiResponse } from '../http/response';
+import type { ValidationErrorDetails } from '../http/validation';
+import type { FriendshipsErrorName } from './friendships.errors';
 
 export type FriendshipPublic = {
   id: string;
   friendUserId: string;
   friendUsername: string;
-  status: "pending" | "accepted";
+  status: 'pending' | 'accepted';
   isSender: boolean;
   createdAt: Date;
 };
@@ -67,7 +67,7 @@ export type AcceptRequestResponse = ApiResponse<
 
 export type RespondFriendRequestOk = {
   friendship?: FriendshipPublic;
-  action: "accept" | "reject";
+  action: 'accept' | 'reject';
 };
 export type RespondFriendRequestResponse = ApiResponse<
   RespondFriendRequestOk,

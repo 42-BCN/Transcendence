@@ -1,15 +1,13 @@
 // src/lib/prisma.ts
-import { Pool } from "pg";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-import { PrismaClient } from "../generated/prisma/client";
+import { PrismaClient } from '../generated/prisma/client';
 
 const { PGUSER, PGPASSWORD, PGDATABASE, PGHOST } = process.env;
 
 if (!PGUSER || !PGPASSWORD || !PGDATABASE || !PGHOST) {
-  throw new Error(
-    "Missing required PG* environment variables for Prisma runtime.",
-  );
+  throw new Error('Missing required PG* environment variables for Prisma runtime.');
 }
 
 const connectionString = `postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE}?schema=public`;
@@ -27,6 +25,6 @@ export const prisma =
     adapter,
   });
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }

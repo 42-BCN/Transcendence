@@ -1,8 +1,5 @@
-import { ApiError } from "@shared";
-import type {
-  FriendshipPublic,
-  FriendPublic,
-} from "@contracts/friendships/friendships.contracts";
+import { ApiError } from '@shared';
+import type { FriendshipPublic, FriendPublic } from '@contracts/friendships/friendships.contracts';
 
 import {
   findFriendshipByPair,
@@ -17,20 +14,20 @@ import {
   findUserBrief,
   findFriendshipRowById,
   rejectFriendRequest,
-} from "./friendships.repo";
+} from './friendships.repo';
 import {
   notifyFriendAccepted,
   notifyFriendRequest,
   notifyFriendRejected,
-} from "./friendships.notify";
-import { resolveOnlineStatus } from "./friendships.presence";
+} from './friendships.notify';
+import { resolveOnlineStatus } from './friendships.presence';
 
 function isUniqueViolation(err: unknown): boolean {
   return (
-    typeof err === "object" &&
+    typeof err === 'object' &&
     err !== null &&
-    "code" in err &&
-    (err as { code: string }).code === "P2002"
+    'code' in err &&
+    (err as { code: string }).code === 'P2002'
   );
 }
 
@@ -38,23 +35,23 @@ export async function sendFriendRequest(
   senderId: string,
   targetId: string,
 ): Promise<{ friendship: FriendshipPublic; wasAutoAccepted: boolean }> {
-  if (senderId === targetId) throw new ApiError("FRIENDSHIP_SELF_REQUEST");
+  if (senderId === targetId) throw new ApiError('FRIENDSHIP_SELF_REQUEST');
 
   const targetExists = await findUserById(targetId);
-  if (!targetExists) throw new ApiError("USER_NOT_FOUND");
+  if (!targetExists) throw new ApiError('USER_NOT_FOUND');
 
   const existing = await findFriendshipByPair(senderId, targetId);
 
   if (existing) {
-    if (existing.status === "accepted") {
-      throw new ApiError("FRIENDSHIP_ALREADY_EXISTS");
+    if (existing.status === 'accepted') {
+      throw new ApiError('FRIENDSHIP_ALREADY_EXISTS');
     }
     if (existing.senderId === senderId) {
-      throw new ApiError("FRIENDSHIP_REQUEST_ALREADY_SENT");
+      throw new ApiError('FRIENDSHIP_REQUEST_ALREADY_SENT');
     }
 
     const accepted = await autoAcceptMutualRequest(senderId, targetId);
-    if (!accepted) throw new ApiError("INTERNAL_ERROR");
+    if (!accepted) throw new ApiError('INTERNAL_ERROR');
 
     const senderBrief = await findUserBrief(senderId);
     const targetBrief = await findUserBrief(targetId);
@@ -83,17 +80,17 @@ export async function sendFriendRequest(
     if (!isUniqueViolation(err)) throw err;
 
     const afterRace = await findFriendshipByPair(senderId, targetId);
-    if (!afterRace) throw new ApiError("INTERNAL_ERROR");
+    if (!afterRace) throw new ApiError('INTERNAL_ERROR');
 
-    if (afterRace.status === "accepted") {
-      throw new ApiError("FRIENDSHIP_ALREADY_EXISTS");
+    if (afterRace.status === 'accepted') {
+      throw new ApiError('FRIENDSHIP_ALREADY_EXISTS');
     }
     if (afterRace.senderId === senderId) {
-      throw new ApiError("FRIENDSHIP_REQUEST_ALREADY_SENT");
+      throw new ApiError('FRIENDSHIP_REQUEST_ALREADY_SENT');
     }
 
     const accepted = await autoAcceptMutualRequest(senderId, targetId);
-    if (!accepted) throw new ApiError("INTERNAL_ERROR");
+    if (!accepted) throw new ApiError('INTERNAL_ERROR');
 
     const senderBrief = await findUserBrief(senderId);
     const targetBrief = await findUserBrief(targetId);
@@ -108,9 +105,7 @@ export async function sendFriendRequest(
   }
 }
 
-export async function getFriendships(
-  userId: string,
-): Promise<FriendshipPublic[]> {
+export async function getFriendships(userId: string): Promise<FriendshipPublic[]> {
   return await listAcceptedFriendships(userId);
 }
 
@@ -129,52 +124,44 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
   }));
 }
 
-export async function getReceivedRequests(
-  userId: string,
-): Promise<FriendshipPublic[]> {
+export async function getReceivedRequests(userId: string): Promise<FriendshipPublic[]> {
   return await listReceivedRequests(userId);
 }
 
-export async function getSentRequests(
-  userId: string,
-): Promise<FriendshipPublic[]> {
+export async function getSentRequests(userId: string): Promise<FriendshipPublic[]> {
   return await listSentRequests(userId);
 }
 
-export async function acceptRequest(
-  requestId: string,
-  userId: string,
-): Promise<FriendshipPublic> {
+export async function acceptRequest(requestId: string, userId: string): Promise<FriendshipPublic> {
   const friendship = await acceptFriendRequest(requestId, userId);
-  if (!friendship) throw new ApiError("FRIENDSHIP_REQUEST_NOT_FOUND");
+  if (!friendship) throw new ApiError('FRIENDSHIP_REQUEST_NOT_FOUND');
   return friendship;
 }
 
 export async function respondToFriendRequest(
   friendshipId: string,
   currentUserId: string,
-  action: "accept" | "reject",
-): Promise<{ friendship?: FriendshipPublic; action: "accept" | "reject" }> {
+  action: 'accept' | 'reject',
+): Promise<{ friendship?: FriendshipPublic; action: 'accept' | 'reject' }> {
   const row = await findFriendshipRowById(friendshipId);
-  if (!row) throw new ApiError("FRIENDSHIP_REQUEST_NOT_FOUND");
+  if (!row) throw new ApiError('FRIENDSHIP_REQUEST_NOT_FOUND');
 
-  const inPair =
-    row.userId1 === currentUserId || row.userId2 === currentUserId;
-  if (!inPair) throw new ApiError("FRIENDSHIP_REQUEST_NOT_FOUND");
+  const inPair = row.userId1 === currentUserId || row.userId2 === currentUserId;
+  if (!inPair) throw new ApiError('FRIENDSHIP_REQUEST_NOT_FOUND');
 
-  if (row.status === "accepted") {
-    throw new ApiError("FRIENDSHIP_ALREADY_ACCEPTED");
+  if (row.status === 'accepted') {
+    throw new ApiError('FRIENDSHIP_ALREADY_ACCEPTED');
   }
-  if (row.status !== "pending") {
-    throw new ApiError("FRIENDSHIP_ALREADY_ACCEPTED");
+  if (row.status !== 'pending') {
+    throw new ApiError('FRIENDSHIP_ALREADY_ACCEPTED');
   }
   if (row.senderId === currentUserId) {
-    throw new ApiError("UNAUTHORIZED_ACTION");
+    throw new ApiError('UNAUTHORIZED_ACTION');
   }
 
-  if (action === "accept") {
+  if (action === 'accept') {
     const friendship = await acceptFriendRequest(friendshipId, currentUserId);
-    if (!friendship) throw new ApiError("INTERNAL_ERROR");
+    if (!friendship) throw new ApiError('INTERNAL_ERROR');
 
     const receiverBrief = await findUserBrief(currentUserId);
     const senderBrief = await findUserBrief(row.senderId);
@@ -185,16 +172,16 @@ export async function respondToFriendRequest(
       );
     }
 
-    return { friendship, action: "accept" };
+    return { friendship, action: 'accept' };
   }
 
   const deleted = await rejectFriendRequest(friendshipId, currentUserId);
-  if (!deleted) throw new ApiError("INTERNAL_ERROR");
+  if (!deleted) throw new ApiError('INTERNAL_ERROR');
 
   await notifyFriendRejected(row.senderId, {
     rejectedByUserId: currentUserId,
     friendshipId,
   });
 
-  return { action: "reject" };
+  return { action: 'reject' };
 }

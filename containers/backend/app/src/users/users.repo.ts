@@ -1,5 +1,5 @@
-import type { UserPublic } from "@contracts/users/users.contracts";
-import { prisma } from "@/lib/prisma";
+import type { UserPublic } from '@contracts/users/users.contracts';
+import { prisma } from '@/lib/prisma';
 
 type UserPublicRow = {
   id: string;
@@ -18,13 +18,10 @@ const userPublicSelect = {
   username: true,
 } as const;
 
-export async function listUsers(
-  limit: number,
-  offset: number,
-): Promise<UserPublic[]> {
+export async function listUsers(limit: number, offset: number): Promise<UserPublic[]> {
   const rows = await prisma.user.findMany({
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     take: limit,
     skip: offset,
@@ -37,6 +34,15 @@ export async function listUsers(
 export async function selectUserData(id: string): Promise<UserPublic | null> {
   const row = await prisma.user.findUnique({
     where: { id },
+    select: userPublicSelect,
+  });
+
+  return row ? mapUserRow(row) : null;
+}
+
+export async function selectUserDataByUsername(username: string): Promise<UserPublic | null> {
+  const row = await prisma.user.findUnique({
+    where: { username },
     select: userPublicSelect,
   });
 
