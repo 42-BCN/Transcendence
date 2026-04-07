@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import type { LoginRes, SignupRes } from '@contracts/auth/auth.contract';
 import { AUTH_ERRORS, type AuthErrorName } from '@contracts/auth/auth.errors';
 import type { SignupReq, LoginReq } from '@contracts/auth/auth.validation';
-import { HttpStatus } from '@contracts/http';
+import { HttpStatus, HttpStatusCode } from '@contracts/http';
 
 import { normalizeEmailLocale } from '../mail';
 import * as Service from './local.service';
@@ -19,17 +19,24 @@ function sendError<TResponse>(res: Response<TResponse>, code: AuthErrorName): vo
   } as TResponse);
 }
 
+function sendOk<TResponse>(
+  res: Response<TResponse>,
+  data: TResponse extends { data: infer TData } ? TData : unknown,
+  code: HttpStatusCode,
+): void {
+  res.status(code).json({
+    ok: true,
+    data,
+  } as TResponse);
+}
+
 export async function postSignup(
   req: Request<unknown, unknown, SignupReq>,
   res: Response<SignupRes>,
 ): Promise<void> {
   const locale = normalizeEmailLocale(req.headers['accept-language']?.toString());
   const result = await Service.signup(req.body, locale);
-
-  res.status(200).json({
-    ok: true,
-    data: { user: result },
-  });
+  sendOk(res, { user: result }, 200);
 }
 
 export async function postLogin(
@@ -43,11 +50,7 @@ export async function postLogin(
     req.session.userId = result.id;
     req.session.save((saveErr) => {
       if (saveErr) return sendError(res, 'AUTH_INTERNAL_ERROR');
-
-      res.status(200).json({
-        ok: true,
-        data: { user: result },
-      });
+      sendOk(res, { user: result }, 200);
     });
   });
 }
@@ -62,6 +65,6 @@ export function postLogout(req: Request, res: Response): void {
       secure: true,
     });
 
-    res.status(200).json({ ok: true, data: null });
+    sendOk(res, { user: null }, 200);
   });
 }

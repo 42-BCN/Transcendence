@@ -185,14 +185,14 @@ export async function signup(
   },
   locale: EmailLocale = 'en',
 ): Promise<AuthUser> {
-  const email = input.email;
+  const { email, password } = input;
   const idHash = fingerprint(email);
   logEvents.signupAttempt(idHash);
 
   const existing = await SharedRepo.findUserByEmail(email);
   if (existing) signupFailure('email_already_exists', idHash);
 
-  const passwordHash = await hashPassword(input.password);
+  const passwordHash = await hashPassword(password);
 
   const result = await createUserWithRetries({ email, passwordHash });
   if (!result.ok) {
