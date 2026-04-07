@@ -1,51 +1,23 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { useForm } from '@/lib/forms/use-form';
 import { type SignupReq } from '@/contracts/api/auth/auth.validation';
-import { type SignupRes } from '@/contracts/api/auth/auth.contract';
-import { Button, Form, TextField } from '@components';
+import { Button, Form, Text, TextField } from '@components';
 
 import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
-
-type StateActionProps = {
-  state: SignupRes | null | undefined;
-};
-
-function useCreateAccountFieldNavigation() {
-  const emailRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    emailRef.current?.focus();
-  }, []);
-
-  return { emailRef };
-}
-
-// TODO make a component
-function APIError({ state }: StateActionProps) {
-  const t2 = useTranslations('errors');
-  if (state?.ok !== false) return null;
-
-  return (
-    <div role="alert" className="mb-4">
-      {t2(state.error.code)}
-    </div>
-  );
-}
+import { useAutoFocus } from '@/hooks/useAutoFocus';
 
 export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
   const t = useTranslations('features.auth');
   const [state, formAction] = useActionState(createAccountAction, null);
-  const { emailRef } = useCreateAccountFieldNavigation();
-
+  const emailRef = useAutoFocus<HTMLInputElement>();
   return (
     <>
-      <APIError state={state} />
       <Form
         action={formAction}
         onSubmit={(e) => {
@@ -70,6 +42,7 @@ export function CreateAccountForm() {
         />
         <Button type="submit">{t('actions.signup')}</Button>
       </Form>
+      {state && !state.ok && <Text variant="caption">{state.error.code}</Text>}
     </>
   );
 }
