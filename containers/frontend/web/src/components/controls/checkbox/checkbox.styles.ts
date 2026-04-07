@@ -19,5 +19,4 @@ export const checkboxStyles = {
     ),
   label: () =>
     'text-xs font-medium text-text-tertiary group-hover:text-text-secondary transition-colors duration-200 leading-tight',
-  error: () => 'font-body-xs text-red-600 mt-1 ml-5',
 };

@@ -22,7 +22,7 @@ export const fieldsBase = {
   },
   privacy: {
     name: 'privacy',
-    labelKey: 'auth.createAccount.privacy.label',
+    labelKey: 'features.auth.signup.privacy.label',
     type: 'checkbox',
     isRequired: true,
   },

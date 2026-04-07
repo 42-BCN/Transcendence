@@ -78,16 +78,12 @@ export function CreateAccountForm() {
         />
         <CheckboxField
           isSelected={form.values.privacy}
-          errorKey={form.errors.privacy && `signup.privacy.error`}
+          errorKey={form.errors.privacy && 'features.auth.signup.privacy.error'}
           onChange={(v) => form.setValue('privacy', v)}
           onBlur={() => form.setTouch('privacy')}
           {...fieldsBase.privacy}
         />
         <Button type="submit">{t('actions.signup')}</Button>
-      </Form>
-    </>
-  );
-}
       </Form>
     </>
   );
