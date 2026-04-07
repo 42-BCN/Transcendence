@@ -8,6 +8,7 @@ import { type SignupReq } from '@/contracts/api/auth/auth.validation';
 import { type SignupRes } from '@/contracts/api/auth/auth.contract';
 import { Form } from '@components/composites/form';
 import { TextField } from '@components/composites/text-field';
+import { CheckboxField } from '@components/composites/checkbox-field/checkbox-field';
 import { Button } from '@components/controls/button';
 
 import { signupAction } from './create-account.action';
@@ -77,6 +78,13 @@ export function CreateAccountForm() {
           onChange={(v) => form.setValue('password', v)}
           onBlur={() => form.setTouch('password')}
           {...fieldsBase.password}
+        />
+        <CheckboxField
+          isSelected={form.values.privacy}
+          errorKey={form.errors.privacy && `auth.createAccount.privacy.error`}
+          onChange={(v) => form.setValue('privacy', v)}
+          onBlur={() => form.setTouch('privacy')}
+          {...fieldsBase.privacy}
         />
         <Button type="submit">{t('createAccount.submit')}</Button>
       </Form>

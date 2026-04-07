@@ -20,9 +20,19 @@ export const fieldsBase = {
     descriptionKey: 'auth.common.password.description',
     autoComplete: 'new-password',
   },
+  privacy: {
+    name: 'privacy',
+    labelKey: 'auth.createAccount.privacy.label',
+    type: 'checkbox',
+    isRequired: true,
+  },
 } as const;
 
-const fieldNames = ['email', 'password'] as const satisfies readonly (keyof typeof fieldsBase)[];
+const fieldNames = [
+  'email',
+  'password',
+  'privacy',
+] as const satisfies readonly (keyof typeof fieldsBase)[];
 const defaultValues = createEmptyValues<SignupReq>(fieldNames);
 
 export const formApiReq = {
