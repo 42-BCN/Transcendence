@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { SplitScreenGrid } from '@components/primitives/split-screen-grid';
+import { SplitScreenGrid } from '@components';
 import { ChatProvider } from '@/features/chat/chat.provider';
 
 type GameLayoutProps = {

@@ -11,7 +11,9 @@
       "@contracts/*": ["src/contracts/api/*"],
       "@shared": ["src/shared/index.ts"],
       "@shared/*": ["src/shared/*"],
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@lib/*": ["src/lib/*"],
+      "@auth/*": ["src/auth/*"]
     },
 
     "strict": true,

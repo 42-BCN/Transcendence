@@ -102,10 +102,9 @@ async function main() {
   const pending = received.data.requests.find((r) => r.id === friendshipId);
   assert(pending, 'pending request visible to A');
 
-  const acceptRes = await a.req(
-    `/friendships/requests/${friendshipId}/accept`,
-    { method: 'PATCH' },
-  );
+  const acceptRes = await a.req(`/friendships/requests/${friendshipId}/accept`, {
+    method: 'PATCH',
+  });
   assert(acceptRes.ok === true, 'accept');
 
   const friends = await a.req('/friends');

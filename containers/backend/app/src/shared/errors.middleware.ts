@@ -1,6 +1,6 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from 'express';
 
-import { RES_ERRORS, type ResErrorsName } from "@contracts/http/errors";
+import { RES_ERRORS, type ResErrorsName } from '@contracts/http/errors';
 
 export class ApiError extends Error {
   code: ResErrorsName;
@@ -22,16 +22,9 @@ export function sendError(res: Response, code: ResErrorsName): void {
   });
 }
 
-export function errorMiddleware(
-  err: unknown,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-) {
-  const errCode = err instanceof ApiError ? err.code : "INTERNAL_ERROR";
-  console.error(
-    err instanceof ApiError ? `API ERROR: ${err.code} ${err}` : err,
-  );
+export function errorMiddleware(err: unknown, _req: Request, res: Response, _next: NextFunction) {
+  const errCode = err instanceof ApiError ? err.code : 'INTERNAL_ERROR';
+  console.error(err instanceof ApiError ? `API ERROR: ${err.code} ${err}` : err);
   if (res.headersSent) return;
   sendError(res, errCode);
 }

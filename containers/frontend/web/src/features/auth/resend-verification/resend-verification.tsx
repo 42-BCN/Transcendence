@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@components/controls/button';
+import { Button, Stack } from '@components';
 import { resendVerificationAction } from './resend-verification.action';
 
 import { feedbackStyles } from './resend-verification.styles';
-import { Stack } from '@components/primitives/stack';
 
 type ResendState = 'idle' | 'sending' | 'cooldown';
 type Feedback = 'success' | 'error' | null;
 
 export function ResendVerification() {
-  const t = useTranslations('auth.createAccount.success');
+  const t = useTranslations('features.auth');
   const [state, setState] = useState<ResendState>('idle');
   const [countdown, setCountdown] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>(null);
@@ -45,9 +44,9 @@ export function ResendVerification() {
   };
 
   const buttonTexts: Record<ResendState, string> = {
-    sending: t('resending'),
-    cooldown: `${t('resend')} (${countdown}s)`,
-    idle: t('resend'),
+    sending: t('verification.resending'),
+    cooldown: `${t('actions.resendEmail')} (${countdown}s)`,
+    idle: t('actions.resendEmail'),
   };
 
   return (
@@ -55,8 +54,12 @@ export function ResendVerification() {
       <Button onPress={handleResend} isDisabled={state !== 'idle'} variant="secondary">
         {buttonTexts[state]}
       </Button>
-      {feedback === 'success' && <p className={feedbackStyles('success')}>{t('resendSuccess')}</p>}
-      {feedback === 'error' && <p className={feedbackStyles('error')}>{t('resendError')}</p>}
+      {feedback === 'success' && (
+        <p className={feedbackStyles('success')}>{t('messages.resendSuccess')}</p>
+      )}
+      {feedback === 'error' && (
+        <p className={feedbackStyles('error')}>{t('messages.resendError')}</p>
+      )}
     </Stack>
   );
 }

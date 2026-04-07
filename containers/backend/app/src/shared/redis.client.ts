@@ -1,4 +1,4 @@
-import { createClient, type RedisClientType } from "redis";
+import { createClient, type RedisClientType } from 'redis';
 
 let redisClient: RedisClientType | null = null;
 
@@ -11,7 +11,7 @@ function getRedisUrl(): string {
   const port = process.env.REDIS_PORT;
 
   if (!host || !port) {
-    throw new Error("REDIS_URL or REDIS_HOST/REDIS_PORT is required");
+    throw new Error('REDIS_URL or REDIS_HOST/REDIS_PORT is required');
   }
 
   return `redis://${host}:${port}`;
@@ -23,8 +23,8 @@ export function getRedisClient(): RedisClientType {
       url: getRedisUrl(),
     });
 
-    redisClient.on("error", (err: unknown) => {
-      console.error("Redis error:", err);
+    redisClient.on('error', (err: unknown) => {
+      console.error('Redis error:', err);
     });
   }
 
@@ -36,7 +36,7 @@ export async function connectRedis(): Promise<RedisClientType> {
 
   if (!client.isOpen) {
     await client.connect();
-    console.log("Redis connected");
+    console.log('Redis connected');
   }
 
   return client;

@@ -1,11 +1,11 @@
-import type { RequestHandler } from "express";
-import { Router } from "express";
-import { validateBody, validateParams, requireAuth } from "@shared";
+import type { RequestHandler } from 'express';
+import { Router } from 'express';
+import { validateBody, validateParams, requireAuth } from '@shared';
 import {
   SendFriendRequestBodySchema,
   AcceptRequestParamSchema,
   RespondFriendRequestBodySchema,
-} from "@contracts/friendships/friendships.validation";
+} from '@contracts/friendships/friendships.validation';
 
 import {
   getFriendsListController,
@@ -15,38 +15,30 @@ import {
   sendFriendRequestController,
   acceptRequestController,
   respondFriendRequestController,
-} from "./friendships.controller";
+} from './friendships.controller';
 
 function buildFriendshipsRouter(listController: RequestHandler): Router {
   const router = Router();
   router.use(requireAuth);
 
-  router.get("/", listController);
+  router.get('/', listController);
 
-  router.get("/requests/received", getReceivedRequestsController);
+  router.get('/requests/received', getReceivedRequestsController);
 
-  router.get("/requests/sent", getSentRequestsController);
+  router.get('/requests/sent', getSentRequestsController);
 
-  router.post(
-    "/request",
-    validateBody(SendFriendRequestBodySchema),
-    sendFriendRequestController,
-  );
+  router.post('/request', validateBody(SendFriendRequestBodySchema), sendFriendRequestController);
 
-  router.post(
-    "/requests",
-    validateBody(SendFriendRequestBodySchema),
-    sendFriendRequestController,
-  );
+  router.post('/requests', validateBody(SendFriendRequestBodySchema), sendFriendRequestController);
 
   router.patch(
-    "/requests/:requestId/accept",
+    '/requests/:requestId/accept',
     validateParams(AcceptRequestParamSchema),
     acceptRequestController,
   );
 
   router.post(
-    "/respond",
+    '/respond',
     validateBody(RespondFriendRequestBodySchema),
     respondFriendRequestController,
   );

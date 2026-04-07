@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import { faker } from '@faker-js/faker';
 
 export function generateUsername(): string {
   const adjective = faker.word.adjective();
