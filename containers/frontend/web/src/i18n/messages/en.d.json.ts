@@ -85,7 +85,7 @@ declare const messages: {
       },
       "contact": {
         "title": "Contact",
-        "description": "If you have any questions about this privacy policy or wish to exercise your rights, please contact us through our GitHub repository or reach out to the project administrators."
+        "description": "If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>."
       }
     },
     "ui": {
@@ -222,7 +222,7 @@ declare const messages: {
       },
       "disclaimer": {
         "title": "Disclaimers",
-        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided on an as-is and as-available basis. We do not warranty that the service will be uninterrupted, timely, secure, or error-free."
+        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided on an as-is and as-available basis. We do not warrant that the service will be uninterrupted, timely, secure, or error-free."
       },
       "termination": {
         "title": "Termination",

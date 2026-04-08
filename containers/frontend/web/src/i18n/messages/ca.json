@@ -194,14 +194,14 @@
       "intro": "Benvingut a Transcendence. L'ús d'aquesta plataforma està subjecte als següents Termes de Servei, que regeixen la relació entre tu i l'equip de desenvolupament.",
       "acceptance": {
         "title": "Acceptació dels Termes",
-        "description": "En crear un compte o utilitzar els nostres serveis, aceptes aquestes condicions en la seva totalitat. Si no estàs d'acord amb alguna part d'aquests Termes, t'has d'abstenir d'utilitzar la plataforma."
+        "description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma."
       },
       "registration": {
         "title": "Registre de Compte",
         "description": "Ets responsable de mantenir la confidencialitat de les teves credencials i de totes les activitats que ocorrin sota el teu compte.",
         "items": {
           "security": "Ens has de notificar immediatament qualsevol ús no autoritzat del teu compte.",
-          "accuracy": "Aceptes proporcionar informació precissa i completa durant el registre."
+          "accuracy": "Acceptes proporcionar informació precisa i completa durant el registre."
         }
       },
       "conduct": {
