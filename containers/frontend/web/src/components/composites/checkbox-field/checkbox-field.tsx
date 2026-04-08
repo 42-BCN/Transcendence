@@ -1,3 +1,5 @@
+'use client';
+
 import {
   type CheckboxProps as AriaCheckboxProps,
   CheckboxGroup,
