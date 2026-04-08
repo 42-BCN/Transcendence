@@ -278,6 +278,7 @@ declare const messages: {
     "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
     "AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
     "AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
+    "AUTH_NO_PENDING_RECOVER": "No password reset request was found. Please start again.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
     "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
     "AUTH_FORBIDDEN": "The verification link is invalid or expired.",

@@ -275,6 +275,7 @@
     "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
     "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
     "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
+    "AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
     "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",

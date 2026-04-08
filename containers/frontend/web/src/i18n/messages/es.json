@@ -275,6 +275,7 @@
     "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
     "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
     "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
+    "AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
     "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
