@@ -13,7 +13,7 @@ import { Checkbox } from '@components/controls/checkbox';
 
 type I18nKey = string;
 
-export type CheckboxFieldProps = Omit<AriaCheckboxProps, 'className'> & {
+export type CheckboxFieldProps = Omit<AriaCheckboxProps, 'className' | 'children'> & {
   labelKey: I18nKey;
   errorKey?: I18nKey;
   linkHref?: string;
@@ -24,7 +24,6 @@ export function CheckboxField({
   labelKey,
   errorKey,
   linkHref,
-  children,
   className,
   ...props
 }: CheckboxFieldProps) {
@@ -39,7 +38,6 @@ export function CheckboxField({
               link: (chunks) => <InternalLink href={linkHref}>{chunks}</InternalLink>,
             })
           : t(labelKey)}
-        {children}
       </Checkbox>
       {errorKey && <FieldError className={checkboxFieldStyles.error()}>{t(errorKey)}</FieldError>}
     </CheckboxGroup>
