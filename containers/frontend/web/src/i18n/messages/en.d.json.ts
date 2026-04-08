@@ -9,6 +9,9 @@ declare const messages: {
     }
   },
   "components": {
+    "submitButton": {
+      "pendingLabel": "Submitting..."
+    },
     "localeSwitcher": {
       "ariaLabel": "Language",
       "en": "EN",
@@ -205,7 +208,8 @@ declare const messages: {
         "missingToken": "Verification token is missing.",
         "invalidOrExpired": "Verification link is invalid or expired.",
         "resending": "Sending...",
-        "backToLogin": "Already confirmed? Sign in",
+        "isConfirmed": "Already confirmed?",
+        "backToLogin": "Log In",
         "recoverTitle": "Recover account"
       },
       "recover": {
@@ -217,8 +221,8 @@ declare const messages: {
       },
       "messages": {
         "or": "OR",
-        "resendSuccess": "✓ Email sent. Wait before trying again.",
-        "resendError": "✗ Could not send email. Please try again."
+        "success": "Email sent. Wait before trying again.",
+        "submitting": "Submitting..."
       }
     },
     "navigation": {
@@ -277,7 +281,9 @@ declare const messages: {
     "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
     "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
     "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
-    "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again."
+    "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "VALIDATION_ERROR": "Validation error: please check the fields and try again.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 };
 export default messages;

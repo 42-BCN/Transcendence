@@ -15,6 +15,9 @@
     "textAreaField": {
       "characterCount": "{current} de {max} caracteres"
     },
+    "submitButton": {
+      "pendingLabel": "CHANGE_LATER"
+    },
     "footer": {
       "appName": "Transcendence",
       "privacy": "Política de Privacidad",
@@ -202,7 +205,8 @@
         "missingToken": "Falta el token de verificación.",
         "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
         "resending": "Enviando...",
-        "backToLogin": "¿Ya confirmaste? Iniciar sesión",
+        "isConfirmed": "¿Ya confirmaste?",
+        "backToLogin": "Iniciar sesión",
         "recoverTitle": "Recuperar cuenta"
       },
       "recover": {
@@ -214,8 +218,8 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Email enviado. Espera para volver a intentarlo.",
-        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo."
+        "success": "Email enviado: Espera para volver a intentarlo.",
+        "submitting": "Submitting..."
       }
     },
     "navigation": {
@@ -274,6 +278,8 @@
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
     "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
-    "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo."
+    "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+    "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 }

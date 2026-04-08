@@ -12,6 +12,9 @@
       "es": "ES",
       "ca": "CA"
     },
+    "submitButton": {
+      "pendingLabel": "CHANGE_LATER"
+    },
     "textAreaField": {
       "characterCount": "{current} de {max} caràcters"
     },
@@ -202,7 +205,8 @@
         "missingToken": "Falta el token de verificació.",
         "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
         "resending": "Enviant...",
-        "backToLogin": "Ja has confirmat? Iniciar sessió",
+        "isConfirmed": "Ja has confirmat?",
+        "backToLogin": "Iniciar sessió",
         "recoverTitle": "Recuperar compte"
       },
       "recover": {
@@ -214,8 +218,8 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Email enviat. Espera per tornar-ho a intentar.",
-        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar."
+        "success": "Email enviat. Espera per tornar-ho a intentar.",
+        "submitting": "Submitting..."
       }
     },
     "navigation": {
@@ -274,6 +278,8 @@
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
     "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
-    "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar."
+    "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 }

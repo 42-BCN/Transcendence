@@ -15,7 +15,7 @@ export function Logout({ onPress, label, isExpanded = false }: LogoutProps) {
   const router = useRouter();
   const t = useTranslations('features.auth.actions');
   const logoutHandler = async () => {
-    const { data } = await logoutAction();
+    const data = await logoutAction();
     if (!data.ok) {
       // TODO handle error
       console.error('Failed to log out');

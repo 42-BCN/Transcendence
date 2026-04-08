@@ -3,13 +3,12 @@
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { useForm } from '@/lib/forms/use-form';
+import { Button, Form, ApiFeedback, TextField, Stack } from '@components';
+import { useAutoFocus, useForm } from '@/hooks';
 import { type SignupReq } from '@/contracts/api/auth/auth.validation';
-import { Button, Form, Text, TextField } from '@components';
 
 import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
-import { useAutoFocus } from '@/hooks/useAutoFocus';
 
 export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
@@ -40,9 +39,11 @@ export function CreateAccountForm() {
           onBlur={() => form.setTouch('password')}
           {...fieldsBase.password}
         />
-        <Button type="submit">{t('actions.signup')}</Button>
+        <Stack gap="sm">
+          <Button type="submit">{t('actions.signup')}</Button>
+          <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
+        </Stack>
       </Form>
-      {state && !state.ok && <Text variant="caption">{state.error.code}</Text>}
     </>
   );
 }

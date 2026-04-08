@@ -1,28 +1,5 @@
-import { getTranslations } from 'next-intl/server';
-import { ResendVerification } from '@/features/auth/resend-verification';
-import { InternalLink, Stack, Text } from '@components';
+import CreateAccountSuccess from '@/features/auth/create-account/create-account.success';
 
-export default async function CreateAccountSuccessPage() {
-  const t = await getTranslations('features.auth');
-
-  return (
-    <Stack>
-      <Text as="h1" variant="heading-md">
-        {t('verification.title')}
-      </Text>
-      <Stack>
-        <Text as="p" variant="body-sm">
-          {t('verification.sent')}
-        </Text>
-        <Text as="p" variant="body-sm">
-          {t('verification.checkInbox')}
-        </Text>
-        <Text as="p" variant="body-sm">
-          {t('verification.checkSpam')}
-        </Text>
-      </Stack>
-      <ResendVerification />
-      <InternalLink href="/login">{t('verification.backToLogin')}</InternalLink>
-    </Stack>
-  );
+export default function CreateAccountSuccessPage() {
+  return <CreateAccountSuccess />;
 }

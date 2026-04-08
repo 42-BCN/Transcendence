@@ -1,84 +1,54 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Button, Form, InternalLink, TextField } from '@components';
+import { Form, InternalLink, SubmitButton, TextField, ApiFeedback, Stack } from '@components';
 import { fieldsBase, formApiReq } from './login.schema';
-import { useForm } from '@/lib/forms/use-form';
+import { useForm } from '@/hooks/use-form/use-form';
 import { type LoginReq } from '@/contracts/api/auth/auth.validation';
-import { type LoginRes } from '@/contracts/api/auth/auth.contract';
 
 import { loginAction } from './login.action';
-
-type StateActionProps = {
-  err: LoginRes | null | undefined;
-};
-
-function APIError({ err }: StateActionProps) {
-  const t = useTranslations('errors');
-  if (err?.ok !== false) return null;
-
-  return (
-    <div role="alert" className="mb-4">
-      {t(err.error.code)}
-    </div>
-  );
-}
-
-function useLoginFieldNavigation() {
-  const identifierRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    identifierRef.current?.focus();
-  }, []);
-
-  return {
-    identifierRef,
-  };
-}
+import { useAutoFocus } from '@/hooks/useAutoFocus';
 
 export function LoginForm() {
   const t = useTranslations('features.auth');
   const form = useForm<LoginReq>(formApiReq);
   const [state, formAction] = useActionState(loginAction, null);
-
-  const { identifierRef } = useLoginFieldNavigation();
+  const identifierRef = useAutoFocus<HTMLInputElement>();
 
   return (
-    <>
-      {state?.ok === false && <APIError err={state} />}
+    <Form
+      action={formAction}
+      onSubmit={(e) => {
+        const res = form.validateBeforeSubmit();
+        if (!res.ok) e.preventDefault();
+      }}
+    >
+      <TextField
+        value={form.values.identifier}
+        errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
+        onChange={(v) => form.setValue('identifier', v)}
+        onBlur={() => form.setTouch('identifier')}
+        inputRef={identifierRef}
+        {...fieldsBase.identifier}
+      />
 
-      <Form
-        action={formAction}
-        onSubmit={(e) => {
-          const res = form.validateBeforeSubmit();
-          if (!res.ok) e.preventDefault();
-        }}
-      >
-        <TextField
-          value={form.values.identifier}
-          errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
-          onChange={(v) => form.setValue('identifier', v)}
-          onBlur={() => form.setTouch('identifier')}
-          inputRef={identifierRef}
-          {...fieldsBase.identifier}
-        />
+      <TextField
+        value={form.values.password}
+        errorKey={form.errors.password && `validation.${form.errors.password}`}
+        onChange={(v) => form.setValue('password', v)}
+        onBlur={() => form.setTouch('password')}
+        {...fieldsBase.password}
+      />
 
-        <TextField
-          value={form.values.password}
-          errorKey={form.errors.password && `validation.${form.errors.password}`}
-          onChange={(v) => form.setValue('password', v)}
-          onBlur={() => form.setTouch('password')}
-          {...fieldsBase.password}
-        />
-
-        <div className="flex gap-2 justify-center">
-          <InternalLink href="/recover">{t('login.forgotPassword')}</InternalLink>
-        </div>
-
-        <Button type="submit">{t('login.submit')}</Button>
-      </Form>
-    </>
+      <InternalLink href="/recover" className="block text-center">
+        {t('login.forgotPassword')}
+      </InternalLink>
+      <Stack gap="sm">
+        <SubmitButton idleLabel={t('login.submit')} />
+        <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
+      </Stack>
+    </Form>
   );
 }

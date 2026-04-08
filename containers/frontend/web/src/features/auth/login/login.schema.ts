@@ -1,5 +1,5 @@
 import { LoginReqSchema, type LoginReq } from '@/contracts/api/auth/auth.validation';
-import { createEmptyValues } from '@/lib/forms/defaults';
+import { createEmptyValues } from '@/hooks/use-form/defaults';
 
 export const fieldsBase = {
   identifier: {
