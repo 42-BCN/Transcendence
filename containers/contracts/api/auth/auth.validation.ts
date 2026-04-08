@@ -38,9 +38,7 @@ export const identifierSchema = z
       safeParseSchema(usernameSchema, val, ctx);
     }
   })
-  .transform((val: string) =>
-    val.includes('@') ? normalizeEmailValue(val) : normalizeUsernameValue(val),
-  );
+  .transform((val) => (val.includes('@') ? normalizeEmailValue(val) : normalizeUsernameValue(val)));
 
 export const passwordSchema = z
   .string()
@@ -66,7 +64,6 @@ export const SignupReqSchema = z
   .object({
     email: emailSchema,
     password: passwordSchema,
-    // privacy: z.boolean().refine((val) => val === true, { message: V.REQUIRED }),
   })
   .strict();
 
