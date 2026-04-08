@@ -62,6 +62,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limited (too many signup attempts)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '500':
           description: Internal error
           content:
@@ -136,6 +142,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RecoverResponse'
+        '429':
+          description: Rate limited (too many password reset requests)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '422':
           description: Validation error
           content:
