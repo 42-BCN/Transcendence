@@ -6,8 +6,12 @@ import { MapControls, OrthographicCamera } from '@react-three/drei';
 import type { pos, parse_entity, tile } from './maps';
 import { testMap, parseMap } from './maps';
 import { useGame } from './store';
-import { Button, Meter, Stack, Text } from '@components';
-import { useTranslations } from 'next-intl';
+import { useGameStore } from './game.zustand';
+import { useGameSocketManager } from './hooks';
+import { Button } from '@components/controls/button';
+import { Meter } from '@components/composites/meter';
+import { Stack } from '@components/primitives/stack';
+import { Text } from '@components/primitives/text';
 
 const s = 0.975;
 
@@ -34,23 +38,48 @@ function DiceButtons() {
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectDice);
+
+  // Zustand store
+  const rollQuantity = useGameStore((state) => state.rollQuantity);
+  const rollDice = useGameStore((state) => state.rollDice);
+
+  // Initialize socket listeners on mount
+  useGameSocketManager();
+
+  const handleDiceClick = (quantity: number) => {
+    rollDice(quantity);
+    console.log('Emitted roll dice event with quantity:', quantity);
+  };
+
   return (
-    <div className='z-10 bottom-[10%] left-[20%] flex gap-4'>
-      {ent?.usedDice.map((diceNum, i) => (
-        <Button key={i} className={`px-4 py-2 bg-gray-500 text-white transition-all`}>
-          {`d${diceNum}`}
-        </Button>
-      ))}
-      {ent?.dice.map((diceNum, i) => (
-        <Button
-          key={i}
-          onPress={() => ability ? selectDice(diceNum) : movDice(diceNum)}
-          className={`px-4 py-2 bg-blue-500 text-white transition-all
-    ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : ''}`}
-        >
-          {`d${diceNum}`}
-        </Button>
-      ))}
+    <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
+      <div className="flex gap-4">
+        {ent?.usedDice.map((diceNum, i) => (
+          <Button key={i} className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}>
+            {`d${diceNum}`}
+          </Button>
+        ))}
+      </div>
+      <div className="flex gap-4">
+        {ent?.dice.map((diceNum, i) => (
+          <Button
+            key={i}
+            onPress={() => {
+              ability ? selectDice(diceNum) : movDice(diceNum);
+              const rolled = Math.floor(Math.random() * 6) + 1;
+              handleDiceClick(rolled);
+            }}
+            className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
+              ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
+          >
+            {`d${diceNum}`}
+          </Button>
+        ))}
+      </div>
+      {/* Roll Total Display */}
+      <div className="px-4 py-2 bg-purple-600 text-white rounded font-bold text-center">
+        Total Rolls: {rollQuantity}
+      </div>
     </div>
   );
 }
@@ -78,10 +107,11 @@ function EndPlan() {
   const nextPhase = useGame((state) => state.nextPhase);
   const phase = useGame((state) => state.phase);
   const historyLength = useGame((state) => state.history.length);
-  return (phase === "PLAN" && historyLength === 4 ?
-    <Button className='absolute z-10 bottom-8 right-64'
-      variant='primary'
-      w='default'
+  return phase === 'PLAN' && historyLength === 4 ? (
+    <Button
+      className="absolute z-10 bottom-8 right-64"
+      variant="primary"
+      w="default"
       onPress={() => nextPhase()}
     >
       {t('Execute plan')}
@@ -102,6 +132,7 @@ function HUD() {
         <div>
           <Meter
             label={t('healthLabel')}
+            label="HP"
             value={ent.hp}
             maxValue={ent.maxHp}
             max={ent.maxHp}
@@ -115,10 +146,10 @@ function HUD() {
   );
 }
 
-function Obstacle({ id, pos }: { id: string, pos: pos }) {
+function Obstacle({ id, pos }: { id: string; pos: pos }) {
   const phase = useGame((state) => state.phase);
-  const moveClone = useGame(state => state.moveClone);
-  const isHighlighted = useGame(state => state.highlights[id]);
+  const moveClone = useGame((state) => state.moveClone);
+  const isHighlighted = useGame((state) => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
@@ -142,8 +173,7 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
-        if (phase !== "PLAN")
-          return;
+        if (phase !== 'PLAN') return;
         moveClone(id);
         event.stopPropagation();
         moveClone(id);
@@ -158,10 +188,10 @@ function Obstacle({ id, pos }: { id: string, pos: pos }) {
 function Enemy({ id, pos }: { id: string; pos: pos }) {
   const eRef = useRef(null);
   const phase = useGame((state) => state.phase);
-  const selectEntity = useGame(state => state.selectEntity);
-  const selected = useGame(state => state.selectedEnt);
-  const canSelect = useGame(state => state.canSelect);
-  const isTarget = useGame(state => state.selectables[id]);
+  const selectEntity = useGame((state) => state.selectEntity);
+  const selected = useGame((state) => state.selectedEnt);
+  const canSelect = useGame((state) => state.canSelect);
+  const isTarget = useGame((state) => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
   let color = selected === id ? 'lightpink' : 'violet';
   if (isTarget) color = 'red';
@@ -173,9 +203,13 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
       position={[pos.x, pos.y, pos.z]}
       ref={eRef}
       onPointerOver={(event) => {
-        event.stopPropagation(); setHover(true);
+        event.stopPropagation();
+        setHover(true);
       }}
-      onPointerOut={(event) => { event.stopPropagation(); setHover(false); }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        setHover(false);
+      }}
     >
       {/* onClick={(event) => { */}
       {/*   if (phase !== "PLAN") */}
@@ -193,13 +227,13 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
 function Clone({ id, pos }: { id: string; pos: pos }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
-  const selectEntity = useGame(state => state.selectEntity);
-  const selected = useGame(state => state.selectedEnt);
-  const selectedDice = useGame(state => state.selectedDice);
-  const selectedAb = useGame(state => state.selectedAb);
-  const canSelect = useGame(state => state.canSelect);
-  const addHistoryAbility = useGame(state => state.addHistoryAbility);
-  const isTarget = useGame(state => state.selectables[id]);
+  const selectEntity = useGame((state) => state.selectEntity);
+  const selected = useGame((state) => state.selectedEnt);
+  const selectedDice = useGame((state) => state.selectedDice);
+  const selectedAb = useGame((state) => state.selectedAb);
+  const canSelect = useGame((state) => state.canSelect);
+  const addHistoryAbility = useGame((state) => state.addHistoryAbility);
+  const isTarget = useGame((state) => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
 
   let color = selected === id ? 'white' : 'cyan';
@@ -220,8 +254,7 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
-        if (phase !== "PLAN")
-          return;
+        if (phase !== 'PLAN') return;
         event.stopPropagation();
         if (canSelect) selectEntity(id);
         else if (isTarget && selected && selectedDice && selectedAb)
@@ -238,11 +271,11 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
 function Player({ id, pos }: { id: string; pos: pos }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
-  const selectEntity = useGame(state => state.selectEntity);
-  const selected = useGame(state => state.selectedEnt);
-  const canSelect = useGame(state => state.canSelect);
-  const addHistoryAbility = useGame(state => state.addHistoryAbility);
-  const isTarget = useGame(state => state.selectables[id]);
+  const selectEntity = useGame((state) => state.selectEntity);
+  const selected = useGame((state) => state.selectedEnt);
+  const canSelect = useGame((state) => state.canSelect);
+  const addHistoryAbility = useGame((state) => state.addHistoryAbility);
+  const isTarget = useGame((state) => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
 
   let color = selected === id ? 'white' : 'blue';
@@ -263,8 +296,7 @@ function Player({ id, pos }: { id: string; pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
-        if (phase !== "PLAN")
-          return;
+        if (phase !== 'PLAN') return;
         event.stopPropagation();
         if (canSelect) selectEntity(id);
         else if (isTarget)
@@ -359,14 +391,14 @@ function Scene() {
 
 function name(phase: string) {
   switch (phase) {
-    case "PLAN":
-      return "PLANNING PHASE";
-    case "EXEC":
-      return "EXECUTION PHASE";
-    case "ENEMY":
-      return "ENEMY PHASE";
+    case 'PLAN':
+      return 'PLANNING PHASE';
+    case 'EXEC':
+      return 'EXECUTION PHASE';
+    case 'ENEMY':
+      return 'ENEMY PHASE';
     default:
-      return "END PHASE";
+      return 'END PHASE';
   }
 }
 
@@ -387,10 +419,9 @@ export function Game() {
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}
       </div>
-      {selectedDice && phase === "PLAN" && (
-        <Text className='absolute z-10 top-[10%] left-[10%] flex gap-4'>
-          {`d${selectedDice}`}
-        </Text>)}
+      {selectedDice && phase === 'PLAN' && (
+        <Text className="absolute z-10 top-[10%] left-[10%] flex gap-4">{`d${selectedDice}`}</Text>
+      )}
       <HUD />
       <EndPlan />
       <Canvas>

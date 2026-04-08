@@ -9,7 +9,7 @@ import type {
 import type {
   ServerToClientGameEvents,
   ClientToServerGameEvents,
-} from '@/contracts/sockets/chat/game.schema';
+} from '@/contracts/sockets/game/game.schema';
 
 export type Robot = {
   id: string;
@@ -26,7 +26,7 @@ type ClientToServerRobotsEvents = {
 };
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
-  'http://localhost:3100/robots',
+  'http://localhost:3100/game',
   {
     autoConnect: false,
   },
