@@ -11,6 +11,6 @@ export async function logoutAction() {
 
     return response.data;
   } catch {
-    return { ok: false, error: { code: 'AUTH_FAILED_TO_LOGOUT' } };
+    return { ok: false, error: { code: 'AUTH_INTERNAL_ERROR' } };
   }
 }

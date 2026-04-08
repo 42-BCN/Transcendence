@@ -40,6 +40,11 @@ export const routing = defineRouting({
       es: '/registro/exito',
       ca: '/crear-compte/exit',
     },
+    '/resend-verification': {
+      en: '/resend-verification',
+      es: '/reenvio-verificacion',
+      ca: '/re-enviament-verificacio',
+    },
     '/verify-email': {
       en: '/verify-email',
       es: '/verify-email',

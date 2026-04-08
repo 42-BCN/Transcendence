@@ -8,19 +8,23 @@ import type { ResendVerificationRes } from '@/contracts/api/auth/auth.contract';
 
 const PENDING_VERIFICATION_EMAIL_COOKIE = 'pending_verification_email';
 
-export async function resendVerificationAction(): Promise<ApiResponse<unknown>> {
+export async function resendVerificationAction(
+  _prevState?: unknown,
+  formData?: FormData,
+): Promise<ApiResponse<unknown>> {
   const result = await withServerAction(async () => {
     const cookieStore = await cookies();
     const cookie = cookieStore.toString();
-    const email = cookieStore.get(PENDING_VERIFICATION_EMAIL_COOKIE)?.value;
-    if (!email) {
-      return { ok: false, error: { code: 'AUTH_NO_PENDING_VERIFICATION' } } as const;
+    const formEmail = String(formData?.get('email') ?? '').trim();
+    const pendingEmail = formEmail || cookieStore.get(PENDING_VERIFICATION_EMAIL_COOKIE)?.value;
+    if (!pendingEmail) {
+      return { ok: true, data: null } as const;
     }
 
     const res = await fetchServer<ResendVerificationRes>(
       '/auth/resend-verification',
       'POST',
-      { email },
+      { email: pendingEmail },
       { cookie },
     );
 

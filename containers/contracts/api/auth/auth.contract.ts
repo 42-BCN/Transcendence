@@ -104,6 +104,7 @@ export type ResetPasswordOk = null;
 
 export const AUTH_RESET_PASSWORD_ERRORS = [
   'AUTH_TOKEN_EXPIRED',
+  'AUTH_FORBIDDEN',
   'AUTH_INTERNAL_ERROR',
   'VALIDATION_ERROR',
 ] as const satisfies readonly AuthErrorName[];

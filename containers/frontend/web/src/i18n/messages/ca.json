@@ -207,7 +207,9 @@
         "resending": "Enviant...",
         "isConfirmed": "Ja has confirmat?",
         "backToLogin": "Iniciar sessió",
-        "recoverTitle": "Recuperar compte"
+        "recoverTitle": "Recuperar compte",
+        "resendTitle": "Torna a enviar el correu de verificació",
+        "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte."
       },
       "recover": {
         "title": "Revisa el teu correu",

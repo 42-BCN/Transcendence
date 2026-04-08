@@ -210,7 +210,9 @@ declare const messages: {
         "resending": "Sending...",
         "isConfirmed": "Already confirmed?",
         "backToLogin": "Log In",
-        "recoverTitle": "Recover account"
+        "recoverTitle": "Recover account",
+        "resendTitle": "Resend verification email",
+        "resendDescription": "Enter the email address you used to create your account."
       },
       "recover": {
         "title": "Check your email",

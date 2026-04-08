@@ -88,13 +88,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
-          description: Invalid credentials or email not verified
+          description: Invalid credentials (including current lockout behavior surfaced as invalid credentials)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '403':
-          description: Account locked
+          description: Email not verified
           content:
             application/json:
               schema:
@@ -168,6 +168,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NullResponse'
+        '429':
+          description: Rate limited (too many resend attempts)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '422':
           description: Validation error
           content:
@@ -201,6 +207,12 @@ paths:
                 $ref: '#/components/schemas/NullResponse'
         '401':
           description: Invalid, already used, or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Email verified token belongs to a blocked user or access is forbidden
           content:
             application/json:
               schema:

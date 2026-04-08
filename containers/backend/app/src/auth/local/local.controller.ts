@@ -64,6 +64,6 @@ export function postLogout(req: Request, res: Response): void {
       sameSite: 'lax',
     });
 
-    sendOk(res, { user: null }, 200);
+    sendOk(res, null, 200);
   });
 }

@@ -16,7 +16,7 @@
       "characterCount": "{current} de {max} caracteres"
     },
     "submitButton": {
-      "pendingLabel": "CHANGE_LATER"
+      "pendingLabel": "Enviando..."
     },
     "footer": {
       "appName": "Transcendence",
@@ -207,7 +207,9 @@
         "resending": "Enviando...",
         "isConfirmed": "¿Ya confirmaste?",
         "backToLogin": "Iniciar sesión",
-        "recoverTitle": "Recuperar cuenta"
+        "recoverTitle": "Recuperar cuenta",
+        "resendTitle": "Reenviar correo de verificación",
+        "resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta."
       },
       "recover": {
         "title": "Revisa tu correo",
