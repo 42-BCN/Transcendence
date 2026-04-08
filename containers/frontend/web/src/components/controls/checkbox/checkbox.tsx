@@ -14,12 +14,7 @@ export type CheckboxProps = AriaCheckboxProps & {
 
 export function Checkbox({ children, className, ...props }: CheckboxProps) {
   return (
-    <AriaCheckbox
-      {...props}
-      className={(values) =>
-        cn(checkboxStyles.root(), typeof className === 'function' ? className(values) : className)
-      }
-    >
+    <AriaCheckbox {...props} className={(values) => checkboxStyles.root(className as any, values)}>
       {({ isSelected, isIndeterminate, isInvalid }) => (
         <>
           <div className={checkboxStyles.box({ isInvalid })}>
@@ -28,23 +23,29 @@ export function Checkbox({ children, className, ...props }: CheckboxProps) {
               aria-hidden="true"
               className={checkboxStyles.icon({ isSelected: isSelected || isIndeterminate })}
             >
-              {isIndeterminate ? (
-                <rect x="4" y="8" width="10" height="2" fill="currentColor" />
-              ) : (
-                <polyline
-                  points="3 9 7 13 15 5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              )}
+              {isIndeterminate ? <IndeterminateIcon /> : <CheckedIcon />}
             </svg>
           </div>
           {children && <span className={checkboxStyles.label()}>{children}</span>}
         </>
       )}
     </AriaCheckbox>
+  );
+}
+
+function IndeterminateIcon() {
+  return <rect x="4" y="8" width="10" height="2" fill="currentColor" />;
+}
+
+function CheckedIcon() {
+  return (
+    <polyline
+      points="3 9 7 13 15 5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   );
 }

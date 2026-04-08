@@ -1,8 +1,11 @@
 import { cn } from '@/lib/styles/cn';
 
 export const checkboxStyles = {
-  root: (className?: string) =>
-    cn('group flex items-center gap-2 cursor-pointer select-none py-0.5', className),
+  root: (className?: string | ((values: any) => string), values?: any) =>
+    cn(
+      'group flex items-center gap-2 cursor-pointer select-none py-0.5',
+      typeof className === 'function' ? className(values) : className,
+    ),
   box: ({ isInvalid }: { isInvalid?: boolean } = {}) =>
     cn(
       'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all duration-200',
