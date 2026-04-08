@@ -12,12 +12,14 @@ type I18nKey = string;
 export type CheckboxFieldProps = Omit<CheckboxProps, 'className'> & {
   labelKey: I18nKey;
   errorKey?: I18nKey;
+  linkHref?: string;
   className?: ClassValue;
 };
 
 export function CheckboxField({
   labelKey,
   errorKey,
+  linkHref,
   children,
   className,
   ...props
@@ -28,9 +30,11 @@ export function CheckboxField({
   return (
     <div className={checkboxFieldStyles.root(className)}>
       <Checkbox {...props} isInvalid={isInvalid}>
-        {t.rich(labelKey, {
-          link: (chunks) => <InternalLink href="/privacy">{chunks}</InternalLink>,
-        })}
+        {linkHref
+          ? t.rich(labelKey, {
+              link: (chunks) => <InternalLink href={linkHref}>{chunks}</InternalLink>,
+            })
+          : t(labelKey)}
         {children}
       </Checkbox>
       {errorKey && <span className={checkboxFieldStyles.error()}>{t(errorKey)}</span>}

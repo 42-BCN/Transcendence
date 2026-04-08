@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Text } from '@components/primitives/text';
-import { Stack } from '@components/primitives/stack';
+import { Stack, Text, ContentSection } from '@components';
 
 export default async function PrivacyPolicyPage() {
   const t = await getTranslations('pages.privacy');
@@ -20,134 +19,44 @@ export default async function PrivacyPolicyPage() {
             </Stack>
           </header>
 
-          <section>
-            <Stack gap="sm">
-              <Text as="p" variant="body" color="secondary">
-                {t('intro')}
-              </Text>
-            </Stack>
-          </section>
+          <ContentSection description={t('intro')} />
 
-          <section>
-            <Stack gap="sm">
-              <Text as="h2" variant="heading-sm">
-                {t('dataCollected.title')}
-              </Text>
-              <Text as="p" variant="body" color="secondary">
-                {t('dataCollected.description')}
-              </Text>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataCollected.items.email')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataCollected.items.username')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataCollected.items.usage')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataCollected.items.technical')}
-                  </Text>
-                </li>
-              </ul>
-            </Stack>
-          </section>
+          <ContentSection
+            title={t('dataCollected.title')}
+            description={t('dataCollected.description')}
+            items={[
+              t('dataCollected.items.email'),
+              t('dataCollected.items.username'),
+              t('dataCollected.items.usage'),
+              t('dataCollected.items.technical'),
+            ]}
+          />
 
-          <section>
-            <Stack gap="sm">
-              <Text as="h2" variant="heading-sm">
-                {t('dataUsage.title')}
-              </Text>
-              <Text as="p" variant="body" color="secondary">
-                {t('dataUsage.description')}
-              </Text>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataUsage.items.account')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataUsage.items.gameplay')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataUsage.items.improvement')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('dataUsage.items.communication')}
-                  </Text>
-                </li>
-              </ul>
-            </Stack>
-          </section>
+          <ContentSection
+            title={t('dataUsage.title')}
+            description={t('dataUsage.description')}
+            items={[
+              t('dataUsage.items.account'),
+              t('dataUsage.items.gameplay'),
+              t('dataUsage.items.improvement'),
+              t('dataUsage.items.communication'),
+            ]}
+          />
 
-          <section>
-            <Stack gap="sm">
-              <Text as="h2" variant="heading-sm">
-                {t('storage.title')}
-              </Text>
-              <Text as="p" variant="body" color="secondary">
-                {t('storage.description')}
-              </Text>
-            </Stack>
-          </section>
+          <ContentSection title={t('storage.title')} description={t('storage.description')} />
 
-          <section>
-            <Stack gap="sm">
-              <Text as="h2" variant="heading-sm">
-                {t('rights.title')}
-              </Text>
-              <Text as="p" variant="body" color="secondary">
-                {t('rights.description')}
-              </Text>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('rights.items.access')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('rights.items.rectification')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('rights.items.deletion')}
-                  </Text>
-                </li>
-                <li>
-                  <Text as="span" variant="body" color="secondary">
-                    {t('rights.items.portability')}
-                  </Text>
-                </li>
-              </ul>
-            </Stack>
-          </section>
+          <ContentSection
+            title={t('rights.title')}
+            description={t('rights.description')}
+            items={[
+              t('rights.items.access'),
+              t('rights.items.rectification'),
+              t('rights.items.deletion'),
+              t('rights.items.portability'),
+            ]}
+          />
 
-          <section>
-            <Stack gap="sm">
-              <Text as="h2" variant="heading-sm">
-                {t('contact.title')}
-              </Text>
-              <Text as="p" variant="body" color="secondary">
-                {t('contact.description')}
-              </Text>
-            </Stack>
-          </section>
+          <ContentSection title={t('contact.title')} description={t('contact.description')} />
         </Stack>
       </article>
     </main>
