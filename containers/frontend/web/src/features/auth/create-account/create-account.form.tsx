@@ -76,13 +76,6 @@ export function CreateAccountForm() {
           onBlur={() => form.setTouch('password')}
           {...fieldsBase.password}
         />
-        {/* <CheckboxField
-          isSelected={form.values.privacy}
-          errorKey={form.errors.privacy && 'features.auth.signup.privacy.error'}
-          onChange={(v) => form.setValue('privacy', v)}
-          onBlur={() => form.setTouch('privacy')}
-          {...fieldsBase.privacy}
-        /> */}
         <Button type="submit">{t('actions.signup')}</Button>
       </Form>
     </>

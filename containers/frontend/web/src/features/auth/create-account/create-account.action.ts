@@ -8,12 +8,10 @@ import { getLocale } from 'next-intl/server';
 export async function createAccountAction(_prevState: unknown, formData: FormData) {
   const email = String(formData?.get('email') ?? '');
   const password = String(formData?.get('password') ?? '');
-  // const privacy = formData?.get('privacy') === 'on';
 
   const res = await fetchServer<SignupRes>('/auth/signup', 'POST', {
     email,
     password,
-    // privacy,
   });
 
   if (!res.data.ok) return { ok: false, res };
