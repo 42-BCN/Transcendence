@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
 
-import type { RecoverReq } from '@contracts/auth/auth.recover.caro';
+import type { RecoverReq } from '@contracts/auth/auth.validation';
 import { ApiError } from '@shared';
 import { MailServiceError, isMailServiceConfigured } from '@lib/mail.service';
 

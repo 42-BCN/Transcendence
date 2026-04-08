@@ -148,3 +148,17 @@ export const AUTH_ME_ERRORS = [
 export type MeError = (typeof AUTH_ME_ERRORS)[number];
 
 export type MeRes = ApiResponse<AuthMeOk, MeError>;
+
+export type RecoverOk = {
+  identifier: string;
+};
+
+export const AUTH_RECOVER_ERRORS = [
+  'AUTH_RATE_LIMITED',
+  'AUTH_INTERNAL_ERROR',
+  'VALIDATION_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type RecoverError = (typeof AUTH_RECOVER_ERRORS)[number];
+
+export type RecoverRes = ApiResponse<RecoverOk, RecoverError, ValidationErrorDetails>;

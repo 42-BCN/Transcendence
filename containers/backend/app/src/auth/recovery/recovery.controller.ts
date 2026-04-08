@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 
 import type { ResetPasswordRes } from '@contracts/auth/auth.contract';
-import type { RecoverReq, RecoverRes } from '@contracts/auth/auth.recover.caro';
-import type { ResetPasswordReq } from '@contracts/auth/auth.validation';
+import type { RecoverRes } from '@contracts/auth/auth.contract';
+import type { ResetPasswordReq, RecoverReq } from '@contracts/auth/auth.validation';
 
 import { normalizeEmailLocale } from '../mail';
 import * as Service from './recovery.service';

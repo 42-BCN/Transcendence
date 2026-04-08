@@ -1,7 +1,6 @@
 import { Router } from 'express';
 
-import { RecoverReqSchema } from '@contracts/auth/auth.recover.caro';
-import { ResetPasswordReqSchema } from '@contracts/auth/auth.validation';
+import { ResetPasswordReqSchema, RecoverReqSchema } from '@contracts/auth/auth.validation';
 import { validateBody } from '@shared/validation.middleware';
 
 import { recoveryRateLimit } from './recovery.rate-limit';

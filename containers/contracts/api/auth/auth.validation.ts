@@ -93,3 +93,13 @@ export const ResetPasswordReqSchema = z
   .strict();
 
 export type ResetPasswordReq = z.infer<typeof ResetPasswordReqSchema>;
+
+export const RecoverReqSchema = z
+  .object({
+    identifier: identifierSchema.transform((val) =>
+      val.includes('@') ? val.toLowerCase().trim() : val,
+    ),
+  })
+  .strict();
+
+export type RecoverReq = z.infer<typeof RecoverReqSchema>;
