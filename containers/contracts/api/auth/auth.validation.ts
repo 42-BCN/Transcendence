@@ -65,7 +65,7 @@ export type LoginReq = z.infer<typeof LoginReqSchema>;
 export const SignupReqSchema = z
   .object({
     email: emailSchema,
-    password: passwordSchema
+    password: passwordSchema,
   })
   .strict();
 
