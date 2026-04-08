@@ -37,10 +37,14 @@ export function TextAreaField(props: TextAreaFieldProps) {
 
   const t = useTranslations();
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
+  const stableId =
+    textFieldProps.id ??
+    (typeof textFieldProps.name === 'string' ? textFieldProps.name : undefined);
 
   return (
     <AriaTextField
       {...textFieldProps}
+      id={stableId}
       aria-label={ariaLabel}
       value={value}
       onChange={onChange}

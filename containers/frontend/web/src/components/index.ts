@@ -10,6 +10,7 @@ export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
 export { Tooltip } from './controls/tooltip';
+export { ApiFeedback } from './composites/api-feedback/api-feedback';
 
 export { Drawer } from './composites/drawer';
 export { Form, type FormProps } from './composites/form';
@@ -44,3 +45,4 @@ export { ScrollArea, type ScrollAreaProps } from './primitives/scroll-area';
 export { SplitScreenGrid } from './primitives/split-screen-grid';
 export { Stack } from './primitives/stack';
 export { Text } from './primitives/text';
+export { SubmitButton } from './controls/submit-button/submit-button';

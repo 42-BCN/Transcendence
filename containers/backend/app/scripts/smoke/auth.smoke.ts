@@ -72,6 +72,64 @@ async function testSignupAndDuplicate(): Promise<void> {
   );
 }
 
+async function testSignupValidationError(): Promise<void> {
+  logStep('signup rejects invalid payload with validation error');
+  clearCookies();
+
+  const invalid = await request<ApiResponse<SignupSuccess>>('auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({
+      email: 'not-an-email',
+      password: '123',
+    }),
+  });
+
+  logResponse(invalid.res, invalid.body, invalid.text);
+
+  assert(invalid.res.status === 422, 'Invalid signup payload should return 422');
+  assert(invalid.body?.ok === false, 'Invalid signup payload should return ok=false');
+  assert(
+    invalid.body.error.code === 'VALIDATION_ERROR',
+    'Invalid signup payload should return VALIDATION_ERROR',
+  );
+}
+
+async function testSignupRateLimit(): Promise<void> {
+  logStep('signup rate limit triggers on repeated requests for same email');
+  clearCookies();
+
+  const email = uniqueEmail('signup_rate_limit');
+  const attempts = 4;
+
+  for (let i = 1; i <= attempts; i++) {
+    const response = await request<ApiResponse<SignupSuccess>>('auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        password: TEST_SIGNUP_PASSWORD,
+      }),
+    });
+
+    console.log(`\nsignup rate-limit attempt ${i}`);
+    logResponse(response.res, response.body, response.text);
+
+    if (i < attempts) {
+      assert(
+        response.res.status === 200 || response.res.status === 409,
+        `Attempt ${i} should be accepted or duplicate before limiter blocks`,
+      );
+      continue;
+    }
+
+    assert(response.res.status === 429, 'Final signup attempt should be rate-limited with 429');
+    assert(response.body?.ok === false, 'Rate-limited signup should return ok=false');
+    assert(
+      response.body.error.code === 'AUTH_RATE_LIMITED',
+      'Rate-limited signup should return AUTH_RATE_LIMITED',
+    );
+  }
+}
+
 async function testInvalidLoginUnknownUser(): Promise<void> {
   logStep('login rejects unknown identifier with generic failure');
   clearCookies();
@@ -205,7 +263,7 @@ async function testLockout(): Promise<void> {
   logStep('lockout triggers after repeated failed logins');
   clearCookies();
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 3; i++) {
     const res = await request<ApiResponse<LoginSuccess>>('auth/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -250,6 +308,83 @@ async function testLockout(): Promise<void> {
   );
 }
 
+async function testVerifyEmailInvalidToken(): Promise<void> {
+  logStep('verify-email rejects invalid token');
+  clearCookies();
+
+  const res = await request<ApiResponse<null>>('auth/verify-email', {
+    method: 'POST',
+    body: JSON.stringify({ token: 'invalid-smoke-token' }),
+  });
+
+  logResponse(res.res, res.body, res.text);
+
+  assert(res.res.status === 401, 'verify-email invalid token should return 401');
+  assert(res.body?.ok === false, 'verify-email invalid token should return ok=false');
+  assert(
+    res.body.error.code === 'AUTH_TOKEN_EXPIRED',
+    'verify-email invalid token should return AUTH_TOKEN_EXPIRED',
+  );
+}
+
+async function testResetPasswordInvalidToken(): Promise<void> {
+  logStep('reset-password rejects invalid token');
+  clearCookies();
+
+  const res = await request<ApiResponse<null>>('auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({
+      token: 'invalid-smoke-token',
+      password: 'NewPassword123',
+    }),
+  });
+
+  logResponse(res.res, res.body, res.text);
+
+  assert(res.res.status === 401, 'reset-password invalid token should return 401');
+  assert(res.body?.ok === false, 'reset-password invalid token should return ok=false');
+  assert(
+    res.body.error.code === 'AUTH_TOKEN_EXPIRED',
+    'reset-password invalid token should return AUTH_TOKEN_EXPIRED',
+  );
+}
+
+async function testResendVerificationPublicNonEnumerating(): Promise<void> {
+  logStep('public resend-verification hides missing account state');
+  clearCookies();
+
+  const email = uniqueEmail('missing_verify');
+
+  const first = await request<ApiResponse<null>>('auth/resend-verification', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+
+  logResponse(first.res, first.body, first.text);
+
+  assert(
+    first.res.status === 200,
+    'public resend-verification should return 200 for unknown email',
+  );
+  assert(
+    first.body?.ok === true,
+    'public resend-verification should return ok=true for unknown email',
+  );
+
+  const second = await request<ApiResponse<null>>('auth/resend-verification', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+
+  logResponse(second.res, second.body, second.text);
+
+  assert(
+    second.res.status === 200,
+    'repeated public resend-verification should keep generic 200 response',
+  );
+  assert(second.body?.ok === true, 'repeated public resend-verification should return ok=true');
+}
+
 async function testGoogleEntrypoint(): Promise<void> {
   logStep('google auth entrypoint redirects');
   clearCookies();
@@ -276,8 +411,17 @@ async function main(): Promise<void> {
   console.log('LOCKOUT_EMAIL:', LOCKOUT_EMAIL);
 
   await runTest(results, 'signup + duplicate signup', testSignupAndDuplicate);
+  await runTest(results, 'signup invalid payload validation', testSignupValidationError);
+  await runTest(results, 'signup rate-limit', testSignupRateLimit);
   await runTest(results, 'invalid login - unknown user', testInvalidLoginUnknownUser);
   await runTest(results, 'invalid login - wrong password', testInvalidLoginWrongPassword);
+  await runTest(results, 'verify-email invalid token', testVerifyEmailInvalidToken);
+  await runTest(results, 'reset-password invalid token', testResetPasswordInvalidToken);
+  await runTest(
+    results,
+    'resend-verification public non-enumerating',
+    testResendVerificationPublicNonEnumerating,
+  );
   await runTest(results, '/protected/me/profile unauthorized', testMeProfileUnauthorized);
   await runTest(results, 'valid login + logout + relogin', testValidLoginLogoutRelogin);
 
