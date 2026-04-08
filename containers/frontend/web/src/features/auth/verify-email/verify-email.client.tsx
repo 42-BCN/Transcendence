@@ -6,9 +6,8 @@ import { useTranslations } from 'next-intl';
 
 import { InternalLink, Stack, Text } from '@components';
 import { useRouter } from '@/i18n/navigation';
+import type { VerifyEmailRes } from '@/contracts/api/auth/auth.contract';
 import { VerifyEmailReqSchema } from '@/contracts/api/auth/auth.validation';
-
-import { verifyEmailAction } from './verify-email.action';
 
 type VerifyState = 'loading' | 'success' | 'error';
 
@@ -27,12 +26,18 @@ async function verifyToken(token: string): Promise<VerificationOutcome> {
     };
   }
 
-  const data = await verifyEmailAction(parsedToken.data.token);
+  const res = await fetch('/api/auth/verify-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedToken.data),
+  });
+
+  const data = (await res.json()) as VerifyEmailRes;
 
   if (data.ok) return { kind: 'success' };
 
   if (data.error.code === 'VALIDATION_ERROR') {
-    return { kind: 'validation-error', key: 'REQUIRED' };
+    return { kind: 'validation-error', key: data.error.details?.fields.token?.[0] ?? 'REQUIRED' };
   }
 
   return { kind: 'api-error', code: data.error.code };
