@@ -1,15 +1,19 @@
-'use client';
-
-import { Checkbox, type CheckboxProps } from '@components/controls/checkbox';
+import {
+  Checkbox as AriaCheckbox,
+  type CheckboxProps as AriaCheckboxProps,
+  CheckboxGroup,
+  FieldError,
+} from 'react-aria-components';
 import { useTranslations } from 'next-intl';
 import { InternalLink } from '@components/controls/link';
 import { checkboxFieldStyles } from './checkbox-field.styles';
 
 import type { ClassValue } from 'clsx';
+import { Checkbox } from '@components/controls/checkbox';
 
 type I18nKey = string;
 
-export type CheckboxFieldProps = Omit<CheckboxProps, 'className'> & {
+export type CheckboxFieldProps = Omit<AriaCheckboxProps, 'className'> & {
   labelKey: I18nKey;
   errorKey?: I18nKey;
   linkHref?: string;
@@ -28,8 +32,8 @@ export function CheckboxField({
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
 
   return (
-    <div className={checkboxFieldStyles.root(className)}>
-      <Checkbox {...props} isInvalid={isInvalid}>
+    <CheckboxGroup isInvalid={isInvalid} className={checkboxFieldStyles.root(className)}>
+      <Checkbox {...props}>
         {linkHref
           ? t.rich(labelKey, {
               link: (chunks) => <InternalLink href={linkHref}>{chunks}</InternalLink>,
@@ -37,7 +41,7 @@ export function CheckboxField({
           : t(labelKey)}
         {children}
       </Checkbox>
-      {errorKey && <span className={checkboxFieldStyles.error()}>{t(errorKey)}</span>}
-    </div>
+      {errorKey && <FieldError className={checkboxFieldStyles.error()}>{t(errorKey)}</FieldError>}
+    </CheckboxGroup>
   );
 }
