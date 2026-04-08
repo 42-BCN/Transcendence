@@ -66,7 +66,7 @@ export const SignupReqSchema = z
   .object({
     email: emailSchema,
     password: passwordSchema,
-    privacy: z.boolean().refine((val) => val === true, { message: V.REQUIRED }),
+    // privacy: z.boolean().refine((val) => val === true, { message: V.REQUIRED }),
   })
   .strict();
 

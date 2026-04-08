@@ -3,7 +3,7 @@ import { Text } from '@components/primitives/text';
 import { Stack } from '@components/primitives/stack';
 
 export default async function PrivacyPolicyPage() {
-  const t = await getTranslations('privacy');
+  const t = await getTranslations('pages.privacy');
 
   return (
     <main className="w-full max-w-3xl mx-auto px-6 py-12">
