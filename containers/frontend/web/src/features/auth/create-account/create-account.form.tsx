@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from '@/lib/forms/use-form';
 import { type SignupReq } from '@/contracts/api/auth/auth.validation';
 import { type SignupRes } from '@/contracts/api/auth/auth.contract';
-import { Button, CheckboxField, Form, TextField } from '@components';
+import { Button, Form, TextField } from '@components';
 
 import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
