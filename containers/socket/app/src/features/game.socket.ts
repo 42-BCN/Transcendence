@@ -26,7 +26,10 @@ export function registerGameSocket(
     }
     users[socket.id] = playerids.pop();
     console.log(socket.id, " joined with ", users[socket.id]);
-    socket.on('testEvent', (payload: unknown) => {
+    // socket.on('testEvent', (payload: unknown) => {
+    //   socket.emit('message', "epa");
+    // })
+    socket.on('selectEntity', (payloadstring: selectEntityPayload) => {
       socket.emit('message', "epa");
     })
     socket.on('disconnect', () => {

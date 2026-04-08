@@ -37,10 +37,14 @@ export function TextAreaField(props: TextAreaFieldProps) {
 
   const t = useTranslations();
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
+  const stableId =
+    textFieldProps.id ??
+    (typeof textFieldProps.name === 'string' ? textFieldProps.name : undefined);
 
   return (
     <AriaTextField
       {...textFieldProps}
+      id={stableId}
       aria-label={ariaLabel}
       value={value}
       onChange={onChange}
@@ -55,7 +59,7 @@ export function TextAreaField(props: TextAreaFieldProps) {
           slot="description"
           className={textAreaFieldStyles.counter}
           aria-live="polite"
-          aria-label={t('TextAreaField.counter', {
+          aria-label={t('components.textAreaField.characterCount', {
             current: value.length,
             max: maxLength,
           })}

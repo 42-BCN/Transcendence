@@ -1,61 +1,22 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { useForm } from '@/lib/forms/use-form';
+import { Button, Form, ApiFeedback, TextField, Stack } from '@components';
+import { useAutoFocus, useForm } from '@/hooks';
 import { type SignupReq } from '@/contracts/api/auth/auth.validation';
-import { type SignupRes } from '@/contracts/api/auth/auth.contract';
-import { Form } from '@components/composites/form';
-import { TextField } from '@components/composites/text-field';
-import { Button } from '@components/controls/button';
 
 import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
 
-type StateActionProps = {
-  state:
-    | {
-        ok: boolean;
-        res: {
-          data: SignupRes;
-          headers: Headers;
-          status: number;
-        };
-      }
-    | null
-    | undefined;
-};
-
-function useCreateAccountFieldNavigation() {
-  const emailRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    emailRef.current?.focus();
-  }, []);
-
-  return { emailRef };
-}
-
-// TODO make a component
-function APIError({ state }: StateActionProps) {
-  const t2 = useTranslations('api');
-  return state?.ok === false ? (
-    <div role="alert" className="mb-4">
-      {state?.res?.data?.ok === false && t2(state.res.data.error.code)}
-    </div>
-  ) : null;
-}
-
 export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
-  const t = useTranslations('auth');
+  const t = useTranslations('features.auth');
   const [state, formAction] = useActionState(createAccountAction, null);
-  const { emailRef } = useCreateAccountFieldNavigation();
-
+  const emailRef = useAutoFocus<HTMLInputElement>();
   return (
     <>
-      <APIError state={state} />
       <Form
         action={formAction}
         onSubmit={(e) => {
@@ -78,7 +39,10 @@ export function CreateAccountForm() {
           onBlur={() => form.setTouch('password')}
           {...fieldsBase.password}
         />
-        <Button type="submit">{t('createAccount.submit')}</Button>
+        <Stack gap="sm">
+          <Button type="submit">{t('actions.signup')}</Button>
+          <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
+        </Stack>
       </Form>
     </>
   );

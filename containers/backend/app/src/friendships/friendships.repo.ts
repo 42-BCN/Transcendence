@@ -1,12 +1,12 @@
-import { prisma } from "@/lib/prisma";
-import type { FriendshipPublic } from "@contracts/friendships/friendships.contracts";
+import { prisma } from '@/lib/prisma';
+import type { FriendshipPublic } from '@contracts/friendships/friendships.contracts';
 
 type FriendshipRow = {
   id: string;
   userId1: string;
   userId2: string;
   senderId: string;
-  status: "pending" | "accepted";
+  status: 'pending' | 'accepted';
   createdAt: Date;
   updatedAt: Date;
   user1: { username: string };
@@ -15,17 +15,13 @@ type FriendshipRow = {
 
 export type FriendshipPairRow = {
   id: string;
-  status: "pending" | "accepted";
+  status: 'pending' | 'accepted';
   senderId: string;
 };
 
-function toPublic(
-  row: FriendshipRow,
-  currentUserId: string,
-): FriendshipPublic {
+function toPublic(row: FriendshipRow, currentUserId: string): FriendshipPublic {
   const friendId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
-  const friendUsername =
-    row.userId1 === currentUserId ? row.user2.username : row.user1.username;
+  const friendUsername = row.userId1 === currentUserId ? row.user2.username : row.user1.username;
 
   return {
     id: row.id,
@@ -76,7 +72,7 @@ export async function createFriendRequest(
       userId1: smaller,
       userId2: larger,
       senderId,
-      status: "pending",
+      status: 'pending',
     },
     include: {
       user1: { select: { username: true } },
@@ -98,11 +94,11 @@ export async function autoAcceptMutualRequest(
     where: {
       userId1: smaller,
       userId2: larger,
-      status: "pending",
+      status: 'pending',
       NOT: { senderId: currentUserId },
     },
     data: {
-      status: "accepted",
+      status: 'accepted',
       updatedAt: new Date(),
     },
   });
@@ -132,10 +128,10 @@ export async function listFriendsForUser(
   const friendships = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
-      status: "accepted",
+      status: 'accepted',
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     include: {
       user1: { select: { id: true, username: true } },
@@ -152,16 +148,14 @@ export async function listFriendsForUser(
   });
 }
 
-export async function listAcceptedFriendships(
-  userId: string,
-): Promise<FriendshipPublic[]> {
+export async function listAcceptedFriendships(userId: string): Promise<FriendshipPublic[]> {
   const friendships = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
-      status: "accepted",
+      status: 'accepted',
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     include: {
       user1: { select: { username: true } },
@@ -172,19 +166,17 @@ export async function listAcceptedFriendships(
   return friendships.map((f) => toPublic(f as FriendshipRow, userId));
 }
 
-export async function listReceivedRequests(
-  userId: string,
-): Promise<FriendshipPublic[]> {
+export async function listReceivedRequests(userId: string): Promise<FriendshipPublic[]> {
   const requests = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
-      status: "pending",
+      status: 'pending',
       NOT: {
         senderId: userId,
       },
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     include: {
       user1: { select: { username: true } },
@@ -195,17 +187,15 @@ export async function listReceivedRequests(
   return requests.map((r) => toPublic(r as FriendshipRow, userId));
 }
 
-export async function listSentRequests(
-  userId: string,
-): Promise<FriendshipPublic[]> {
+export async function listSentRequests(userId: string): Promise<FriendshipPublic[]> {
   const requests = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
-      status: "pending",
+      status: 'pending',
       senderId: userId,
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
     include: {
       user1: { select: { username: true } },
@@ -218,7 +208,7 @@ export async function listSentRequests(
 
 export async function findFriendshipRowById(friendshipId: string): Promise<{
   id: string;
-  status: "pending" | "accepted";
+  status: 'pending' | 'accepted';
   senderId: string;
   userId1: string;
   userId2: string;
@@ -244,12 +234,9 @@ export async function rejectFriendRequest(
   });
 
   if (!friendship) return false;
-  if (friendship.status !== "pending") return false;
+  if (friendship.status !== 'pending') return false;
   if (friendship.senderId === receiverId) return false;
-  if (
-    friendship.userId1 !== receiverId &&
-    friendship.userId2 !== receiverId
-  ) {
+  if (friendship.userId1 !== receiverId && friendship.userId2 !== receiverId) {
     return false;
   }
 
@@ -269,7 +256,7 @@ export async function acceptFriendRequest(
   });
 
   if (!friendship) return null;
-  if (friendship.status !== "pending") return null;
+  if (friendship.status !== 'pending') return null;
   if (friendship.senderId === userId) return null;
   if (friendship.userId1 !== userId && friendship.userId2 !== userId) {
     return null;
@@ -278,7 +265,7 @@ export async function acceptFriendRequest(
   const updated = await prisma.friendship.update({
     where: { id: requestId },
     data: {
-      status: "accepted",
+      status: 'accepted',
       updatedAt: new Date(),
     },
     include: {

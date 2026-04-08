@@ -1,7 +1,11 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'react-aria-components'],
+  },
+};
 
 const withNextIntl = createNextIntlPlugin({
   requestConfig: './src/i18n/request.tsx',
@@ -11,4 +15,3 @@ const withNextIntl = createNextIntlPlugin({
 });
 
 export default withNextIntl(nextConfig);
-

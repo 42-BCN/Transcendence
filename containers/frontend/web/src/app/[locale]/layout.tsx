@@ -15,7 +15,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   const [t, formatter, now, timeZone] = await Promise.all([
-    getTranslations({ locale, namespace: 'LocaleLayout' }),
+    getTranslations({ locale, namespace: 'layouts.locale' }),
     getFormatter({ locale }),
     getNow({ locale }),
     getTimeZone({ locale }),

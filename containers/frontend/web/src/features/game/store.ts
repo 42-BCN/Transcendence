@@ -7,7 +7,9 @@ type gamePhase = "PLAN" | "EXEC" | "ENEMY" | "END"
 type player = parse_entity & {
   hp: number;
   maxHp: number;
+  armor: number;
   status: string | null;
+  statusTurns: number;
   facing: string;
   abilities: string[];
   dice: number[];
@@ -54,8 +56,8 @@ type abilityInfo = {
   cd: number;
   self: boolean;
   AoE?: string;
-  AoErange?: string;
-  effect?: string;
+  AoErange?: number;
+  effect?: string[];
 }
 
 type gameState = {
@@ -129,6 +131,7 @@ export const useGame = create<gameState>()((set, get) => ({
   typeEnt: null,
   selectedAb: null,
   selectedEnt: null,
+  chosenPlayer: null,
   selectedDice: null,
 
   players: {},
@@ -466,59 +469,124 @@ export const useGame = create<gameState>()((set, get) => ({
       switch (entity.type) {
         case "assassin":
           playEnt[entity.id] = {
-            ...entity, type: "player", hp: 13, maxHp: 13,
+            ...entity, type: "player", hp: 13, maxHp: 13, armor: 0,
             abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
             dice: [4, 4, 4, 4, 8],
             usedDice: [],
             facing: "center",
             status: null,
+            statusTurns: 0,
             hasMoved: false,
           }
           break;
         case "paladin":
           playEnt[entity.id] = {
-            ...entity, type: "player", hp: 16, maxHp: 16,
+            ...entity, type: "player", hp: 16, maxHp: 16, armor: 0,
             abilities: ["Thrust", "Defend", "Shield Bash", "Vertical Slash"],
             dice: [6, 6, 6, 6],
             usedDice: [],
             facing: "center",
             status: null,
+            statusTurns: 0,
             hasMoved: false,
           }
           break;
         case "mage":
           playEnt[entity.id] = {
-            ...entity, type: "player", hp: 8, maxHp: 8,
+            ...entity, type: "player", hp: 8, maxHp: 8, armor: 0,
             abilities: ["Fire Breath", "Azure Comet", "Small Meteor", "Rising Thorns"],
             dice: [4, 8, 12],
             usedDice: [],
             facing: "center",
             status: null,
+            statusTurns: 0,
             hasMoved: false,
           }
           break;
         case "alchemist":
           playEnt[entity.id] = {
-            ...entity, type: "player", hp: 10, maxHp: 10,
+            ...entity, type: "player", hp: 10, maxHp: 10, armor: 0,
             abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],
             dice: [6, 8, 10],
             usedDice: [],
             facing: "center",
             status: null,
+            statusTurns: 0,
             hasMoved: false,
           }
           break;
-      }
-      if (entity.type === "enemy") {
-        enemEnt[entity.id] = {
-          ...entity, type: "enemy", hp: 13, maxHp: 13,
-          abilities: ["Claw"],
-          dice: [4],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          hasMoved: false,
-        }
+        case "drone":
+          enemEnt[entity.id] = {
+            ...entity, type: "drone", hp: 3, maxHp: 3, armor: 0,
+            abilities: ["Swoop"],
+            dice: [4, 4, 4],
+            usedDice: [],
+            facing: "center",
+            status: null,
+            statusTurns: 0,
+            hasMoved: false,
+          }
+          break;
+        case "crawler":
+          enemEnt[entity.id] = {
+            ...entity, type: "drone", hp: 4, maxHp: 4, armor: 0,
+            abilities: ["Claw"],
+            dice: [4, 4, 6],
+            usedDice: [],
+            facing: "center",
+            status: null,
+            statusTurns: 0,
+            hasMoved: false,
+          }
+          break;
+        case "spawner":
+          enemEnt[entity.id] = {
+            ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 0,
+            abilities: ["Spawn Drone", "Spawn Crawler"],
+            dice: [4, 6],
+            usedDice: [],
+            facing: "center",
+            status: null,
+            statusTurns: 0,
+            hasMoved: false,
+          }
+          break;
+        case "mortar":
+          enemEnt[entity.id] = {
+            ...entity, type: "enemy", hp: 12, maxHp: 12, armor: 0,
+            abilities: ["Shoot", "Reload"],
+            dice: [6, 6],
+            usedDice: [],
+            facing: "center",
+            status: null,
+            statusTurns: 0,
+            hasMoved: false,
+          }
+          break;
+        case "centurion":
+          enemEnt[entity.id] = {
+            ...entity, type: "enemy", hp: 20, maxHp: 20, armor: 2,
+            abilities: ["Charge", "Atomic Bomb"],
+            dice: [6, 8, 8],
+            usedDice: [],
+            facing: "center",
+            status: null,
+            statusTurns: 0,
+            hasMoved: false,
+          }
+          break;
+        case "jaeger":
+          enemEnt[entity.id] = {
+            ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 1,
+            abilities: ["Push", "Railgun"],
+            dice: [6, 6, 10],
+            usedDice: [],
+            facing: "center",
+            status: null,
+            statusTurns: 0,
+            hasMoved: false,
+          }
+          break;
       }
     });
     set({
@@ -806,13 +874,13 @@ export const useGame = create<gameState>()((set, get) => ({
           dmg: 1,
           cd: 0,
           self: false,
-          effect: "bleed",
+          effect: ["bleed", "1"],
         }
       case "Dagger Throw":
         return {
           name: name,
           type: "cross",
-          effect: "bleed",
+          effect: ["bleed", "1"],
           cond: (x: number) => x > 3,
           range: 3,
           dmg: 1,
@@ -823,7 +891,7 @@ export const useGame = create<gameState>()((set, get) => ({
         return {
           name: name,
           type: "cross",
-          effect: "push",
+          effect: ["move", "away"],
           cond: (x: number) => x > 2,
           range: 1,
           dmg: 1,
@@ -834,145 +902,144 @@ export const useGame = create<gameState>()((set, get) => ({
         return {
           name: name,
           type: "circle",
-          effect: "restrain",
+          effect: ["restrain", "2"],
           cond: (x: number) => x > 2,
           range: 3,
           dmg: 1,
           cd: 0,
           self: false,
         }
-      // case "Thrust":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Defend":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Shield Bash":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Vertical Slash":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Fire Breath":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Azure Comet":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Small Meteor":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Rising Thorns":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Stimulant":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Vacuum Flask":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Bombastic Flask":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
-      // case "Oxidation":
-      //   return {
-      //     name: name,
-      //     type: "circle",
-      //     effect: "restrain",
-      //     cond: (x: number) => x > 2,
-      //     range: 3,
-      //     dmg: 1,
-      //     cd: 0,
-      //     self: false,
-      //   }
+      case "Thrust":
+        return {
+          name: name,
+          type: "cross",
+          cond: (x: number) => x > 3,
+          range: 2,
+          dmg: 2,
+          cd: 1,
+          self: false,
+        }
+      case "Defend":
+        return {
+          name: name,
+          type: "circle",
+          effect: ["defend", "2"],
+          cond: (x: number) => x > 2,
+          range: 2,
+          dmg: 0,
+          cd: 0,
+          self: false,
+        }
+      case "Shield Bash":
+        return {
+          name: name,
+          type: "cross",
+          effect: ["move", "away"],
+          cond: (x: number) => x > 5,
+          range: 0,
+          dmg: 4,
+          cd: 2,
+          AoE: "circle",
+          AoErange: 2,
+          self: true,
+        }
+      case "Vertical Slash":
+        return {
+          name: name,
+          type: "cross",
+          cond: (x: number) => x > 3,
+          range: 1,
+          dmg: (bonus: number) => 1 + bonus,
+          cd: 1,
+          AoE: "vertical",
+          AoErange: 1,
+          self: false,
+        }
+      case "Fire Breath":
+        return {
+          name: name,
+          type: "cone",
+          effect: ["burn", "2"],
+          cond: (x: number) => x > 3,
+          range: 3,
+          dmg: (res: number) => Math.floor(res / 3),
+          cd: 2,
+          self: false,
+        }
+      case "Azure Comet":
+        return {
+          name: name,
+          type: "cross",
+          cond: (x: number) => x > 3,
+          range: 5,
+          dmg: (res: number) => Math.floor(res / 2) + 2,
+          cd: 3,
+          self: false,
+        }
+      case "Small Meteor":
+        return {
+          name: name,
+          type: "smcircle",
+          cond: (x: number) => x > 2,
+          range: 4,
+          dmg: (bonus: number) => 1 + bonus,
+          cd: 1,
+          self: false,
+        }
+      case "Rising Thorns":
+        return {
+          name: name,
+          type: "rtcircle",
+          cond: (x: number) => x > 2,
+          range: 4,
+          dmg: (bonus: number) => 1 + bonus,
+          cd: 1,
+          self: false,
+        }
+      case "Stimulant":
+        return {
+          name: name,
+          type: "cross",
+          effect: ["bonus dice", "1"],
+          cond: (x: number) => x > 2,
+          range: 2,
+          dmg: 0,
+          cd: 0,
+          self: true,
+        }
+      case "Vacuum Flask":
+        return {
+          name: name,
+          type: "circle",
+          effect: ["move", "towards"],
+          cond: (x: number) => x > 2,
+          range: 3,
+          dmg: 1,
+          cd: 0,
+          self: false,
+        }
+      case "Bombastic Flask":
+        return {
+          name: name,
+          type: "circle",
+          effect: ["move", "away"],
+          cond: (x: number) => x > 2,
+          range: 2,
+          dmg: (res: number) => Math.floor(res / 2) - 2,
+          cd: 0,
+          self: false,
+        }
+      case "Oxidation":
+        return {
+          name: name,
+          type: "circle",
+          effect: ["oxidation", "2"],
+          cond: (x: number) => x > 2,
+          range: 2,
+          dmg: 0,
+          cd: 0,
+          self: false,
+        }
       default:
         return {
           name: "error",
@@ -1018,8 +1085,12 @@ export const useGame = create<gameState>()((set, get) => ({
     target.hp = target.hp - (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);;
     if (target.hp < 0)
       target.hp = 0;
-    if (!target.status && ab.effect)
-      target.status = ab.effect;
+    const hadStatus = Boolean(target.status);
+    if (!target.status && ab.effect) {
+      target.status = ab.effect[0];
+      if (target.status !== "push" && !hadStatus)
+        target.statusTurns = Number(ab.effect[1]);
+    }
     return (target);
   },
 

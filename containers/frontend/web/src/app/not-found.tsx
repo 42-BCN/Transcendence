@@ -1,8 +1,12 @@
-export default function NotFound() {
+import { getTranslations } from 'next-intl/server';
+
+export default async function NotFound() {
+  const t = await getTranslations('pages.notFound');
+
   return (
     <main className="m-6">
-      <h1>Page not found</h1>
-      <p>The page you’re looking for doesn’t exist.</p>
+      <h1>{t('title')}</h1>
+      <p>{t('description')}</p>
     </main>
   );
 }

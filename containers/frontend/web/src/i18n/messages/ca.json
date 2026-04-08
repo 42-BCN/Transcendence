@@ -1,104 +1,316 @@
 {
-  "navigation": {
-    "home": "Inici",
-    "createAccount": "Crear compte",
-    "login": "Iniciar sessió",
-    "UI": "UI",
-    "robots": "Robots",
-    "profile": "Perfil",
-    "logout": "Tancar sessió",
-    "settings": "Configuració",
-    "menu": "Menú"
+  "common": {
+    "globalError": {
+      "title": "Alguna cosa ha anat malament",
+      "tryAgain": "Torna-ho a provar"
+    }
   },
-  "CreateAccountPage": {
-    "title": "Crear compte",
-    "email": "Correu electrònic",
-    "password": "Contrasenya",
-    "submit": "Crear compte"
+  "components": {
+    "localeSwitcher": {
+      "ariaLabel": "Idioma",
+      "en": "EN",
+      "es": "ES",
+      "ca": "CA"
+    },
+    "submitButton": {
+      "pendingLabel": "CHANGE_LATER"
+    },
+    "textAreaField": {
+      "characterCount": "{current} de {max} caràcters"
+    },
+    "footer": {
+      "appName": "Transcendence",
+      "privacy": "Política de Privacitat",
+      "terms": "Termes de Servei",
+      "github": "GitHub",
+      "copyright": "© {year} {appName}. Tots els drets reservats"
+    }
   },
-  "home": {
-    "title": "Hola des de Next en Docker 👋",
-    "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
+  "layouts": {
+    "locale": {
+      "description": "Aquest és un exemple de com utilitzar next-intl al directori app.",
+      "title": "Exemple next-intl"
+    }
   },
-  "LocaleLayout": {
-    "description": "Aquest és un exemple de com utilitzar next-intl al directori app.",
-    "title": "Exemple next-intl"
-  },
-  "LocaleSwitcher": {
-    "ariaLabel": "Idioma",
-    "en": "EN",
-    "es": "ES",
-    "ca": "CA"
-  },
-  "auth": {
-    "common": {
-      "appTitle": "Autenticació",
-      "or": "O",
-      "identifier": {
-        "label": "Correu o nom d'usuari",
-        "placeholder": "nom@exemple.com o usuari",
-        "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar."
+  "pages": {
+    "home": {
+      "title": "Hola des de Next en Docker 👋",
+      "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
+    },
+    "notFound": {
+      "title": "Pàgina no trobada",
+      "description": "La pàgina que busques no existeix."
+    },
+    "me": {
+      "title": "El Meu Compte",
+      "subtitle": "Accedeix als detalls protegits del teu compte."
+    },
+    "privacy": {
+      "title": "Política de Privacitat",
+      "lastUpdated": "Última actualització: Abril 2026",
+      "intro": "A Transcendence, valorem la teva privacitat. Aquesta política descriu quines dades recopilem, com les fem servir, com les emmagatzemem i quins drets tens sobre la teva informació personal.",
+      "dataCollected": {
+        "title": "Dades Recopilades",
+        "description": "Quan fas servir la nostra plataforma, podem recopilar la següent informació:",
+        "items": {
+          "email": "Adreça de correu electrònic (utilitzada per al registre i l'autenticació)",
+          "username": "Nom d'usuari (escollit per tu per identificar-te al joc)",
+          "usage": "Dades d'ús (historial de partides, puntuacions i registres d'interacció)",
+          "technical": "Dades tècniques (tipus de navegador, informació del dispositiu i adreça IP amb fins de seguretat)"
+        }
       },
-      "email": {
-        "label": "Correu electrònic",
-        "placeholder": "nom@exemple.com"
+      "dataUsage": {
+        "title": "Com Fem Servir les Teves Dades",
+        "description": "Les dades que recopilem s'utilitzen exclusivament per als següents fins:",
+        "items": {
+          "account": "Gestió de comptes i autenticació",
+          "gameplay": "Proporcionar l'experiència de joc i funcions socials",
+          "improvement": "Millorar i optimitzar la plataforma",
+          "communication": "Enviar comunicacions necessàries relacionades amb el teu compte"
+        }
       },
-      "username": {
-        "label": "Nom d'usuari",
-        "placeholder": "el_teu_usuari"
+      "storage": {
+        "title": "Emmagatzematge i Seguretat de Dades",
+        "description": "Les teves dades s'emmagatzemen de forma segura als nostres servidors. Implementem mesures de seguretat estàndard de la indústria, incloent connexions xifrades (HTTPS), hash segur de contrasenyes i auditories de seguretat regulars. Conservem les teves dades només mentre el teu compte estigui actiu o segons sigui necessari per proporcionar-te els nostres serveis."
       },
-      "password": {
-        "label": "Contrasenya",
-        "placeholder": "Introdueix la teva contrasenya",
-        "description": "Mínim 8 caràcters."
+      "rights": {
+        "title": "Els Teus Drets",
+        "description": "Com a usuari, tens els següents drets sobre les teves dades personals:",
+        "items": {
+          "access": "Dret a accedir a les teves dades personals",
+          "rectification": "Dret a corregir dades inexactes",
+          "deletion": "Dret a sol·licitar l'eliminació de les teves dades",
+          "portability": "Dret a la portabilitat de dades"
+        }
       },
-      "confirmPassword": {
-        "label": "Confirmar contrasenya",
-        "placeholder": "Torna a introduir la teva contrasenya"
+      "contact": {
+        "title": "Contacte",
+        "description": "Si tens alguna pregunta sobre aquesta política de privacitat o desitges exercir els teus drets, contacta'ns a través del nostre repositori de GitHub o comunica't amb els administradors del projecte."
       }
     },
-    "login": {
-      "title": "Iniciar sessió",
-      "submit": "Iniciar sessió",
-      "forgotPassword": "Has oblidat la contrasenya?",
-      "noAccount": "No tens compte?",
-      "goToCreateAccount": "Crear-ne un",
-      "withGoogle": "Continuar amb Google"
-    },
-    "createAccount": {
-      "title": "Crear compte",
-      "submit": "Crear compte",
-      "haveAccount": "Ja tens compte?",
-      "goToLogin": "Iniciar sessió",
-      "withGoogle": "Continuar amb Google",
-      "success": {
+    "ui": {
+      "index": {
+        "controlComponents": "Components de control",
+        "buttons": "Botons",
+        "input": "Entrada",
+        "sampleButtonText": "Hola",
+        "links": {
+          "chat": "Xat",
+          "glassCard": "Targeta de vidre",
+          "glassCardAnimated": "Targeta de vidre animada",
+          "glassCardAnimatedV2": "Targeta de vidre animada V2",
+          "glassCardAnimatedV3": "Targeta de vidre animada V3",
+          "messageBubble": "Bombolla de missatge",
+          "meter": "Mesurador",
+          "scrollArea": "Àrea de desplaçament",
+          "textArea": "Àrea de text",
+          "themeTest": "Prova del tema",
+          "typography": "Tipografia"
+        },
+        "viewerTitles": {
+          "buttonPrimitive": "Botó primitiu",
+          "ariaButton": "Botó Aria",
+          "uiButton": "Botó UI",
+          "inputPrimitive": "Input primitiu",
+          "ariaInput": "Input Aria",
+          "uiInput": "Input UI"
+        }
+      },
+      "glassCard": {
+        "title": "Targeta de Glassmorphism",
+        "cardTitle": "Glassmorphism",
+        "description": "Un component de targeta glassmorphic que utilitza filtres de fons, vores transparents i ombres subtils per integrar-se amb fons texturitzats.",
+        "cta": "Començar"
+      },
+      "glassCardAnimated": {
+        "title": "Provant la saturació",
+        "descriptionPrefix": "Aquesta targeta utilitza",
+        "highlight": "backdrop-saturate",
+        "descriptionSuffix": "Les esferes de llum guanyen més vida i color en passar darrere del vidre.",
+        "activate": "Activar"
+      },
+      "glassCardAnimatedV2": {
+        "title": "Reflex dinàmic",
+        "descriptionPrefix": "Aquí les esferes",
+        "highlight": "es mouen darrere del vidre",
+        "descriptionSuffix": "El color flueix i es refracta suaument en travessar les vores.",
+        "option1": "Opció 1",
+        "option2": "Opció 2",
+        "option3": "Opció 3"
+      },
+      "glassCardAnimatedV3": {
+        "title": "Esferes sòlides",
+        "descriptionPrefix": "Aquí les esferes són",
+        "highlight": "100% sòlides",
+        "descriptionMiddle": "Tota la distorsió ve exclusivament del vidre.",
+        "nestedPrefix": "Exemple d'un component glass imbricat:",
+        "activate": "Activar"
+      },
+      "textArea": {
+        "title": "Component d'àrea de text",
+        "ariaLabel": "Missatge"
+      },
+      "typography": {
+        "caption": "Text de peu utilitzat per a informació de suport o metadades.",
+        "bodyXs": "Text de cos extra petit útil per a interfícies denses amb espai limitat.",
+        "bodySm": "El text de cos petit sovint apareix en descripcions secundàries, pistes o contingut d'ajuda.",
+        "body": "Aquest paràgraf mostra l'estil de cos per defecte. És intencionadament més llarg per avaluar la llegibilitat, el ritme i la llargada de línia del sistema tipogràfic. Quan el text s'estén massa a la pantalla, llegir es fa més difícil, per això limitar la mesura millora la lectura.",
+        "bodyLg": "El text de cos gran funciona bé per a paràgrafs introductoris o descripcions destacades que necessiten més èmfasi sense convertir-se en un títol.",
+        "headingSm": "Estil de títol petit renderitzat com a paràgraf per a proves visuals.",
+        "headingMd": "Estil de títol mitjà renderitzat com a paràgraf per a inspecció.",
+        "headingLg": "Estil de títol gran renderitzat com a paràgraf.",
+        "headingXl": "Estil de títol extra gran renderitzat com a contingut de paràgraf.",
+        "code": "const message = \"Text d'estil codi renderitzat en un paràgraf.\";"
+      },
+      "messageBubble": {
+        "title": "Bombolla de missatge",
+        "userOne": "John Doe",
+        "userTwo": "Jane Doe",
+        "messageOne": "Hola! El meu nom és ...",
+        "messageTwo": "Hola! Això és una prova de previsualització de missatge"
+      },
+      "meter": {
+        "title": "Mesurador",
+        "label": "HP"
+      },
+      "themeTest": {
+        "title": "Pàgina de prova de tema",
+        "description": "Aquesta pàgina demostra la implementació del mode clar/fosc. Tots els colors utilitzen variables CSS sincronitzades amb Tailwind.",
+        "secondaryBackground": "Fons secundari",
+        "secondaryBackgroundDescription": "Aquesta targeta utilitza `bg-bg-secondary`. S'hauria de veure lleugerament diferent del fons principal en tots dos modes.",
+        "textVariants": "Variants de text",
+        "primaryText": "Text principal",
+        "secondaryText": "Text secundari",
+        "tertiaryText": "Text terciari",
+        "disabledText": "Text deshabilitat"
+      },
+      "scrollArea": {
+        "title": "Àrea de desplaçament",
+        "description": "Aquest component és un div que ocupa una alçada del 100% i crea una àrea de desplaçament.",
+        "example": "Exemple",
+        "itemLabel": "Element"
+      }
+    }
+  },
+  "features": {
+    "auth": {
+      "fields": {
+        "identifier": {
+          "label": "Correu o nom d'usuari",
+          "placeholder": "nom@exemple.com o usuari",
+          "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar."
+        },
+        "email": {
+          "label": "Correu electrònic",
+          "placeholder": "nom@exemple.com"
+        },
+        "username": {
+          "label": "Nom d'usuari",
+          "placeholder": "el_teu_usuari"
+        },
+        "password": {
+          "label": "Contrasenya",
+          "placeholder": "Introdueix la teva contrasenya",
+          "description": "Mínim 8 caràcters."
+        },
+        "confirmPassword": {
+          "label": "Confirmar contrasenya",
+          "placeholder": "Torna a introduir la teva contrasenya"
+        }
+      },
+      "actions": {
+        "login": "Iniciar sessió",
+        "signup": "Crear compte",
+        "continueWithGoogle": "Continuar amb Google",
+        "sendEmail": "Enviar email",
+        "resendEmail": "Tornar a enviar",
+        "logoutAriaLabel": "Tancar sessió"
+      },
+      "login": {
+        "title": "Iniciar sessió",
+        "submit": "Iniciar sessió",
+        "forgotPassword": "Has oblidat la contrasenya?",
+        "noAccount": "No tens compte?",
+        "goToSignup": "Crear-ne un"
+      },
+      "signup": {
+        "title": "Crear compte",
+        "privacy": {
+          "label": "He llegit i accepto la <link>Política de Privacitat</link>",
+          "error": "Has d'acceptar la Política de Privacitat per continuar."
+        },
+        "haveAccount": "Ja tens compte?",
+        "goToLogin": "Iniciar sessió"
+      },
+      "verification": {
         "title": "Verifica el teu email",
         "sent": "T'hem enviat un correu per confirmar el teu compte.",
-        "check": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
-        "resend": "Tornar a enviar",
+        "verifying": "Verificant el teu correu...",
+        "verified": "Correu verificat. Redirigint al teu perfil...",
+        "missingToken": "Falta el token de verificació.",
+        "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
         "resending": "Enviant...",
-        "resent": "Enviat!",
-        "resendSuccess": "✓ Correu enviat. Espera abans de tornar-ho a intentar.",
-        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar.",
-        "backToLogin": "Ja has confirmat? Iniciar sessió"
+        "isConfirmed": "Ja has confirmat?",
+        "backToLogin": "Iniciar sessió",
+        "recoverTitle": "Recuperar compte",
+        "resendTitle": "Torna a enviar el correu de verificació",
+        "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte."
+      },
+      "recover": {
+        "title": "Revisa el teu correu",
+        "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
+        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "backToLogin": "Torna a iniciar sessió"
+      },
+      "reset": {
+        "title": "Restableix la contrasenya",
+        "description": "Introdueix la teva nova contrasenya.",
+        "submit": "Desa la contrasenya nova",
+        "success": "La contrasenya s'ha actualitzat correctament.",
+        "backToLogin": "Torna a iniciar sessió"
+      },
+      "messages": {
+        "or": "O",
+        "success": "Email enviat. Espera per tornar-ho a intentar.",
+        "submitting": "Submitting..."
       }
     },
-    "status": {
-      "success": "Correcte",
-      "error": "Alguna cosa ha anat malament. Torna-ho a intentar."
+    "navigation": {
+      "home": "Inici",
+      "createAccount": "Crear compte",
+      "login": "Iniciar sessió",
+      "menu": "Menú",
+      "mainAriaLabel": "Navegació principal",
+      "ui": "UI",
+      "robots": "Robots",
+      "profile": "Perfil",
+      "logout": "Tancar sessió",
+      "settings": "Configuració"
     },
-    "recover": {
-      "title": "Recuperar compte",
-      "submit": "Enviar correu",
-      "resend": "Sol·licitar un altre correu",
-      "goToLogin": "Anar a l'inici de sessió"
+    "chat": {
+      "messageAriaLabel": "Missatge",
+      "showChat": "Mostra el xat",
+      "hideChat": "Amaga el xat"
     },
-    "logout": "Tancar sessió"
-  },
-  "api": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
+    "game": {
+      "resetPlan": "Reiniciar pla",
+      "endTurn": "Acabar torn",
+      "healthLabel": "HP"
+    },
+    "settings": {
+      "theme": "Tema",
+      "language": "Idioma",
+      "dark": "Fosc",
+      "light": "Clar"
+    },
+    "profile": {
+      "fail": "No s'ha pogut carregar el teu perfil.",
+      "userId": "ID d'usuari",
+      "username": "Nom d'usuari"
+    }
   },
   "validation": {
     "REQUIRED": "Aquest camp és obligatori.",
@@ -114,24 +326,17 @@
     "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen.",
     "OUT_OF_RANGE": "Sol·licitud fora de rang"
   },
-  "Footer": {
-    "appName": "Transcendence",
-    "privacy": "Política de privacitat",
-    "terms": "Termes de servei",
-    "github": "GitHub",
-    "copyright": "Tots els drets reservats"
-  },
-  "settings": {
-    "theme": "Tema",
-    "language": "Idioma"
-  },
-  "Profile": {
-    "fail": "Error al carregar l'usuari",
-    "userId": "ID d'usuari",
-    "username": "Nom d'usuari"
-  },
-  "me": {
-    "title": "Prova de ruta protegida",
-    "subtitle": "Fes clic al botó. Si estàs autenticat, hauries de veure la informació de l'usuari. Si no, hauries de rebre un 401."
+  "errors": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
+    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
+    "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
+    "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
+    "AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
+    "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 }

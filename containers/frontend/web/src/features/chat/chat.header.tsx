@@ -1,5 +1,4 @@
-import { Stack } from '@components/primitives/stack';
-import { Text } from '@components/primitives/text';
+import { Stack, Text } from '@components';
 import { chatStyles } from './chat.styles';
 
 export type ChatHeaderProps = {

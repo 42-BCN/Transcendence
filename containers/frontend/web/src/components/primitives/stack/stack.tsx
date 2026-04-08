@@ -31,7 +31,23 @@ type FooterStackProps = StackBaseProps &
     as: 'footer';
   };
 
-type StackProps = DivStackProps | NavStackProps | SectionStackProps | FooterStackProps;
+type HeaderStackProps = StackBaseProps &
+  Omit<HTMLAttributes<HTMLElement>, keyof StackBaseProps> & {
+    as: 'header';
+  };
+
+type ArticleStackProps = StackBaseProps &
+  Omit<HTMLAttributes<HTMLElement>, keyof StackBaseProps> & {
+    as: 'article';
+  };
+
+type StackProps =
+  | DivStackProps
+  | NavStackProps
+  | SectionStackProps
+  | FooterStackProps
+  | HeaderStackProps
+  | ArticleStackProps;
 
 export function Stack(props: StackProps) {
   const {

@@ -1,17 +1,17 @@
 import { LoginReqSchema, type LoginReq } from '@/contracts/api/auth/auth.validation';
-import { createEmptyValues } from '@/lib/forms/defaults';
+import { createEmptyValues } from '@/hooks/use-form/defaults';
 
 export const fieldsBase = {
   identifier: {
     name: 'identifier',
-    labelKey: 'auth.common.identifier.label',
-    placeholderKey: 'auth.common.identifier.placeholder',
+    labelKey: 'features.auth.fields.identifier.label',
+    placeholderKey: 'features.auth.fields.identifier.placeholder',
     isRequired: true,
   },
   password: {
     name: 'password',
-    labelKey: 'auth.common.password.label',
-    placeholderKey: 'auth.common.password.placeholder',
+    labelKey: 'features.auth.fields.password.label',
+    placeholderKey: 'features.auth.fields.password.placeholder',
     type: 'password',
     isRequired: true,
     autoComplete: 'current-password',

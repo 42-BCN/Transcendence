@@ -1,4 +1,4 @@
-import { ExternalLink } from '@components/controls/link/link';
+import { ExternalLink } from '@components';
 import type { ReactNode } from 'react';
 
 function GoogleLogo() {
@@ -27,7 +27,7 @@ function GoogleLogo() {
 
 export function Oauth({ children }: { children: ReactNode }) {
   return (
-    <ExternalLink icon={<GoogleLogo />} href={'/api/auth/google'} target="_blank" rel="noopener">
+    <ExternalLink icon={<GoogleLogo />} href={'/api/auth/google'} target="_self">
       {children}
     </ExternalLink>
   );

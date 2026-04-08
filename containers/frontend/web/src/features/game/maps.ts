@@ -19,7 +19,7 @@ oooowwoooo
 ooooooooow
 woooooooow
 wwooooooww
-wwwapmswww,
+wwwapmlwww,
 
 wwwwwwwwww
 wwoowwooww
@@ -82,7 +82,6 @@ type info = {
   width: number; //x
   height: number; //y
   depth: number; //z
-  planum: number;
   enenum: number;
   entities: parse_entity[];
   tiles: tile[];
@@ -90,7 +89,7 @@ type info = {
 
 export const parseMap = (map: string) => {
   const info: info = {
-    width: 0, height: 0, depth: 0, planum: 1,
+    width: 0, height: 0, depth: 0,
     enenum: 1, entities: [], tiles: []
   };
   const levels = map.trim().split(',');
@@ -112,7 +111,6 @@ export const parseMap = (map: string) => {
             })
             break
           case 'a':
-            ++info.planum;
             info.entities.push({
               id: 'assassin',
               type: 'assassin',
@@ -120,7 +118,6 @@ export const parseMap = (map: string) => {
             });
             break;
           case 'p':
-            ++info.planum;
             info.entities.push({
               id: 'paladin',
               type: 'paladin',
@@ -128,26 +125,64 @@ export const parseMap = (map: string) => {
             });
             break;
           case 'm':
-            ++info.planum;
             info.entities.push({
               id: 'mage',
               type: 'mage',
               position
             });
             break;
-          case 's':
-            ++info.planum;
+          case 'l':
             info.entities.push({
               id: `alchemist`,
               type: 'alchemist',
               position
             });
             break;
-          case 'e':
+          case 'c':
             ++info.enenum;
             info.entities.push({
-              id: `enemy_${info.enenum}`,
-              type: 'enemy',
+              id: `crawler_${info.enenum}`,
+              type: 'crawler',
+              position
+            });
+            break;
+          case 'd':
+            ++info.enenum;
+            info.entities.push({
+              id: `drone_${info.enenum}`,
+              type: 'drone',
+              position
+            });
+            break;
+          case 's':
+            ++info.enenum;
+            info.entities.push({
+              id: `spawner${info.enenum}`,
+              type: 'spawner',
+              position
+            });
+            break;
+          case 't':
+            ++info.enenum;
+            info.entities.push({
+              id: `mortar${info.enenum}`,
+              type: 'mortar',
+              position
+            });
+            break;
+          case 'j':
+            ++info.enenum;
+            info.entities.push({
+              id: `jaeger`,
+              type: 'jaeger',
+              position
+            });
+            break;
+          case 'n':
+            ++info.enenum;
+            info.entities.push({
+              id: `centurion`,
+              type: 'centurion',
               position
             });
             break;

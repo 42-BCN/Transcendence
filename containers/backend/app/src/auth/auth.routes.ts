@@ -1,29 +1,13 @@
-import { Router } from "express";
-import passport from "passport";
+import { Router } from 'express';
 
-import { validateBody } from "@shared/validation.middleware";
-import {
-  LoginReqSchema,
-  SignupReqSchema,
-} from "@contracts/auth/auth.validation";
-
-import {
-  postLogin,
-  postSignup,
-  postLogout,
-  getGoogleCallback,
-} from "./auth.controller";
+import { localRouter } from './local/local.routes';
+import { oauthRouter } from './oauth/oauth.routes';
+import { recoveryRouter } from './recovery/recovery.routes';
+import { verificationRouter } from './verification/verification.routes';
 
 export const authRouter = Router();
 
-authRouter.post("/signup", validateBody(SignupReqSchema), postSignup);
-authRouter.post("/login", validateBody(LoginReqSchema), postLogin);
-authRouter.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-    prompt: "select_account",
-  }),
-);
-authRouter.get("/callback/google", getGoogleCallback);
-authRouter.post("/logout", postLogout);
+authRouter.use(localRouter);
+authRouter.use(recoveryRouter);
+authRouter.use(verificationRouter);
+authRouter.use(oauthRouter);

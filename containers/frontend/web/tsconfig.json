@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "baseUrl": "./",
     "paths": {
+      "@components": ["src/components/index.ts"],
       "@components/*": ["src/components/*"],
       "@/*": ["src/*"]
     },
-    "target": "ES2023",
+    "target": "ES2024",
     "lib": ["dom", "dom.iterable", "esnext"],
     "strict": true,
     "noEmit": true,
@@ -23,7 +25,7 @@
         "name": "next"
       }
     ],
-    "allowJs": true
+    "allowJs": false
   },
   "include": [
     "next-env.d.ts",

@@ -114,11 +114,11 @@ shell-socket:
 	mkdir -p .make
 
 $(DB_PUSH_STAMP): $(DB_SCHEMA_FILES) $(NODE_MODULES_BACKEND_STAMP) | .make
-	$(COMPOSE) exec backend npm run prisma:db:push
+	$(COMPOSE) exec backend npm run prisma:db:push:dev
 	touch $@
 
 $(DB_SEED_STAMP): $(DB_SEED_FILES) $(DB_PUSH_STAMP) $(NODE_MODULES_BACKEND_STAMP) | .make
-	$(COMPOSE) exec backend npm run db:seed
+	$(COMPOSE) exec backend npm run db:seed:dev
 	touch $@
 
 db-push: $(DB_PUSH_STAMP)
@@ -126,8 +126,8 @@ db-push: $(DB_PUSH_STAMP)
 db-seed: $(DB_SEED_STAMP)
 
 db-reset:
-	$(COMPOSE) exec backend npm run db:reset
-	$(COMPOSE) exec backend npm run db:seed
+	$(COMPOSE) exec backend npm run db:reset:dev
+	$(COMPOSE) exec backend npm run db:seed:dev
 	rm -f $(DB_PUSH_STAMP) $(DB_SEED_STAMP)
 
 db-setup: db-seed

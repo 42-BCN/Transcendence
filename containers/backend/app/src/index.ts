@@ -1,5 +1,5 @@
-import app from "./app";
-import { connectRedis } from "./shared/redis.client";
+import app from './app';
+import { connectRedis } from './shared/redis.client';
 
 const PORT = Number(process.env.PORT ?? 4000);
 
@@ -10,7 +10,7 @@ function listen(port: number): Promise<void> {
       resolve();
     });
 
-    server.on("error", reject);
+    server.on('error', reject);
   });
 }
 
@@ -20,6 +20,6 @@ async function start(): Promise<void> {
 }
 
 void start().catch((err: unknown) => {
-  console.error("Startup failed:", err);
+  console.error('Startup failed:', err);
   process.exitCode = 1;
 });

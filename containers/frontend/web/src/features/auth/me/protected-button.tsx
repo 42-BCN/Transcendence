@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { protectedMeAction } from './protected.action';
-import { Button } from '@components/controls/button';
+import { Button } from '@components';
 
 export function ProtectedButton() {
   const [isPending, startTransition] = useTransition();
