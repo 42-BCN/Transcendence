@@ -24,7 +24,6 @@ export async function postResendVerification(
   res: Response<ResendVerificationRes>,
 ): Promise<void> {
   const locale = normalizeEmailLocale(req.headers['accept-language']?.toString());
-  const isPublicEmailRequest = !req.session.userId && typeof req.body.email === 'string';
 
   try {
     await Service.resendVerification({
@@ -33,15 +32,15 @@ export async function postResendVerification(
       locale,
     });
   } catch (error) {
-    if (isPublicEmailRequest) {
-      const code = (error as { code?: AuthErrorName })?.code;
-      if (
-        code === 'AUTH_RESEND_VERIFICATION_NOT_FOUND' ||
-        code === 'AUTH_RESEND_VERIFICATION_COOLDOWN'
-      ) {
-        res.status(200).json({ ok: true, data: null });
-        return;
-      }
+    const code = (error as { code?: AuthErrorName })?.code;
+    // Always mask privacy-sensitive errors to maintain non-enumerating behavior
+    // for both authenticated and unauthenticated requests
+    if (
+      code === 'AUTH_RESEND_VERIFICATION_NOT_FOUND' ||
+      code === 'AUTH_RESEND_VERIFICATION_COOLDOWN'
+    ) {
+      res.status(200).json({ ok: true, data: null });
+      return;
     }
     throw error;
   }
