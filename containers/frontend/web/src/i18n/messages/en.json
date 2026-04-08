@@ -216,6 +216,13 @@
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
         "backToLogin": "Back to login"
       },
+      "reset": {
+        "title": "Reset password",
+        "description": "Enter your new password.",
+        "submit": "Save new password",
+        "success": "Password updated successfully.",
+        "backToLogin": "Back to login"
+      },
       "messages": {
         "or": "OR",
         "success": "Email sent. Wait before trying again.",

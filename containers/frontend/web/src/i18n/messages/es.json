@@ -216,6 +216,13 @@
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
         "backToLogin": "Volver a iniciar sesión"
       },
+      "reset": {
+        "title": "Restablecer contraseña",
+        "description": "Introduce tu nueva contraseña.",
+        "submit": "Guardar nueva contraseña",
+        "success": "La contraseña se actualizó correctamente.",
+        "backToLogin": "Volver a iniciar sesión"
+      },
       "messages": {
         "or": "O",
         "success": "Email enviado: Espera para volver a intentarlo.",

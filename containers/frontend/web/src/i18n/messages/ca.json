@@ -216,6 +216,13 @@
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
         "backToLogin": "Torna a iniciar sessió"
       },
+      "reset": {
+        "title": "Restableix la contrasenya",
+        "description": "Introdueix la teva nova contrasenya.",
+        "submit": "Desa la contrasenya nova",
+        "success": "La contrasenya s'ha actualitzat correctament.",
+        "backToLogin": "Torna a iniciar sessió"
+      },
       "messages": {
         "or": "O",
         "success": "Email enviat. Espera per tornar-ho a intentar.",
