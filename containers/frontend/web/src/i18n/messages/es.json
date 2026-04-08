@@ -2,7 +2,7 @@
   "common": {
     "globalError": {
       "title": "Algo salió mal",
-      "tryAgain": "Intentar de nuevo"
+      "tryAgain": "Inténtalo de nuevo"
     }
   },
   "components": {
@@ -40,7 +40,7 @@
     },
     "me": {
       "title": "Mi Cuenta",
-      "subtitle": "Accede a los detalles protegidos de tu cuenta."
+      "subtitle": "Accede a los datos protegidos de tu cuenta."
     },
     "privacy": {
       "title": "Política de Privacidad",
@@ -218,12 +218,12 @@
         "description": "Todo el contenido, incluyendo el código del juego, gráficos y marcas registradas, es propiedad de Transcendence. Otorgamos una licencia limitada y no transferible para uso personal y no comercial."
       },
       "disclaimer": {
-        "title": "Descargos de Responsabilidad",
-        "description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona en su estado actual y según disponibilidad técnica. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores."
+        "title": "Exención de responsabilidad",
+        "description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona tal cual y según disponibilidad. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores."
       },
       "termination": {
-        "title": "Terminación",
-        "description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra entera discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto."
+        "title": "Cancelación",
+        "description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto."
       },
       "law": {
         "title": "Ley Aplicable",
@@ -265,8 +265,8 @@
         "login": "Iniciar sesión",
         "signup": "Crear cuenta",
         "continueWithGoogle": "Continuar con Google",
-        "sendEmail": "Enviar email",
-        "resendEmail": "Volver a enviar",
+        "sendEmail": "Enviar correo electrónico",
+        "resendEmail": "Reenviar correo",
         "logoutAriaLabel": "Cerrar sesión"
       },
       "login": {
@@ -286,7 +286,7 @@
         "goToLogin": "Iniciar sesión"
       },
       "verification": {
-        "title": "Verifica tu email",
+        "title": "Verifica tu correo electrónico",
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
@@ -296,7 +296,7 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Email enviado. Espera para volver a intentarlo.",
+        "resendSuccess": "✓ Correo enviado. Espera para volver a intentarlo.",
         "resendError": "✗ No se pudo enviar. Inténtalo de nuevo."
       }
     },
@@ -349,7 +349,7 @@
     "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
     "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
   }
 }
