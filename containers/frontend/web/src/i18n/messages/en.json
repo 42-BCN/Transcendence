@@ -42,6 +42,49 @@
       "title": "My Account",
       "subtitle": "Access your protected account details."
     },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: April 2026",
+      "intro": "At Transcendence, we value your privacy. This policy describes what data we collect, how we use it, how we store it, and what rights you have regarding your personal information.",
+      "dataCollected": {
+        "title": "Data Collected",
+        "description": "When you use our platform, we may collect the following information:",
+        "items": {
+          "email": "Email address (used for account registration and authentication)",
+          "username": "Username (chosen by you to identify yourself in the game)",
+          "usage": "Usage data (game history, scores, and interaction logs)",
+          "technical": "Technical data (browser type, device information, and IP address for security purposes)"
+        }
+      },
+      "dataUsage": {
+        "title": "How We Use Your Data",
+        "description": "The data we collect is used exclusively for the following purposes:",
+        "items": {
+          "account": "Account management and authentication",
+          "gameplay": "Providing the game experience and social features",
+          "improvement": "Improving and optimizing the platform",
+          "communication": "Sending necessary communications related to your account"
+        }
+      },
+      "storage": {
+        "title": "Data Storage and Security",
+        "description": "Your data is stored securely on our servers. We implement industry-standard security measures including encrypted connections (HTTPS), secure password hashing, and regular security audits. We retain your data only for as long as your account is active or as needed to provide you with our services."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "description": "As a user, you have the following rights regarding your personal data:",
+        "items": {
+          "access": "Right to access your personal data",
+          "rectification": "Right to correct inaccurate data",
+          "deletion": "Right to request deletion of your data",
+          "portability": "Right to data portability"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "If you have any questions about this privacy policy or wish to exercise your rights, please contact us through our GitHub repository or reach out to the project administrators."
+      }
+    },
     "ui": {
       "index": {
         "controlComponents": "Control components",
@@ -189,6 +232,10 @@
       },
       "signup": {
         "title": "Create account",
+        "privacy": {
+          "label": "I have read and agree to the <link>Privacy Policy</link>",
+          "error": "You must accept the Privacy Policy to continue."
+        },
         "haveAccount": "Already have an account?",
         "goToLogin": "Log in"
       },

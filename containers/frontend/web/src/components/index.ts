@@ -1,4 +1,5 @@
 export { Button, type ButtonProps } from './controls/button';
+export { Checkbox, type CheckboxProps } from './controls/checkbox';
 export {
   ExternalLink,
   InternalLink,
@@ -17,7 +18,9 @@ export {
   SegmentedControlGroup,
   type SegmentedControlGroupProps,
 } from './composites/segmented-control-group';
+export { CheckboxField, type CheckboxFieldProps } from './composites/checkbox-field';
 export { TextAreaField, type TextAreaFieldProps } from './composites/text-area-field';
+export { ContentSection } from './composites/content-section';
 export { TextField, type TextFieldProps } from './composites/text-field';
 export { TooltipTrigger } from './composites/tooltip-trigger';
 

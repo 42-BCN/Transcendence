@@ -42,6 +42,49 @@
       "title": "Mi Cuenta",
       "subtitle": "Accede a los detalles protegidos de tu cuenta."
     },
+    "privacy": {
+      "title": "Política de Privacidad",
+      "lastUpdated": "Última actualización: Abril 2026",
+      "intro": "En Transcendence, valoramos tu privacidad. Esta política describe qué datos recopilamos, cómo los usamos, cómo los almacenamos y qué derechos tienes sobre tu información personal.",
+      "dataCollected": {
+        "title": "Datos Recopilados",
+        "description": "Cuando usas nuestra plataforma, podemos recopilar la siguiente información:",
+        "items": {
+          "email": "Dirección de correo electrónico (usada para el registro y la autenticación)",
+          "username": "Nombre de usuario (elegido por ti para identificarte en el juego)",
+          "usage": "Datos de uso (historial de partidas, puntuaciones y registros de interacción)",
+          "technical": "Datos técnicos (tipo de navegador, información del dispositivo y dirección IP con fines de seguridad)"
+        }
+      },
+      "dataUsage": {
+        "title": "Cómo Usamos tus Datos",
+        "description": "Los datos que recopilamos se utilizan exclusivamente para los siguientes fines:",
+        "items": {
+          "account": "Gestión de cuentas y autenticación",
+          "gameplay": "Proporcionar la experiencia de juego y funciones sociales",
+          "improvement": "Mejorar y optimizar la plataforma",
+          "communication": "Enviar comunicaciones necesarias relacionadas con tu cuenta"
+        }
+      },
+      "storage": {
+        "title": "Almacenamiento y Seguridad de Datos",
+        "description": "Tus datos se almacenan de forma segura en nuestros servidores. Implementamos medidas de seguridad estándar de la industria, incluyendo conexiones cifradas (HTTPS), hash seguro de contraseñas y auditorías de seguridad regulares. Conservamos tus datos solo mientras tu cuenta esté activa o según sea necesario para proporcionarte nuestros servicios."
+      },
+      "rights": {
+        "title": "Tus Derechos",
+        "description": "Como usuario, tienes los siguientes derechos sobre tus datos personales:",
+        "items": {
+          "access": "Derecho a acceder a tus datos personales",
+          "rectification": "Derecho a corregir datos inexactos",
+          "deletion": "Derecho a solicitar la eliminación de tus datos",
+          "portability": "Derecho a la portabilidad de datos"
+        }
+      },
+      "contact": {
+        "title": "Contacto",
+        "description": "Si tienes alguna pregunta sobre esta política de privacidad o deseas ejercer tus derechos, contáctanos a través de nuestro repositorio de GitHub o comunícate con los administradores del proyecto."
+      }
+    },
     "ui": {
       "index": {
         "controlComponents": "Componentes de control",
@@ -189,6 +232,10 @@
       },
       "signup": {
         "title": "Crear cuenta",
+        "privacy": {
+          "label": "He leído y acepto la <link>Política de Privacidad</link>",
+          "error": "Debes aceptar la Política de Privacidad para continuar."
+        },
         "haveAccount": "¿Ya tienes cuenta?",
         "goToLogin": "Iniciar sesión"
       },

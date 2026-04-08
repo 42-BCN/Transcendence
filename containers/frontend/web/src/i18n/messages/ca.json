@@ -42,6 +42,49 @@
       "title": "El Meu Compte",
       "subtitle": "Accedeix als detalls protegits del teu compte."
     },
+    "privacy": {
+      "title": "Política de Privacitat",
+      "lastUpdated": "Última actualització: Abril 2026",
+      "intro": "A Transcendence, valorem la teva privacitat. Aquesta política descriu quines dades recopilem, com les fem servir, com les emmagatzemem i quins drets tens sobre la teva informació personal.",
+      "dataCollected": {
+        "title": "Dades Recopilades",
+        "description": "Quan fas servir la nostra plataforma, podem recopilar la següent informació:",
+        "items": {
+          "email": "Adreça de correu electrònic (utilitzada per al registre i l'autenticació)",
+          "username": "Nom d'usuari (escollit per tu per identificar-te al joc)",
+          "usage": "Dades d'ús (historial de partides, puntuacions i registres d'interacció)",
+          "technical": "Dades tècniques (tipus de navegador, informació del dispositiu i adreça IP amb fins de seguretat)"
+        }
+      },
+      "dataUsage": {
+        "title": "Com Fem Servir les Teves Dades",
+        "description": "Les dades que recopilem s'utilitzen exclusivament per als següents fins:",
+        "items": {
+          "account": "Gestió de comptes i autenticació",
+          "gameplay": "Proporcionar l'experiència de joc i funcions socials",
+          "improvement": "Millorar i optimitzar la plataforma",
+          "communication": "Enviar comunicacions necessàries relacionades amb el teu compte"
+        }
+      },
+      "storage": {
+        "title": "Emmagatzematge i Seguretat de Dades",
+        "description": "Les teves dades s'emmagatzemen de forma segura als nostres servidors. Implementem mesures de seguretat estàndard de la indústria, incloent connexions xifrades (HTTPS), hash segur de contrasenyes i auditories de seguretat regulars. Conservem les teves dades només mentre el teu compte estigui actiu o segons sigui necessari per proporcionar-te els nostres serveis."
+      },
+      "rights": {
+        "title": "Els Teus Drets",
+        "description": "Com a usuari, tens els següents drets sobre les teves dades personals:",
+        "items": {
+          "access": "Dret a accedir a les teves dades personals",
+          "rectification": "Dret a corregir dades inexactes",
+          "deletion": "Dret a sol·licitar l'eliminació de les teves dades",
+          "portability": "Dret a la portabilitat de dades"
+        }
+      },
+      "contact": {
+        "title": "Contacte",
+        "description": "Si tens alguna pregunta sobre aquesta política de privacitat o desitges exercir els teus drets, contacta'ns a través del nostre repositori de GitHub o comunica't amb els administradors del projecte."
+      }
+    },
     "ui": {
       "index": {
         "controlComponents": "Components de control",
@@ -189,6 +232,10 @@
       },
       "signup": {
         "title": "Crear compte",
+        "privacy": {
+          "label": "He llegit i accepto la <link>Política de Privacitat</link>",
+          "error": "Has d'acceptar la Política de Privacitat per continuar."
+        },
         "haveAccount": "Ja tens compte?",
         "goToLogin": "Iniciar sessió"
       },
