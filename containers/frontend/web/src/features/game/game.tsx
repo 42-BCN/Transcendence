@@ -8,6 +8,7 @@ import { testMap, parseMap } from './maps';
 import { useGame } from './store';
 import { useGameStore } from './game.zustand';
 import { useGameSocketManager } from './hooks';
+import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
@@ -114,10 +115,10 @@ function EndPlan() {
       w="default"
       onPress={() => nextPhase()}
     >
-      {t('Execute plan')}
+      {t('endTurn')}
     </Button >
-    : null
   )
+    : null
 }
 
 function HUD() {
@@ -132,7 +133,6 @@ function HUD() {
         <div>
           <Meter
             label={t('healthLabel')}
-            label="HP"
             value={ent.hp}
             maxValue={ent.maxHp}
             max={ent.maxHp}
