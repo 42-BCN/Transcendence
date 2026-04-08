@@ -40,15 +40,15 @@ export const routing = defineRouting({
       es: '/registro/exito',
       ca: '/crear-compte/exit',
     },
-    '/auth/verify-email': {
-      en: '/auth/verify-email',
-      es: '/auth/verify-email',
-      ca: '/auth/verify-email',
+    '/verify-email': {
+      en: '/verify-email',
+      es: '/verify-email',
+      ca: '/verify-email',
     },
-    '/auth/reset-password': {
-      en: '/auth/reset-password',
-      es: '/auth/reset-password',
-      ca: '/auth/reset-password',
+    '/reset-password': {
+      en: '/reset-password',
+      es: '/reset-password',
+      ca: '/reset-password',
     },
     '/ui': '/ui',
     '/ui/chat': '/ui/chat',

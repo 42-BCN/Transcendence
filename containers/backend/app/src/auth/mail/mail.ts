@@ -58,7 +58,7 @@ function passwordResetMailContent(input: PasswordResetMailInput): {
   text: string;
   html: string;
 } {
-  const resetUrl = `${getPublicAppBaseUrl()}/auth/reset-password?token=${encodeURIComponent(input.resetToken)}`;
+  const resetUrl = `${getPublicAppBaseUrl()}/reset-password?token=${encodeURIComponent(input.resetToken)}`;
   const locale = input.locale ?? 'en';
   const copy = mailTemplates[locale].passwordReset;
 

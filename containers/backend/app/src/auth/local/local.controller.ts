@@ -62,7 +62,6 @@ export function postLogout(req: Request, res: Response): void {
     res.clearCookie('sid', {
       path: '/',
       sameSite: 'lax',
-      secure: true,
     });
 
     sendOk(res, { user: null }, 200);
