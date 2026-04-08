@@ -63,6 +63,11 @@ export const routing = defineRouting({
       es: '/terminos',
       ca: '/termes',
     },
+    '/game': {
+      en: '/game',
+      es: '/juego',
+      ca: '/joc',
+    },
   },
   localeCookie,
 });
