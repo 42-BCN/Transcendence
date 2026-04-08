@@ -222,7 +222,7 @@ declare const messages: {
       },
       "disclaimer": {
         "title": "Disclaimers",
-        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided on an 'as is' and 'as available' basis. We do not warranty that the service will be uninterrupted, timely, secure, or error-free."
+        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided on an as-is and as-available basis. We do not warranty that the service will be uninterrupted, timely, secure, or error-free."
       },
       "termination": {
         "title": "Termination",
