@@ -5,7 +5,6 @@ import {
   type CheckboxProps as AriaCheckboxProps,
 } from 'react-aria-components';
 import { checkboxStyles } from './checkbox.styles';
-import { cn } from '@/lib/styles/cn';
 import type { ReactNode } from 'react';
 
 export type CheckboxProps = AriaCheckboxProps & {
