@@ -1,8 +1,8 @@
 'use client';
 
-import { Checkbox, type CheckboxProps } from '@components/controls/checkbox/checkbox';
+import { Checkbox, type CheckboxProps } from '@components/controls/checkbox';
 import { useTranslations } from 'next-intl';
-import { InternalLink } from '@components/controls/link/link';
+import { InternalLink } from '@components/controls/link';
 import { checkboxFieldStyles } from './checkbox-field.styles';
 
 import type { ClassValue } from 'clsx';
