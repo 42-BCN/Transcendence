@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-undef, no-console */
 /**
  * Smoke test: signup x2 → login → friend request → accept → GET /friends & /friendships.
  * Run inside backend container: BASE_URL=http://127.0.0.1:4000 node scripts/smoke-friendships.mjs
@@ -78,17 +79,22 @@ async function main() {
   const idA = loginA.data.user.id;
   const idB = loginB.data.user.id;
 
-  // Cleanup: check if already friends and remove friendship if exists
-  const existingFriendships = await b.req('/friendships');
-  if (existingFriendships.ok) {
-    const existing = existingFriendships.data.friendships.find(
-      (f) => f.friendUserId === idA
-    );
-    if (existing) {
-      // Delete via database (smoke test simplification - no DELETE endpoint yet)
-      console.log('Note: Existing friendship detected, test may need cleanup');
-    }
+  // Cleanup: remove accepted or pending A–B rows so the test is repeatable
+  async function cleanupRelationship() {
+    const listA = await a.req('/friendships');
+    const accA = listA.data.friendships?.find((f) => f.friendUserId === idB);
+    if (accA) await a.req(`/friends/${accA.id}`, { method: 'DELETE' });
+    const listB = await b.req('/friendships');
+    const accB = listB.data.friendships?.find((f) => f.friendUserId === idA);
+    if (accB) await b.req(`/friends/${accB.id}`, { method: 'DELETE' });
+    const sentB = await b.req('/friendships/requests/sent');
+    const pendB = sentB.data.requests?.find((r) => r.friendUserId === idA);
+    if (pendB) await b.req(`/friends/${pendB.id}`, { method: 'DELETE' });
+    const sentA = await a.req('/friendships/requests/sent');
+    const pendA = sentA.data.requests?.find((r) => r.friendUserId === idB);
+    if (pendA) await a.req(`/friends/${pendA.id}`, { method: 'DELETE' });
   }
+  await cleanupRelationship();
 
   const sendRes = await b.req('/friendships/request', {
     method: 'POST',
@@ -122,6 +128,17 @@ async function main() {
   assert(row, 'B in friendships list');
   assert('createdAt' in row, 'FriendshipPublic uses createdAt');
   assert('friendAvatar' in row, 'FriendshipPublic uses friendAvatar');
+
+  const delRes = await a.req(`/friends/${friendshipId}`, { method: 'DELETE' });
+  assert(delRes.ok === true && delRes.data?.deleted === true, 'DELETE /friends/:friendshipId');
+
+  const friendsAfter = await a.req('/friends');
+  assert(
+    !friendsAfter.data.friends.find((f) => f.id === idB),
+    'GET /friends omits removed user',
+  );
+
+  await a.req(`/friends/${friendshipId}`, { method: 'DELETE', okStatuses: [404] });
 
   console.log('smoke-friendships: OK', { idA, idB, friendshipId });
 }

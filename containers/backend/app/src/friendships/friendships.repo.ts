@@ -250,6 +250,28 @@ export async function rejectFriendRequest(
   return true;
 }
 
+/** Delete any friendship row (pending or accepted) if the user is one of the two members. */
+export async function deleteFriendship(
+  friendshipId: string,
+  currentUserId: string,
+): Promise<'deleted' | 'not_found' | 'forbidden'> {
+  const friendship = await prisma.friendship.findUnique({
+    where: { id: friendshipId },
+  });
+
+  if (!friendship) return 'not_found';
+
+  const isMember =
+    friendship.userId1 === currentUserId || friendship.userId2 === currentUserId;
+  if (!isMember) return 'forbidden';
+
+  await prisma.$transaction(async (tx) => {
+    await tx.friendship.delete({ where: { id: friendshipId } });
+  });
+
+  return 'deleted';
+}
+
 export async function acceptFriendRequest(
   requestId: string,
   userId: string,
@@ -285,7 +307,7 @@ export async function findUserById(userId: string): Promise<boolean> {
     where: { id: userId },
     select: { id: true },
   });
-  return !!user;
+  return Boolean(user);
 }
 
 export async function findUserBrief(

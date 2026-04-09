@@ -14,6 +14,7 @@ import {
   findUserBrief,
   findFriendshipRowById,
   rejectFriendRequest,
+  deleteFriendship,
 } from './friendships.repo';
 import {
   notifyFriendAccepted,
@@ -178,4 +179,13 @@ export async function respondToFriendRequest(
   });
 
   return { action: 'reject' };
+}
+
+export async function removeFriendship(
+  friendshipId: string,
+  currentUserId: string,
+): Promise<void> {
+  const outcome = await deleteFriendship(friendshipId, currentUserId);
+  if (outcome === 'not_found') throw new ApiError('FRIENDSHIP_NOT_FOUND');
+  if (outcome === 'forbidden') throw new ApiError('UNAUTHORIZED_ACTION');
 }

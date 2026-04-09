@@ -68,3 +68,10 @@ export type RespondFriendRequestResponse = ApiResponse<
   FriendshipsErrorName,
   ValidationErrorDetails
 >;
+
+export type DeleteFriendshipOk = { deleted: true };
+export type DeleteFriendshipResponse = ApiResponse<
+  DeleteFriendshipOk,
+  FriendshipsErrorName,
+  ValidationErrorDetails
+>;

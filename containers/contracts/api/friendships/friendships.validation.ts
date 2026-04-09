@@ -12,3 +12,9 @@ export const RespondFriendRequestBodySchema = z.object({
 });
 
 export type RespondFriendRequestBody = z.infer<typeof RespondFriendRequestBodySchema>;
+
+export const DeleteFriendshipParamSchema = z.strictObject({
+  friendshipId: z.string().uuid(),
+});
+
+export type DeleteFriendshipParam = z.infer<typeof DeleteFriendshipParamSchema>;

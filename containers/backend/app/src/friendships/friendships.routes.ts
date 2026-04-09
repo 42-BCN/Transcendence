@@ -1,9 +1,11 @@
 import type { RequestHandler } from 'express';
 import { Router } from 'express';
-import { validateBody, requireAuth } from '@shared';
+
+import { validateBody, validateParams, requireAuth } from '@shared';
 import {
   SendFriendRequestBodySchema,
   RespondFriendRequestBodySchema,
+  DeleteFriendshipParamSchema,
 } from '@contracts/friendships/friendships.validation';
 
 import {
@@ -13,6 +15,7 @@ import {
   getSentRequestsController,
   sendFriendRequestController,
   respondFriendRequestController,
+  deleteFriendshipController,
 } from './friendships.controller';
 
 function buildFriendshipsRouter(listController: RequestHandler): Router {
@@ -31,6 +34,12 @@ function buildFriendshipsRouter(listController: RequestHandler): Router {
     '/respond',
     validateBody(RespondFriendRequestBodySchema),
     respondFriendRequestController,
+  );
+
+  router.delete(
+    '/:friendshipId',
+    validateParams(DeleteFriendshipParamSchema),
+    deleteFriendshipController,
   );
 
   return router;

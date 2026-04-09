@@ -201,6 +201,13 @@ Accept or reject a friend request.
 
 ---
 
+### `DELETE /api/friends/:friendshipId`
+Remove an accepted friendship or cancel a pending one. Only `user_id_1` / `user_id_2` may delete; others get **403**. Missing id → **404** (idempotent repeat delete).
+
+**Response**: `{ "ok": true, "data": { "deleted": true } }`
+
+---
+
 ### `GET /api/friendships`
 Get the current friends list (accepted).
 
@@ -441,6 +448,13 @@ Aceptar o rechazar solicitud de amistad.
 **Body**: `{ "friendshipId": "uuid", "action": "accept" | "reject" }`
 
 **Response**: `{ "ok": true, "data": { "friendship": {...}, "action": "accept" } }`
+
+---
+
+### `DELETE /api/friends/:friendshipId`
+Eliminar una amistad aceptada o cancelar una solicitud pendiente. Solo los dos usuarios de la fila pueden borrar; otro usuario recibe **403**. Si el id no existe → **404** (repetir DELETE es idempotente en el sentido de error controlado).
+
+**Response**: `{ "ok": true, "data": { "deleted": true } }`
 
 ---
 

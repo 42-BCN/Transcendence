@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+
 import type {
   GetFriendsListResponse,
   GetFriendshipsResponse,
@@ -7,8 +8,12 @@ import type {
   SendFriendRequestBody,
   SendFriendRequestResponse,
   RespondFriendRequestResponse,
+  DeleteFriendshipResponse,
 } from '@contracts/friendships/friendships.contracts';
-import type { RespondFriendRequestBody } from '@contracts/friendships/friendships.validation';
+import type {
+  RespondFriendRequestBody,
+  DeleteFriendshipParam,
+} from '@contracts/friendships/friendships.validation';
 
 import {
   getFriendships,
@@ -17,6 +22,7 @@ import {
   getSentRequests,
   sendFriendRequest,
   respondToFriendRequest,
+  removeFriendship,
 } from './friendships.service';
 
 export async function getFriendsListController(
@@ -75,4 +81,13 @@ export async function respondFriendRequestController(
   const userId = req.session.userId!;
   const result = await respondToFriendRequest(req.body.friendshipId, userId, req.body.action);
   res.status(200).json({ ok: true, data: result });
+}
+
+export async function deleteFriendshipController(
+  req: Request<DeleteFriendshipParam>,
+  res: Response<DeleteFriendshipResponse>,
+): Promise<void> {
+  const userId = req.session.userId!;
+  await removeFriendship(req.params.friendshipId, userId);
+  res.status(200).json({ ok: true, data: { deleted: true } });
 }

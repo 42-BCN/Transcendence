@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { VALIDATION, type ValidationCode } from '../../api/http/validation';
+import { VALIDATION } from '../../api/http/validation';
 
 export type ClientToServerChatEvents = {
   'chat:send': (payload: ChatSend) => void;

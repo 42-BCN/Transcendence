@@ -8,7 +8,6 @@ import {
   localLoginIpRateLimit,
   localSignupEmailRateLimit,
 } from './local.rate-limit';
-
 import { postLogin, postLogout, postSignup } from './local.controller';
 
 export const localRouter = Router();

@@ -42,7 +42,7 @@ type GetFriendsListOk = {
   friends: FriendPublic[];
 };
 
-type GetReceivedRequestsOk = {
+type GetPendingRequestsOk = {
   requests: FriendshipPublic[];
 };
 
@@ -140,20 +140,20 @@ async function testListPendingSent(): Promise<void> {
 async function testListPendingReceived(): Promise<void> {
   await loginAsSeedUser();
 
-  logStep('list received pending requests for pikachu');
+  logStep('list pending (received) requests for pikachu');
 
-  const res = await request<ApiResponse<GetReceivedRequestsOk>>('friends/requests/received', {
+  const res = await request<ApiResponse<GetPendingRequestsOk>>('friends/requests/pending', {
     method: 'GET',
   });
 
   logResponse(res.res, res.body, res.text);
 
-  assert(res.res.status === 200, 'Received pending list should return 200');
-  assert(res.body?.ok === true, 'Received pending list should return ok=true');
+  assert(res.res.status === 200, 'Pending received list should return 200');
+  assert(res.body?.ok === true, 'Pending received list should return ok=true');
 
   const names = requestUsernamesOf(res.body.data.requests);
 
-  assert(names.includes('eevee'), 'Received pending should include eevee');
+  assert(names.includes('eevee'), 'Pending received should include eevee');
 }
 
 async function testSendRequestToIsolatedUser(): Promise<void> {
@@ -278,7 +278,7 @@ async function main(): Promise<void> {
 
   await runTest(results, 'accepted friends list', testListAcceptedFriends);
   await runTest(results, 'pending sent list', testListPendingSent);
-  await runTest(results, 'pending received list', testListPendingReceived);
+  await runTest(results, 'pending list (received)', testListPendingReceived);
   await runTest(results, 'send request to isolated user', testSendRequestToIsolatedUser);
   await runTest(results, 'duplicate request rejected', testDuplicateRequestRejected);
   await runTest(results, 'reverse request auto-accept', testReverseRequestAutoAccept);
