@@ -9,8 +9,8 @@ type FriendshipRow = {
   status: 'pending' | 'accepted';
   createdAt: Date;
   updatedAt: Date;
-  user1: { username: string };
-  user2: { username: string };
+  user1: { username: string; avatar: string | null };
+  user2: { username: string; avatar: string | null };
 };
 
 export type FriendshipPairRow = {
@@ -22,11 +22,13 @@ export type FriendshipPairRow = {
 function toPublic(row: FriendshipRow, currentUserId: string): FriendshipPublic {
   const friendId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
   const friendUsername = row.userId1 === currentUserId ? row.user2.username : row.user1.username;
+  const friendAvatar = row.userId1 === currentUserId ? row.user2.avatar : row.user1.avatar;
 
   return {
     id: row.id,
     friendUserId: friendId,
     friendUsername,
+    friendAvatar,
     status: row.status,
     isSender: row.senderId === currentUserId,
     createdAt: row.createdAt,
@@ -75,8 +77,8 @@ export async function createFriendRequest(
       status: 'pending',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -124,7 +126,7 @@ export async function autoAcceptMutualRequest(
 
 export async function listFriendsForUser(
   userId: string,
-): Promise<{ id: string; username: string }[]> {
+): Promise<{ id: string; username: string; avatar: string | null }[]> {
   const friendships = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
@@ -134,8 +136,8 @@ export async function listFriendsForUser(
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { id: true, username: true } },
-      user2: { select: { id: true, username: true } },
+      user1: { select: { id: true, username: true, avatar: true } },
+      user2: { select: { id: true, username: true, avatar: true } },
     },
   });
 
@@ -144,6 +146,7 @@ export async function listFriendsForUser(
     return {
       id: friend.id,
       username: friend.username,
+      avatar: friend.avatar,
     };
   });
 }
@@ -158,8 +161,8 @@ export async function listAcceptedFriendships(userId: string): Promise<Friendshi
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -179,8 +182,8 @@ export async function listPendingRequests(userId: string): Promise<FriendshipPub
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -198,8 +201,8 @@ export async function listSentRequests(userId: string): Promise<FriendshipPublic
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -269,8 +272,8 @@ export async function acceptFriendRequest(
       updatedAt: new Date(),
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 

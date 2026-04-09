@@ -1255,7 +1255,7 @@ components:
                   type: integer
     FriendshipPublic:
       type: object
-      required: [id, friendUserId, friendUsername, status, isSender, createdAt]
+      required: [id, friendUserId, friendUsername, friendAvatar, status, isSender, createdAt]
       properties:
         id:
           type: string
@@ -1265,6 +1265,9 @@ components:
           format: uuid
         friendUsername:
           type: string
+        friendAvatar:
+          type: string
+          nullable: true
         status:
           type: string
           enum: [pending, accepted]

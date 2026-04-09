@@ -121,6 +121,7 @@ async function main() {
   const row = list.data.friendships.find((f) => f.friendUserId === idB);
   assert(row, 'B in friendships list');
   assert('createdAt' in row, 'FriendshipPublic uses createdAt');
+  assert('friendAvatar' in row, 'FriendshipPublic uses friendAvatar');
 
   console.log('smoke-friendships: OK', { idA, idB, friendshipId });
 }

@@ -6,6 +6,7 @@ export type FriendshipPublic = {
   id: string;
   friendUserId: string;
   friendUsername: string;
+  friendAvatar: string | null;
   status: 'pending' | 'accepted';
   isSender: boolean;
   createdAt: Date;

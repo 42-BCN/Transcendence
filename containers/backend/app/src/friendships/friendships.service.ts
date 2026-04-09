@@ -119,7 +119,7 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
   return friends.map((f) => ({
     id: f.id,
     username: f.username,
-    avatar: null,
+    avatar: f.avatar,
     isOnline: onlineStatus[f.id] ?? false,
   }));
 }
