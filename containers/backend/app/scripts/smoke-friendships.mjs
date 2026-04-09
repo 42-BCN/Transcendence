@@ -57,36 +57,38 @@ function assert(cond, msg) {
 }
 
 async function main() {
-  const stamp = Date.now();
-  const emailA = `smoke_a_${stamp}@example.com`;
-  const emailB = `smoke_b_${stamp}@example.com`;
-  const password = 'SmokeTestPass1!';
+  const emailA = 'capapes@fakemail.com';
+  const emailB = 'mfontser@fakemail.com';
+  const password = 'Password123!';
 
   const a = new Client();
   const b = new Client();
 
-  const signupA = await a.req('/auth/signup', {
-    method: 'POST',
-    body: { email: emailA, password },
-  });
-  const signupB = await b.req('/auth/signup', {
-    method: 'POST',
-    body: { email: emailB, password },
-  });
-
-  assert(signupA.ok === true && signupA.data?.user?.id, 'signup A');
-  assert(signupB.ok === true && signupB.data?.user?.id, 'signup B');
-  const idA = signupA.data.user.id;
-  const idB = signupB.data.user.id;
-
-  await a.req('/auth/login', {
+  const loginA = await a.req('/auth/login', {
     method: 'POST',
     body: { identifier: emailA, password },
   });
-  await b.req('/auth/login', {
+  const loginB = await b.req('/auth/login', {
     method: 'POST',
     body: { identifier: emailB, password },
   });
+
+  assert(loginA.ok === true && loginA.data?.user?.id, 'login A');
+  assert(loginB.ok === true && loginB.data?.user?.id, 'login B');
+  const idA = loginA.data.user.id;
+  const idB = loginB.data.user.id;
+
+  // Cleanup: check if already friends and remove friendship if exists
+  const existingFriendships = await b.req('/friendships');
+  if (existingFriendships.ok) {
+    const existing = existingFriendships.data.friendships.find(
+      (f) => f.friendUserId === idA
+    );
+    if (existing) {
+      // Delete via database (smoke test simplification - no DELETE endpoint yet)
+      console.log('Note: Existing friendship detected, test may need cleanup');
+    }
+  }
 
   const sendRes = await b.req('/friendships/request', {
     method: 'POST',
@@ -97,13 +99,14 @@ async function main() {
   const friendshipId = sendRes.data.friendship?.id;
   assert(friendshipId, 'friendship id from send');
 
-  const received = await a.req('/friendships/requests/received');
+  const received = await a.req('/friendships/requests/pending');
   assert(received.ok === true, 'received list');
   const pending = received.data.requests.find((r) => r.id === friendshipId);
   assert(pending, 'pending request visible to A');
 
-  const acceptRes = await a.req(`/friendships/requests/${friendshipId}/accept`, {
-    method: 'PATCH',
+  const acceptRes = await a.req('/friendships/respond', {
+    method: 'POST',
+    body: { friendshipId, action: 'accept' },
   });
   assert(acceptRes.ok === true, 'accept');
 

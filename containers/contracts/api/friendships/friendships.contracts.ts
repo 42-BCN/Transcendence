@@ -33,9 +33,9 @@ export type GetFriendshipsResponse = ApiResponse<
   ValidationErrorDetails
 >;
 
-export type GetReceivedRequestsOk = { requests: FriendshipPublic[] };
-export type GetReceivedRequestsResponse = ApiResponse<
-  GetReceivedRequestsOk,
+export type GetPendingRequestsOk = { requests: FriendshipPublic[] };
+export type GetPendingRequestsResponse = ApiResponse<
+  GetPendingRequestsOk,
   FriendshipsErrorName,
   ValidationErrorDetails
 >;
@@ -54,13 +54,6 @@ export type SendFriendRequestOk = {
 };
 export type SendFriendRequestResponse = ApiResponse<
   SendFriendRequestOk,
-  FriendshipsErrorName,
-  ValidationErrorDetails
->;
-
-export type AcceptRequestOk = { friendship: FriendshipPublic };
-export type AcceptRequestResponse = ApiResponse<
-  AcceptRequestOk,
   FriendshipsErrorName,
   ValidationErrorDetails
 >;

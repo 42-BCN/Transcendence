@@ -2,25 +2,20 @@ import type { Request, Response } from 'express';
 import type {
   GetFriendsListResponse,
   GetFriendshipsResponse,
-  GetReceivedRequestsResponse,
+  GetPendingRequestsResponse,
   GetSentRequestsResponse,
   SendFriendRequestBody,
   SendFriendRequestResponse,
-  AcceptRequestResponse,
   RespondFriendRequestResponse,
 } from '@contracts/friendships/friendships.contracts';
-import type {
-  AcceptRequestParam,
-  RespondFriendRequestBody,
-} from '@contracts/friendships/friendships.validation';
+import type { RespondFriendRequestBody } from '@contracts/friendships/friendships.validation';
 
 import {
   getFriendships,
   getFriendsList,
-  getReceivedRequests,
+  getPendingRequests,
   getSentRequests,
   sendFriendRequest,
-  acceptRequest,
   respondToFriendRequest,
 } from './friendships.service';
 
@@ -42,12 +37,12 @@ export async function getFriendshipsController(
   res.status(200).json({ ok: true, data: { friendships } });
 }
 
-export async function getReceivedRequestsController(
+export async function getPendingRequestsController(
   req: Request,
-  res: Response<GetReceivedRequestsResponse>,
+  res: Response<GetPendingRequestsResponse>,
 ): Promise<void> {
   const userId = req.session.userId!;
-  const requests = await getReceivedRequests(userId);
+  const requests = await getPendingRequests(userId);
   res.status(200).json({ ok: true, data: { requests } });
 }
 
@@ -71,15 +66,6 @@ export async function sendFriendRequestController(
     ok: true,
     data: { friendship, wasAutoAccepted },
   });
-}
-
-export async function acceptRequestController(
-  req: Request<AcceptRequestParam>,
-  res: Response<AcceptRequestResponse>,
-): Promise<void> {
-  const userId = req.session.userId!;
-  const friendship = await acceptRequest(req.params.requestId, userId);
-  res.status(200).json({ ok: true, data: { friendship } });
 }
 
 export async function respondFriendRequestController(

@@ -6,7 +6,7 @@ import {
   createFriendRequest,
   listAcceptedFriendships,
   listFriendsForUser,
-  listReceivedRequests,
+  listPendingRequests,
   listSentRequests,
   acceptFriendRequest,
   findUserById,
@@ -124,18 +124,12 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
   }));
 }
 
-export async function getReceivedRequests(userId: string): Promise<FriendshipPublic[]> {
-  return await listReceivedRequests(userId);
+export async function getPendingRequests(userId: string): Promise<FriendshipPublic[]> {
+  return await listPendingRequests(userId);
 }
 
 export async function getSentRequests(userId: string): Promise<FriendshipPublic[]> {
   return await listSentRequests(userId);
-}
-
-export async function acceptRequest(requestId: string, userId: string): Promise<FriendshipPublic> {
-  const friendship = await acceptFriendRequest(requestId, userId);
-  if (!friendship) throw new ApiError('FRIENDSHIP_REQUEST_NOT_FOUND');
-  return friendship;
 }
 
 export async function respondToFriendRequest(

@@ -1,19 +1,17 @@
 import type { RequestHandler } from 'express';
 import { Router } from 'express';
-import { validateBody, validateParams, requireAuth } from '@shared';
+import { validateBody, requireAuth } from '@shared';
 import {
   SendFriendRequestBodySchema,
-  AcceptRequestParamSchema,
   RespondFriendRequestBodySchema,
 } from '@contracts/friendships/friendships.validation';
 
 import {
   getFriendsListController,
   getFriendshipsController,
-  getReceivedRequestsController,
+  getPendingRequestsController,
   getSentRequestsController,
   sendFriendRequestController,
-  acceptRequestController,
   respondFriendRequestController,
 } from './friendships.controller';
 
@@ -23,19 +21,11 @@ function buildFriendshipsRouter(listController: RequestHandler): Router {
 
   router.get('/', listController);
 
-  router.get('/requests/received', getReceivedRequestsController);
+  router.get('/requests/pending', getPendingRequestsController);
 
   router.get('/requests/sent', getSentRequestsController);
 
   router.post('/request', validateBody(SendFriendRequestBodySchema), sendFriendRequestController);
-
-  router.post('/requests', validateBody(SendFriendRequestBodySchema), sendFriendRequestController);
-
-  router.patch(
-    '/requests/:requestId/accept',
-    validateParams(AcceptRequestParamSchema),
-    acceptRequestController,
-  );
 
   router.post(
     '/respond',

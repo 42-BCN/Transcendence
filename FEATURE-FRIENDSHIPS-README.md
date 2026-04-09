@@ -76,18 +76,20 @@ curl -sk -X POST https://localhost:8443/api/auth/login \
   -c /tmp/bob.txt
 
 # Alice sends a friend request to Bob (use Bob's ID from signup)
-curl -sk -X POST https://localhost:8443/api/friendships/requests \
+curl -sk -X POST https://localhost:8443/api/friendships/request \
   -H "Content-Type: application/json" \
   -b /tmp/alice.txt \
   -d '{"targetUserId":"<BOB_ID>"}'
 
-# Bob checks received requests
-curl -sk https://localhost:8443/api/friendships/requests/received \
+# Bob checks pending requests
+curl -sk https://localhost:8443/api/friendships/requests/pending \
   -b /tmp/bob.txt
 
 # Bob accepts (use the request ID from above)
-curl -sk -X PATCH https://localhost:8443/api/friendships/requests/<REQUEST_ID>/accept \
-  -b /tmp/bob.txt
+curl -sk -X POST https://localhost:8443/api/friendships/respond \
+  -H "Content-Type: application/json" \
+  -b /tmp/bob.txt \
+  -d '{"friendshipId":"<REQUEST_ID>","action":"accept"}'
 
 # Check Alice's friends list
 curl -sk https://localhost:8443/api/friendships \
@@ -174,7 +176,7 @@ If there are module errors, run `npm ci` again.
 
 ## 📚 API Endpoints
 
-### `POST /api/friendships/requests`
+### `POST /api/friendships/request`
 Send a friend request.
 
 **Body**: `{ "targetUserId": "uuid" }`
@@ -183,17 +185,19 @@ Send a friend request.
 
 ---
 
-### `GET /api/friendships/requests/received`
-Get received (pending) requests.
+### `GET /api/friendships/requests/pending`
+Get pending (received) requests.
 
 **Response**: `{ "ok": true, "data": { "requests": [...] } }`
 
 ---
 
-### `PATCH /api/friendships/requests/:requestId/accept`
-Accept a friend request.
+### `POST /api/friendships/respond`
+Accept or reject a friend request.
 
-**Response**: `{ "ok": true, "data": { "friendship": {...} } }`
+**Body**: `{ "friendshipId": "uuid", "action": "accept" | "reject" }`
+
+**Response**: `{ "ok": true, "data": { "friendship": {...}, "action": "accept" } }`
 
 ---
 
@@ -315,18 +319,20 @@ curl -sk -X POST https://localhost:8443/api/auth/login \
   -c /tmp/bob.txt
 
 # Alice envía friend request a Bob (usa el ID de Bob del signup)
-curl -sk -X POST https://localhost:8443/api/friendships/requests \
+curl -sk -X POST https://localhost:8443/api/friendships/request \
   -H "Content-Type: application/json" \
   -b /tmp/alice.txt \
   -d '{"targetUserId":"<BOB_ID>"}'
 
-# Bob ve sus requests recibidas
-curl -sk https://localhost:8443/api/friendships/requests/received \
+# Bob ve sus requests pendientes
+curl -sk https://localhost:8443/api/friendships/requests/pending \
   -b /tmp/bob.txt
 
 # Bob acepta (usa el request ID de arriba)
-curl -sk -X PATCH https://localhost:8443/api/friendships/requests/<REQUEST_ID>/accept \
-  -b /tmp/bob.txt
+curl -sk -X POST https://localhost:8443/api/friendships/respond \
+  -H "Content-Type: application/json" \
+  -b /tmp/bob.txt \
+  -d '{"friendshipId":"<REQUEST_ID>","action":"accept"}'
 
 # Ver lista de amigos de Alice
 curl -sk https://localhost:8443/api/friendships \
@@ -413,7 +419,7 @@ Si hay errores de módulos, hacer `npm ci` de nuevo.
 
 ## 📚 API Endpoints
 
-### `POST /api/friendships/requests`
+### `POST /api/friendships/request`
 Enviar solicitud de amistad.
 
 **Body**: `{ "targetUserId": "uuid" }`
@@ -422,17 +428,19 @@ Enviar solicitud de amistad.
 
 ---
 
-### `GET /api/friendships/requests/received`
-Obtener solicitudes recibidas (pendientes).
+### `GET /api/friendships/requests/pending`
+Obtener solicitudes pendientes (recibidas).
 
 **Response**: `{ "ok": true, "data": { "requests": [...] } }`
 
 ---
 
-### `PATCH /api/friendships/requests/:requestId/accept`
-Aceptar solicitud de amistad.
+### `POST /api/friendships/respond`
+Aceptar o rechazar solicitud de amistad.
 
-**Response**: `{ "ok": true, "data": { "friendship": {...} } }`
+**Body**: `{ "friendshipId": "uuid", "action": "accept" | "reject" }`
+
+**Response**: `{ "ok": true, "data": { "friendship": {...}, "action": "accept" } }`
 
 ---
 

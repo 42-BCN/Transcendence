@@ -41,5 +41,21 @@ export const GetUserByIdParamSchema = z.strictObject({
   userId: z.uuid({ message: VALIDATION.INVALID_FORMAT }),
 });
 
+export const SearchUsersQuerySchema = z
+  .object({
+    q: z.string().trim().min(1, { message: VALIDATION.REQUIRED }).max(100, { message: VALIDATION.FIELD_TOO_LONG }),
+    limit: intFromQuery(VALIDATION.INVALID_FORMAT).optional(),
+  })
+  .strict()
+  .transform((q) => ({
+    q: q.q,
+    limit: q.limit ?? 20,
+  }))
+  .refine((q) => q.limit >= 1 && q.limit <= 50, {
+    message: VALIDATION.OUT_OF_RANGE,
+    path: ['limit'],
+  });
+
 export type GetUsersQuery = z.infer<typeof GetUsersQuerySchema>;
 export type GetUserByIdParam = z.infer<typeof GetUserByIdParamSchema>;
+export type SearchUsersQuery = z.infer<typeof SearchUsersQuerySchema>;

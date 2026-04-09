@@ -166,7 +166,7 @@ export async function listAcceptedFriendships(userId: string): Promise<Friendshi
   return friendships.map((f) => toPublic(f as FriendshipRow, userId));
 }
 
-export async function listReceivedRequests(userId: string): Promise<FriendshipPublic[]> {
+export async function listPendingRequests(userId: string): Promise<FriendshipPublic[]> {
   const requests = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
