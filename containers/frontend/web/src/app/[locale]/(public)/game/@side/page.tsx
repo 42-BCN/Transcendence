@@ -10,7 +10,7 @@ export default function GameSidePage() {
   const [chatVisible, setChatVisible] = useState(false);
   return (
     <>
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-4 right-4 z-20 pointer-events-auto">
         <Button onPress={() => setChatVisible((v) => !v)} w="auto">
           {chatVisible ? t('hideChat') : t('showChat')}
         </Button>
