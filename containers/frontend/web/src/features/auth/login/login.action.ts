@@ -1,34 +1,19 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { fetchServer } from '@/lib/http/fetcher.server';
-import { LoginReqSchema } from '@/contracts/api/auth/auth.validation';
+import { getLocale } from 'next-intl/server';
+import { redirect } from '@/i18n/navigation';
+import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
+
 import { type LoginRes } from '@/contracts/api/auth/auth.contract';
-import { type ApiResponse } from '@/contracts/api/http';
-import { redirect } from 'next/navigation';
 
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 7;
 
-function parseInput(formData: FormData) {
-  const result = LoginReqSchema.safeParse({
-    identifier: formData.get('identifier'),
-    password: formData.get('password'),
-  });
-
-  if (!result.success) {
-    return {
-      ok: false,
-      errors: result.error.flatten(),
-    };
-  }
-
-  return { ok: true, data: result.data };
-}
-
 function getAuthCookie(headers: Headers): string[] {
-  if (typeof headers?.getSetCookie === 'function') return headers.getSetCookie();
+  if (typeof headers.getSetCookie === 'function') return headers.getSetCookie();
 
-  return headers.get('set-cookie') ? [headers.get('set-cookie')!] : [];
+  const setCookie = headers.get('set-cookie');
+  return setCookie ? [setCookie] : [];
 }
 
 async function setAuthCookies(headers: Headers) {
@@ -52,16 +37,23 @@ async function setAuthCookies(headers: Headers) {
 }
 
 export async function loginAction(_prevState: unknown, formData: FormData) {
-  const result = parseInput(formData);
-  if (!result.ok) return;
+  const result = await withServerAction(async () => {
+    const identifier = String(formData.get('identifier') ?? '');
+    const password = String(formData.get('password') ?? '');
 
-  const { data, headers } = await fetchServer<ApiResponse<LoginRes>>(
-    '/auth/login',
-    'POST',
-    result.data,
-  );
+    const { data, headers } = await fetchServer<LoginRes>('/auth/login', 'POST', {
+      identifier,
+      password,
+    });
 
-  if (!data.ok) return data;
-  if (data.ok) await setAuthCookies(headers);
-  redirect('/profile');
+    if (!data.ok) return data;
+
+    await setAuthCookies(headers);
+    return data;
+  })();
+
+  if (!result.ok) return result;
+
+  const locale = await getLocale();
+  redirect({ href: '/profile', locale });
 }

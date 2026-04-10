@@ -1,6 +1,7 @@
 import { cn } from '@/lib/styles/cn';
 
 export type TextVariant =
+  | 'divider'
   | 'caption'
   | 'body-xs'
   | 'body-sm'
@@ -12,7 +13,11 @@ export type TextVariant =
   | 'heading-xl'
   | 'code';
 
+const dividerStyles =
+  'flex items-center gap-4 before:h-px before:flex-1 before:bg-border-primary after:h-px after:flex-1 after:bg-border-primary';
+
 const variantClasses: Record<TextVariant, string> = {
+  divider: `font-caption ${dividerStyles} `,
   caption: 'font-caption',
   'body-xs': 'font-body-xs',
   'body-sm': 'font-body-sm',

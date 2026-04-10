@@ -1,5 +1,5 @@
 import { prisma } from '../src/lib/prisma';
-import { hashPassword } from '../src/auth/auth.service';
+import { hashPassword } from '../src/auth/local/local.service';
 
 import type { FriendshipStatus } from '../src/generated/prisma/enums';
 

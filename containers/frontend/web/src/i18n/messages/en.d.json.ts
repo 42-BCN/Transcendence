@@ -9,6 +9,9 @@ declare const messages: {
     }
   },
   "components": {
+    "submitButton": {
+      "pendingLabel": "Submitting..."
+    },
     "localeSwitcher": {
       "ariaLabel": "Language",
       "en": "EN",
@@ -293,14 +296,35 @@ declare const messages: {
         "sent": "We've sent you an email to confirm your account.",
         "checkInbox": "Check your inbox and follow the instructions to activate your account.",
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
+        "verifying": "Verifying your email...",
+        "verified": "Email verified. Redirecting to your profile...",
+        "missingToken": "Verification token is missing.",
+        "invalidOrExpired": "Verification link is invalid or expired.",
         "resending": "Sending...",
-        "backToLogin": "Already confirmed? Sign in",
-        "recoverTitle": "Recover account"
+        "isConfirmed": "Already confirmed?",
+        "backToLogin": "Log In",
+        "recoverTitle": "Recover account",
+        "resendTitle": "Resend verification email",
+        "resendDescription": "Enter the email address you used to create your account."
+      },
+      "recover": {
+        "title": "Check your email",
+        "sent": "We've sent password reset instructions to the address you entered.",
+        "checkInbox": "Check your inbox and follow the instructions to set a new password.",
+        "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
+        "backToLogin": "Back to login"
+      },
+      "reset": {
+        "title": "Reset password",
+        "description": "Enter your new password.",
+        "submit": "Save new password",
+        "success": "Password updated successfully.",
+        "backToLogin": "Back to login"
       },
       "messages": {
         "or": "OR",
-        "resendSuccess": "✓ Email sent. Wait before trying again.",
-        "resendError": "✗ Could not send email. Please try again."
+        "success": "Email sent. Wait before trying again.",
+        "submitting": "Submitting..."
       }
     },
     "navigation": {
@@ -353,7 +377,16 @@ declare const messages: {
   },
   "errors": {
     "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials"
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
+    "AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
+    "AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
+    "AUTH_NO_PENDING_RECOVER": "No password reset request was found. Please start again.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+    "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
+    "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
+    "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "VALIDATION_ERROR": "Validation error: please check the fields and try again.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 };
 export default messages;

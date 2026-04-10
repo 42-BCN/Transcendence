@@ -7,7 +7,7 @@ import { errorMiddleware, getRedisClient } from '@shared';
 
 import { usersRouter } from './users/users.routes';
 import { protectedRouter } from './protected/protected.route';
-import './auth/auth.passport';
+import './auth/oauth/oauth.passport';
 import { authRouter } from './auth/auth.routes';
 import { friendsRouter, friendshipsRouter } from './friendships/friendships.routes';
 

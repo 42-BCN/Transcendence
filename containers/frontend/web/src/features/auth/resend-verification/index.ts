@@ -1,1 +1,2 @@
-export * from './resend-verification';
+export { ResendVerification } from './resend-verification';
+export { ResendVerificationFeature } from './resend-verification.page';

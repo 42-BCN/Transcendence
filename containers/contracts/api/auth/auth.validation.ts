@@ -76,3 +76,30 @@ export const ResendVerificationReqSchema = z
   .strict();
 
 export type ResendVerificationReq = z.infer<typeof ResendVerificationReqSchema>;
+
+export const VerifyEmailReqSchema = z
+  .object({
+    token: z.string().trim().min(1, { message: V.REQUIRED }),
+  })
+  .strict();
+
+export type VerifyEmailReq = z.infer<typeof VerifyEmailReqSchema>;
+
+export const ResetPasswordReqSchema = z
+  .object({
+    token: z.string().trim().min(1, { message: V.REQUIRED }),
+    password: passwordSchema,
+  })
+  .strict();
+
+export type ResetPasswordReq = z.infer<typeof ResetPasswordReqSchema>;
+
+export const RecoverReqSchema = z
+  .object({
+    identifier: identifierSchema.transform((val) =>
+      val.includes('@') ? val.toLowerCase().trim() : val,
+    ),
+  })
+  .strict();
+
+export type RecoverReq = z.infer<typeof RecoverReqSchema>;

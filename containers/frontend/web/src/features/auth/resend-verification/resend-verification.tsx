@@ -1,65 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button, Stack } from '@components';
+
+import { Button, Stack, ApiFeedback } from '@components';
+import { useCooldown } from '@/hooks';
+
 import { resendVerificationAction } from './resend-verification.action';
 
-import { feedbackStyles } from './resend-verification.styles';
-
-type ResendState = 'idle' | 'sending' | 'cooldown';
-type Feedback = 'success' | 'error' | null;
+type ResendState = 'idle' | 'sending';
 
 export function ResendVerification() {
   const t = useTranslations('features.auth');
   const [state, setState] = useState<ResendState>('idle');
-  const [countdown, setCountdown] = useState(0);
-  const [feedback, setFeedback] = useState<Feedback>(null);
-
-  useEffect(() => {
-    if (state === 'cooldown' && countdown > 0) {
-      const timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (countdown === 0 && state === 'cooldown') {
-      setState('idle');
-    }
-  }, [state, countdown]);
+  const [result, setResult] = useState<Awaited<ReturnType<typeof resendVerificationAction>> | null>(
+    null,
+  );
+  const { remaining, isCoolingDown, startCooldown } = useCooldown({ duration: 30 });
+  const isDisabled = state !== 'idle' || isCoolingDown;
 
   const handleResend = async () => {
-    if (state !== 'idle') return;
-    setFeedback(null);
+    if (isDisabled) return;
+
     setState('sending');
-    await new Promise((r) => setTimeout(r, 800));
-    const result = await resendVerificationAction();
-    if (result.ok) {
-      setFeedback('success');
-      setState('cooldown');
-      setCountdown(30);
-    } else {
-      setFeedback('error');
-      setState('idle');
-    }
+    startCooldown();
+
+    const nextResult = await resendVerificationAction();
+    setResult(nextResult);
+    setState('idle');
   };
 
-  const buttonTexts: Record<ResendState, string> = {
-    sending: t('verification.resending'),
-    cooldown: `${t('actions.resendEmail')} (${countdown}s)`,
-    idle: t('actions.resendEmail'),
-  };
+  const labelIdle = t('actions.resendEmail');
+  const labelSending = state === 'sending' && t('verification.resending');
+  const labelCooldown = isCoolingDown && `${t('actions.resendEmail')} (${remaining}s)`;
 
   return (
-    <Stack gap="xs">
-      <Button onPress={handleResend} isDisabled={state !== 'idle'} variant="secondary">
-        {buttonTexts[state]}
+    <Stack gap="sm">
+      <Button onPress={handleResend} isDisabled={isDisabled} variant="secondary">
+        {labelSending || labelCooldown || labelIdle}
       </Button>
-      {feedback === 'success' && (
-        <p className={feedbackStyles('success')}>{t('messages.resendSuccess')}</p>
-      )}
-      {feedback === 'error' && (
-        <p className={feedbackStyles('error')}>{t('messages.resendError')}</p>
-      )}
+      <ApiFeedback result={result} successMessage={t('messages.success')} />
     </Stack>
   );
 }

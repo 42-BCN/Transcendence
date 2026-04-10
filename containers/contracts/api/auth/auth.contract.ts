@@ -20,8 +20,6 @@ export const AUTH_SIGNUP_ERRORS = [
   'AUTH_INTERNAL_ERROR',
   'AUTH_RATE_LIMITED',
   'AUTH_EMAIL_ALREADY_EXISTS',
-  'AUTH_INVALID_CREDENTIALS',
-  'AUTH_EMAIL_NOT_VERIFIED',
   'VALIDATION_ERROR',
 ] as const satisfies readonly AuthErrorName[];
 
@@ -40,7 +38,6 @@ export type LoginOk = {
 export const AUTH_LOGIN_ERRORS = [
   'AUTH_RATE_LIMITED',
   'AUTH_INVALID_CREDENTIALS',
-  'AUTH_ACCOUNT_LOCKED',
   'AUTH_EMAIL_NOT_VERIFIED',
   'VALIDATION_ERROR',
   'AUTH_INTERNAL_ERROR',
@@ -83,6 +80,60 @@ export type ResendVerificationError = (typeof AUTH_RESEND_VERIFICATION_ERRORS)[n
 export type ResendVerificationRes = ApiResponse<ResendVerificationOk, ResendVerificationError>;
 
 // ---------------------------------------
+// POST /api/auth/verify-email
+// ---------------------------------------
+
+export type VerifyEmailOk = null;
+
+export const AUTH_VERIFY_EMAIL_ERRORS = [
+  'AUTH_TOKEN_EXPIRED',
+  'AUTH_FORBIDDEN',
+  'AUTH_INTERNAL_ERROR',
+  'VALIDATION_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type VerifyEmailError = (typeof AUTH_VERIFY_EMAIL_ERRORS)[number];
+
+export type VerifyEmailRes = ApiResponse<VerifyEmailOk, VerifyEmailError, ValidationErrorDetails>;
+
+// ---------------------------------------
+// POST /api/auth/reset-password
+// ---------------------------------------
+
+export type ResetPasswordOk = null;
+
+export const AUTH_RESET_PASSWORD_ERRORS = [
+  'AUTH_TOKEN_EXPIRED',
+  'AUTH_FORBIDDEN',
+  'AUTH_INTERNAL_ERROR',
+  'VALIDATION_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type ResetPasswordError = (typeof AUTH_RESET_PASSWORD_ERRORS)[number];
+
+export type ResetPasswordRes = ApiResponse<
+  ResetPasswordOk,
+  ResetPasswordError,
+  ValidationErrorDetails
+>;
+
+// ---------------------------------------
+// GET /api/auth/callback/google
+// ---------------------------------------
+
+export type GoogleCallbackOk = null;
+
+export const AUTH_GOOGLE_CALLBACK_ERRORS = [
+  'AUTH_CSRF_FAILED',
+  'AUTH_FORBIDDEN',
+  'AUTH_INTERNAL_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type GoogleCallbackError = (typeof AUTH_GOOGLE_CALLBACK_ERRORS)[number];
+
+export type GoogleCallbackRes = ApiResponse<GoogleCallbackOk, GoogleCallbackError>;
+
+// ---------------------------------------
 // GET /api/auth/me
 // ---------------------------------------
 
@@ -98,3 +149,17 @@ export const AUTH_ME_ERRORS = [
 export type MeError = (typeof AUTH_ME_ERRORS)[number];
 
 export type MeRes = ApiResponse<AuthMeOk, MeError>;
+
+export type RecoverOk = {
+  identifier: string;
+};
+
+export const AUTH_RECOVER_ERRORS = [
+  'AUTH_RATE_LIMITED',
+  'AUTH_INTERNAL_ERROR',
+  'VALIDATION_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type RecoverError = (typeof AUTH_RECOVER_ERRORS)[number];
+
+export type RecoverRes = ApiResponse<RecoverOk, RecoverError, ValidationErrorDetails>;

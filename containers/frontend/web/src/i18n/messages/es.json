@@ -15,6 +15,9 @@
     "textAreaField": {
       "characterCount": "{current} de {max} caracteres"
     },
+    "submitButton": {
+      "pendingLabel": "Enviando..."
+    },
     "footer": {
       "appName": "Transcendence",
       "privacy": "Política de Privacidad",
@@ -290,9 +293,30 @@
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
+        "verifying": "Verificando tu correo...",
+        "verified": "Correo verificado. Redirigiendo a tu perfil...",
+        "missingToken": "Falta el token de verificación.",
+        "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
         "resending": "Enviando...",
-        "backToLogin": "¿Ya confirmaste? Iniciar sesión",
-        "recoverTitle": "Recuperar cuenta"
+        "isConfirmed": "¿Ya confirmaste?",
+        "backToLogin": "Iniciar sesión",
+        "recoverTitle": "Recuperar cuenta",
+        "resendTitle": "Reenviar correo de verificación",
+        "resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta."
+      },
+      "recover": {
+        "title": "Revisa tu correo",
+        "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
+        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
+        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
+        "backToLogin": "Volver a iniciar sesión"
+      },
+      "reset": {
+        "title": "Restablecer contraseña",
+        "description": "Introduce tu nueva contraseña.",
+        "submit": "Guardar nueva contraseña",
+        "success": "La contraseña se actualizó correctamente.",
+        "backToLogin": "Volver a iniciar sesión"
       },
       "messages": {
         "or": "O",
@@ -349,7 +373,16 @@
     "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas"
+    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
+    "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
+    "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
+    "AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
+    "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
+    "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
+    "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+    "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 }

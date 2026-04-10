@@ -12,6 +12,9 @@
       "es": "ES",
       "ca": "CA"
     },
+    "submitButton": {
+      "pendingLabel": "CHANGE_LATER"
+    },
     "textAreaField": {
       "characterCount": "{current} de {max} caràcters"
     },
@@ -290,9 +293,30 @@
         "sent": "T'hem enviat un correu per confirmar el teu compte.",
         "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
+        "verifying": "Verificant el teu correu...",
+        "verified": "Correu verificat. Redirigint al teu perfil...",
+        "missingToken": "Falta el token de verificació.",
+        "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
         "resending": "Enviant...",
-        "backToLogin": "Ja has confirmat? Iniciar sessió",
-        "recoverTitle": "Recuperar compte"
+        "isConfirmed": "Ja has confirmat?",
+        "backToLogin": "Iniciar sessió",
+        "recoverTitle": "Recuperar compte",
+        "resendTitle": "Torna a enviar el correu de verificació",
+        "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte."
+      },
+      "recover": {
+        "title": "Revisa el teu correu",
+        "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
+        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "backToLogin": "Torna a iniciar sessió"
+      },
+      "reset": {
+        "title": "Restableix la contrasenya",
+        "description": "Introdueix la teva nova contrasenya.",
+        "submit": "Desa la contrasenya nova",
+        "success": "La contrasenya s'ha actualitzat correctament.",
+        "backToLogin": "Torna a iniciar sessió"
       },
       "messages": {
         "or": "O",
@@ -349,7 +373,16 @@
     "OUT_OF_RANGE": "Sol·licitud fora de rang"
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides"
+    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
+    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
+    "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
+    "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
+    "AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
+    "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
+    "FETCH_FAILED": "API request failed. Try again later."
   }
 }

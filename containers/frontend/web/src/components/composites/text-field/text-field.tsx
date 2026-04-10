@@ -29,9 +29,15 @@ export function TextField({
   ...props
 }: TextFieldProps) {
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
+  const stableId = props.id ?? (typeof props.name === 'string' ? props.name : undefined);
   const t = useTranslations();
   return (
-    <AriaTextField {...props} className={textFieldStyles.root()} isInvalid={isInvalid}>
+    <AriaTextField
+      {...props}
+      id={stableId}
+      className={textFieldStyles.root()}
+      isInvalid={isInvalid}
+    >
       <Label className={textFieldStyles.label()}>{t(labelKey)}</Label>
       <Input {...inputProps} ref={inputRef} />
       {descriptionKey && (

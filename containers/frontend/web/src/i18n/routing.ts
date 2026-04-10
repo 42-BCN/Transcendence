@@ -30,10 +30,30 @@ export const routing = defineRouting({
       es: '/recuperar-cuenta',
       ca: '/recuperar-compte',
     },
+    '/recover/success': {
+      en: '/recover/success',
+      es: '/recuperar-cuenta/exito',
+      ca: '/recuperar-compte/exit',
+    },
     '/create-account/success': {
       en: '/create-account/success',
       es: '/registro/exito',
       ca: '/crear-compte/exit',
+    },
+    '/resend-verification': {
+      en: '/resend-verification',
+      es: '/reenvio-verificacion',
+      ca: '/re-enviament-verificacio',
+    },
+    '/verify-email': {
+      en: '/verify-email',
+      es: '/verify-email',
+      ca: '/verify-email',
+    },
+    '/reset-password': {
+      en: '/reset-password',
+      es: '/reset-password',
+      ca: '/reset-password',
     },
     '/ui': '/ui',
     '/ui/chat': '/ui/chat',
@@ -62,6 +82,11 @@ export const routing = defineRouting({
       en: '/terms',
       es: '/terminos',
       ca: '/termes',
+    },
+    '/game': {
+      en: '/game',
+      es: '/juego',
+      ca: '/joc',
     },
   },
   localeCookie,

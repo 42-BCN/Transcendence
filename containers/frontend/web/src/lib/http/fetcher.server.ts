@@ -1,5 +1,3 @@
-'use server';
-
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 import { envServer } from '../config/env.server';
@@ -8,6 +6,27 @@ const API_BASE_URL = envServer.apiBaseUrl;
 
 function cookieHeaders(cookie?: string): Record<string, string> {
   return cookie ? { Cookie: cookie } : {};
+}
+
+type ApiError = {
+  ok: false;
+  error: {
+    code: string;
+  };
+};
+
+export function withServerAction<TArgs extends unknown[], TResult>(
+  handler: (...args: TArgs) => Promise<TResult>,
+  fallbackError: ApiError = { ok: false, error: { code: 'FETCH_FAILED' } },
+) {
+  return async (...args: TArgs): Promise<TResult | ApiError> => {
+    try {
+      return await handler(...args);
+    } catch (error) {
+      console.error(error);
+      return fallbackError;
+    }
+  };
 }
 
 export async function fetchServer<T>(

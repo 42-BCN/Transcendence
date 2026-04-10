@@ -12,9 +12,7 @@ export function CreateAccount() {
         {t('signup.title')}
       </Text>
       <CreateAccountForm />
-      <div className="flex items-center gap-4 before:h-px before:flex-1 before:bg-border-primary after:h-px after:flex-1 after:bg-border-primary">
-        <Text variant="caption">{t('messages.or')}</Text>
-      </div>
+      <Text variant="divider">{t('messages.or')}</Text>
       <Oauth>{t('actions.continueWithGoogle')}</Oauth>
       <Stack direction="horizontal" justify="center" align="baseline" gap="sm">
         <Text as="span" variant="caption">
