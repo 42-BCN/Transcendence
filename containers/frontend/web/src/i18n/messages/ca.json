@@ -43,7 +43,7 @@
     },
     "me": {
       "title": "El Meu Compte",
-      "subtitle": "Accedeix als detalls protegits del teu compte."
+      "subtitle": "Accedeix a les dades protegides del teu compte."
     },
     "privacy": {
       "title": "Política de Privacitat",
@@ -85,7 +85,7 @@
       },
       "contact": {
         "title": "Contacte",
-        "description": "Si tens alguna pregunta sobre aquesta política de privacitat o desitges exercir els teus drets, contacta'ns a través del nostre repositori de GitHub o comunica't amb els administradors del projecte."
+        "description": "Si tens alguna pregunta sobre aquesta política o desitges exercir els teus drets, si us plau, contacta amb l'equip de desenvolupament a través del nostre <link>repositori de GitHub</link>."
       }
     },
     "ui": {
@@ -190,6 +190,52 @@
         "example": "Exemple",
         "itemLabel": "Element"
       }
+    },
+    "terms": {
+      "title": "Termes de Servei",
+      "lastUpdated": "Última actualització: Abril 2026",
+      "intro": "Benvingut a Transcendence. L'ús d'aquesta plataforma està subjecte als següents Termes de Servei, que regeixen la relació entre tu i l'equip de desenvolupament.",
+      "acceptance": {
+        "title": "Acceptació dels Termes",
+        "description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma."
+      },
+      "registration": {
+        "title": "Registre de Compte",
+        "description": "Ets responsable de mantenir la confidencialitat de les teves credencials i de totes les activitats que es produeixin sota el teu compte.",
+        "items": {
+          "security": "Ens has de notificar immediatament qualsevol ús no autoritzat del teu compte.",
+          "accuracy": "Acceptes proporcionar informació precisa i completa durant el registre."
+        }
+      },
+      "conduct": {
+        "title": "Conducta de l'Usuari",
+        "description": "Per mantenir un entorn just, respectuós i divertit, et compromets a no:",
+        "items": {
+          "cheating": "Utilitzar trampes, programari d'automatització (bots) o hacks per obtenir avantatge.",
+          "harassment": "Assetjar, abusar o participar en conductes que danyin la comunitat o altres jugadors.",
+          "disruption": "Intentar interrompre la integritat o seguretat dels nostres servidors."
+        }
+      },
+      "ip": {
+        "title": "Propietat Intel·lectual",
+        "description": "Tot el contingut, incloent el codi del joc, gràfics i marques registrades, és propietat de Transcendence. Atorguem una llicència limitada i no transferible per a ús personal i no comercial."
+      },
+      "disclaimer": {
+        "title": "Exempció de responsabilitat",
+        "description": "Transcendence és un projecte educatiu i comunitari. En conseqüència, el servei es proporciona tal com està i segons disponibilitat. No garantim que el servei sigui ininterromput, puntual, segur o lliure d'errors."
+      },
+      "termination": {
+        "title": "Cancel·lació",
+        "description": "Ens reservem el dret de suspendre o tancar el teu compte a la nostra discreció, sense previ avís, per conductes que considerem que violen aquests Termes o que resultin perjudicials per a altres usuaris o el projecte."
+      },
+      "law": {
+        "title": "Llei Aplicable",
+        "description": "Aquests Termes es regeixen i interpreten d'acord amb les lleis aplicables als serveis digitals dins de l'àmbit de jurisdicció d'aquest projecte."
+      },
+      "contact": {
+        "title": "Contacte",
+        "description": "Si tens preguntes o desitges exercir qualsevol dret relacionat amb aquests Termes, si us plau, contacta amb l'equip obrint una incidència en el nostre <link>repositori de GitHub</link>."
+      }
     }
   },
   "features": {
@@ -222,8 +268,8 @@
         "login": "Iniciar sessió",
         "signup": "Crear compte",
         "continueWithGoogle": "Continuar amb Google",
-        "sendEmail": "Enviar email",
-        "resendEmail": "Tornar a enviar",
+        "sendEmail": "Enviar correu electrònic",
+        "resendEmail": "Tornar a enviar el correu",
         "logoutAriaLabel": "Tancar sessió"
       },
       "login": {
@@ -243,7 +289,7 @@
         "goToLogin": "Iniciar sessió"
       },
       "verification": {
-        "title": "Verifica el teu email",
+        "title": "Verifica el teu correu electrònic",
         "sent": "T'hem enviat un correu per confirmar el teu compte.",
         "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
@@ -274,8 +320,8 @@
       },
       "messages": {
         "or": "O",
-        "success": "Email enviat. Espera per tornar-ho a intentar.",
-        "submitting": "Submitting..."
+        "resendSuccess": "✓ Correu enviat. Espera per tornar-ho a intentar.",
+        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar."
       }
     },
     "navigation": {
