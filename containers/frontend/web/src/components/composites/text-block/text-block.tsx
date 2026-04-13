@@ -10,7 +10,7 @@ type MessageBlockProps = {
 export function MessageBlock({ title, messages }: MessageBlockProps) {
   return (
     <>
-      {/* TODO: maybe change this component name to somenthing more generic */}
+      {/* TODO: maybe change this component name to something more generic */}
       <FormTitle title={title} />
 
       {messages.map((message, index) => (

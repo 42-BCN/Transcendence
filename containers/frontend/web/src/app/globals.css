@@ -50,7 +50,6 @@
   --color-text-secondary: #4d4d4d;
   --color-text-tertiary: #808080;
   --color-text-disabled: #b3b3b3;
-  --color-text-inverse: rgba(250, 251, 253, 0.872);
 
   /* background colors */
   --color-bg-primary: #f1f5f9; /* Corresponds to slate-100 (original) */
@@ -85,9 +84,6 @@
 }
 
 .dark {
-  --color-emphasis: #fafbfded;
-  --color-medium-emphasis: #ffffffc7;
-  --color-disabled: #ffffffc3;
   --color-primary: #020617;
   --color-text-primary: #fafbfdde;
   --color-text-secondary: #ffffff9d; /* slate-400 */

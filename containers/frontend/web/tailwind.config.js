@@ -37,9 +37,6 @@ export default {
       colors: {
         primary: 'var(--color-text-primary)',
         secondary: 'var(--color-bg-secondary)',
-        emphasis: 'var(--color-emphasis)',
-        "mid-emphasis": 'var(--color-medium-emphasis)',
-        disabled: 'var(--color-disabled)',
         text: {
           primary: 'var(--color-text-primary)',
           secondary: 'var(--color-text-secondary)',

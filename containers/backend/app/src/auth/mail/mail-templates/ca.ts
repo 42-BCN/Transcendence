@@ -12,8 +12,8 @@ export const caMailTemplates = {
     html: '<p>Hola {name},</p><p>S&#39;ha sol·licitat un restabliment de contrasenya per al teu compte.</p><p>Obre aquest enllaç per establir una contrasenya nova:</p><p><a href="{url}">Restableix la contrasenya</a></p><p>Si no has sol·licitat això, pots ignorar aquest correu.</p>',
   },
   signupAccountExistsNotice: {
-    subject: 'Aquest correu ja esta registrat',
-    text: "Hola {name},\n\nS'ha intentat crear un compte nou amb aquest correu, pero ja existeix un compte.\nSi has estat tu, prova d'iniciar sessio:\n{loginUrl}\n\nO recupera la contrasenya aqui:\n{recoverUrl}\n\nSi no has estat tu, pots ignorar aquest correu.",
-    html: '<p>Hola {name},</p><p>S&#39;ha intentat crear un compte nou amb aquest correu, pero ja existeix un compte.</p><p>Si has estat tu, prova d&#39;iniciar sessio:</p><p><a href="{loginUrl}">Iniciar sessio</a></p><p>O recupera la contrasenya aqui:</p><p><a href="{recoverUrl}">Recuperar contrasenya</a></p><p>Si no has estat tu, pots ignorar aquest correu.</p>',
+    subject: 'Aquest correu ja està registrat',
+    text: "Hola {name},\n\nS'ha intentat crear un compte nou amb aquest correu, però ja existeix un compte.\nSi has estat tu, prova d'iniciar sessió:\n{loginUrl}\n\nO recupera la contrasenya aquí:\n{recoverUrl}\n\nSi no has estat tu, pots ignorar aquest correu.",
+    html: '<p>Hola {name},</p><p>S&#39;ha intentat crear un compte nou amb aquest correu, però ja existeix un compte.</p><p>Si has estat tu, prova d&#39;iniciar sessió:</p><p><a href="{loginUrl}">Iniciar sessió</a></p><p>O recupera la contrasenya aquí:</p><p><a href="{recoverUrl}">Recuperar contrasenya</a></p><p>Si no has estat tu, pots ignorar aquest correu.</p>',
   },
 } satisfies MailTemplateSet;

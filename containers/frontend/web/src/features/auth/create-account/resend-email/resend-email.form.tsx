@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Stack, ApiFeedback } from '@components';
+import { Stack, ApiFeedback, AsyncCooldownButton } from '@components';
 
 import { resendVerificationAction } from './resend-email.action';
-import { AsyncCooldownButton } from '@components/composites/async-cooldown-button/async-cooldown-button';
 
 export function ResendVerification() {
   const t = useTranslations('features.auth');

@@ -11,8 +11,6 @@ type AsyncCooldownButtonProps = {
   startOnMount?: boolean;
   idleLabel: string;
   pendingLabel: string;
-  isDisabled?: boolean;
-  variant?: 'primary' | 'secondary' | 'cta';
   formatCooldownLabel?: (remaining: number) => string;
 };
 

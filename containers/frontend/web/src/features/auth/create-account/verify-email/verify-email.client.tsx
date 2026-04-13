@@ -58,6 +58,7 @@ function resolveVerificationMessage(
       return tErrors('FETCH_FAILED');
 
     case 'AUTH_INTERNAL_ERROR':
+    default:
       return tErrors('AUTH_INTERNAL_ERROR');
   }
 }

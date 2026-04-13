@@ -223,11 +223,6 @@ export async function signup(
 
   const existing = await SharedRepo.findUserByEmail(email);
   if (existing) {
-    if (existing.passwordHash) {
-      const verifyExisting = await verifyPassword(password, existing.passwordHash);
-      if (verifyExisting.ok) return toAuthUser(existing);
-    }
-
     await dispatchSignupAccountExistsNoticeMail({
       email: existing.email,
       username: existing.username,
@@ -242,7 +237,14 @@ export async function signup(
   const result = await createUserWithRetries({ email, passwordHash });
   if (!result.ok) {
     const duplicate = await SharedRepo.findUserByEmail(email);
-    if (duplicate) return toAuthUser(duplicate);
+    if (duplicate) {
+      await dispatchSignupAccountExistsNoticeMail({
+        email: duplicate.email,
+        username: duplicate.username,
+        locale,
+      });
+      return toAuthUser(duplicate);
+    }
     signupFailure('username_collision_exhausted', idHash);
   }
 

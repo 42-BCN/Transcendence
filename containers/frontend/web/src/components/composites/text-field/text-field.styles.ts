@@ -2,9 +2,9 @@
 import { cn } from '@/lib/styles/cn';
 
 const rootBase = 'grid gap-2';
-const labelBase = 'font-body-sm text-emphasis';
+const labelBase = 'font-body-sm text-text-primary';
 const errorBase = 'pointer-events-none font-body-xs text-red-600';
-const descriptionBase = 'pointer-events-none font-body-xs text-disabled';
+const descriptionBase = 'pointer-events-none font-body-xs text-text-disabled';
 
 const textFieldBase = {
   root: rootBase,
