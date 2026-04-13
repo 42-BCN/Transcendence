@@ -270,6 +270,7 @@
         "description": "Introdueix la teva nova contrasenya.",
         "submit": "Desa la contrasenya nova",
         "success": "La contrasenya s'ha actualitzat correctament.",
+        "rememberedPassword": "Has recordat la contrasenya?",
         "backToLogin": "Torna a iniciar sessió"
       },
       "messages": {

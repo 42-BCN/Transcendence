@@ -11,4 +11,9 @@ export const caMailTemplates = {
     text: "Hola {name},\n\nS'ha sol·licitat un restabliment de contrasenya per al teu compte.\nObre aquest enllaç per establir una contrasenya nova:\n{url}\n\nSi no has sol·licitat això, pots ignorar aquest correu.",
     html: '<p>Hola {name},</p><p>S&#39;ha sol·licitat un restabliment de contrasenya per al teu compte.</p><p>Obre aquest enllaç per establir una contrasenya nova:</p><p><a href="{url}">Restableix la contrasenya</a></p><p>Si no has sol·licitat això, pots ignorar aquest correu.</p>',
   },
+  signupAccountExistsNotice: {
+    subject: 'Aquest correu ja esta registrat',
+    text: "Hola {name},\n\nS'ha intentat crear un compte nou amb aquest correu, pero ja existeix un compte.\nSi has estat tu, prova d'iniciar sessio:\n{loginUrl}\n\nO recupera la contrasenya aqui:\n{recoverUrl}\n\nSi no has estat tu, pots ignorar aquest correu.",
+    html: '<p>Hola {name},</p><p>S&#39;ha intentat crear un compte nou amb aquest correu, pero ja existeix un compte.</p><p>Si has estat tu, prova d&#39;iniciar sessio:</p><p><a href="{loginUrl}">Iniciar sessio</a></p><p>O recupera la contrasenya aqui:</p><p><a href="{recoverUrl}">Recuperar contrasenya</a></p><p>Si no has estat tu, pots ignorar aquest correu.</p>',
+  },
 } satisfies MailTemplateSet;
