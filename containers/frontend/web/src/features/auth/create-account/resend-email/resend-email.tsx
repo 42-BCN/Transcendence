@@ -2,14 +2,14 @@ import { cookies } from 'next/headers';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { redirect } from '@/i18n/navigation';
-import { ResendVerification } from '@/features/auth/resend-verification';
-import { InternalLink, Stack, Text } from '@components';
+import { ResendVerification } from './resend-email.form';
+import { InlineLinkPrompt } from '@components';
 import { MessageBlock } from '@components/composites/text-block/text-block';
 
 const SIGNUP_SUCCESS_COOKIE = 'signup_success';
 const PENDING_VERIFICATION_EMAIL_COOKIE = 'pending_verification_email';
 
-export default async function CreateAccountSuccess() {
+export async function ResendEmailFeature() {
   const t = await getTranslations('features.auth');
   const locale = await getLocale();
   const cookieStore = await cookies();
@@ -22,7 +22,7 @@ export default async function CreateAccountSuccess() {
   }
 
   return (
-    <Stack gap="md">
+    <>
       <MessageBlock
         title={t('verification.title')}
         messages={[
@@ -34,12 +34,11 @@ export default async function CreateAccountSuccess() {
 
       <ResendVerification />
 
-      <Stack direction="horizontal" justify="center" align="baseline" gap="sm">
-        <Text as="span" variant="caption">
-          {t('verification.isConfirmed')}
-        </Text>
-        <InternalLink href="/login">{t('verification.backToLogin')}</InternalLink>
-      </Stack>
-    </Stack>
+      <InlineLinkPrompt
+        text={t('verification.isConfirmed')}
+        linkLabel={t('verification.backToLogin')}
+        href={'/login'}
+      />
+    </>
   );
 }

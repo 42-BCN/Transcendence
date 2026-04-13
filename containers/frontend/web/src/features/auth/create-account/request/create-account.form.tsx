@@ -3,12 +3,13 @@
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Button, Form, ApiFeedback, TextField, Stack } from '@components';
+import { Form, ApiFeedback, TextField, Stack, SubmitButton } from '@components';
 import { useAutoFocus, useForm } from '@/hooks';
 import { type SignupReq } from '@/contracts/api/auth/auth.validation';
 
 import { createAccountAction } from './create-account.action';
 import { formApiReq, fieldsBase } from './create-account.schema';
+import { createSubmitHandler } from '@/lib/http/submitHandler';
 
 export function CreateAccountForm() {
   const form = useForm<SignupReq>(formApiReq);
@@ -17,13 +18,7 @@ export function CreateAccountForm() {
   const emailRef = useAutoFocus<HTMLInputElement>();
   return (
     <>
-      <Form
-        action={formAction}
-        onSubmit={(e) => {
-          const res = form.validateBeforeSubmit();
-          if (!res.ok) e.preventDefault();
-        }}
-      >
+      <Form onSubmit={createSubmitHandler(form, formAction)}>
         <TextField
           value={form.values.email}
           errorKey={form.errors.email && `validation.${form.errors.email}`}
@@ -40,7 +35,7 @@ export function CreateAccountForm() {
           {...fieldsBase.password}
         />
         <Stack gap="sm">
-          <Button type="submit">{t('actions.signup')}</Button>
+          <SubmitButton idleLabel={t('actions.signup')} />
           <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
         </Stack>
       </Form>

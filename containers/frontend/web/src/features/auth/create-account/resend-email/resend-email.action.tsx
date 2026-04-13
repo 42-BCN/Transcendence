@@ -1,6 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { getLocale } from 'next-intl/server';
 
 import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
 import type { ApiResponse } from '@/contracts/api/http';
@@ -12,6 +13,7 @@ export async function resendVerificationAction(
   _prevState?: unknown,
   formData?: FormData,
 ): Promise<ApiResponse<unknown>> {
+  const locale = await getLocale();
   const result = await withServerAction(async () => {
     const cookieStore = await cookies();
     const cookie = cookieStore.toString();
@@ -25,7 +27,7 @@ export async function resendVerificationAction(
       '/auth/resend-verification',
       'POST',
       { email: pendingEmail },
-      { cookie },
+      { cookie, acceptLanguage: locale },
     );
 
     return res.data;

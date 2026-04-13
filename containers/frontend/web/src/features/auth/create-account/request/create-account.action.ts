@@ -14,19 +14,22 @@ const TEN_MINUTES_S = 60 * 10;
 export async function createAccountAction(_prevState: unknown, formData: FormData) {
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
+  const locale = await getLocale();
   const result = await withServerAction(async () => {
-    const res = await fetchServer<SignupRes>('/auth/signup', 'POST', {
-      email,
-      password,
-    });
+    const res = await fetchServer<SignupRes>(
+      '/auth/signup',
+      'POST',
+      {
+        email,
+        password,
+      },
+      { acceptLanguage: locale },
+    );
 
-    return {
-      api: res.data,
-      email,
-    };
+    return res.data;
   })();
-  // TODO handle case where result.ok is true but result.api.ok is false (validation errors)
-  if (!result.ok && !result?.api?.ok) return result;
+
+  if (!result.ok) return result;
 
   const cookieStore = await cookies();
 
@@ -46,6 +49,5 @@ export async function createAccountAction(_prevState: unknown, formData: FormDat
     maxAge: TEN_MINUTES_S,
   });
 
-  const locale = await getLocale();
   redirect({ href: '/create-account/success', locale });
 }
