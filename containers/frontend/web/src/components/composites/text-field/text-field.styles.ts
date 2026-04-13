@@ -1,10 +1,10 @@
 // components/forms/field/text-field.styles.ts
 import { cn } from '@/lib/styles/cn';
 
-const rootBase = 'grid gap-1.5';
-const labelBase = 'font-caption';
+const rootBase = 'grid gap-2';
+const labelBase = 'font-body-sm text-emphasis';
 const errorBase = 'pointer-events-none font-body-xs text-red-600';
-const descriptionBase = 'pointer-events-none font-body-xs text-slate-600';
+const descriptionBase = 'pointer-events-none font-body-xs text-disabled';
 
 const textFieldBase = {
   root: rootBase,

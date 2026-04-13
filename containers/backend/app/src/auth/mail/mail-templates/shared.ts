@@ -9,6 +9,7 @@ export type MailCopy = {
 export type MailTemplateSet = {
   signupVerification: MailCopy;
   passwordReset: MailCopy;
+  signupAccountExistsNotice: MailCopy;
 };
 
 export type MailTemplateTree = {

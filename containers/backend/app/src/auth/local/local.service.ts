@@ -9,7 +9,11 @@ import { MailServiceError, isMailServiceConfigured } from '@lib/mail.service';
 import { authSecurityConfig } from '../security.config';
 import { toAuthUser } from '../auth.model';
 import { logEvents, type LoginFailureReason } from '../auth.logs';
-import { type EmailLocale, sendSignupVerificationEmail } from '../mail';
+import {
+  type EmailLocale,
+  sendSignupAccountExistsNoticeEmail,
+  sendSignupVerificationEmail,
+} from '../mail';
 import * as LocalRepo from './local.repo';
 import * as SharedRepo from '../shared.repo';
 import * as VerificationRepo from '../verification/verification.repo';
@@ -70,6 +74,35 @@ async function dispatchSignupVerificationMail(user: AuthUser, locale: EmailLocal
     logEvents.info({
       event: 'signup_verification_mail_failed',
       userId: user.id,
+      error: error instanceof MailServiceError ? `${error.code}:${error.message}` : String(error),
+    });
+  }
+}
+
+async function dispatchSignupAccountExistsNoticeMail(input: {
+  email: string;
+  username: string;
+  locale: EmailLocale;
+}): Promise<void> {
+  if (!isMailServiceConfigured()) {
+    logEvents.info({
+      event: 'signup_existing_account_notice_skipped',
+      reason: 'mail_not_configured',
+      emailHash: fingerprint(input.email),
+    });
+    return;
+  }
+
+  try {
+    await sendSignupAccountExistsNoticeEmail({
+      toEmail: input.email,
+      username: input.username,
+      locale: input.locale,
+    });
+  } catch (error) {
+    logEvents.info({
+      event: 'signup_existing_account_notice_mail_failed',
+      emailHash: fingerprint(input.email),
       error: error instanceof MailServiceError ? `${error.code}:${error.message}` : String(error),
     });
   }
@@ -149,7 +182,6 @@ export async function login(input: LoginReq): Promise<AuthUser> {
 
 function signupFailure(reason: string, emailHash: string): never {
   logEvents.signupFailure(reason, emailHash);
-  if (reason === 'email_already_exists') throw new ApiError('AUTH_EMAIL_ALREADY_EXISTS');
   throw new ApiError('AUTH_INTERNAL_ERROR');
 }
 
@@ -190,14 +222,27 @@ export async function signup(
   logEvents.signupAttempt(idHash);
 
   const existing = await SharedRepo.findUserByEmail(email);
-  if (existing) signupFailure('email_already_exists', idHash);
+  if (existing) {
+    if (existing.passwordHash) {
+      const verifyExisting = await verifyPassword(password, existing.passwordHash);
+      if (verifyExisting.ok) return toAuthUser(existing);
+    }
+
+    await dispatchSignupAccountExistsNoticeMail({
+      email: existing.email,
+      username: existing.username,
+      locale,
+    });
+
+    return toAuthUser(existing);
+  }
 
   const passwordHash = await hashPassword(password);
 
   const result = await createUserWithRetries({ email, passwordHash });
   if (!result.ok) {
     const duplicate = await SharedRepo.findUserByEmail(email);
-    if (duplicate) signupFailure('email_already_exists', idHash);
+    if (duplicate) return toAuthUser(duplicate);
     signupFailure('username_collision_exhausted', idHash);
   }
 

@@ -35,6 +35,11 @@ export default {
       },
 
       colors: {
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-bg-secondary)',
+        emphasis: 'var(--color-emphasis)',
+        "mid-emphasis": 'var(--color-medium-emphasis)',
+        disabled: 'var(--color-disabled)',
         text: {
           primary: 'var(--color-text-primary)',
           secondary: 'var(--color-text-secondary)',
@@ -45,6 +50,7 @@ export default {
         bg: {
           primary: 'var(--color-bg-primary)',
           secondary: 'var(--color-bg-secondary)',
+          inverse: 'var(--color-bg-inverse)',
         },
         border: {
           primary: 'var(--color-border-primary)',
