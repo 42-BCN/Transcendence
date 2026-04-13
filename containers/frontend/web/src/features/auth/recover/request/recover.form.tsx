@@ -3,28 +3,24 @@
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Button, Form, TextField, ApiFeedback, Stack } from '@components';
+import { Form, TextField, ApiFeedback, Stack, SubmitButton } from '@components';
 import { useForm } from '@/hooks/use-form/use-form';
 import { useAutoFocus } from '@/hooks/useAutoFocus';
 import type { RecoverReq } from '@/contracts/api/auth/auth.validation';
 
 import { recoverAction } from './recover.action';
 import { fieldsBase, formApiReq } from './recover.schema';
+import { createSubmitHandler } from '@/lib/http/submitHandler';
 
 export default function RecoverForm() {
   const form = useForm<RecoverReq>(formApiReq);
   const t = useTranslations('features.auth');
   const [state, formAction] = useActionState(recoverAction, null);
   const identifierRef = useAutoFocus<HTMLInputElement>();
+
   return (
     <>
-      <Form
-        action={formAction}
-        onSubmit={(e) => {
-          const res = form.validateBeforeSubmit();
-          if (!res.ok) e.preventDefault();
-        }}
-      >
+      <Form onSubmit={createSubmitHandler(form, formAction)}>
         <TextField
           value={form.values.identifier}
           errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
@@ -34,7 +30,7 @@ export default function RecoverForm() {
           {...fieldsBase.identifier}
         />
         <Stack gap="sm">
-          <Button type="submit">{t('actions.sendEmail')}</Button>
+          <SubmitButton idleLabel={t('actions.sendEmail')} />
           <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
         </Stack>
       </Form>

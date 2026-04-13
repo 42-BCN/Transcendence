@@ -4,11 +4,12 @@ import { useActionState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-import { ApiFeedback, Form, InternalLink, Stack, SubmitButton, TextField } from '@components';
+import { ApiFeedback, Form, Stack, SubmitButton, TextField } from '@components';
 import { useForm } from '@/hooks/use-form/use-form';
 
 import { resetPasswordAction } from './reset-password.action';
 import { fieldsBase, formApiReq, type ResetPasswordFormReq } from './reset-password.schema';
+import { createSubmitHandler } from '@/lib/http/submitHandler';
 
 export function ResetPasswordForm() {
   const t = useTranslations('features.auth');
@@ -18,13 +19,7 @@ export function ResetPasswordForm() {
   const [state, formAction] = useActionState(resetPasswordAction, null);
 
   return (
-    <Form
-      action={formAction}
-      onSubmit={(e) => {
-        const res = form.validateBeforeSubmit();
-        if (!res.ok) e.preventDefault();
-      }}
-    >
+    <Form onSubmit={createSubmitHandler(form, formAction)}>
       <input type="hidden" name="token" value={token} readOnly />
 
       <TextField
@@ -47,10 +42,6 @@ export function ResetPasswordForm() {
         <SubmitButton idleLabel={t('reset.submit')} />
         <ApiFeedback result={state ?? null} successMessage={t('reset.success')} />
       </Stack>
-
-      <InternalLink href="/login" className="block text-center">
-        {t('reset.backToLogin')}
-      </InternalLink>
     </Form>
   );
 }

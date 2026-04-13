@@ -12,8 +12,16 @@ const TEN_MINUTES_S = 60 * 10;
 
 export async function recoverAction(_prevState: unknown, formData: FormData) {
   const identifier = String(formData.get('identifier') ?? '');
+  const locale = await getLocale();
   const result = await withServerAction(async () => {
-    const res = await fetchServer<RecoverRes>('/auth/recover', 'POST', { identifier });
+    const res = await fetchServer<RecoverRes>(
+      '/auth/recover',
+      'POST',
+      { identifier },
+      {
+        acceptLanguage: locale,
+      },
+    );
 
     return res.data;
   })();
@@ -29,6 +37,5 @@ export async function recoverAction(_prevState: unknown, formData: FormData) {
     maxAge: TEN_MINUTES_S,
   });
 
-  const locale = await getLocale();
   redirect({ href: '/recover/success', locale });
 }
