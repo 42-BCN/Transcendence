@@ -1,5 +1,12 @@
+import { glassCardStyles, Stack } from '@components';
 import type { ReactNode } from 'react';
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
-  return <main className="mx-auto max-w-[400px] min-w-[300px] p-5">{children}</main>;
+  return (
+    <main className="flex justify-end w-full pe-11 items-center">
+      <Stack className={glassCardStyles({ className: 'min-h-[600px] max-w-[420px]' })}>
+        {children}
+      </Stack>
+    </main>
+  );
 }
