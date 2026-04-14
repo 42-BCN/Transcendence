@@ -38,12 +38,7 @@ export const routing = defineRouting({
     '/create-account/success': {
       en: '/create-account/success',
       es: '/registro/exito',
-      ca: '/crear-compte/exit',
-    },
-    '/resend-verification': {
-      en: '/resend-verification',
-      es: '/reenvio-verificacion',
-      ca: '/re-enviament-verificacio',
+      ca: '/crear-comte/exit',
     },
     '/verify-email': {
       en: '/verify-email',

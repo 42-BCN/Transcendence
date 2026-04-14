@@ -1,4 +1,4 @@
-import { ResetPasswordFeature } from '@/features/auth/reset-password';
+import { ResetPasswordFeature } from '@/features/auth/recover';
 
 export default function ResetPasswordPage() {
   return <ResetPasswordFeature />;

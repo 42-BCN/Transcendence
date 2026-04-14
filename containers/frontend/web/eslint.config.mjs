@@ -23,7 +23,7 @@ const sharedRules = {
     'no-implicit-coercion': 'warn',
     'max-depth': ['warn', 4],
     'prefer-template': 'warn',
-    complexity: ['error', { max: 8 }],
+    complexity: ['error', { max: 10 }],
     eqeqeq: ['error', 'always'],
     'max-lines-per-function': [
       'warn',

@@ -1,5 +1,5 @@
-import CreateAccountSuccess from '@/features/auth/create-account/create-account.success';
+import { ResendEmailFeature } from '@/features/auth/create-account';
 
 export default function CreateAccountSuccessPage() {
-  return <CreateAccountSuccess />;
+  return <ResendEmailFeature />;
 }
