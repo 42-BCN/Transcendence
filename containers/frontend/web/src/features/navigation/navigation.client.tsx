@@ -31,7 +31,7 @@ const mobileNavigationClassName = glassCardStyles({
   intensity: 'medium',
   blur: 'sm',
   className:
-    'group z-10 flex max-h-[100dvh] w-full overflow-y-auto overscroll-contain px-2 py-4 rounded-s-none rounded-e-md',
+    'group z-10 flex h-full w-full overflow-y-auto overscroll-contain px-2 py-4 rounded-none',
 });
 
 export function useMediaQuery(query: string) {
