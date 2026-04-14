@@ -81,6 +81,9 @@
   --space-md: var(--space-4);
   --space-lg: var(--space-5);
   --space-xl: var(--space-7);
+
+  /* shadows */
+  --shadow-header: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
 .dark {
@@ -93,6 +96,8 @@
   --color-bg-secondary: #1e293b; /* slate-800 */
   --color-border-primary: #334155; /* slate-700 */
   --color-grid-line: rgba(255, 255, 255, 0.02); /* Very subtle white for dark mode */
+  --shadow-header:
+    0 4px 6px -1px rgba(255, 255, 255, 0.12), 0 2px 4px -2px rgba(255, 255, 255, 0.12);
 }
 
 .font-caption {
@@ -263,4 +268,8 @@ select:-webkit-autofill:hover {
 
 .fancy-btn:active {
   transform: translateY(-1px);
+}
+
+.shadow-header {
+  box-shadow: var(--shadow-header);
 }
