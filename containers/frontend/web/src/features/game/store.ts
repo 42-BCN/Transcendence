@@ -153,7 +153,7 @@ export const useGame = create<gameState>()((set, get) => ({
   phase: "PLAN",
 
   rollQuantity: 0,
-
+  assignedCharacter: "spectator",
 
   canSelect: true,
   typeEnt: null,
@@ -288,11 +288,11 @@ export const useGame = create<gameState>()((set, get) => ({
     if (ent.hasMoved === true)
       return;
 
+    set({ selectedDice: mov });
     gameSocket.emit('game:client:displayMoveRange', mov);
-    const hlId = state.dijkstra(ent.position, mov);
-    const hlTiles: Record<string, boolean> = {};
-    hlId.forEach((id: string) => (hlTiles[id] = true));
-    set({ highlights: hlTiles, selectedDice: mov });
+    // const hlId = state.dijkstra(ent.position, mov);
+    // const hlTiles: Record<string, boolean> = {};
+    // hlId.forEach((id: string) => (hlTiles[id] = true));
   },
 
   selectDice: (dice) => {
@@ -627,88 +627,88 @@ export const useGame = create<gameState>()((set, get) => ({
   //   });
   // },
 
-  checkEnt: (x, y, z) => {
-    const state = get();
-    const entities = [
-      ...Object.values(state.players),
-      ...Object.values(state.enemies),
-      ...Object.values(state.clones),
-    ];
+  // checkEnt: (x, y, z) => {
+  //   const state = get();
+  //   const entities = [
+  //     ...Object.values(state.players),
+  //     ...Object.values(state.enemies),
+  //     ...Object.values(state.clones),
+  //   ];
+  //
+  //   return entities.find((e) =>
+  //     e.position.x === x
+  //     && e.position.y === y
+  //     && e.position.z === z);
+  // },
 
-    return entities.find((e) =>
-      e.position.x === x
-      && e.position.y === y
-      && e.position.z === z);
-  },
+  // isOOB: (x, y, z) => {
+  //   const state = get();
+  //   if (x < 0 || y < 0 || z < 0 || x >= state.mapBounds.width
+  //     || y >= state.mapBounds.height + 1 || z >= state.mapBounds.depth)
+  //     return true;
+  //   return false;
+  // },
 
-  isOOB: (x, y, z) => {
-    const state = get();
-    if (x < 0 || y < 0 || z < 0 || x >= state.mapBounds.width
-      || y >= state.mapBounds.height + 1 || z >= state.mapBounds.depth)
-      return true;
-    return false;
-  },
+  // isBlocked: (x, y, z) => {
+  //   const state = get();
+  //   const key = `${x},${y},${z}`;
+  //   return (state.tiles[key] || state.checkEnt(x, y, z) ? true : false);
+  // },
+  //
+  // hasFloor: (x, y, z) => {
+  //   const state = get();
+  //   return (y - 1 < 0 || (state.isBlocked(x, y - 1, z)
+  //     && !state.checkEnt(x, y - 1, z)) ? true : false)
+  // },
 
-  isBlocked: (x, y, z) => {
-    const state = get();
-    const key = `${x},${y},${z}`;
-    return (state.tiles[key] || state.checkEnt(x, y, z) ? true : false);
-  },
-
-  hasFloor: (x, y, z) => {
-    const state = get();
-    return (y - 1 < 0 || (state.isBlocked(x, y - 1, z)
-      && !state.checkEnt(x, y - 1, z)) ? true : false)
-  },
-
-  dijkstra: (pos, maxCost) => {
-    const state = get();
-    const initial = `${pos.x},${pos.y},${pos.z}`;
-    const MOV = [
-      [1, 0, 0], [-1, 0, 0],
-      [0, 0, 1], [0, 0, -1],
-      [1, 1, 0], [-1, 1, 0],
-      [0, 1, 1], [0, 1, -1],
-      [1, -1, 0], [-1, -1, 0],
-      [0, -1, 1], [0, -1, -1],
-    ];
-    const dist: Record<string, number> = { [initial]: 0 };
-    const nodes = new TinyQueue<{ key: string; d: number }>([], (a, b) => a.d - b.d);
-    nodes.push({ key: initial, d: 0 });
-    while (nodes.length > 0) {
-      const { key, d } = nodes.pop()!;
-      if (d > (dist[key] ?? Infinity))
-        continue;
-      if (d > maxCost)
-        break;
-      const [x, y, z] = key.split(",").map(Number);
-      for (const [dx, dy, dz] of MOV) {
-        const nx = x + dx;
-        const ny = y + dy;
-        const nz = z + dz;
-        if (state.isOOB(nx, ny, nz) || state.isBlocked(nx, ny, nz)
-          || !state.hasFloor(nx, ny, nz))
-          continue;
-        const stepCost = dy === 1 ? 2 : 1;
-        const newCost = d + stepCost;
-        const nkey = `${nx},${ny},${nz}`;
-        if (newCost < (dist[nkey] ?? Infinity)) {
-          dist[nkey] = newCost;
-          nodes.push({ key: nkey, d: newCost });
-        }
-      }
-    }
-    const reachable: string[] = [];
-    for (const key in dist) {
-      if (dist[key] <= maxCost && key !== initial) {
-        const [x, y, z] = key.split(",").map(Number);
-        reachable.push(`${x},${y - 1},${z}`);
-      }
-    }
-
-    return reachable;
-  },
-
+  // dijkstra: (pos, maxCost) => {
+  //   const state = get();
+  //   const initial = `${pos.x},${pos.y},${pos.z}`;
+  //   const MOV = [
+  //     [1, 0, 0], [-1, 0, 0],
+  //     [0, 0, 1], [0, 0, -1],
+  //     [1, 1, 0], [-1, 1, 0],
+  //     [0, 1, 1], [0, 1, -1],
+  //     [1, -1, 0], [-1, -1, 0],
+  //     [0, -1, 1], [0, -1, -1],
+  //   ];
+  //   const dist: Record<string, number> = { [initial]: 0 };
+  //   const nodes = new TinyQueue<{ key: string; d: number }>([], (a, b) => a.d - b.d);
+  //   nodes.push({ key: initial, d: 0 });
+  //   while (nodes.length > 0) {
+  //     const { key, d } = nodes.pop()!;
+  //     if (d > (dist[key] ?? Infinity))
+  //       continue;
+  //     if (d > maxCost)
+  //       break;
+  //     const [x, y, z] = key.split(",").map(Number);
+  //     for (const [dx, dy, dz] of MOV) {
+  //       const nx = x + dx;
+  //       const ny = y + dy;
+  //       const nz = z + dz;
+  //       if (state.isOOB(nx, ny, nz) || state.isBlocked(nx, ny, nz)
+  //         || !state.hasFloor(nx, ny, nz))
+  //         continue;
+  //       const stepCost = dy === 1 ? 2 : 1;
+  //       const newCost = d + stepCost;
+  //       const nkey = `${nx},${ny},${nz}`;
+  //       if (newCost < (dist[nkey] ?? Infinity)) {
+  //         dist[nkey] = newCost;
+  //         nodes.push({ key: nkey, d: newCost });
+  //       }
+  //     }
+  //   }
+  //   const reachable: string[] = [];
+  //   for (const key in dist) {
+  //     if (dist[key] <= maxCost && key !== initial) {
+  //       const [x, y, z] = key.split(",").map(Number);
+  //       reachable.push(`${x},${y - 1},${z}`);
+  //     }
+  //   }
+  //
+  //   return reachable;
+  // },
+  //
   Astar: (src, dest) => {
     const state = get();
     const MOV = [
@@ -1204,9 +1204,18 @@ export const useGame = create<gameState>()((set, get) => ({
         mapBounds: initState.mapBounds,
       });
     };
-    const handleSync = (id: string) => {
-      console.log('joined with character', id);
-      set({ assignedCharacter: id });
+    const handleSync = (initState: GlobalGameState) => {
+      console.log('recieved sync event with character', get().assignedCharacter);
+      set({
+        phase: initState.phase,
+        turn: initState.turn,
+        tiles: initState.tiles,
+        enemies: initState.enemies,
+        players: initState.players,
+        clones: initState.clones,
+        history: initState.history,
+        mapBounds: initState.mapBounds,
+      });
     };
     const handleUpdateRolls = (quantity: number) => {
       console.log('Received game rolls update event', quantity);

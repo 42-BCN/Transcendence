@@ -203,7 +203,6 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
       }}
       onClick={(event) => {
         if (phase !== 'PLAN') return;
-        moveClone(id);
         event.stopPropagation();
         moveClone(id);
       }}

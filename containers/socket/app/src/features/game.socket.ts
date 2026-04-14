@@ -3,11 +3,29 @@ import TinyQueue from "tinyqueue";
 import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../contracts/sockets/game/game.schema';
 import { testMap, parseMap } from './maps';
 import type { pos, parse_entity, tile, mapInfo } from './maps';
-import { useRef, useEffect, useMemo, useState } from 'react';
 
 const playerIds: string[] = ['assassin', 'paladin', 'mage', 'alchemist'].reverse();
 const users: Record<string, string> = {};
 let numberOfRolls = 0;
+
+const gameState: ServerGameState = {
+  phase: 'PLAN',
+  turn: 1,
+  players: {},
+  clones: {},
+  enemies: {},
+  tiles: {},
+  history: [],
+  mapBounds: { width: 0, height: 0, depth: 0 },
+};
+
+// global function execution means it doesn't reset when disconnected
+
+const initstate = initState();
+gameState.players = initstate.players;
+gameState.enemies = initstate.enemies;
+gameState.tiles = initstate.tiles;
+gameState.mapBounds = initstate.mapBounds;
 
 type player = parse_entity & {
   hp: number;
@@ -226,6 +244,81 @@ export function initState() {
     mapBounds: { width, height, depth }
   }
 }
+function checkEnt(x: number, y: number, z: number) {
+  const entities = [
+    ...Object.values(gameState.players),
+    ...Object.values(gameState.enemies),
+    ...Object.values(gameState.clones),
+  ];
+
+  return entities.find((e) =>
+    e.position.x === x
+    && e.position.y === y
+    && e.position.z === z);
+}
+
+function isOOB(x: number, y: number, z: number) {
+  if (x < 0 || y < 0 || z < 0 || x >= gameState.mapBounds.width
+    || y >= gameState.mapBounds.height + 1 || z >= gameState.mapBounds.depth)
+    return true;
+  return false;
+}
+function isBlocked(x: number, y: number, z: number) {
+  const key = `${x},${y},${z}`;
+  return (gameState.tiles[key] || checkEnt(x, y, z) ? true : false);
+}
+
+function hasFloor(x: number, y: number, z: number) {
+  return (y - 1 < 0 || (isBlocked(x, y - 1, z)
+    && !checkEnt(x, y - 1, z)) ? true : false)
+}
+
+function dijkstra(pos: pos, maxCost: number) {
+  const initial = `${pos.x},${pos.y},${pos.z}`;
+  const MOV = [
+    [1, 0, 0], [-1, 0, 0],
+    [0, 0, 1], [0, 0, -1],
+    [1, 1, 0], [-1, 1, 0],
+    [0, 1, 1], [0, 1, -1],
+    [1, -1, 0], [-1, -1, 0],
+    [0, -1, 1], [0, -1, -1],
+  ];
+  const dist: Record<string, number> = { [initial]: 0 };
+  const nodes = new TinyQueue<{ key: string; d: number }>([], (a, b) => a.d - b.d);
+  nodes.push({ key: initial, d: 0 });
+  while (nodes.length > 0) {
+    const { key, d } = nodes.pop()!;
+    if (d > (dist[key] ?? Infinity))
+      continue;
+    if (d > maxCost)
+      break;
+    const [x, y, z] = key.split(",").map(Number);
+    for (const [dx, dy, dz] of MOV) {
+      const nx = x + dx;
+      const ny = y + dy;
+      const nz = z + dz;
+      if (isOOB(nx, ny, nz) || isBlocked(nx, ny, nz)
+        || !hasFloor(nx, ny, nz))
+        continue;
+      const stepCost = dy === 1 ? 2 : 1;
+      const newCost = d + stepCost;
+      const nkey = `${nx},${ny},${nz}`;
+      if (newCost < (dist[nkey] ?? Infinity)) {
+        dist[nkey] = newCost;
+        nodes.push({ key: nkey, d: newCost });
+      }
+    }
+  }
+  const reachable: string[] = [];
+  for (const key in dist) {
+    if (dist[key] <= maxCost && key !== initial) {
+      const [x, y, z] = key.split(",").map(Number);
+      reachable.push(`${x},${y - 1},${z}`);
+    }
+  }
+
+  return reachable;
+}
 
 export type ServerGameState = {
   phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
@@ -238,24 +331,6 @@ export type ServerGameState = {
   mapBounds: mapInfo;
 }
 
-const gameState: ServerGameState = {
-  phase: 'PLAN',
-  turn: 1,
-  players: {},
-  clones: {},
-  enemies: {},
-  tiles: {},
-  history: [],
-  mapBounds: { width: 0, height: 0, depth: 0 },
-};
-
-// global function execution means it doesn't reset when disconnected
-
-const initstate = initState();
-gameState.players = initstate.players;
-gameState.enemies = initstate.enemies;
-gameState.tiles = initstate.tiles;
-gameState.mapBounds = initstate.mapBounds;
 
 export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>) {
   nsp.on('connection', (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
@@ -263,27 +338,30 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     // socket.emit('game:server:sync', gameState);
     const assignedRole = playerIds.pop();
     if (!assignedRole)
-      return (console.log('Room full, spectator joined:', socket.id));
-    users[socket.id] = assignedRole;
-    console.log('Emitted join server event with role:', assignedRole);
-    socket.emit('game:server:join', assignedRole);
-    // socket.on('game::client::join', (assignedRole: string) => {
-    //   console.log('Received join even with role:', assignedRole);
-    //   socket.emit('game::server::join', assignedRole);
-    // });
-    socket.on('game:client:displayMoveRange', (payload: number) => {
-      console.log('Received move range event with dice:', payload,
-        'for character', users[socket.id]);
-      nsp.emit('game:server:rolls', payload);
-      // highlights = ()
-      // socket.emit('game:server:displayMoveRange', (payload: number) => {
-      // console.log('game:server:displayMoveRange called'));
-    });
-    socket.on('game:client:rolls', (payload: number) => {
-      console.log('Received roll dice event with quantity:', payload);
-      numberOfRolls += payload;
-      nsp.emit('game:server:rolls', numberOfRolls);
-    });
+      console.log('Room full, spectator joined:', socket.id);
+    if (assignedRole) {
+      users[socket.id] = assignedRole;
+      console.log('Emitted join server event with role:', assignedRole);
+      socket.emit('game:server:join', assignedRole);
+      // socket.on('game::client::join', (assignedRole: string) => {
+      //   console.log('Received join even with role:', assignedRole);
+      //   socket.emit('game::server::join', assignedRole);
+      // });
+      socket.on('game:client:displayMoveRange', (diceValue: number) => {
+        console.log('Received move range event with dice:', diceValue,
+          'for character', users[socket.id]);
+        const hlId = dijkstra(gameState.players[users[socket.id]].position, diceValue)
+        const hlTiles: Record<string, boolean> = {};
+        hlId.forEach((id: string) => (hlTiles[id] = true));
+        socket.emit('game:server:displayMoveRange', hlTiles);
+        // console.log('game:server:displayMoveRange called'));
+      });
+      socket.on('game:client:rolls', (payload: number) => {
+        console.log('Received roll dice event with quantity:', payload);
+        numberOfRolls += payload;
+        nsp.emit('game:server:rolls', numberOfRolls);
+      });
+    }
     socket.on('disconnect', () => {
       const free = users[socket.id];
       if (free) {
