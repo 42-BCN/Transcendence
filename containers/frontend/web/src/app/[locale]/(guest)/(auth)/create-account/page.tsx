@@ -1,5 +1,5 @@
-import { CreateAccount } from '@/features/auth/create-account';
+import { CreateAccountFeature } from '@/features/auth/create-account';
 
 export default function CreateAccountPage() {
-  return <CreateAccount />;
+  return <CreateAccountFeature />;
 }

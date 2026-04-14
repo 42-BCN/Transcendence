@@ -11,6 +11,9 @@ export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
 export { Tooltip } from './controls/tooltip';
 export { ApiFeedback } from './composites/api-feedback/api-feedback';
+export { FormTitle } from './composites/form-title/form-title';
+export { Divider } from './composites/divider/divider';
+export { MessageBlock } from './composites/text-block/text-block';
 
 export { Drawer } from './composites/drawer';
 export { Form, type FormProps } from './composites/form';
@@ -40,9 +43,11 @@ export {
   type GlassIntensity,
 } from './primitives/glass-card/glass-card.styles';
 export { Icon, type IconName } from './primitives/icon';
+export { InlineLinkPrompt } from './composites/inline-link-prompt/inline-link-prompt';
 export { MessageBubble, type MessageBubbleProps } from './primitives/message-bubble';
 export { ScrollArea, type ScrollAreaProps } from './primitives/scroll-area';
 export { SplitScreenGrid } from './primitives/split-screen-grid';
 export { Stack } from './primitives/stack';
 export { Text } from './primitives/text';
-export { SubmitButton } from './controls/submit-button/submit-button';
+export { SubmitButton } from './composites/submit-button/submit-button';
+export { AsyncCooldownButton } from './composites/async-cooldown-button/async-cooldown-button';

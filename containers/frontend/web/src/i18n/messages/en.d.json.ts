@@ -312,6 +312,7 @@ declare const messages: {
         "sent": "We've sent password reset instructions to the address you entered.",
         "checkInbox": "Check your inbox and follow the instructions to set a new password.",
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
+        "rememberedPassword": "Remembered your password?",
         "backToLogin": "Back to login"
       },
       "reset": {

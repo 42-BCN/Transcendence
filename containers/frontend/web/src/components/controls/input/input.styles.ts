@@ -2,9 +2,9 @@ import { cn } from '@/lib/styles/cn';
 
 const inputBase = [
   'font-body-sm',
-  // layout
-  'w-full border border-border-primary bg-bg-primary text-text-primary px-2 py-2',
-  // behavior
+  'border rounded-lg',
+  'w-full px-2 py-2 ',
+  'bg-bg-primary text-text-primary autofill:bg-white autofill:text-black',
   'outline-none transition',
 ];
 
@@ -15,9 +15,9 @@ const inputVariants = {
 } as const;
 
 const inputSizes = {
-  sm: 'h-5',
-  md: 'h-6',
-  lg: 'h-7 text-base',
+  sm: 'h-6',
+  md: 'h-7',
+  lg: 'h-8 text-base',
 } as const;
 
 // RAC states grouped together

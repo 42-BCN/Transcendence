@@ -35,6 +35,8 @@ export default {
       },
 
       colors: {
+        primary: 'var(--color-text-primary)',
+        secondary: 'var(--color-bg-secondary)',
         text: {
           primary: 'var(--color-text-primary)',
           secondary: 'var(--color-text-secondary)',
@@ -45,6 +47,7 @@ export default {
         bg: {
           primary: 'var(--color-bg-primary)',
           secondary: 'var(--color-bg-secondary)',
+          inverse: 'var(--color-bg-inverse)',
         },
         border: {
           primary: 'var(--color-border-primary)',

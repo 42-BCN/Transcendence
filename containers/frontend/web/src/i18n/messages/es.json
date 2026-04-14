@@ -309,7 +309,8 @@
         "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
-        "backToLogin": "Volver a iniciar sesión"
+        "rememberedPassword": "¿Has recordado tu contraseña?",
+        "backToLogin": "Volver al inicio de sesión"
       },
       "reset": {
         "title": "Restablecer contraseña",
