@@ -6,8 +6,7 @@ import { MapControls, OrthographicCamera } from '@react-three/drei';
 import type { pos, parse_entity, tile } from './maps';
 import { testMap, parseMap } from './maps';
 import { useGame } from './store';
-import { useGameStore } from './game.zustand';
-import { useGameSocketManager } from './hooks';
+//import { useGameSocketManager } from './provider';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
@@ -25,7 +24,8 @@ function AbButtons() {
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map((ability) => (
-        <Button key={ability} onPress={() => selectAbility(ability)}>
+        <Button key={ability} className="bg-red-600 text-white"
+          onPress={() => selectAbility(ability)}>
           {ability}
         </Button>
       ))}
@@ -39,13 +39,8 @@ function DiceButtons() {
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectDice);
-
-  // Zustand store
-  const rollQuantity = useGameStore((state) => state.rollQuantity);
-  const rollDice = useGameStore((state) => state.rollDice);
-
-  // Initialize socket listeners on mount
-  useGameSocketManager();
+  const rollQuantity = useGame((state) => state.rollQuantity);
+  const rollDice = useGame((state) => state.rollDice);
 
   const handleDiceClick = (quantity: number) => {
     rollDice(quantity);
@@ -60,14 +55,12 @@ function DiceButtons() {
             {`d${diceNum}`}
           </Button>
         ))}
-      </div>
-      <div className="flex gap-4">
         {ent?.dice.map((diceNum, i) => (
           <Button
             key={i}
             onPress={() => {
               ability ? selectDice(diceNum) : movDice(diceNum);
-              const rolled = Math.floor(Math.random() * 6) + 1;
+              const rolled = Math.ceil(Math.random() * diceNum);
               handleDiceClick(rolled);
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -128,7 +121,7 @@ function HUD() {
   const ent = useGame((state) => state.getSel());
   return !ent || !canSelect ? null : (
     <>
-      <Stack className="absolute left-8 bottom-4">
+      <Stack className="z-10 absolute left-8 bottom-4">
         <AbButtons />
         <div>
           <Meter
@@ -402,18 +395,18 @@ function name(phase: string) {
   }
 }
 
+
+
 export function Game() {
-  // <div
-  //   style={{
-  //     height: "98vh",
-  //     width: "95vm",
-  //     background: "black",
-  //     position: "relative",
-  //     overflow: "hidden"
-  //   }}
   const phase = useGame((state) => state.phase);
   const selectedDice = useGame((state) => state.selectedDice);
+  const init = useGame((state) => state.initSocketListeners);
+  const cleanup = useGame((state) => state.cleanupSocketListeners);
   console.log('selectedDice: ', selectedDice);
+  useEffect(() => {
+    init();
+    return cleanup
+  }, [init, cleanup]);
   return (
     <>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">

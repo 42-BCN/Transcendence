@@ -4,10 +4,12 @@ import { VALIDATION, type ValidationCode } from '../../api/http/validation';
 
 export type ClientToServerGameEvents = {
   'game:client:rolls': (quantity: number) => void;
+  'game:client:displayMoveRange': (quantity: number) => void;
 };
 
 export type ServerToClientGameEvents = {
   'game:server:rolls': (totalRolls: number) => void;
+  'game:client:displayMoveRange': (quantity: number) => void;
 };
 
 export const GameEventPayloadSchema = z.object({

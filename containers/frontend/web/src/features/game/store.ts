@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import TinyQueue from "tinyqueue";
 import type { parse_entity, pos, tile } from "./maps";
+import { gameSocket } from '@/lib/sockets/socket';
 
 type gamePhase = "PLAN" | "EXEC" | "ENEMY" | "END"
 
@@ -64,6 +65,8 @@ type gameState = {
   turn: number;
   phase: gamePhase;
 
+  rollQuantity: number;
+
   players: Record<string, entity>;
   enemies: Record<string, entity>;
   clones: Record<string, entity>;
@@ -84,6 +87,11 @@ type gameState = {
   executionPhase: () => Promise<void>;
   enemyPhase: () => Promise<void>;
   endTurn: () => void;
+
+  setRollQuantity: (quantity: number) => void;
+  rollDice: (quantity: number) => void;
+  initSocketListeners: () => void;
+  cleanupSocketListeners: () => void;
 
   selectEntity: (Id: string) => void;
   getSel: () => entity | undefined;
@@ -126,6 +134,9 @@ const clean = {
 export const useGame = create<gameState>()((set, get) => ({
   turn: 1,
   phase: "PLAN",
+
+  rollQuantity: 0,
+
 
   canSelect: true,
   typeEnt: null,
@@ -259,6 +270,8 @@ export const useGame = create<gameState>()((set, get) => ({
       throw new Error("no ent id!");
     if (ent.hasMoved === true)
       return;
+
+    gameSocket.emit('game:client:displayMoveRange', mov);
     const hlId = state.dijkstra(ent.position, mov);
     const hlTiles: Record<string, boolean> = {};
     hlId.forEach((id: string) => (hlTiles[id] = true));
@@ -1125,6 +1138,41 @@ export const useGame = create<gameState>()((set, get) => ({
       players: { ...state.players, ...Object.fromEntries(changedPlayers.map(p => [p.id, p])) },
       enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map(e => [e.id, e])) },
     })
-  }
+  },
+
+  setRollQuantity: (quantity) => {
+    set({ rollQuantity: quantity });
+  },
+
+  rollDice: (quantity) => {
+    gameSocket.emit('game:client:rolls', quantity);
+  },
+
+  initSocketListeners: () => {
+    const handleUpdateRolls = (quantity: number) => {
+      console.log('Received game rolls update event', quantity);
+      set({ rollQuantity: quantity });
+    };
+    const handleHighlights = (hightlights: Record<string, boolean>) => {
+      console.log('Received highlights form server');
+      set({ hightlights: hightlights });
+    };
+
+    gameSocket.on('connect', () => console.log('Connected to game events socket server'));
+    gameSocket.on('disconnect', () => console.log('Disconnected from game events socket server'));
+    gameSocket.on('game:server:rolls', handleUpdateRolls);
+    gameSocket.on('game:server:displayMoveRange', handleHighlights);
+
+    gameSocket.connect();
+  },
+
+  cleanupSocketListeners: () => {
+    gameSocket.off('connect');
+    gameSocket.off('disconnect');
+    gameSocket.off('game:server:rolls');
+    gameSocket.off('game:server:displayMoveRange');
+    gameSocket.disconnect();
+  },
 }
 ));
+
