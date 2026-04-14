@@ -340,49 +340,31 @@ function Player({ id, pos }: { id: string; pos: pos }) {
 }
 
 function Scene() {
-  // const map = testMap;
-  // const { info } = useMemo(() => parseMap(map), [map]);
-  // const {
-  //   tiles,
-  //   entities,
-  //   width,
-  //   height,
-  //   depth,
-  // }: {
-  //   tiles: tile[];
-  //   entities: parse_entity[];
-  //   width: number;
-  //   height: number;
-  //   depth: number;
-  // } = info;
-  //
-  // const init = useGame((state) => state.init);
   const players = useGame((state) => state.players);
   const tiles = useGame((state) => state.tiles);
   const clones = useGame((state) => state.clones);
   const enemies = useGame((state) => state.enemies);
 
-  // useEffect(() => {
-  //   init(entities, tiles, { width, height, depth });
-  // }, [entities, tiles, width, height, depth]);
   return (
     <>
       <ambientLight intensity={Math.PI / 4} />
       <pointLight position={[7, 6, 7]} decay={0} intensity={2.5} />
       <OrthographicCamera makeDefault position={[5, 5, 5]} zoom={50} near={-50} far={100} />
       <MapControls makeDefault target={[0, 0, 0]} maxPolarAngle={Math.PI / 2} minPolarAngle={0} />
-      {Object.values(tiles).map((t) => (
-        <Tile
-          key={t.id}
-          id={t.id}
-          pos={{
-            x: t.position.x - 5,
-            y: t.position.y - 1,
-            z: t.position.z - 5,
-          }}
-        />
-      ))}
-      {Object.values(players).map((p) => (
+      {Object.keys(tiles).map((t) => {
+        const [x, y, z] = t.split(',').map(Number);
+        return (
+          <Tile
+            key={t}
+            id={t}
+            pos={{
+              x: x - 5,
+              y: y - 1,
+              z: z - 5,
+            }}
+          />
+        );
+      })}      {Object.values(players).map((p) => (
         <Player
           key={p.id}
           id={p.id}
@@ -438,12 +420,17 @@ export function Game() {
   const selectedDice = useGame((state) => state.selectedDice);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
+  const mapBounds = useGame((state) => state.mapBounds);
   // console.log('selectedDice: ', selectedDice);
   useEffect(() => {
     initSocketListeners();
     return cleanupSocketListeners
   }, [initSocketListeners, cleanupSocketListeners]);
-  return (
+  return (!mapBounds || mapBounds.width === 0 ?
+    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+      <h2>Connecting to Server...</h2>
+    </div>
+    :
     <>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}
