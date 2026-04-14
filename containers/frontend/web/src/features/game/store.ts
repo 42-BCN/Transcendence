@@ -3,6 +3,17 @@ import TinyQueue from "tinyqueue";
 import type { parse_entity, pos, tile } from "./maps";
 import { gameSocket } from '@/lib/sockets/socket';
 
+export type GlobalGameState = {
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
+  turn: number;
+  players: Record<string, player>;
+  clones: Record<string, player>;
+  enemies: Record<string, enemy>;
+  tiles: Record<string, boolean>;
+  history: historyAction[];
+  mapBounds: mapInfo;
+}
+
 type gamePhase = "PLAN" | "EXEC" | "ENEMY" | "END"
 
 type player = parse_entity & {
@@ -66,18 +77,21 @@ type gameState = {
   phase: gamePhase;
 
   rollQuantity: number;
+  assignedCharacter: string;
 
+  //global state
   players: Record<string, entity>;
   enemies: Record<string, entity>;
   clones: Record<string, entity>;
+  tiles: Record<string, boolean>;
   history: historyAction[];
-  typeEnt: string | null;
   mapBounds: mapInfo;
 
+  //local state
+  typeEnt: string | null;
   canSelect: boolean;
   selectedAb: string | null;
   selectedEnt: string | null;
-  obstacles: Record<string, boolean>;
   highlights: Record<string, boolean>;
   selectables: Record<string, boolean>;
   affected: Record<string, boolean>;
@@ -115,8 +129,11 @@ type gameState = {
   crossTiles: (pos: pos, range: number) => Record<string, boolean>;
   paint: (pos: pos, type: string, range: number, self: boolean) => Record<string, boolean>;
   selectAbility: (name: string) => void;
+  showAbRange: (name: string) => void;
   getAbility: (name: string) => abilityInfo;
   executeAbility: (who: string, which: string, target: string) => void;
+  clearHighlights: () => void;
+  clearSelectables: () => void;
   takeAb: (id: string, type: string, ab: abilityInfo, roll: number) => player | enemy;
 }
 
@@ -148,7 +165,7 @@ export const useGame = create<gameState>()((set, get) => ({
   players: {},
   enemies: {},
   clones: {},
-  obstacles: {},
+  tiles: {},
   highlights: {},
   selectables: {},
   affected: {},
@@ -470,145 +487,145 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
 
-  init: (entities, tiles, mapInfo) => {
-    const playEnt: Record<string, player> = {};
-    const enemEnt: Record<string, enemy> = {};
-    const worldMap: Record<string, boolean> = {};
-
-    tiles.forEach((obstacle) => {
-      worldMap[obstacle.id] = true;
-    });
-    entities.forEach((entity) => {
-      switch (entity.type) {
-        case "assassin":
-          playEnt[entity.id] = {
-            ...entity, type: "player", hp: 13, maxHp: 13, armor: 0,
-            abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
-            dice: [4, 4, 4, 4, 8],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "paladin":
-          playEnt[entity.id] = {
-            ...entity, type: "player", hp: 16, maxHp: 16, armor: 0,
-            abilities: ["Thrust", "Defend", "Shield Bash", "Vertical Slash"],
-            dice: [6, 6, 6, 6],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "mage":
-          playEnt[entity.id] = {
-            ...entity, type: "player", hp: 8, maxHp: 8, armor: 0,
-            abilities: ["Fire Breath", "Azure Comet", "Small Meteor", "Rising Thorns"],
-            dice: [4, 8, 12],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "alchemist":
-          playEnt[entity.id] = {
-            ...entity, type: "player", hp: 10, maxHp: 10, armor: 0,
-            abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],
-            dice: [6, 8, 10],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "drone":
-          enemEnt[entity.id] = {
-            ...entity, type: "drone", hp: 3, maxHp: 3, armor: 0,
-            abilities: ["Swoop"],
-            dice: [4, 4, 4],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "crawler":
-          enemEnt[entity.id] = {
-            ...entity, type: "drone", hp: 4, maxHp: 4, armor: 0,
-            abilities: ["Claw"],
-            dice: [4, 4, 6],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "spawner":
-          enemEnt[entity.id] = {
-            ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 0,
-            abilities: ["Spawn Drone", "Spawn Crawler"],
-            dice: [4, 6],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "mortar":
-          enemEnt[entity.id] = {
-            ...entity, type: "enemy", hp: 12, maxHp: 12, armor: 0,
-            abilities: ["Shoot", "Reload"],
-            dice: [6, 6],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "centurion":
-          enemEnt[entity.id] = {
-            ...entity, type: "enemy", hp: 20, maxHp: 20, armor: 2,
-            abilities: ["Charge", "Atomic Bomb"],
-            dice: [6, 8, 8],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-        case "jaeger":
-          enemEnt[entity.id] = {
-            ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 1,
-            abilities: ["Push", "Railgun"],
-            dice: [6, 6, 10],
-            usedDice: [],
-            facing: "center",
-            status: null,
-            statusTurns: 0,
-            hasMoved: false,
-          }
-          break;
-      }
-    });
-    set({
-      players: playEnt,
-      enemies: enemEnt,
-      obstacles: worldMap,
-      mapBounds: mapInfo,
-    });
-  },
+  // init: (entities, tiles, mapInfo) => {
+  //   const playEnt: Record<string, player> = {};
+  //   const enemEnt: Record<string, enemy> = {};
+  //   const worldMap: Record<string, boolean> = {};
+  //
+  //   tiles.forEach((tile) => {
+  //     worldMap[tile.id] = true;
+  //   });
+  //   entities.forEach((entity) => {
+  //     switch (entity.type) {
+  //       case "assassin":
+  //         playEnt[entity.id] = {
+  //           ...entity, type: "player", hp: 13, maxHp: 13, armor: 0,
+  //           abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
+  //           dice: [4, 4, 4, 4, 8],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "paladin":
+  //         playEnt[entity.id] = {
+  //           ...entity, type: "player", hp: 16, maxHp: 16, armor: 0,
+  //           abilities: ["Thrust", "Defend", "Shield Bash", "Vertical Slash"],
+  //           dice: [6, 6, 6, 6],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "mage":
+  //         playEnt[entity.id] = {
+  //           ...entity, type: "player", hp: 8, maxHp: 8, armor: 0,
+  //           abilities: ["Fire Breath", "Azure Comet", "Small Meteor", "Rising Thorns"],
+  //           dice: [4, 8, 12],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "alchemist":
+  //         playEnt[entity.id] = {
+  //           ...entity, type: "player", hp: 10, maxHp: 10, armor: 0,
+  //           abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],
+  //           dice: [6, 8, 10],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "drone":
+  //         enemEnt[entity.id] = {
+  //           ...entity, type: "drone", hp: 3, maxHp: 3, armor: 0,
+  //           abilities: ["Swoop"],
+  //           dice: [4, 4, 4],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "crawler":
+  //         enemEnt[entity.id] = {
+  //           ...entity, type: "drone", hp: 4, maxHp: 4, armor: 0,
+  //           abilities: ["Claw"],
+  //           dice: [4, 4, 6],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "spawner":
+  //         enemEnt[entity.id] = {
+  //           ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 0,
+  //           abilities: ["Spawn Drone", "Spawn Crawler"],
+  //           dice: [4, 6],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "mortar":
+  //         enemEnt[entity.id] = {
+  //           ...entity, type: "enemy", hp: 12, maxHp: 12, armor: 0,
+  //           abilities: ["Shoot", "Reload"],
+  //           dice: [6, 6],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "centurion":
+  //         enemEnt[entity.id] = {
+  //           ...entity, type: "enemy", hp: 20, maxHp: 20, armor: 2,
+  //           abilities: ["Charge", "Atomic Bomb"],
+  //           dice: [6, 8, 8],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //       case "jaeger":
+  //         enemEnt[entity.id] = {
+  //           ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 1,
+  //           abilities: ["Push", "Railgun"],
+  //           dice: [6, 6, 10],
+  //           usedDice: [],
+  //           facing: "center",
+  //           status: null,
+  //           statusTurns: 0,
+  //           hasMoved: false,
+  //         }
+  //         break;
+  //     }
+  //   });
+  //   set({
+  //     players: playEnt,
+  //     enemies: enemEnt,
+  //     tiles: worldMap,
+  //     mapBounds: mapInfo,
+  //   });
+  // },
 
   checkEnt: (x, y, z) => {
     const state = get();
@@ -635,7 +652,7 @@ export const useGame = create<gameState>()((set, get) => ({
   isBlocked: (x, y, z) => {
     const state = get();
     const key = `${x},${y},${z}`;
-    return (state.obstacles[key] || state.checkEnt(x, y, z) ? true : false);
+    return (state.tiles[key] || state.checkEnt(x, y, z) ? true : false);
   },
 
   hasFloor: (x, y, z) => {
@@ -802,7 +819,7 @@ export const useGame = create<gameState>()((set, get) => ({
           const x = pos.x + dx;
           const y = pos.y + dy;
           const z = pos.z + dz;
-          if (!state.isValid(x, y, z) || state.obstacles[`${x},${y},${z}`]
+          if (!state.isValid(x, y, z) || state.tiles[`${x},${y},${z}`]
             || (range * range < dx * dx + dy * dy + dz * dz))
             continue;
           const resLoS = state.hasLoS(pos, x, y, z);
@@ -839,7 +856,7 @@ export const useGame = create<gameState>()((set, get) => ({
         const x = pos.x + n * dx;
         const y = pos.y + n * dy;
         const z = pos.z + n * dz;
-        if (!state.isValid(x, y, z) || state.obstacles[`${x},${y},${z}`])
+        if (!state.isValid(x, y, z) || state.tiles[`${x},${y},${z}`])
           break;
         const ent = state.checkEnt(x, y, z);
         if (ent) {
@@ -1091,6 +1108,19 @@ export const useGame = create<gameState>()((set, get) => ({
     console.log("Selectables: ", get().selectables);
   },
 
+  showAbRange: (name) => {
+    const state = get()
+    const ent = state.getSel();
+    if (!ent)
+      throw new Error("no ent id!");
+    const { type, range, self } = state.getAbility(name);
+    set({
+      highlights: {},
+      selectedDice: null,
+      selectables: state.paint(ent.position, type, range, self),
+    });
+  },
+
   takeAb: (id, type, ab, roll) => {
     const state = get();
     const target = type === "enemy" ? { ...state.enemies[id] } : { ...state.players[id] };
@@ -1140,6 +1170,14 @@ export const useGame = create<gameState>()((set, get) => ({
     })
   },
 
+  clearHighlights: () => {
+    set({ highlights: {} });
+  },
+
+  clearSelectables: () => {
+    set({ selectables: {} });
+  },
+
   setRollQuantity: (quantity) => {
     set({ rollQuantity: quantity });
   },
@@ -1149,26 +1187,52 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   initSocketListeners: () => {
+    const handleJoin = (id: string) => {
+      console.log('joined with character', id);
+      set({ assignedCharacter: id });
+    };
+    const handleInit = (initState: GlobalGameState) => {
+      console.log('recieved init event with character', get().assignedCharacter);
+      set({
+        phase: 'PLAN',
+        turn: 1,
+        tiles: initState.tiles,
+        enemies: initState.enemies,
+        players: initState.players,
+        clones: initState.clones,
+        history: initState.history,
+        mapBounds: initState.mapBounds,
+      });
+    };
+    const handleSync = (id: string) => {
+      console.log('joined with character', id);
+      set({ assignedCharacter: id });
+    };
     const handleUpdateRolls = (quantity: number) => {
       console.log('Received game rolls update event', quantity);
       set({ rollQuantity: quantity });
     };
-    const handleHighlights = (hightlights: Record<string, boolean>) => {
+    const handleHighlights = (highlights: Record<string, boolean>) => {
       console.log('Received highlights form server');
-      set({ hightlights: hightlights });
+      set({ highlights: highlights });
     };
 
     gameSocket.on('connect', () => console.log('Connected to game events socket server'));
     gameSocket.on('disconnect', () => console.log('Disconnected from game events socket server'));
+    gameSocket.on('game:server:join', handleJoin);
+    gameSocket.on('game:server:init', handleInit);
+    gameSocket.on('game:server:sync', handleSync);
     gameSocket.on('game:server:rolls', handleUpdateRolls);
     gameSocket.on('game:server:displayMoveRange', handleHighlights);
-
     gameSocket.connect();
   },
 
   cleanupSocketListeners: () => {
     gameSocket.off('connect');
     gameSocket.off('disconnect');
+    gameSocket.off('game:server:join');
+    gameSocket.off('game:server:init');
+    gameSocket.off('game:server:sync');
     gameSocket.off('game:server:rolls');
     gameSocket.off('game:server:displayMoveRange');
     gameSocket.disconnect();

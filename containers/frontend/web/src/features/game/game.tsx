@@ -20,12 +20,31 @@ const s = 0.975;
 function AbButtons() {
   const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
-
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
+  const clearSelectables = useGame((state) => state.clearSelectables);
+  const showAbRange = useGame((state) => state.showAbRange);
+  const [isPressed, setPressed] = useState(false);
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map((ability) => (
         <Button key={ability} className="bg-red-600 text-white"
-          onPress={() => selectAbility(ability)}>
+          onPointerOver={(event) => {
+            event.stopPropagation();
+            showAbRange(ability);
+            setPressed(false);
+          }}
+          onPointerOut={(event) => {
+            if (!isPressed) {
+              event.stopPropagation();
+              clearSelectables();
+            }
+          }}
+          onPress={() => {
+            if (assignedCharacter === ent.id) {
+              selectAbility(ability);
+              setPressed(true);
+            }
+          }}>
           {ability}
         </Button>
       ))}
@@ -41,11 +60,14 @@ function DiceButtons() {
   const selectDice = useGame((state) => state.selectDice);
   const rollQuantity = useGame((state) => state.rollQuantity);
   const rollDice = useGame((state) => state.rollDice);
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
+  const clearHighlights = useGame((state) => state.clearHighlights);
 
   const handleDiceClick = (quantity: number) => {
     rollDice(quantity);
     console.log('Emitted roll dice event with quantity:', quantity);
   };
+  const [isPressed, setPressed] = useState(false);
 
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
@@ -58,10 +80,24 @@ function DiceButtons() {
         {ent?.dice.map((diceNum, i) => (
           <Button
             key={i}
+            onPointerOver={(event) => {
+              event.stopPropagation();
+              movDice(diceNum);
+              setPressed(false);
+            }}
+            onPointerOut={(event) => {
+              if (!isPressed) {
+                event.stopPropagation();
+                clearHighlights();
+              }
+            }}
             onPress={() => {
-              ability ? selectDice(diceNum) : movDice(diceNum);
-              const rolled = Math.ceil(Math.random() * diceNum);
-              handleDiceClick(rolled);
+              if (assignedCharacter === ent.id) {
+                ability ? selectDice(diceNum) : movDice(diceNum);
+                const rolled = Math.ceil(Math.random() * diceNum);
+                handleDiceClick(rolled);
+                setPressed(true);
+              }
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
               ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
@@ -71,9 +107,9 @@ function DiceButtons() {
         ))}
       </div>
       {/* Roll Total Display */}
-      <div className="px-4 py-2 bg-purple-600 text-white rounded font-bold text-center">
-        Total Rolls: {rollQuantity}
-      </div>
+      {/* <div className="px-4 py-2 bg-purple-600 text-white rounded font-bold text-center"> */}
+      {/*   Total Rolls: {rollQuantity} */}
+      {/* </div> */}
     </div>
   );
 }
@@ -119,7 +155,7 @@ function HUD() {
   const typeEnt = useGame((state) => state.typeEnt);
   const canSelect = useGame((state) => state.selectedEnt);
   const ent = useGame((state) => state.getSel());
-  return !ent || !canSelect ? null : (
+  return !ent ? null : (
     <>
       <Stack className="z-10 absolute left-8 bottom-4">
         <AbButtons />
@@ -139,7 +175,7 @@ function HUD() {
   );
 }
 
-function Obstacle({ id, pos }: { id: string; pos: pos }) {
+function Tile({ id, pos }: { id: string; pos: pos }) {
   const phase = useGame((state) => state.phase);
   const moveClone = useGame((state) => state.moveClone);
   const isHighlighted = useGame((state) => state.highlights[id]);
@@ -304,38 +340,39 @@ function Player({ id, pos }: { id: string; pos: pos }) {
 }
 
 function Scene() {
-  const map = testMap;
-  const { info } = useMemo(() => parseMap(map), [map]);
-  const {
-    tiles,
-    entities,
-    width,
-    height,
-    depth,
-  }: {
-    tiles: tile[];
-    entities: parse_entity[];
-    width: number;
-    height: number;
-    depth: number;
-  } = info;
-
-  const init = useGame((state) => state.init);
+  // const map = testMap;
+  // const { info } = useMemo(() => parseMap(map), [map]);
+  // const {
+  //   tiles,
+  //   entities,
+  //   width,
+  //   height,
+  //   depth,
+  // }: {
+  //   tiles: tile[];
+  //   entities: parse_entity[];
+  //   width: number;
+  //   height: number;
+  //   depth: number;
+  // } = info;
+  //
+  // const init = useGame((state) => state.init);
   const players = useGame((state) => state.players);
+  const tiles = useGame((state) => state.tiles);
   const clones = useGame((state) => state.clones);
   const enemies = useGame((state) => state.enemies);
 
-  useEffect(() => {
-    init(entities, tiles, { width, height, depth });
-  }, [entities, tiles, width, height, depth]);
+  // useEffect(() => {
+  //   init(entities, tiles, { width, height, depth });
+  // }, [entities, tiles, width, height, depth]);
   return (
     <>
       <ambientLight intensity={Math.PI / 4} />
       <pointLight position={[7, 6, 7]} decay={0} intensity={2.5} />
       <OrthographicCamera makeDefault position={[5, 5, 5]} zoom={50} near={-50} far={100} />
       <MapControls makeDefault target={[0, 0, 0]} maxPolarAngle={Math.PI / 2} minPolarAngle={0} />
-      {tiles.map((t) => (
-        <Obstacle
+      {Object.values(tiles).map((t) => (
+        <Tile
           key={t.id}
           id={t.id}
           pos={{
@@ -395,22 +432,22 @@ function name(phase: string) {
   }
 }
 
-
-
 export function Game() {
   const phase = useGame((state) => state.phase);
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
   const selectedDice = useGame((state) => state.selectedDice);
-  const init = useGame((state) => state.initSocketListeners);
-  const cleanup = useGame((state) => state.cleanupSocketListeners);
-  console.log('selectedDice: ', selectedDice);
+  const initSocketListeners = useGame((state) => state.initSocketListeners);
+  const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
+  // console.log('selectedDice: ', selectedDice);
   useEffect(() => {
-    init();
-    return cleanup
-  }, [init, cleanup]);
+    initSocketListeners();
+    return cleanupSocketListeners
+  }, [initSocketListeners, cleanupSocketListeners]);
   return (
     <>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}
+        {assignedCharacter}
       </div>
       {selectedDice && phase === 'PLAN' && (
         <Text className="absolute z-10 top-[10%] left-[10%] flex gap-4">{`d${selectedDice}`}</Text>
