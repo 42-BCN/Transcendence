@@ -84,6 +84,7 @@
 
   /* shadows */
   --shadow-header: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-drawer: 8px 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .dark {
@@ -98,6 +99,7 @@
   --color-grid-line: rgba(255, 255, 255, 0.02); /* Very subtle white for dark mode */
   --shadow-header:
     0 4px 6px -1px rgba(255, 255, 255, 0.12), 0 2px 4px -2px rgba(255, 255, 255, 0.12);
+  --shadow-drawer: 8px 0 20px rgba(255, 255, 255, 0.12);
 }
 
 .font-caption {
@@ -272,4 +274,8 @@ select:-webkit-autofill:hover {
 
 .shadow-header {
   box-shadow: var(--shadow-header);
+}
+
+.shadow-drawer {
+  box-shadow: var(--shadow-drawer);
 }
