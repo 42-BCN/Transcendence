@@ -22,7 +22,7 @@ const drawerBase = [
 ];
 
 const drawerRacStates = [
-  'data-[enter]:translate-x-0 h-data-[entering]:translate-x-0 data-[entered]:translate-x-0',
+  'data-[enter]:translate-x-0 data-[entering]:translate-x-0 data-[entered]:translate-x-0',
 ];
 
 export function drawerStyles() {
