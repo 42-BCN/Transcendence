@@ -105,7 +105,8 @@
           "scrollArea": "Área de desplazamiento",
           "textArea": "Área de texto",
           "themeTest": "Prueba de tema",
-          "typography": "Tipografía"
+          "typography": "Tipografía",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Botón primitivo",

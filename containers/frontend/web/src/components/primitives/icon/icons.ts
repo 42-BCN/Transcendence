@@ -4,7 +4,7 @@ import {
   Settings,
   Home,
   Gamepad2,
-  MessageSquare,
+  MessageSquareText,
   Wrench,
   LogIn,
   LogOut,
@@ -13,6 +13,8 @@ import {
   PanelLeftClose,
   Sun,
   Moon,
+  UserPlus,
+  Check,
 } from 'lucide-react';
 
 export const icons = {
@@ -21,7 +23,7 @@ export const icons = {
   settings: Settings,
   home: Home,
   gamepad: Gamepad2,
-  messages: MessageSquare,
+  messages: MessageSquareText,
   ui: Wrench,
   logIn: LogIn,
   logOut: LogOut,
@@ -30,6 +32,8 @@ export const icons = {
   collapse: PanelLeftClose,
   lightMode: Sun,
   darkMode: Moon,
+  userAdd: UserPlus,
+  check: Check,
 };
 
 export type IconName = keyof typeof icons;

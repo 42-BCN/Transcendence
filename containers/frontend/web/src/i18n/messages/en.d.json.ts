@@ -107,8 +107,9 @@ declare const messages: {
           "meter": "Meter",
           "scrollArea": "Scroll Area",
           "textArea": "Text Area",
-          "themeTest": "Theme Test",
-          "typography": "Typography"
+          "themeTest": "Theme test",
+          "typography": "Typography",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Button primitive",
