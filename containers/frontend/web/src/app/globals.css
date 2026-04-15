@@ -82,9 +82,7 @@
   --space-lg: var(--space-5);
   --space-xl: var(--space-7);
 
-  /* shadows */
-  --shadow-header: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-drawer: 8px 0 20px rgba(0, 0, 0, 0.1);
+  --color-shadow: rgba(0, 0, 0, 0.168);
 }
 
 .dark {
@@ -96,10 +94,8 @@
   --color-bg-primary: #020617; /* slate-950 (Dark blue) */
   --color-bg-secondary: #1e293b; /* slate-800 */
   --color-border-primary: #334155; /* slate-700 */
-  --color-grid-line: rgba(255, 255, 255, 0.02); /* Very subtle white for dark mode */
-  --shadow-header:
-    0 4px 6px -1px rgba(255, 255, 255, 0.12), 0 2px 4px -2px rgba(255, 255, 255, 0.12);
-  --shadow-drawer: 8px 0 20px rgba(255, 255, 255, 0.12);
+  --color-grid-line: #ffffff05; /* Very subtle white for dark mode */
+  --color-shadow: rgba(255, 255, 255, 0.099);
 }
 
 .font-caption {
@@ -270,12 +266,4 @@ select:-webkit-autofill:hover {
 
 .fancy-btn:active {
   transform: translateY(-1px);
-}
-
-.shadow-header {
-  box-shadow: var(--shadow-header);
-}
-
-.shadow-drawer {
-  box-shadow: var(--shadow-drawer);
 }
