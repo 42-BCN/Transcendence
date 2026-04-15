@@ -31,8 +31,6 @@ services:
       context: ./socket
       dockerfile: ./docker/Dockerfile
     working_dir: /app
-    ports:
-      - "3100:3100"
     environment:
       NODE_ENV: development
     volumes:
