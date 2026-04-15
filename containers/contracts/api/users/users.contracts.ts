@@ -38,6 +38,6 @@ export type SearchUsersOk = {
   users: UserPublic[];
 };
 
-export type SearchUsersResponse = ApiResponse<SearchUsersOk, 'VALIDATION_ERROR', ValidationErrorDetails>;
+export type SearchUsersResponse = ApiResponse<SearchUsersOk, UsersErrorName, ValidationErrorDetails>;
 
 export type UserPublicResponse = ApiResponse<UserPublic, UsersListError, ValidationErrorDetails>;

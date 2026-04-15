@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* eslint-disable no-undef, no-console */
 /**
- * Smoke test: signup x2 → login → friend request → accept → GET /friends & /friendships.
+ * Smoke test: login (seeded users) → friend request → accept → GET /friends & /friendships → DELETE.
+ * Requires `npm run db:seed:dev` to have been run first (uses capapes / mfontser seed accounts).
  * Run inside backend container: BASE_URL=http://127.0.0.1:4000 node scripts/smoke-friendships.mjs
  */
 

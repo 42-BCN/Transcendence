@@ -12,5 +12,5 @@ export const usersRouter = Router();
 // ---------------------------------------
 usersRouter.get('/', validateQuery(GetUsersQuerySchema), getUsersController);
 usersRouter.get('/search', validateQuery(SearchUsersQuerySchema), searchUsersController);
-usersRouter.get('/:userId', validateParams(GetUserByIdParamSchema), getUserById);
 usersRouter.get('/username/:username', getUserByUsername);
+usersRouter.get('/:userId', validateParams(GetUserByIdParamSchema), getUserById);

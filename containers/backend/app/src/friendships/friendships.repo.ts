@@ -255,21 +255,20 @@ export async function deleteFriendship(
   friendshipId: string,
   currentUserId: string,
 ): Promise<'deleted' | 'not_found' | 'forbidden'> {
-  const friendship = await prisma.friendship.findUnique({
-    where: { id: friendshipId },
-  });
+  return prisma.$transaction(async (tx) => {
+    const friendship = await tx.friendship.findUnique({
+      where: { id: friendshipId },
+    });
 
-  if (!friendship) return 'not_found';
+    if (!friendship) return 'not_found' as const;
 
-  const isMember =
-    friendship.userId1 === currentUserId || friendship.userId2 === currentUserId;
-  if (!isMember) return 'forbidden';
+    const isMember =
+      friendship.userId1 === currentUserId || friendship.userId2 === currentUserId;
+    if (!isMember) return 'forbidden' as const;
 
-  await prisma.$transaction(async (tx) => {
     await tx.friendship.delete({ where: { id: friendshipId } });
+    return 'deleted' as const;
   });
-
-  return 'deleted';
 }
 
 export async function acceptFriendRequest(
