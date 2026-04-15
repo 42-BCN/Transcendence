@@ -82,12 +82,7 @@ export function NavigationMain(args: NavigationMainProps) {
   const t = useTranslations('features.navigation');
 
   return (
-    <Stack
-      className="flex-1 list w-full shadow-[8px_0_20px_var(--color-shadow)]"
-      gap="sm"
-      align="stretch"
-      role="list"
-    >
+    <Stack className="flex-1 list w-full" gap="sm" align="stretch" role="list">
       {mainNavItems.map((item) => (
         <NavLinkItem key={item.href} navItem={item} />
       ))}
