@@ -3,6 +3,35 @@ set -eu
 
 has() { command -v "$1" >/dev/null 2>&1; }
 
+write_openssl_config() {
+  file="$1"
+  cat > "$file" <<'EOF'
+[req]
+default_bits       = 2048
+prompt             = no
+default_md         = sha256
+distinguished_name = dn
+x509_extensions    = v3_req
+
+[dn]
+CN = localhost
+
+[v3_req]
+basicConstraints = critical,CA:TRUE
+keyUsage = critical, digitalSignature, keyEncipherment, keyCertSign
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+DNS.2 = backend
+DNS.3 = socket
+DNS.4 = frontend
+DNS.5 = nginx
+IP.1  = 127.0.0.1
+IP.2  = ::1
+EOF
+}
+
 docker_ok() {
   has docker || return 1
   docker info >/dev/null 2>&1
@@ -10,11 +39,15 @@ docker_ok() {
 
 openssl_selfsigned_host() {
   mkdir -p "$CERT_DIR"
+  config_file="$(mktemp)"
+  write_openssl_config "$config_file"
   openssl req -x509 -newkey rsa:2048 -nodes \
     -keyout "$KEY" \
     -out "$CRT" \
     -days 365 \
-    -subj "/CN=localhost"
+    -config "$config_file"
+  cp "$CRT" "$CERT_DIR/ca.pem"
+  rm -f "$config_file"
 }
 
 openssl_selfsigned_docker() {
@@ -34,10 +67,16 @@ x509_extensions    = v3_req
 CN = localhost
 
 [v3_req]
+basicConstraints = critical,CA:TRUE
+keyUsage = critical, digitalSignature, keyEncipherment, keyCertSign
 subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = localhost
+DNS.2 = backend
+DNS.3 = socket
+DNS.4 = frontend
+DNS.5 = nginx
 IP.1  = 127.0.0.1
 IP.2  = ::1
 EOF
@@ -47,6 +86,8 @@ EOF
       -out /out/localhost.crt \
       -days 365 \
       -config /tmp/localhost.cnf
+
+    cp /out/localhost.crt /out/ca.pem
   '
 }
 echo "➡️ Using self-signed certificate..."

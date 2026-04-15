@@ -225,7 +225,9 @@ set_env_var "$BACKEND_ENV" "REDIS_PORT" "6379"
 set_env_var "$BACKEND_ENV" "REDIS_URL" "redis://redis:6379"
 set_env_var "$BACKEND_ENV" "SESSION_TTL" "604800000"
 
-set_env_var "$BACKEND_ENV" "SOCKET_SERVICE_URL" "http://socket:3100"
+set_env_var "$BACKEND_ENV" "SOCKET_SERVICE_URL" "https://socket:3100"
+set_env_var "$BACKEND_ENV" "CERT_DIR" "/certs"
+set_env_var "$BACKEND_ENV" "NODE_EXTRA_CA_CERTS" "/certs/ca.pem"
 append_if_missing "$BACKEND_ENV" "SOCKET_INTERNAL_SECRET" ""
 
 current_google="$(get_env_value "$BACKEND_ENV" "GOOGLE_CLIENT_ID")"
@@ -277,7 +279,8 @@ set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_API_BASE_URL" "/api"
 set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_SOCKET_URL" "https://localhost:8443"
 set_env_var "$FRONTEND_ENV" "NEXT_PUBLIC_LOCALE_COOKIE_NAME" "locale"
 set_env_var "$FRONTEND_ENV" "NODE_ENV" "development"
-set_env_var "$FRONTEND_ENV" "API_BASE_URL" "http://backend:4000"
+set_env_var "$FRONTEND_ENV" "API_BASE_URL" "https://backend:4000"
+set_env_var "$FRONTEND_ENV" "NODE_EXTRA_CA_CERTS" "/certs/ca.pem"
 
 echo
 echo "✅ Environment setup complete."

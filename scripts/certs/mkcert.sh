@@ -80,9 +80,11 @@ echo "🔧 Installing local CA (may prompt)..."
 
 mkcert -install
 
+cp "$(mkcert -CAROOT)/rootCA.pem" "$CERT_DIR/ca.pem"
+
 mkcert \
   -key-file "$KEY" \
   -cert-file "$CRT" \
-  localhost 127.0.0.1 ::1
+  localhost 127.0.0.1 ::1 backend socket frontend nginx
 
 echo "🎉 HTTPS ready with trusted mkcert certificate"
