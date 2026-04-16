@@ -1,6 +1,6 @@
 import type { Server } from 'socket.io';
 
-import { registerGameSocket } from '../features/game.socket';
+import { registerGameSocket } from '../features/game/game.socket';
 import { registerFriendsSocket } from '../features/friends.socket';
 import { registerChatSocket } from '../features/chat.socket';
 import { registerRobotsSocket } from '../features/robots.socket';

@@ -1,3 +1,5 @@
+import type { tile, parse_entity } from './types'
+
 export const testMap = `
 
 wwwwwwwwww
@@ -59,31 +61,6 @@ ooooawoooo
 `
 
 export const emptyMap = ``
-
-export type pos = {
-  x: number,
-  y: number,
-  z: number
-}
-
-export type mapInfo = {
-  width: number;
-  height: number;
-  depth: number;
-}
-
-export type tile = {
-  id: string,
-  type: string,
-  position: pos
-}
-
-export type parse_entity = {
-  id: string,
-  type: string,
-  position: pos
-}
-
 
 export const parseMap = (map: string) => {
   let width = 0;
