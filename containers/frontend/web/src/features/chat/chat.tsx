@@ -23,6 +23,7 @@ function ChatContent() {
           e.preventDefault();
           sendMessage();
         }}
+        className={chatStyles.footer.wrapper}
       >
         <TextAreaField
           value={value}

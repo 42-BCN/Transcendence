@@ -9,5 +9,9 @@ export const chatStyles = {
   main: {
     wrapper: 'px-3 py-4',
   },
-  footer: { input: 'rounded-none shadow-md px-3' },
+  footer: {
+    wrapper:
+      'relative z-10 bg-bg-primary shadow-[0_-4px_6px_-1px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity)),0_-2px_4px_-2px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity))]',
+    input: 'rounded-none px-3 border-none',
+  },
 };
