@@ -47,7 +47,6 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         gameState.clients[role].canSelect = true;
         gameState.clients[role].selectedAb = null;
         gameState.clients[role].selectedDice = null;
-        gameState.clients[role].selectedEnt = null;
         gameState.clients[role].highlights = {};
         gameState.clients[role].selectables = {};
         gameState.clients[role].selectedEnt =

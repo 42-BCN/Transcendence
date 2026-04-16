@@ -264,12 +264,11 @@ export const useGame = create<gameState>()((set, get) => ({
     console.log("New turn");
   },
 
-
   selectEntity: (id) => {
     const state = get();
     gameSocket.emit('game:client:selectEntity', id);
     let ent = state.players[id] || state.enemies[id] || state.clones[id];
-    console.log("ent.id: ", ent.id);
+    console.log("ent id: ", id);
   },
 
   getSel: () => {
@@ -1101,7 +1100,7 @@ export const useGame = create<gameState>()((set, get) => ({
       throw new Error("no ent id!");
     // const { type, range, self } = state.getAbility(name);
     // set({ highlights: {}, selectedDice: null, });
-    gameSocket.emit('game:client:displayAbilityRange', name);
+    gameSocket.emit('game:client:showAbilityRange', name);
     // selectables: state.paint(ent.position, type, range, self),
   },
 

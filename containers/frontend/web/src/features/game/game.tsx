@@ -6,7 +6,6 @@ import { MapControls, OrthographicCamera } from '@react-three/drei';
 import type { pos, parse_entity, tile } from './maps';
 import { testMap, parseMap } from './maps';
 import { useGame } from './store';
-//import { useGameSocketManager } from './provider';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
