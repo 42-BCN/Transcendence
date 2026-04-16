@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { avatarStyles, type AvatarSize } from './avatar.styles';
 import { Icon } from '../icon';
+import { cn } from '@/lib/styles/cn';
 
 export type AvatarProps = {
   src?: string | null;
@@ -17,11 +18,14 @@ export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarPr
   const showFallback = !src || hasError;
 
   return (
-    <div className={avatarStyles({ size, className })}>
+    <div
+      className={cn(
+        avatarStyles({ size, className }),
+        showFallback && 'flex items-center justify-center text-text-tertiary',
+      )}
+    >
       {showFallback ? (
-        <div className="flex h-full w-full items-center justify-center text-text-tertiary">
-          <Icon name="user" className="h-2/3 w-2/3" />
-        </div>
+        <Icon name="user" className="h-2/3 w-2/3" />
       ) : (
         <img
           src={src}

@@ -92,14 +92,14 @@ export default function SocialTestPage() {
             avatarUrl="/avatars/avatar-2.png"
             actions={
               <>
-                <TooltipTrigger label={t('actions.acceptRequest')} placement="top">
-                  <Button variant="primary" size="lg" className="aspect-square p-0">
-                    <Icon name="check" className="h-4 w-4 text-green-500" />
-                  </Button>
-                </TooltipTrigger>
                 <TooltipTrigger label={t('actions.rejectRequest')} placement="top">
                   <Button variant="secondary" size="lg" className="aspect-square p-0">
                     <Icon name="close" className="h-4 w-4 text-red-500" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipTrigger label={t('actions.acceptRequest')} placement="top">
+                  <Button variant="primary" size="lg" className="aspect-square p-0">
+                    <Icon name="check" className="h-4 w-4 text-green-500" />
                   </Button>
                 </TooltipTrigger>
               </>
