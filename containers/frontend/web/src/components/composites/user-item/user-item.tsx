@@ -18,11 +18,11 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
       <Avatar src={avatarUrl} size="md" />
 
       <div className="flex-grow flex flex-col pt-[1px]">
-        <Text variant="body-sm" className="font-bold text-text-primary">
+        <Text variant="body-sm" as="p" className="font-bold">
           {username}
         </Text>
         {subtitle && (
-          <Text variant="caption" color="tertiary">
+          <Text variant="caption" as="p" color="tertiary">
             {subtitle}
           </Text>
         )}
