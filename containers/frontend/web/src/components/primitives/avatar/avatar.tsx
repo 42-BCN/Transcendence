@@ -25,6 +25,8 @@ export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarPr
 
   return (
     <div
+      role="img"
+      aria-label={alt}
       className={cn(
         avatarStyles({ size, className }),
         showFallback && 'flex items-center justify-center text-text-tertiary',
