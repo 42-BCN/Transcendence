@@ -51,8 +51,8 @@ export default function SocialTestPage() {
       <Stack gap="md">
         <Text variant="heading-sm">{t('userItemsTitle')}</Text>
 
-        <Stack gap="sm" className="rounded-xl border border-border-primary p-4 bg-bg-primary/50">
-          <Text variant="caption" color="tertiary" className="mb-2">
+        <Stack gap="sm" className="rounded-xl border border-border-primary py-4 bg-bg-primary/50">
+          <Text variant="caption" color="tertiary" className="mb-2 px-4">
             {t('socialListLabel')}
           </Text>
 
@@ -64,7 +64,7 @@ export default function SocialTestPage() {
             actions={
               <>
                 <TooltipTrigger label={t('actions.playGame')} placement="top">
-                  <Button variant="primary" size="lg" className="aspect-square p-0">
+                  <Button variant="primary" size="icon" aria-label={t('actions.playGame')}>
                     <Icon name="gamepad" className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
@@ -73,8 +73,8 @@ export default function SocialTestPage() {
                     href="/ui"
                     as="button"
                     variant="primary"
-                    size="lg"
-                    className="aspect-square p-0"
+                    size="icon"
+                    aria-label={t('actions.sendMessage')}
                   >
                     <Icon name="messages" className="h-4 w-4" />
                   </InternalLink>
@@ -83,7 +83,7 @@ export default function SocialTestPage() {
             }
           />
 
-          <div className="h-px bg-border-primary w-full" />
+          <div className="mx-4 h-px bg-border-primary" />
 
           {/* Example 2: Friend Request */}
           <UserItem
@@ -93,12 +93,12 @@ export default function SocialTestPage() {
             actions={
               <>
                 <TooltipTrigger label={t('actions.rejectRequest')} placement="top">
-                  <Button variant="secondary" size="lg" className="aspect-square p-0">
+                  <Button variant="secondary" size="icon" aria-label={t('actions.rejectRequest')}>
                     <Icon name="close" className="h-4 w-4 text-red-500" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipTrigger label={t('actions.acceptRequest')} placement="top">
-                  <Button variant="primary" size="lg" className="aspect-square p-0">
+                  <Button variant="primary" size="icon" aria-label={t('actions.acceptRequest')}>
                     <Icon name="check" className="h-4 w-4 text-green-500" />
                   </Button>
                 </TooltipTrigger>
@@ -106,7 +106,7 @@ export default function SocialTestPage() {
             }
           />
 
-          <div className="h-px bg-border-primary w-full" />
+          <div className="mx-4 h-px bg-border-primary" />
 
           {/* Example 3: Search Result */}
           <UserItem
@@ -114,7 +114,7 @@ export default function SocialTestPage() {
             avatarUrl="/avatars/avatar-1.png"
             actions={
               <TooltipTrigger label={t('actions.addFriend')} placement="top">
-                <Button variant="primary" size="lg" className="aspect-square p-0">
+                <Button variant="primary" size="icon" aria-label={t('actions.addFriend')}>
                   <Icon name="userAdd" className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
