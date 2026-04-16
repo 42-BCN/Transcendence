@@ -4,7 +4,7 @@ export const chatStyles = {
 
   header: {
     wrapper:
-      'px-5 py-3 relative z-10 bg-bg-primary shadow-[0_4px_6px_-1px_rgb(var(--color-shadow)),0_2px_4px_-2px_rgb(var(--color-shadow)/0.12)]',
+      'px-5 py-3 relative z-10 bg-bg-primary shadow-[0_4px_6px_-1px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity)),0_2px_4px_-2px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity))]',
   },
   main: {
     wrapper: 'px-3 py-4',

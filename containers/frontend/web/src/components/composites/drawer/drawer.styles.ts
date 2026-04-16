@@ -16,7 +16,7 @@ const drawerBase = [
   'bg-bg-primary/50 dark:bg-bg-primary/30',
   'backdrop-blur-md',
   'border-r border-border-primary',
-  'shadow-[8px_0_20px_var(--color-shadow)]',
+  'shadow-[8px_0_20px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity))]',
   'transition-transform duration-300',
   'translate-x-0',
 ];

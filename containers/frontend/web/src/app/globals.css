@@ -82,7 +82,8 @@
   --space-lg: var(--space-5);
   --space-xl: var(--space-7);
 
-  --color-shadow: rgba(0, 0, 0, 0.168);
+  --color-shadow-rgb: 0, 0, 0;
+  --color-shadow-opacity: 0.1;
 }
 
 .dark {
@@ -95,7 +96,8 @@
   --color-bg-secondary: #1e293b; /* slate-800 */
   --color-border-primary: #334155; /* slate-700 */
   --color-grid-line: #ffffff05; /* Very subtle white for dark mode */
-  --color-shadow: rgba(255, 255, 255, 0.099);
+  --color-shadow-rgb: 255, 255, 255;
+  --color-shadow-opacity: 0.12;
 }
 
 .font-caption {
