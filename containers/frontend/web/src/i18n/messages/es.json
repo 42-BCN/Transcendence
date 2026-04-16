@@ -194,7 +194,7 @@
       "social": {
         "title": "Prueba de Componentes Sociales",
         "description": "Probando primitivos de Avatar y compuestos de UserItem.",
-        "avatarsTitle": "1. Tamaños de Avatar e Imágen por Defecto",
+        "avatarsTitle": "1. Tamaños de Avatar e Imagen por Defecto",
         "avatarSizes": {
           "sm": "Pequeño",
           "md": "Mediano",

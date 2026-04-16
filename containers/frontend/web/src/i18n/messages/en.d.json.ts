@@ -107,7 +107,7 @@ declare const messages: {
           "meter": "Meter",
           "scrollArea": "Scroll Area",
           "textArea": "Text Area",
-          "themeTest": "Theme test",
+          "themeTest": "Theme Test",
           "typography": "Typography",
           "social": "Social"
         },
