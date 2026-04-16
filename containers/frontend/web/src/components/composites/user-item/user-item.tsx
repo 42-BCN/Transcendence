@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { Stack } from '../../primitives/stack';
-import { Text } from '../../primitives/text';
-import { Avatar } from '../../primitives/avatar';
+import { Stack } from '@components/primitives/stack';
+import { Text } from '@components/primitives/text';
+import { Avatar } from '@components/primitives/avatar';
 import { userItemStyles } from './user-item.styles';
 
 export type UserItemProps = {

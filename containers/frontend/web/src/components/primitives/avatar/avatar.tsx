@@ -14,6 +14,12 @@ export type AvatarProps = {
 
 export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarProps) {
   const [hasError, setHasError] = useState(false);
+  const [prevSrc, setPrevSrc] = useState(src);
+
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setHasError(false);
+  }
 
   const showFallback = !src || hasError;
 
