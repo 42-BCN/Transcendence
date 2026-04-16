@@ -36,6 +36,8 @@ export function getGoogleCallback(req: Request, res: Response, next: NextFunctio
     req.session.regenerate((regenErr) => {
       if (regenErr) return next(regenErr);
       req.session.userId = userId;
+      req.session.guestId = undefined;
+      req.session.guestUsername = undefined;
       req.session.save((saveErr) => {
         if (saveErr) return next(saveErr);
         return res.status(302).redirect('/profile');

@@ -18,6 +18,7 @@ export type ServerToClientChatEvents = {
   'chat:system': (payload: ChatSystemMessage) => void;
   'chat:error': (payload: ChatError) => void;
   'chat:history': (payload: ChatHistoryType) => void;
+  'chat:identity': (payload: ChatIdentity) => void;
   'chat:game-event': (payload: ChatGameEvent) => void;
 };
 
@@ -107,6 +108,15 @@ export const ChatGameEventSchema = BaseMessageSchema.extend({
 });
 
 export type ChatGameEvent = z.infer<typeof ChatGameEventSchema>;
+
+export const ChatIdentitySchema = z.object({
+  identityKey: z.string(),
+  username: z.string(),
+  isGuest: z.boolean(),
+  userId: z.string().optional(),
+});
+
+export type ChatIdentity = z.infer<typeof ChatIdentitySchema>;
 
 // ---------------------------------------------------------------
 // union

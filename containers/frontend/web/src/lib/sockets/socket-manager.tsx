@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 
-import { chatSocket, robotsSocket, type Robot } from './socket';
+import { chatSocket, ensureChatSessionIdentity, robotsSocket, type Robot } from './socket';
 import type {
   ChatError,
   ChatGameEvent,
   ChatHistoryType,
+  ChatIdentity,
   ChatMessage,
   ChatSystemMessage,
 } from '@/contracts/sockets/chat/chat.schema';
@@ -56,6 +57,7 @@ type ChatSocketManagerProps = {
   onChatSystemMessage: (message: ChatSystemMessage) => void;
   onChatError: (message: ChatError) => void;
   onChatHistory: (history: ChatHistoryType) => void;
+  onChatIdentity: (identity: ChatIdentity) => void;
   onGameEvent: (event: ChatGameEvent) => void;
 };
 
@@ -64,6 +66,7 @@ export const ChatSocketManager = ({
   onChatSystemMessage,
   onChatError,
   onChatHistory,
+  onChatIdentity,
   onGameEvent,
 }: ChatSocketManagerProps) => {
   useEffect(() => {
@@ -73,6 +76,7 @@ export const ChatSocketManager = ({
     const handleChatSystemMessage = (payload: ChatSystemMessage) => onChatSystemMessage(payload);
     const handleChatError = (payload: ChatError) => onChatError(payload);
     const handleChatHistory = (payload: ChatHistoryType) => onChatHistory(payload);
+    const handleChatIdentity = (payload: ChatIdentity) => onChatIdentity(payload);
     const handleGameEvent = (payload: ChatGameEvent) => onGameEvent(payload);
 
     const reservedListeners = [
@@ -81,6 +85,7 @@ export const ChatSocketManager = ({
     ] as const;
 
     const chatListeners = [
+      ['chat:identity', handleChatIdentity],
       ['chat:message', handleChatMessage],
       ['chat:system', handleChatSystemMessage],
       ['chat:error', handleChatError],
@@ -91,14 +96,25 @@ export const ChatSocketManager = ({
     reservedListeners.forEach(([event, handler]) => chatSocket.on(event, handler));
     chatListeners.forEach(([event, handler]) => chatSocket.on(event, handler));
 
-    chatSocket.connect();
+    let isMounted = true;
+
+    void ensureChatSessionIdentity()
+      .catch((error) => {
+        console.error('Failed to initialize chat session identity', error);
+      })
+      .finally(() => {
+        if (isMounted) {
+          chatSocket.connect();
+        }
+      });
 
     return () => {
+      isMounted = false;
       reservedListeners.forEach(([event, handler]) => chatSocket.off(event, handler));
       chatListeners.forEach(([event, handler]) => chatSocket.off(event, handler));
       chatSocket.disconnect();
     };
-  }, [onChatMessage, onChatSystemMessage, onChatError, onChatHistory, onGameEvent]);
+  }, [onChatMessage, onChatSystemMessage, onChatError, onChatHistory, onChatIdentity, onGameEvent]);
 
   return null;
 };

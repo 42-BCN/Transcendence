@@ -31,10 +31,14 @@ services:
       context: ./socket
       dockerfile: ./docker/Dockerfile
     working_dir: /app
+    depends_on:
+      backend:
+        condition: service_healthy
     environment:
       NODE_ENV: development
       CERT_DIR: /certs
       NODE_EXTRA_CA_CERTS: /certs/ca.pem
+      BACKEND_SESSION_IDENTITY_URL: https://backend:4000/auth/session/identity
     volumes:
       - ./socket/app:/app
       - node_modules_socket:/app/node_modules

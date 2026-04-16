@@ -1,39 +1,26 @@
-import type { Namespace, Server, Socket } from 'socket.io';
+import type { Namespace, Socket } from 'socket.io';
 
 let friendsNsp: Namespace | null = null;
 
 /** userId -> number of active /friends connections that identified as that user */
 const onlineCounts = new Map<string, number>();
 
-export function registerFriendsSocket(io: Server) {
-  const nsp = io.of('/friends');
+export function registerFriendsSocket(nsp: Namespace) {
   friendsNsp = nsp;
 
   nsp.on('connection', (socket: Socket) => {
-    let currentUserId: string | null = null;
+    const currentUserId = socket.data.userId;
 
-    socket.on('friends:identify', (userId: unknown) => {
-      if (typeof userId !== 'string' || userId.length === 0) return;
+    if (typeof currentUserId !== 'string' || currentUserId.length === 0) {
+      socket.disconnect(true);
+      return;
+    }
 
-      if (currentUserId === userId) {
-        void socket.join(`user:${userId}`);
-        return;
-      }
-
-      if (currentUserId) {
-        decrementOnline(currentUserId);
-      }
-
-      currentUserId = userId;
-      incrementOnline(userId);
-      void socket.join(`user:${userId}`);
-    });
+    incrementOnline(currentUserId);
+    void socket.join(`user:${currentUserId}`);
 
     socket.on('disconnect', () => {
-      if (currentUserId) {
-        decrementOnline(currentUserId);
-        currentUserId = null;
-      }
+      decrementOnline(currentUserId);
     });
   });
 }

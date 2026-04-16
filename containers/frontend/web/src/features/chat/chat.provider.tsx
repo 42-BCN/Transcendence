@@ -14,6 +14,7 @@ import {
 import type {
   ChatGameEvent,
   ChatHistoryType,
+  ChatIdentity,
   ChatMe,
   ChatMessage,
   ChatMessageUnion,
@@ -35,14 +36,13 @@ type ChatProviderProps = {
   children: ReactNode;
 };
 
-// TODO These formatting functions can be removed once the backend can
-// identify the authenticated user and emit the correct renderable type.
+const formatMessage = (message: ChatMessage, selfUsername: string | null): ChatMessageUnion =>
+  selfUsername && message.username === selfUsername ? { ...message, type: 'me' } : message;
 
-const formatMessage = (message: ChatMessage): ChatMessageUnion =>
-  message.username !== 'me' ? message : { ...message, type: 'me' };
-
-const formatHistory = (history: ChatHistoryType): ChatHistoryType =>
-  history.map((message) => (message.type !== 'user' ? message : formatMessage(message)));
+const formatHistory = (history: ChatHistoryType, selfUsername: string | null): ChatHistoryType =>
+  history.map((message) =>
+    message.type !== 'user' ? message : formatMessage(message, selfUsername),
+  );
 
 const gameEventMessage = (event: string): ChatGameEvent => ({
   id: `event-${Date.now()}`,
@@ -64,10 +64,15 @@ const optimisticMessage = (text: string): ChatMe => ({
   createdAt: Date.now(),
 });
 
-function useChatMessages(setMessages: Dispatch<SetStateAction<ChatHistoryType>>) {
+function useChatMessages(
+  setMessages: Dispatch<SetStateAction<ChatHistoryType>>,
+  selfUsername: string | null,
+  setSelfUsername: Dispatch<SetStateAction<string | null>>,
+) {
   const handleChatMessage = useCallback(
-    (message: ChatMessage) => setMessages((prev) => [...prev, formatMessage(message)]),
-    [setMessages],
+    (message: ChatMessage) =>
+      setMessages((prev) => [...prev, formatMessage(message, selfUsername)]),
+    [setMessages, selfUsername],
   );
 
   const handleChatSystemMessage = useCallback(
@@ -76,8 +81,16 @@ function useChatMessages(setMessages: Dispatch<SetStateAction<ChatHistoryType>>)
   );
 
   const handleChatHistory = useCallback(
-    (history: ChatHistoryType) => setMessages(formatHistory(history)),
-    [setMessages],
+    (history: ChatHistoryType) => setMessages(formatHistory(history, selfUsername)),
+    [setMessages, selfUsername],
+  );
+
+  const handleChatIdentity = useCallback(
+    (identity: ChatIdentity) => {
+      setSelfUsername(identity.username);
+      setMessages((prev) => formatHistory(prev, identity.username));
+    },
+    [setMessages, setSelfUsername],
   );
 
   const handleChatError = useCallback(
@@ -94,6 +107,7 @@ function useChatMessages(setMessages: Dispatch<SetStateAction<ChatHistoryType>>)
     handleChatMessage,
     handleChatSystemMessage,
     handleChatHistory,
+    handleChatIdentity,
     handleChatError,
     handleGameEvent,
   };
@@ -102,6 +116,7 @@ function useChatMessages(setMessages: Dispatch<SetStateAction<ChatHistoryType>>)
 // eslint-disable-next-line max-lines-per-function
 export function ChatProvider({ children }: ChatProviderProps) {
   const [messages, setMessages] = useState<ChatHistoryType>([]);
+  const [selfUsername, setSelfUsername] = useState<string | null>(null);
   const [value, setValue] = useState('');
 
   const sendMessage = useCallback(() => {
@@ -121,9 +136,10 @@ export function ChatProvider({ children }: ChatProviderProps) {
     handleChatMessage,
     handleChatSystemMessage,
     handleChatHistory,
+    handleChatIdentity,
     handleChatError,
     handleGameEvent,
-  } = useChatMessages(setMessages);
+  } = useChatMessages(setMessages, selfUsername, setSelfUsername);
 
   const contextValue = useMemo(
     () => ({
@@ -142,6 +158,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
         onChatMessage={handleChatMessage}
         onChatSystemMessage={handleChatSystemMessage}
         onChatHistory={handleChatHistory}
+        onChatIdentity={handleChatIdentity}
         onChatError={handleChatError}
         onGameEvent={handleGameEvent}
       />

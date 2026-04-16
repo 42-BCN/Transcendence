@@ -20,6 +20,22 @@ type ClientToServerRobotsEvents = {
   moveTo: (target: [number, number, number]) => void;
 };
 
+export async function ensureChatSessionIdentity(): Promise<void> {
+  const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/guest/session`;
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to initialize chat session identity (${response.status})`);
+  }
+}
+
 const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
 const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
 
@@ -28,6 +44,7 @@ export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobo
   {
     autoConnect: false,
     transports: ['websocket'],
+    withCredentials: true,
   },
 );
 
@@ -36,5 +53,7 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
   {
     autoConnect: false,
     transports: ['websocket'],
+    withCredentials: true,
+    auth: {},
   },
 );
