@@ -1,6 +1,8 @@
 import { cn } from '@/lib/styles/cn';
 
-const avatarBase = 'relative flex shrink-0 overflow-hidden rounded-lg bg-bg-secondary';
+const avatarBase = 'rounded-lg bg-bg-secondary shrink-0 overflow-hidden';
+
+export const avatarFallbackClasses = 'flex items-center justify-center text-text-tertiary';
 
 const avatarSize = {
   sm: 'h-5 w-5', // 32px (matching --space-5)

@@ -64,20 +64,20 @@ export default function SocialTestPage() {
             actions={
               <>
                 <TooltipTrigger label={t('actions.playGame')} placement="top">
-                  <Button variant="primary" size="icon" aria-label={t('actions.playGame')}>
-                    <Icon name="gamepad" className="h-4 w-4" />
-                  </Button>
+                  <Button
+                    size="icon"
+                    icon={<Icon name="gamepad" />}
+                    aria-label={t('actions.playGame')}
+                  />
                 </TooltipTrigger>
                 <TooltipTrigger label={t('actions.sendMessage')} placement="top">
                   <InternalLink
                     href="/ui"
                     as="button"
-                    variant="primary"
                     size="icon"
+                    icon={<Icon name="messages" />}
                     aria-label={t('actions.sendMessage')}
-                  >
-                    <Icon name="messages" className="h-4 w-4" />
-                  </InternalLink>
+                  />
                 </TooltipTrigger>
               </>
             }
@@ -93,14 +93,19 @@ export default function SocialTestPage() {
             actions={
               <>
                 <TooltipTrigger label={t('actions.rejectRequest')} placement="top">
-                  <Button variant="secondary" size="icon" aria-label={t('actions.rejectRequest')}>
-                    <Icon name="close" className="h-4 w-4 text-red-500" />
-                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    icon={<Icon name="close" className="text-red-500" />}
+                    aria-label={t('actions.rejectRequest')}
+                  />
                 </TooltipTrigger>
                 <TooltipTrigger label={t('actions.acceptRequest')} placement="top">
-                  <Button variant="primary" size="icon" aria-label={t('actions.acceptRequest')}>
-                    <Icon name="check" className="h-4 w-4 text-green-500" />
-                  </Button>
+                  <Button
+                    size="icon"
+                    icon={<Icon name="check" className="text-green-500" />}
+                    aria-label={t('actions.acceptRequest')}
+                  />
                 </TooltipTrigger>
               </>
             }
@@ -114,9 +119,11 @@ export default function SocialTestPage() {
             avatarUrl="/avatars/avatar-1.png"
             actions={
               <TooltipTrigger label={t('actions.addFriend')} placement="top">
-                <Button variant="primary" size="icon" aria-label={t('actions.addFriend')}>
-                  <Icon name="userAdd" className="h-4 w-4" />
-                </Button>
+                <Button
+                  size="icon"
+                  icon={<Icon name="userAdd" />}
+                  aria-label={t('actions.addFriend')}
+                />
               </TooltipTrigger>
             }
           />

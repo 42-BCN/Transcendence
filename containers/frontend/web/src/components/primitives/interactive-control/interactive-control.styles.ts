@@ -59,7 +59,12 @@ const navLinkBase = [
 ];
 
 export function interactiveControlStyles(args?: InteractiveControlStyleProps) {
-  const { variant = 'primary', size = 'md', w = 'full', className } = args ?? {};
+  const {
+    variant = 'primary',
+    size = 'md',
+    w = size === 'icon' ? 'auto' : 'full',
+    className,
+  } = args ?? {};
 
   return cn(
     interactiveControlBase,
@@ -90,5 +95,5 @@ export function interactiveNavLinkStyles(args?: Omit<InteractiveControlStyleProp
 }
 
 export function interactiveIconSlotStyles() {
-  return cn('h-[16px] w-[16px] shrink-0');
+  return cn('h-[20px] w-[20px] shrink-0 flex items-center justify-center');
 }

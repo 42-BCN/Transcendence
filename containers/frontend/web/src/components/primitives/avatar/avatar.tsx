@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { avatarStyles, type AvatarSize } from './avatar.styles';
+import { avatarStyles, type AvatarSize, avatarFallbackClasses } from './avatar.styles';
 import { Icon } from '../icon';
 import { cn } from '@/lib/styles/cn';
 
@@ -27,10 +27,7 @@ export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarPr
     <div
       role="img"
       aria-label={alt}
-      className={cn(
-        avatarStyles({ size, className }),
-        showFallback && 'flex items-center justify-center text-text-tertiary',
-      )}
+      className={cn(avatarStyles({ size, className }), showFallback && avatarFallbackClasses)}
     >
       {showFallback ? (
         <Icon name="user" className="h-2/3 w-2/3" />
