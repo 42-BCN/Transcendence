@@ -62,11 +62,6 @@ function DiceButtons() {
   const rollDice = useGame((state) => state.rollDice);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
-
-  const handleDiceClick = (quantity: number) => {
-    rollDice(quantity);
-    console.log('Emitted roll dice event with quantity:', quantity);
-  };
   const [isPressed, setPressed] = useState(false);
 
   return (
@@ -94,8 +89,6 @@ function DiceButtons() {
             onPress={() => {
               if (assignedCharacter === ent.id) {
                 ability ? selectDice(diceNum) : movDice(diceNum);
-                const rolled = Math.ceil(Math.random() * diceNum);
-                handleDiceClick(rolled);
                 setPressed(true);
               }
             }}

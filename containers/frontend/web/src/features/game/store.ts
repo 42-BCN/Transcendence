@@ -3,7 +3,7 @@ import TinyQueue from "tinyqueue";
 import type { parse_entity, pos, tile } from "./maps";
 import { gameSocket } from '@/lib/sockets/socket';
 
-export type GlobalGameState = {
+export type globalGameState = {
   phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
   turn: number;
   players: Record<string, player>;
@@ -12,6 +12,15 @@ export type GlobalGameState = {
   tiles: Record<string, boolean>;
   history: historyAction[];
   mapBounds: mapInfo;
+}
+
+export type localGameState = {
+  highlights: Record<string, boolean>;
+  selectables: Record<string, boolean>;
+  canSelect: boolean;
+  selectedAb: string | null;
+  selectedEnt: string | null;
+  selectedDice: number | null;
 }
 
 type gamePhase = "PLAN" | "EXEC" | "ENEMY" | "END"
@@ -153,7 +162,7 @@ export const useGame = create<gameState>()((set, get) => ({
   phase: "PLAN",
 
   rollQuantity: 0,
-  assignedCharacter: "spectator",
+  assignedCharacter: 'spectator',
 
   canSelect: true,
   typeEnt: null,
@@ -256,21 +265,12 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
 
-  selectEntity: (id) =>
-    set((state) => {
-      if (id === state.selectedEnt) {
-        return { ...clean };
-      }
-      let ent = state.players[id] || state.enemies[id] || state.clones[id];
-      if (!ent)
-        throw new Error("cannot select entity!");
-      console.log("ent.id: ", ent.id);
-      return {
-        ...clean,
-        selectedEnt: ent.id,
-        typeEnt: ent.type,
-      };
-    }),
+  selectEntity: (id) => {
+    const state = get();
+    gameSocket.emit('game:client:selectEntity', id);
+    let ent = state.players[id] || state.enemies[id] || state.clones[id];
+    console.log("ent.id: ", ent.id);
+  },
 
   getSel: () => {
     const s = get();
@@ -281,28 +281,13 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   movDice: (mov) => {
-    const state = get();
-    const ent = state.getSel();
-    if (!ent)
+    if (!get().getSel())
       throw new Error("no ent id!");
-    if (ent.hasMoved === true)
-      return;
-
-    set({ selectedDice: mov });
     gameSocket.emit('game:client:displayMoveRange', mov);
-    // const hlId = state.dijkstra(ent.position, mov);
-    // const hlTiles: Record<string, boolean> = {};
-    // hlId.forEach((id: string) => (hlTiles[id] = true));
   },
 
   selectDice: (dice) => {
-    const state = get()
-    if (state.selectedDice === dice)
-      return set({ selectedDice: null });
-    if (!state.selectedEnt)
-      throw new Error("no ent id!");
-    set({ selectedDice: dice });
-    console.log("selectedDice: ", get().selectedDice);
+    gameSocket.emit('game:client:selectDice', dice);
   },
 
   resetHistory: (id) => {
@@ -415,7 +400,7 @@ export const useGame = create<gameState>()((set, get) => ({
       });
     }
   },
-
+  //
   moveClone: (tileId) => {
     const state = get()
     if (!state.highlights[tileId] || !state.selectedEnt || !state.selectedDice)
@@ -446,46 +431,46 @@ export const useGame = create<gameState>()((set, get) => ({
     });
   },
 
-  moveTo: async (entId, tileId) => {
-    const state = get()
-    const [x, y, z] = tileId.split(',').map(Number);
-    const dest = { x, y: (y + 1), z };
-    let ent = state.players[entId] || state.clones[entId] || state.enemies[entId];
-    if (!ent)
-      throw new Error(`Entity not found when trying to move: ${entId}`);
-    const path = state.Astar(ent.position, dest);
-    if (!path || path.length === 0)
-      return;
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    for (let i = 1; i < path.length; ++i) {
-      await sleep(300);
-      const [sx, sy, sz] = path[i].split(',').map(Number);
-      const stepPos = { x: sx, y: sy, z: sz };
-      set((currState) => {
-        if (ent.type === "player") {
-          return {
-            players: {
-              ...currState.players,
-              [entId]: {
-                ...currState.players[entId],
-                position: stepPos
-              }
-            }
-          }
-        }
-        return {
-          enemies: {
-            ...currState.enemies,
-            [entId]: {
-              ...currState.enemies[entId],
-              position: stepPos
-            }
-          }
-        };
-      });
-    }
-  },
-
+  // moveTo: async (entId, tileId) => {
+  //   const state = get()
+  //   const [x, y, z] = tileId.split(',').map(Number);
+  //   const dest = { x, y: (y + 1), z };
+  //   let ent = state.players[entId] || state.clones[entId] || state.enemies[entId];
+  //   if (!ent)
+  //     throw new Error(`Entity not found when trying to move: ${entId}`);
+  //   const path = state.Astar(ent.position, dest);
+  //   if (!path || path.length === 0)
+  //     return;
+  //   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  //   for (let i = 1; i < path.length; ++i) {
+  //     await sleep(300);
+  //     const [sx, sy, sz] = path[i].split(',').map(Number);
+  //     const stepPos = { x: sx, y: sy, z: sz };
+  //     set((currState) => {
+  //       if (ent.type === "player") {
+  //         return {
+  //           players: {
+  //             ...currState.players,
+  //             [entId]: {
+  //               ...currState.players[entId],
+  //               position: stepPos
+  //             }
+  //           }
+  //         }
+  //       }
+  //       return {
+  //         enemies: {
+  //           ...currState.enemies,
+  //           [entId]: {
+  //             ...currState.enemies[entId],
+  //             position: stepPos
+  //           }
+  //         }
+  //       };
+  //     });
+  //   }
+  // },
+  //
 
   // init: (entities, tiles, mapInfo) => {
   //   const playEnt: Record<string, player> = {};
@@ -780,345 +765,344 @@ export const useGame = create<gameState>()((set, get) => ({
     return [];
   },
 
-  hasLoS: (pos, x, y, z) => {
-    const dx = x - pos.x;
-    const dy = y - pos.y;
-    const dz = z - pos.z;
-    const state = get();
-    const steps = Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
-    if (steps < 1)
-      return 1;
-    let cx = pos.x;
-    let cy = pos.y;
-    let cz = pos.z;
-    for (let i = 1; i < steps; i++) {
-      cx += dx / steps;
-      cy += dy / steps;
-      cz += dz / steps;
-      const rx = Math.round(cx);
-      const ry = Math.round(cy);
-      const rz = Math.round(cz);
-      if (state.isBlocked(rx, ry, rz))
-        return -1;
-    }
-    if (state.checkEnt(x, y, z))
-      return 0;
-    if (state.isBlocked(x, y, z))
-      return -1;
-    return 1;
-  },
-
-  euclidTiles: (pos, range, is3D) => {
-    const state = get();
-    const hmax = is3D ? range : 0;
-    const hmin = is3D ? -range : 0;
-    const valid: Record<string, boolean> = {};
-    for (let dx = -range; dx <= range; ++dx) {
-      for (let dy = hmin; dy <= hmax; ++dy) {
-        for (let dz = -range; dz <= range; ++dz) {
-          const x = pos.x + dx;
-          const y = pos.y + dy;
-          const z = pos.z + dz;
-          if (!state.isValid(x, y, z) || state.tiles[`${x},${y},${z}`]
-            || (range * range < dx * dx + dy * dy + dz * dz))
-            continue;
-          const resLoS = state.hasLoS(pos, x, y, z);
-          if (resLoS === -1)
-            continue;
-          if (resLoS === 0) {
-            const entid = state.checkEnt(x, y, z)?.id;
-            if (entid)
-              valid[entid] = true;
-            continue;
-          }
-          valid[`${x},${y - 1},${z}`] = true;
-        }
-      }
-    }
-    return (valid);
-  },
-
-  isValid: (x, y, z) => {
-    const state = get()
-    return (x >= state.mapBounds.width || y >= state.mapBounds.height + 1
-      || z >= state.mapBounds.depth || x < 0 || y < 0 || z < 0 ? false : true)
-  },
-
-  crossTiles: (pos, range) => {
-    const state = get();
-    const CROSS = [
-      [1, 0, 0], [-1, 0, 0],
-      [0, 0, 1], [0, 0, -1]
-    ];
-    const valid: Record<string, boolean> = {};
-    for (const [dx, dy, dz] of CROSS) {
-      for (let n = 1; n <= range; ++n) {
-        const x = pos.x + n * dx;
-        const y = pos.y + n * dy;
-        const z = pos.z + n * dz;
-        if (!state.isValid(x, y, z) || state.tiles[`${x},${y},${z}`])
-          break;
-        const ent = state.checkEnt(x, y, z);
-        if (ent) {
-          valid[ent.id] = true;
-          break;
-        }
-        valid[`${x},${y - 1},${z}`] = true;
-      }
-    }
-    return (valid);
-  },
-
-  paint: (pos, type, range, self) => {
-    const state = get()
-    if (!state.selectedEnt)
-      return {};
-    let valid: Record<string, boolean>;
-    switch (type) {
-      case 'cross':
-        valid = state.crossTiles(pos, range);
-        break;
-      case 'circle':
-        valid = state.euclidTiles(pos, range, false);
-        break;
-      case 'sphere':
-        valid = state.euclidTiles(pos, range, true);
-        break;
-      default:
-        valid = {};
-    }
-    valid[state.selectedEnt] = false;
-    if (self)
-      valid[state.selectedEnt] = true;
-    return (valid);
-  },
-
-  getAbility: (name): abilityInfo => {
-    switch (name) {
-      case "Stab":
-        return {
-          name: name,
-          type: "cross",
-          cond: (x: number) => (x % 2) !== 0,
-          range: 1,
-          dmg: 1,
-          cd: 0,
-          self: false,
-          effect: ["bleed", "1"],
-        }
-      case "Dagger Throw":
-        return {
-          name: name,
-          type: "cross",
-          effect: ["bleed", "1"],
-          cond: (x: number) => x > 3,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Kick":
-        return {
-          name: name,
-          type: "cross",
-          effect: ["move", "away"],
-          cond: (x: number) => x > 2,
-          range: 1,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Restrain":
-        return {
-          name: name,
-          type: "circle",
-          effect: ["restrain", "2"],
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Thrust":
-        return {
-          name: name,
-          type: "cross",
-          cond: (x: number) => x > 3,
-          range: 2,
-          dmg: 2,
-          cd: 1,
-          self: false,
-        }
-      case "Defend":
-        return {
-          name: name,
-          type: "circle",
-          effect: ["defend", "2"],
-          cond: (x: number) => x > 2,
-          range: 2,
-          dmg: 0,
-          cd: 0,
-          self: false,
-        }
-      case "Shield Bash":
-        return {
-          name: name,
-          type: "cross",
-          effect: ["move", "away"],
-          cond: (x: number) => x > 5,
-          range: 0,
-          dmg: 4,
-          cd: 2,
-          AoE: "circle",
-          AoErange: 2,
-          self: true,
-        }
-      case "Vertical Slash":
-        return {
-          name: name,
-          type: "cross",
-          cond: (x: number) => x > 3,
-          range: 1,
-          dmg: (bonus: number) => 1 + bonus,
-          cd: 1,
-          AoE: "vertical",
-          AoErange: 1,
-          self: false,
-        }
-      case "Fire Breath":
-        return {
-          name: name,
-          type: "cone",
-          effect: ["burn", "2"],
-          cond: (x: number) => x > 3,
-          range: 3,
-          dmg: (res: number) => Math.floor(res / 3),
-          cd: 2,
-          self: false,
-        }
-      case "Azure Comet":
-        return {
-          name: name,
-          type: "cross",
-          cond: (x: number) => x > 3,
-          range: 5,
-          dmg: (res: number) => Math.floor(res / 2) + 2,
-          cd: 3,
-          self: false,
-        }
-      case "Small Meteor":
-        return {
-          name: name,
-          type: "smcircle",
-          cond: (x: number) => x > 2,
-          range: 4,
-          dmg: (bonus: number) => 1 + bonus,
-          cd: 1,
-          self: false,
-        }
-      case "Rising Thorns":
-        return {
-          name: name,
-          type: "rtcircle",
-          cond: (x: number) => x > 2,
-          range: 4,
-          dmg: (bonus: number) => 1 + bonus,
-          cd: 1,
-          self: false,
-        }
-      case "Stimulant":
-        return {
-          name: name,
-          type: "cross",
-          effect: ["bonus dice", "1"],
-          cond: (x: number) => x > 2,
-          range: 2,
-          dmg: 0,
-          cd: 0,
-          self: true,
-        }
-      case "Vacuum Flask":
-        return {
-          name: name,
-          type: "circle",
-          effect: ["move", "towards"],
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: false,
-        }
-      case "Bombastic Flask":
-        return {
-          name: name,
-          type: "circle",
-          effect: ["move", "away"],
-          cond: (x: number) => x > 2,
-          range: 2,
-          dmg: (res: number) => Math.floor(res / 2) - 2,
-          cd: 0,
-          self: false,
-        }
-      case "Oxidation":
-        return {
-          name: name,
-          type: "circle",
-          effect: ["oxidation", "2"],
-          cond: (x: number) => x > 2,
-          range: 2,
-          dmg: 0,
-          cd: 0,
-          self: false,
-        }
-      default:
-        return {
-          name: "error",
-          type: "sphere",
-          cond: (x: number) => x > 2,
-          range: 3,
-          dmg: 1,
-          cd: 0,
-          self: true,
-        }
-    }
-  },
-
+  // hasLoS: (pos, x, y, z) => {
+  //   const dx = x - pos.x;
+  //   const dy = y - pos.y;
+  //   const dz = z - pos.z;
+  //   const state = get();
+  //   const steps = Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
+  //   if (steps < 1)
+  //     return 1;
+  //   let cx = pos.x;
+  //   let cy = pos.y;
+  //   let cz = pos.z;
+  //   for (let i = 1; i < steps; i++) {
+  //     cx += dx / steps;
+  //     cy += dy / steps;
+  //     cz += dz / steps;
+  //     const rx = Math.round(cx);
+  //     const ry = Math.round(cy);
+  //     const rz = Math.round(cz);
+  //     if (state.isBlocked(rx, ry, rz))
+  //       return -1;
+  //   }
+  //   if (state.checkEnt(x, y, z))
+  //     return 0;
+  //   if (state.isBlocked(x, y, z))
+  //     return -1;
+  //   return 1;
+  // },
+  // //
+  // // euclidTiles: (pos, range, is3D) => {
+  // //   const state = get();
+  // //   const hmax = is3D ? range : 0;
+  // //   const hmin = is3D ? -range : 0;
+  // //   const valid: Record<string, boolean> = {};
+  // //   for (let dx = -range; dx <= range; ++dx) {
+  // //     for (let dy = hmin; dy <= hmax; ++dy) {
+  // //       for (let dz = -range; dz <= range; ++dz) {
+  // //         const x = pos.x + dx;
+  // //         const y = pos.y + dy;
+  // //         const z = pos.z + dz;
+  // //         if (!state.isValid(x, y, z) || state.tiles[`${x},${y},${z}`]
+  // //           || (range * range < dx * dx + dy * dy + dz * dz))
+  // //           continue;
+  // //         const resLoS = state.hasLoS(pos, x, y, z);
+  // //         if (resLoS === -1)
+  // //           continue;
+  // //         if (resLoS === 0) {
+  // //           const entid = state.checkEnt(x, y, z)?.id;
+  // //           if (entid)
+  // //             valid[entid] = true;
+  // //           continue;
+  // //         }
+  // //         valid[`${x},${y - 1},${z}`] = true;
+  // //       }
+  // //     }
+  // //   }
+  // //   return (valid);
+  // // },
+  // //
+  // // isValid: (x, y, z) => {
+  // //   const state = get()
+  // //   return (x >= state.mapBounds.width || y >= state.mapBounds.height + 1
+  // //     || z >= state.mapBounds.depth || x < 0 || y < 0 || z < 0 ? false : true)
+  // // },
+  // //
+  // // crossTiles: (pos, range) => {
+  // //   const state = get();
+  // //   const CROSS = [
+  // //     [1, 0, 0], [-1, 0, 0],
+  // //     [0, 0, 1], [0, 0, -1]
+  // //   ];
+  // //   const valid: Record<string, boolean> = {};
+  // //   for (const [dx, dy, dz] of CROSS) {
+  // //     for (let n = 1; n <= range; ++n) {
+  // //       const x = pos.x + n * dx;
+  // //       const y = pos.y + n * dy;
+  // //       const z = pos.z + n * dz;
+  // //       if (!state.isValid(x, y, z) || state.tiles[`${x},${y},${z}`])
+  // //         break;
+  // //       const ent = state.checkEnt(x, y, z);
+  // //       if (ent) {
+  // //         valid[ent.id] = true;
+  // //         break;
+  // //       }
+  // //       valid[`${x},${y - 1},${z}`] = true;
+  // //     }
+  // //   }
+  // //   return (valid);
+  // // },
+  // //
+  // // paint: (pos, type, range, self) => {
+  // //   const state = get()
+  // //   if (!state.selectedEnt)
+  // //     return {};
+  // //   let valid: Record<string, boolean>;
+  // //   switch (type) {
+  // //     case 'cross':
+  // //       valid = state.crossTiles(pos, range);
+  // //       break;
+  // //     case 'circle':
+  // //       valid = state.euclidTiles(pos, range, false);
+  // //       break;
+  // //     case 'sphere':
+  // //       valid = state.euclidTiles(pos, range, true);
+  // //       break;
+  // //     default:
+  // //       valid = {};
+  // //   }
+  // //   valid[state.selectedEnt] = false;
+  // //   if (self)
+  // //     valid[state.selectedEnt] = true;
+  // //   return (valid);
+  // // },
+  // //
+  // // getAbility: (name): abilityInfo => {
+  // //   switch (name) {
+  // //     case "Stab":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         cond: (x: number) => (x % 2) !== 0,
+  // //         range: 1,
+  // //         dmg: 1,
+  // //         cd: 0,
+  // //         self: false,
+  // //         effect: ["bleed", "1"],
+  // //       }
+  // //     case "Dagger Throw":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         effect: ["bleed", "1"],
+  // //         cond: (x: number) => x > 3,
+  // //         range: 3,
+  // //         dmg: 1,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     case "Kick":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         effect: ["move", "away"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 1,
+  // //         dmg: 1,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     case "Restrain":
+  // //       return {
+  // //         name: name,
+  // //         type: "circle",
+  // //         effect: ["restrain", "2"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 3,
+  // //         dmg: 1,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     case "Thrust":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         cond: (x: number) => x > 3,
+  // //         range: 2,
+  // //         dmg: 2,
+  // //         cd: 1,
+  // //         self: false,
+  // //       }
+  // //     case "Defend":
+  // //       return {
+  // //         name: name,
+  // //         type: "circle",
+  // //         effect: ["defend", "2"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 2,
+  // //         dmg: 0,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     case "Shield Bash":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         effect: ["move", "away"],
+  // //         cond: (x: number) => x > 5,
+  // //         range: 0,
+  // //         dmg: 4,
+  // //         cd: 2,
+  // //         AoE: "circle",
+  // //         AoErange: 2,
+  // //         self: true,
+  // //       }
+  // //     case "Vertical Slash":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         cond: (x: number) => x > 3,
+  // //         range: 1,
+  // //         dmg: (bonus: number) => 1 + bonus,
+  // //         cd: 1,
+  // //         AoE: "vertical",
+  // //         AoErange: 1,
+  // //         self: false,
+  // //       }
+  // //     case "Fire Breath":
+  // //       return {
+  // //         name: name,
+  // //         type: "cone",
+  // //         effect: ["burn", "2"],
+  // //         cond: (x: number) => x > 3,
+  // //         range: 3,
+  // //         dmg: (res: number) => Math.floor(res / 3),
+  // //         cd: 2,
+  // //         self: false,
+  // //       }
+  // //     case "Azure Comet":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         cond: (x: number) => x > 3,
+  // //         range: 5,
+  // //         dmg: (res: number) => Math.floor(res / 2) + 2,
+  // //         cd: 3,
+  // //         self: false,
+  // //       }
+  // //     case "Small Meteor":
+  // //       return {
+  // //         name: name,
+  // //         type: "smcircle",
+  // //         cond: (x: number) => x > 2,
+  // //         range: 4,
+  // //         dmg: (bonus: number) => 1 + bonus,
+  // //         cd: 1,
+  // //         self: false,
+  // //       }
+  // //     case "Rising Thorns":
+  // //       return {
+  // //         name: name,
+  // //         type: "rtcircle",
+  // //         cond: (x: number) => x > 2,
+  // //         range: 4,
+  // //         dmg: (bonus: number) => 1 + bonus,
+  // //         cd: 1,
+  // //         self: false,
+  // //       }
+  // //     case "Stimulant":
+  // //       return {
+  // //         name: name,
+  // //         type: "cross",
+  // //         effect: ["bonus dice", "1"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 2,
+  // //         dmg: 0,
+  // //         cd: 0,
+  // //         self: true,
+  // //       }
+  // //     case "Vacuum Flask":
+  // //       return {
+  // //         name: name,
+  // //         type: "circle",
+  // //         effect: ["move", "towards"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 3,
+  // //         dmg: 1,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     case "Bombastic Flask":
+  // //       return {
+  // //         name: name,
+  // //         type: "circle",
+  // //         effect: ["move", "away"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 2,
+  // //         dmg: (res: number) => Math.floor(res / 2) - 2,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     case "Oxidation":
+  // //       return {
+  // //         name: name,
+  // //         type: "circle",
+  // //         effect: ["oxidation", "2"],
+  // //         cond: (x: number) => x > 2,
+  // //         range: 2,
+  // //         dmg: 0,
+  // //         cd: 0,
+  // //         self: false,
+  // //       }
+  // //     default:
+  // //       return {
+  // //         name: "error",
+  // //         type: "sphere",
+  // //         cond: (x: number) => x > 2,
+  // //         range: 3,
+  // //         dmg: 1,
+  // //         cd: 0,
+  // //         self: true,
+  // //       }
+  // //   }
+  // // },
+  // //
   selectAbility: (name) => {
     const state = get()
-    if (state.selectedAb === name)
-      return set({
-        selectedAb: null,
-        selectedDice: null,
-        highlights: {},
-        selectables: {},
-        canSelect: true,
-      });
     const ent = state.getSel();
     if (!ent)
       throw new Error("no ent id!");
-    const { type, range, self } = state.getAbility(name);
-    set({
-      selectedAb: name,
-      highlights: {},
-      selectedDice: null,
-      selectables: state.paint(ent.position, type, range, self),
-      canSelect: false,
-    });
-    console.log("SelectedAb: ", get().selectedAb);
-    console.log("Selectables: ", get().selectables);
+    // const { type, range, self } = state.getAbility(name);
+    // if (state.selectedAb === name)
+    //   return set({
+    //     selectedAb: null,
+    //     selectedDice: null,
+    //     highlights: {},
+    //     selectables: {},
+    //     canSelect: true,
+    //   });
+    gameSocket.emit('game:client:displayAbilityRange', name)
+    // set({
+    //   selectedAb: name,
+    //   highlights: {},
+    //   selectedDice: null,
+    //   selectables: state.paint(ent.position, type, range, self),
+    //   canSelect: false,
+    // });
+    // console.log("SelectedAb: ", get().selectedAb);
+    // console.log("Selectables: ", get().selectables);
   },
-
+  //
   showAbRange: (name) => {
     const state = get()
     const ent = state.getSel();
     if (!ent)
       throw new Error("no ent id!");
-    const { type, range, self } = state.getAbility(name);
-    set({
-      highlights: {},
-      selectedDice: null,
-      selectables: state.paint(ent.position, type, range, self),
-    });
+    // const { type, range, self } = state.getAbility(name);
+    // set({ highlights: {}, selectedDice: null, });
+    gameSocket.emit('game:client:displayAbilityRange', name);
+    // selectables: state.paint(ent.position, type, range, self),
   },
 
   takeAb: (id, type, ab, roll) => {
@@ -1171,52 +1155,59 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   clearHighlights: () => {
+    gameSocket.emit('game:client:clearHl');
     set({ highlights: {} });
   },
 
   clearSelectables: () => {
+    gameSocket.emit('game:client:clearSl');
     set({ selectables: {} });
-  },
-
-  setRollQuantity: (quantity) => {
-    set({ rollQuantity: quantity });
-  },
-
-  rollDice: (quantity) => {
-    gameSocket.emit('game:client:rolls', quantity);
   },
 
   initSocketListeners: () => {
     const handleJoin = (id: string) => {
-      console.log('joined with character', id);
+      console.log(id, 'joined');
       set({ assignedCharacter: id });
     };
-    const handleInit = (initState: GlobalGameState) => {
-      console.log('recieved init event with character', get().assignedCharacter);
-      set({
-        phase: 'PLAN',
-        turn: 1,
-        tiles: initState.tiles,
-        enemies: initState.enemies,
-        players: initState.players,
-        clones: initState.clones,
-        history: initState.history,
-        mapBounds: initState.mapBounds,
-      });
-    };
-    const handleSync = (initState: GlobalGameState) => {
+    // const handleInit = (initState: GlobalGameState) => {
+    //   console.log('recieved init event with character', get().assignedCharacter);
+    //   set({
+    //     phase: 'PLAN',
+    //     turn: 1,
+    //     tiles: initState.tiles,
+    //     enemies: initState.enemies,
+    //     players: initState.players,
+    //     clones: initState.clones,
+    //     history: initState.history,
+    //     mapBounds: initState.mapBounds,
+    //   });
+    // };
+    const handleGlobalSync = (state: globalGameState) => {
       console.log('recieved sync event with character', get().assignedCharacter);
       set({
-        phase: initState.phase,
-        turn: initState.turn,
-        tiles: initState.tiles,
-        enemies: initState.enemies,
-        players: initState.players,
-        clones: initState.clones,
-        history: initState.history,
-        mapBounds: initState.mapBounds,
+        phase: state.phase,
+        turn: state.turn,
+        tiles: state.tiles,
+        enemies: state.enemies,
+        players: state.players,
+        clones: state.clones,
+        history: state.history,
+        mapBounds: state.mapBounds,
       });
     };
+
+    const handleSync = (state: localGameState) => {
+      console.log('recieved sync event with character', get().assignedCharacter);
+      set({
+        highlights: state.highlights,
+        selectables: state.selectables,
+        canSelect: state.canSelect,
+        selectedAb: state.selectedAb,
+        selectedEnt: state.selectedEnt,
+        selectedDice: state.selectedDice,
+      });
+    };
+
     const handleUpdateRolls = (quantity: number) => {
       console.log('Received game rolls update event', quantity);
       set({ rollQuantity: quantity });
@@ -1226,13 +1217,19 @@ export const useGame = create<gameState>()((set, get) => ({
       set({ highlights: highlights });
     };
 
+    const handleSelectables = (selectables: Record<string, boolean>) => {
+      console.log('Received highlights form server');
+      set({ selectables: selectables });
+    };
+
     gameSocket.on('connect', () => console.log('Connected to game events socket server'));
     gameSocket.on('disconnect', () => console.log('Disconnected from game events socket server'));
     gameSocket.on('game:server:join', handleJoin);
-    gameSocket.on('game:server:init', handleInit);
+    // gameSocket.on('game:server:init', handleInit);
+    gameSocket.on('game:server:globalSync', handleGlobalSync);
     gameSocket.on('game:server:sync', handleSync);
-    gameSocket.on('game:server:rolls', handleUpdateRolls);
     gameSocket.on('game:server:displayMoveRange', handleHighlights);
+    gameSocket.on('game:server:displayAbilityRange', handleSelectables);
     gameSocket.connect();
   },
 
@@ -1242,10 +1239,8 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:init');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:rolls');
-    gameSocket.off('game:server:displayMoveRange');
+    gameSocket.off('game:server:globalSync');
     gameSocket.disconnect();
   },
 }
 ));
-
