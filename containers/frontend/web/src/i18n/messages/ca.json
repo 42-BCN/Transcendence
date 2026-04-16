@@ -190,6 +190,30 @@
         "description": "Aquest component és un div que ocupa una alçada del 100% i crea una àrea de desplaçament.",
         "example": "Exemple",
         "itemLabel": "Element"
+      },
+      "social": {
+        "title": "Prova de Components Socials",
+        "description": "Provant primitius d'Avatar i compostos d'UserItem.",
+        "avatarsTitle": "1. Mides d'Avatar i Imatge per Defecte",
+        "avatarSizes": {
+          "sm": "Petit",
+          "md": "Mitjà",
+          "lg": "Gran",
+          "fallback": "Per Defecte"
+        },
+        "userItemsTitle": "2. Variants d'UserItem",
+        "socialListLabel": "Exemples de Llistes Socials",
+        "status": {
+          "online": "En línia",
+          "sent": "Enviat fa 2 dies"
+        },
+        "actions": {
+          "playGame": "Jugar",
+          "sendMessage": "Enviar Missatge",
+          "acceptRequest": "Acceptar Sol·licitud",
+          "rejectRequest": "Rebutjar Sol·licitud",
+          "addFriend": "Afegir Amic"
+        }
       }
     },
     "terms": {
