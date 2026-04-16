@@ -29,7 +29,7 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
       </div>
 
       {actions && (
-        <Stack direction="horizontal" gap="sm" align="center">
+        <Stack direction="horizontal" gap="sm" align="center" className="self-center">
           {actions}
         </Stack>
       )}
