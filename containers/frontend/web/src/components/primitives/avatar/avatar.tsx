@@ -19,7 +19,7 @@ export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarPr
   return (
     <div className={avatarStyles({ size, className })}>
       {showFallback ? (
-        <div className="flex h-full w-full items-center justify-center text-slate-500">
+        <div className="flex h-full w-full items-center justify-center text-text-tertiary">
           <Icon name="user" className="h-2/3 w-2/3" />
         </div>
       ) : (

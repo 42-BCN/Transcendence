@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const avatarBase = 'relative flex shrink-0 overflow-hidden rounded-lg bg-slate-200';
+const avatarBase = 'relative flex shrink-0 overflow-hidden rounded-lg bg-bg-secondary';
 
 const avatarSize = {
   sm: 'h-5 w-5', // 32px (matching --space-5)
