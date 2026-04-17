@@ -73,22 +73,3 @@ Missing variables throw at startup using required helpers (fail fast strategy).
 
 ---
 
-## 5. Boolean Handling
-
-Environment variables are always strings.
-
-Example:
-
-```sh
-NEXT_PUBLIC_LOCALE_COOKIE_ENABLED=false
-```
-
-This is `"false"` (string), not `false` (boolean).
-
-Always parse explicitly:
-
-```ts
-value === "true";
-```
-
-Never rely on truthiness (`if (value)`), because `"false"` is truthy.
