@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
  * Smoke test: signup x2 → login → friend request → accept → GET /friends & /friendships.
- * Run inside backend container: BASE_URL=https://localhost:8443/api node scripts/smoke-friendships.mjs
+ * Run inside backend container: node scripts/smoke-friendships.mjs
+ * Optional nginx route from a container on the edge network: BASE_URL=https://nginx/api node scripts/smoke-friendships.mjs
  */
 
-const BASE = process.env.BASE_URL ?? 'https://localhost:8443/api';
+const BASE = process.env.BASE_URL ?? 'https://localhost:4000';
 
 class Client {
   /** @type {string} */
