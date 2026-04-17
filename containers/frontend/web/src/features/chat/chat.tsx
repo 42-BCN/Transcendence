@@ -14,7 +14,7 @@ function ChatContent() {
 
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
-      <ChatHeader room="chatTest" participants={['capapes', 'cmanica-', 'mfontser', 'mvelazqu']} />
+      <ChatHeader room="chatTest" participants={['capapes', 'cmanica-', 'mfontser', 'joanavar']} />
 
       <ChatMain messages={messages} />
 
