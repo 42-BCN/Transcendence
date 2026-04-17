@@ -27,12 +27,8 @@ function getMobileNavigationValue(locale: string, closeNavigation: () => void) {
   };
 }
 
-const mobileNavigationClassName = glassCardStyles({
-  intensity: 'medium',
-  blur: 'sm',
-  className:
-    'group z-10 flex max-h-[100dvh] w-full overflow-y-auto overscroll-contain px-2 py-4 rounded-s-none rounded-e-md',
-});
+const mobileNavigationClassName =
+  'group z-10 flex h-[100dvh] w-full overflow-y-auto overscroll-contain px-2 py-4 rounded-s-none rounded-e-md';
 
 export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState<boolean | null>(null);

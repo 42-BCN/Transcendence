@@ -374,7 +374,7 @@
     "OUT_OF_RANGE": "Sol·licitud fora de rang"
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest email ja existeix",
+    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
     "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
     "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
     "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",

@@ -15,7 +15,7 @@ export function Drawer(props: ModalOverlayProps) {
     <ModalOverlay className={drawerOverlayStyles()}>
       {composeRenderProps(props.children, (children) => (
         <Modal className={drawerStyles()} isOpen={true}>
-          <Dialog>{children}</Dialog>
+          <Dialog className="h-full">{children}</Dialog>
         </Modal>
       ))}
     </ModalOverlay>
