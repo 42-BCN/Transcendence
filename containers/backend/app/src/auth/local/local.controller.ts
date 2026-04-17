@@ -46,17 +46,6 @@ type SessionIdentityRes = {
   error?: { code: AuthErrorName };
 };
 
-type GuestSessionReq = {
-  guestId?: string;
-};
-
-function sanitizeGuestId(raw: unknown): string | null {
-  if (typeof raw !== 'string') return null;
-  const cleaned = raw.trim().toLowerCase();
-  if (!/^[a-z0-9_-]{8,64}$/.test(cleaned)) return null;
-  return cleaned;
-}
-
 function toGuestUsername(guestId: string): string {
   return `guest-${guestId.slice(0, 8)}`;
 }
@@ -102,7 +91,7 @@ export async function postLogin(
 }
 
 export async function postGuestSession(
-  req: Request<unknown, unknown, GuestSessionReq>,
+  req: Request,
   res: Response<SessionIdentityRes>,
 ): Promise<void> {
   if (req.session.userId) {
@@ -125,8 +114,7 @@ export async function postGuestSession(
     return;
   }
 
-  const requestedGuestId = sanitizeGuestId(req.body?.guestId);
-  const guestId = requestedGuestId ?? req.session.guestId ?? newGuestId();
+  const guestId = req.session.guestId ?? newGuestId();
   const guestUsername = req.session.guestUsername ?? toGuestUsername(guestId);
 
   req.session.guestId = guestId;
