@@ -80,7 +80,8 @@ echo "🔧 Installing local CA (may prompt)..."
 
 mkcert -install
 
-cp "$(mkcert -CAROOT)/rootCA.pem" "$CERT_DIR/ca.pem"
+mkcert_root="$(mkcert -CAROOT)"
+cp "$mkcert_root/rootCA.pem" "$CERT_DIR/ca.pem"
 
 mkcert \
   -key-file "$KEY" \
