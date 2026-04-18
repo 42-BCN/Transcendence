@@ -45,10 +45,10 @@ export function Tab({ className, children, ...props }: AriaTabProps) {
         tabsStyles.tab(typeof className === 'function' ? className(values) : className)
       }
     >
-      {({ isSelected }) => (
+      {(values) => (
         <>
-          {children}
-          <div data-selected={isSelected || undefined} className={tabsStyles.indicator()} />
+          {typeof children === 'function' ? children(values) : children}
+          <div data-selected={values.isSelected || undefined} className={tabsStyles.indicator()} />
         </>
       )}
     </AriaTab>
