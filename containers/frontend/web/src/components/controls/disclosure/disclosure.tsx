@@ -15,11 +15,15 @@ import type {
 import { Icon } from '../../primitives/icon';
 import { disclosureStyles } from './disclosure.styles';
 
-export function DisclosureGroup({ className, ...props }: AriaDisclosureGroupProps) {
+export type DisclosureProps = AriaDisclosureProps;
+export type DisclosureGroupProps = AriaDisclosureGroupProps;
+export type DisclosurePanelProps = AriaDisclosurePanelProps;
+
+export function DisclosureGroup({ className, ...props }: DisclosureGroupProps) {
   return <AriaDisclosureGroup {...props} className={className} />;
 }
 
-export function Disclosure({ className, children, ...props }: AriaDisclosureProps) {
+export function Disclosure({ className, children, ...props }: DisclosureProps) {
   return (
     <AriaDisclosure
       {...props}
@@ -46,7 +50,7 @@ export function DisclosureTrigger({ title, className }: DisclosureTriggerProps) 
   );
 }
 
-export function DisclosurePanel({ className, ...props }: AriaDisclosurePanelProps) {
+export function DisclosurePanel({ className, ...props }: DisclosurePanelProps) {
   return (
     <AriaDisclosurePanel
       {...props}

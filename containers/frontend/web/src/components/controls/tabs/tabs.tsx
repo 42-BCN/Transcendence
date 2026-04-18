@@ -15,7 +15,12 @@ import type {
 
 import { tabsStyles } from './tabs.styles';
 
-export function Tabs({ className, ...props }: AriaTabsProps) {
+export type TabsProps = AriaTabsProps;
+export type TabListProps<T extends object> = AriaTabListProps<T>;
+export type TabProps = AriaTabProps;
+export type TabPanelProps = AriaTabPanelProps;
+
+export function Tabs({ className, ...props }: TabsProps) {
   return (
     <AriaTabs
       {...props}
@@ -26,7 +31,7 @@ export function Tabs({ className, ...props }: AriaTabsProps) {
   );
 }
 
-export function TabList<T extends object>({ className, ...props }: AriaTabListProps<T>) {
+export function TabList<T extends object>({ className, ...props }: TabListProps<T>) {
   return (
     <AriaTabList
       {...props}
@@ -37,7 +42,7 @@ export function TabList<T extends object>({ className, ...props }: AriaTabListPr
   );
 }
 
-export function Tab({ className, children, ...props }: AriaTabProps) {
+export function Tab({ className, children, ...props }: TabProps) {
   return (
     <AriaTab
       {...props}
@@ -55,7 +60,7 @@ export function Tab({ className, children, ...props }: AriaTabProps) {
   );
 }
 
-export function TabPanel({ className, ...props }: AriaTabPanelProps) {
+export function TabPanel({ className, ...props }: TabPanelProps) {
   return (
     <AriaTabPanel
       {...props}
