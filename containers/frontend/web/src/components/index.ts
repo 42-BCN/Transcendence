@@ -9,12 +9,25 @@ export {
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
-export { Tabs, TabList, Tab, TabPanel } from './controls/tabs';
+export {
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  type TabsProps,
+  type TabListProps,
+  type TabProps,
+  type TabPanelProps,
+} from './controls/tabs';
 export {
   Disclosure,
   DisclosureGroup,
   DisclosureTrigger,
   DisclosurePanel,
+  type DisclosureProps,
+  type DisclosureGroupProps,
+  type DisclosureTriggerProps,
+  type DisclosurePanelProps,
 } from './controls/disclosure';
 export { Tooltip } from './controls/tooltip';
 export { ApiFeedback } from './composites/api-feedback/api-feedback';
