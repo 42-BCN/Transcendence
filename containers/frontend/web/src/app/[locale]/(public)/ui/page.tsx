@@ -14,6 +14,7 @@ const uiSubpages = [
   { href: '/ui/text-area', labelKey: 'links.textArea' },
   { href: '/ui/theme-test', labelKey: 'links.themeTest' },
   { href: '/ui/typography', labelKey: 'links.typography' },
+  { href: '/ui/tabs-disclosure', labelKey: 'links.tabsDisclosure' },
 ] as const;
 
 export default function UiPage() {

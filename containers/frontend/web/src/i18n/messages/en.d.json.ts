@@ -107,6 +107,7 @@ declare const messages: {
           "meter": "Meter",
           "scrollArea": "Scroll Area",
           "textArea": "Text Area",
+          "tabsDisclosure": "Tabs & Disclosure",
           "themeTest": "Theme Test",
           "typography": "Typography"
         },
@@ -186,6 +187,24 @@ declare const messages: {
         "secondaryText": "Secondary Text",
         "tertiaryText": "Tertiary Text",
         "disabledText": "Disabled Text"
+      },
+      "tabsDisclosure": {
+        "title": "Navigation Components",
+        "description": "Technical demonstration of Tabs and Disclosure (Accordion).",
+        "tabs": {
+          "sectionsLabel": "Social sections",
+          "friends": "Friends",
+          "requests": "Requests"
+        },
+        "disclosure": {
+          "friendsOnline": "Friends online (12)",
+          "friendsOffline": "Friends offline (30)",
+          "received": "Received (5)",
+          "sent": "Sent (10)",
+          "friendsListHint": "Simplified friends list...",
+          "receivedHint": "Incoming requests arrived recently.",
+          "sentHint": "Requests you have sent to other users."
+        }
       },
       "scrollArea": {
         "title": "Scroll Area",

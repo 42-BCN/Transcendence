@@ -9,6 +9,13 @@ export {
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
+export { Tabs, TabList, Tab, TabPanel } from './controls/tabs';
+export {
+  Disclosure,
+  DisclosureGroup,
+  DisclosureTrigger,
+  DisclosurePanel,
+} from './controls/disclosure';
 export { Tooltip } from './controls/tooltip';
 export { ApiFeedback } from './composites/api-feedback/api-feedback';
 export { FormTitle } from './composites/form-title/form-title';

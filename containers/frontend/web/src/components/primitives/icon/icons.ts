@@ -13,6 +13,9 @@ import {
   PanelLeftClose,
   Sun,
   Moon,
+  ChevronDown,
+  UserPlus,
+  Check,
 } from 'lucide-react';
 
 export const icons = {
@@ -30,6 +33,9 @@ export const icons = {
   collapse: PanelLeftClose,
   lightMode: Sun,
   darkMode: Moon,
+  chevronDown: ChevronDown,
+  userAdd: UserPlus,
+  check: Check,
 };
 
 export type IconName = keyof typeof icons;
