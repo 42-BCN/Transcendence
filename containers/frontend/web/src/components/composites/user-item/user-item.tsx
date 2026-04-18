@@ -14,7 +14,7 @@ export type UserItemProps = {
 
 export function UserItem({ avatarUrl, username, subtitle, actions, className }: UserItemProps) {
   return (
-    <Stack direction="horizontal" align="start" gap="sm" className={userItemStyles({ className })}>
+    <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} size="md" />
 
       <div className="flex-1">
@@ -28,7 +28,7 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
         )}
       </div>
 
-      {actions && <div className="flex gap-2 self-center">{actions}</div>}
+      {actions}
     </Stack>
   );
 }

@@ -12,8 +12,95 @@ import {
   InternalLink,
 } from '@components';
 
+/* Example 1: Standard Friend */
+function UserDevExample() {
+  return (
+    <UserItem
+      username="user_dev"
+      subtitle="Online"
+      avatarUrl="/avatars/avatar-4.png"
+      actions={
+        <>
+          <TooltipTrigger label="Play Game" placement="top">
+            <Button w="auto" aria-label="Play Game" icon={<Icon name="gamepad" />} size="icon" />
+          </TooltipTrigger>
+          <TooltipTrigger label="Send Message" placement="top">
+            <InternalLink
+              w="auto"
+              href="/ui"
+              as="button"
+              size="icon"
+              aria-label="Send Message"
+              icon={<Icon name="messages" />}
+            />
+          </TooltipTrigger>
+        </>
+      }
+    />
+  );
+}
+
+/* Example 2: Friend Request */
+function UserRequestExample() {
+  return (
+    <UserItem
+      username="user_42"
+      subtitle="Friend Request Sent"
+      avatarUrl="/avatars/avatar-2.png"
+      actions={
+        <>
+          <TooltipTrigger label="Reject Request" placement="top">
+            <Button
+              w="auto"
+              size="icon"
+              icon={<Icon name="close" />}
+              aria-label="Reject Friend Request"
+              className="text-red-500 border-red-500 hover:bg-red-500/10"
+            />
+          </TooltipTrigger>
+          <TooltipTrigger label="Accept Request" placement="top">
+            <Button
+              w="auto"
+              size="icon"
+              icon={<Icon name="check" />}
+              aria-label="Accept Friend Request"
+              className="text-green-500 border-green-500"
+            />
+          </TooltipTrigger>
+        </>
+      }
+    />
+  );
+}
+
+/* Example 3: Search Result */
+function UserSearchResultExample() {
+  return (
+    <UserItem
+      username="user_designer"
+      avatarUrl="/avatars/avatar-1.png"
+      actions={
+        <TooltipTrigger label="Add Friend" placement="top">
+          <Button w="auto" size="icon" icon={<Icon name="userAdd" />} aria-label="Add Friend" />
+        </TooltipTrigger>
+      }
+    />
+  );
+}
+
 export default function SocialTestPage() {
   const t = useTranslations('pages.ui.social');
+
+  const avatarProps: Array<{
+    size: 'sm' | 'md' | 'lg';
+    src: string | null;
+    label: string;
+  }> = [
+    { size: 'sm', src: '/avatars/avatar-1.png', label: t('avatarSizes.sm') },
+    { size: 'md', src: '/avatars/avatar-2.png', label: t('avatarSizes.md') },
+    { size: 'lg', src: '/avatars/avatar-3.png', label: t('avatarSizes.lg') },
+    { size: 'md', src: null, label: t('avatarSizes.fallback') },
+  ];
 
   return (
     <Stack gap="lg" className="max-w-md">
@@ -25,30 +112,21 @@ export default function SocialTestPage() {
       </Stack>
 
       {/* --- AVATAR SECTION --- */}
-      <Stack gap="md">
+      <Stack>
         <Text variant="heading-sm">{t('avatarsTitle')}</Text>
-        <Stack direction="horizontal" align="center" gap="md">
-          <Stack align="center" gap="xs">
-            <Avatar size="sm" src="/avatars/avatar-1.png" />
-            <Text variant="caption">{t('avatarSizes.sm')}</Text>
-          </Stack>
-          <Stack align="center" gap="xs">
-            <Avatar size="md" src="/avatars/avatar-2.png" />
-            <Text variant="caption">{t('avatarSizes.md')}</Text>
-          </Stack>
-          <Stack align="center" gap="xs">
-            <Avatar size="lg" src="/avatars/avatar-3.png" />
-            <Text variant="caption">{t('avatarSizes.lg')}</Text>
-          </Stack>
-          <Stack align="center" gap="xs">
-            <Avatar size="md" src={null} />
-            <Text variant="caption">{t('avatarSizes.fallback')}</Text>
-          </Stack>
+
+        <Stack direction="horizontal" align="center">
+          {avatarProps.map((props, index) => (
+            <Stack align="center" justify="end" gap="xs" key={index}>
+              <Avatar size={props.size} src={props.src} />
+              <Text variant="caption">{props.label}</Text>
+            </Stack>
+          ))}
         </Stack>
       </Stack>
 
       {/* --- USERITEM SECTION --- */}
-      <Stack gap="md">
+      <Stack>
         <Text variant="heading-sm">{t('userItemsTitle')}</Text>
 
         <Stack gap="sm" className="rounded-xl border border-border-primary py-4 bg-bg-primary/50">
@@ -56,77 +134,15 @@ export default function SocialTestPage() {
             {t('socialListLabel')}
           </Text>
 
-          {/* Example 1: Standard Friend */}
-          <UserItem
-            username="user_dev"
-            subtitle={t('status.online')}
-            avatarUrl="/avatars/avatar-4.png"
-            actions={
-              <>
-                <TooltipTrigger label={t('actions.playGame')} placement="top">
-                  <Button
-                    size="icon"
-                    icon={<Icon name="gamepad" />}
-                    aria-label={t('actions.playGame')}
-                  />
-                </TooltipTrigger>
-                <TooltipTrigger label={t('actions.sendMessage')} placement="top">
-                  <InternalLink
-                    href="/ui"
-                    as="button"
-                    size="icon"
-                    icon={<Icon name="messages" />}
-                    aria-label={t('actions.sendMessage')}
-                  />
-                </TooltipTrigger>
-              </>
-            }
-          />
+          <UserDevExample />
 
-          <div className="mx-4 h-px bg-border-primary" />
+          <hr className="mx-4 border-border-primary" />
 
-          {/* Example 2: Friend Request */}
-          <UserItem
-            username="user_42"
-            subtitle={t('status.sent')}
-            avatarUrl="/avatars/avatar-2.png"
-            actions={
-              <>
-                <TooltipTrigger label={t('actions.rejectRequest')} placement="top">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    icon={<Icon name="close" className="text-red-500" />}
-                    aria-label={t('actions.rejectRequest')}
-                  />
-                </TooltipTrigger>
-                <TooltipTrigger label={t('actions.acceptRequest')} placement="top">
-                  <Button
-                    size="icon"
-                    icon={<Icon name="check" className="text-green-500" />}
-                    aria-label={t('actions.acceptRequest')}
-                  />
-                </TooltipTrigger>
-              </>
-            }
-          />
+          <UserRequestExample />
 
-          <div className="mx-4 h-px bg-border-primary" />
+          <hr className="mx-4 border-border-primary" />
 
-          {/* Example 3: Search Result */}
-          <UserItem
-            username="user_designer"
-            avatarUrl="/avatars/avatar-1.png"
-            actions={
-              <TooltipTrigger label={t('actions.addFriend')} placement="top">
-                <Button
-                  size="icon"
-                  icon={<Icon name="userAdd" />}
-                  aria-label={t('actions.addFriend')}
-                />
-              </TooltipTrigger>
-            }
-          />
+          <UserSearchResultExample />
         </Stack>
       </Stack>
     </Stack>

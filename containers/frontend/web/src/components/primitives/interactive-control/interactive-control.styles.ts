@@ -8,7 +8,7 @@ import type {
 } from './interactive-control.types';
 
 const interactiveControlBase = [
-  'inline-flex items-center justify-center gap-3 rounded-lg border font-medium',
+  'flex items-center justify-center gap-3 rounded-lg border font-medium',
   'min-h-6 min-w-6 select-none text-text-primary',
   'transition-[background-color,border-color,color,transform,box-shadow,opacity] duration-150 ease-out',
   'outline-none',
@@ -59,12 +59,7 @@ const navLinkBase = [
 ];
 
 export function interactiveControlStyles(args?: InteractiveControlStyleProps) {
-  const {
-    variant = 'primary',
-    size = 'md',
-    w = size === 'icon' ? 'auto' : 'full',
-    className,
-  } = args ?? {};
+  const { variant = 'primary', size = 'md', w = 'full', className } = args ?? {};
 
   return cn(
     interactiveControlBase,
@@ -95,5 +90,5 @@ export function interactiveNavLinkStyles(args?: Omit<InteractiveControlStyleProp
 }
 
 export function interactiveIconSlotStyles() {
-  return cn('h-[20px] w-[20px] shrink-0 flex items-center justify-center');
+  return cn('h-[20px] w-[20px] flex items-center justify-center shrink-0');
 }

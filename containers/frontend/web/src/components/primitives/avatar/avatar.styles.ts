@@ -1,8 +1,8 @@
 import { cn } from '@/lib/styles/cn';
 
-const avatarBase = 'rounded-lg bg-bg-secondary shrink-0 overflow-hidden';
+const avatarBase = 'rounded-lg bg-bg-secondary overflow-hidden shrink-0';
 
-export const avatarFallbackClasses = 'flex items-center justify-center text-text-tertiary';
+const avatarFallbackClasses = 'flex items-center justify-center text-text-tertiary';
 
 const avatarSize = {
   sm: 'h-5 w-5', // 32px (matching --space-5)
@@ -15,8 +15,9 @@ export type AvatarSize = keyof typeof avatarSize;
 type AvatarStylesProps = {
   size?: AvatarSize;
   className?: string;
+  isFallback?: boolean;
 };
 
-export function avatarStyles({ size = 'md', className }: AvatarStylesProps = {}) {
-  return cn(avatarBase, avatarSize[size], className);
+export function avatarStyles({ size = 'md', className, isFallback }: AvatarStylesProps = {}) {
+  return cn(isFallback ? avatarFallbackClasses : avatarBase, avatarSize[size], className);
 }
