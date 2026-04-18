@@ -14,7 +14,7 @@ import {
   DisclosureGroup,
 } from '@components';
 
-/* Sub-componente: Contenido de la pestaña de Amigos */
+/* Sub-component: Friends tab content */
 function FriendsTabContent() {
   const t = useTranslations('pages.ui.tabsDisclosure.disclosure');
 
@@ -53,7 +53,7 @@ function FriendsTabContent() {
   );
 }
 
-/* Sub-componente: Contenido de la pestaña de Solicitudes (Modo Acordeón Único) */
+/* Sub-component: Requests tab content (Single Accordion Mode) */
 function RequestsTabContent() {
   const t = useTranslations('pages.ui.tabsDisclosure.disclosure');
 
