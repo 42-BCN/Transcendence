@@ -26,6 +26,15 @@ export function initClientGameState(id: string) {
   })
 }
 
+export function setClear(id: string) {
+  gameState.clients[id].id = id;
+  gameState.clients[id].highlights = {};
+  gameState.clients[id].selectables = {};
+  gameState.clients[id].canSelect = true;
+  gameState.clients[id].selectedAb = null;
+  gameState.clients[id].selectedDice = null;
+}
+
 export async function moveTo(entId: string, tileId: string) {
   const [x, y, z] = tileId.split(',').map(Number);
   const dest = { x, y: (y + 1), z };

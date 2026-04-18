@@ -19,10 +19,11 @@ const s = 0.975;
 function AbButtons() {
   const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
+  const selectedAb = useGame((state) => state.selectedAb);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearSelectables = useGame((state) => state.clearSelectables);
+  const clearSelectedAb = useGame((state) => state.clearSelectedAb);
   const showAbRange = useGame((state) => state.showAbRange);
-  const [isPressed, setPressed] = useState(false);
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map((ability) => (
@@ -30,19 +31,15 @@ function AbButtons() {
           onPointerOver={(event) => {
             event.stopPropagation();
             showAbRange(ability);
-            setPressed(false);
           }}
           onPointerOut={(event) => {
-            if (!isPressed) {
-              event.stopPropagation();
+            event.stopPropagation();
+            if (selectedAb !== ability)
               clearSelectables();
-            }
           }}
           onPress={() => {
-            if (assignedCharacter === ent.id) {
+            if (assignedCharacter === ent.id)
               selectAbility(ability);
-              setPressed(true);
-            }
           }}>
           {ability}
         </Button>
@@ -54,14 +51,13 @@ function AbButtons() {
 function DiceButtons() {
   const ent = useGame((state) => state.getSel());
   const canSelect = useGame((state) => state.canSelect);
+  const showMoveRange = useGame((state) => state.showMoveRange);
   const movDice = useGame((state) => state.movDice);
   const ability = useGame((state) => state.selectedAb);
   const selectDice = useGame((state) => state.selectDice);
-  const rollQuantity = useGame((state) => state.rollQuantity);
-  const rollDice = useGame((state) => state.rollDice);
+  const selectedDice = useGame((state) => state.selectedDice);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
-  const [isPressed, setPressed] = useState(false);
 
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
@@ -76,11 +72,11 @@ function DiceButtons() {
             key={i}
             onPointerOver={(event) => {
               event.stopPropagation();
-              movDice(diceNum);
-              setPressed(false);
+              if (!ability)
+                showMoveRange(diceNum);
             }}
             onPointerOut={(event) => {
-              if (!isPressed) {
+              if (!selectedDice) {
                 event.stopPropagation();
                 clearHighlights();
               }
@@ -88,7 +84,6 @@ function DiceButtons() {
             onPress={() => {
               if (assignedCharacter === ent.id) {
                 ability ? selectDice(diceNum) : movDice(diceNum);
-                setPressed(true);
               }
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -194,7 +189,8 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
-        if (phase !== 'PLAN') return;
+        if (phase !== 'PLAN')
+          return;
         event.stopPropagation();
         moveClone(id);
       }}

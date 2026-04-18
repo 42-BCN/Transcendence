@@ -43,6 +43,7 @@ function SegmentedControlItem(props: ToggleButtonProps) {
   );
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function SegmentedControlGroup({
   options,
   defaultSelectedKey,
@@ -86,9 +87,7 @@ export function SegmentedControlGroup({
           </SegmentedControlItem>
         );
 
-        if (!opt.tooltipLabel) {
-          return item;
-        }
+        if (!opt.tooltipLabel) return item;
 
         return (
           <TooltipTrigger

@@ -11,6 +11,6 @@ export type FormProps = Omit<FormHTMLAttributes<HTMLFormElement>, 'action' | 'me
   method?: 'GET' | 'POST';
 };
 
-export function Form({ action, method, ...props }: FormProps) {
-  return <form {...props} action={action} method={method} className={formStyles()} />;
+export function Form({ action, method, className, ...props }: FormProps) {
+  return <form {...props} action={action} method={method} className={formStyles(className)} />;
 }

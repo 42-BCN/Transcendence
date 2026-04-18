@@ -279,9 +279,11 @@ export const useGame = create<gameState>()((set, get) => ({
     return (s.players[id] || s.enemies[id] || s.clones[id]);
   },
 
+  showMoveRange: (mov) => {
+    gameSocket.emit('game:client:showMoveRange', mov);
+  },
+
   movDice: (mov) => {
-    if (!get().getSel())
-      throw new Error("no ent id!");
     gameSocket.emit('game:client:displayMoveRange', mov);
   },
 
@@ -401,35 +403,37 @@ export const useGame = create<gameState>()((set, get) => ({
   },
   //
   moveClone: (tileId) => {
-    const state = get()
-    if (!state.highlights[tileId] || !state.selectedEnt || !state.selectedDice)
-      return;
-    const [x, y, z] = tileId.split(',').map(Number);
-    const dest = { x, y: (y + 1), z };
-    const ent = state.players[state.selectedEnt];
-    if (!ent)
-      throw new Error("no ent id!");
-    state.addHistory(state.selectedEnt, "mov", tileId);
-    const cloneid = `clone_${ent.id}`;
-    set({
-      ...clean,
-      typeEnt: "clone",
-      clones: {
-        ...state.clones,
-        [cloneid]: {
-          ...state.players[ent.id],
-          type: "clone",
-          id: cloneid,
-          dice: state.players[ent.id].dice.toSpliced(
-            state.players[ent.id].dice.indexOf(state.selectedDice), 1),
-          usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort((a, b) => a - b),
-          hasMoved: true,
-          position: dest,
-        }
-      }
-    });
+    gameSocket.emit('moveClone', tileId);
   },
-
+  //   const state = get()
+  //   if (!state.highlights[tileId] || !state.selectedEnt || !state.selectedDice)
+  //     return;
+  //   const [x, y, z] = tileId.split(',').map(Number);
+  //   const dest = { x, y: (y + 1), z };
+  //   const ent = state.players[state.selectedEnt];
+  //   if (!ent)
+  //     throw new Error("no ent id!");
+  //   state.addHistory(state.selectedEnt, "mov", tileId);
+  //   const cloneid = `clone_${ent.id}`;
+  //   set({
+  //     ...clean,
+  //     typeEnt: "clone",
+  //     clones: {
+  //       ...state.clones,
+  //       [cloneid]: {
+  //         ...state.players[ent.id],
+  //         type: "clone",
+  //         id: cloneid,
+  //         dice: state.players[ent.id].dice.toSpliced(
+  //           state.players[ent.id].dice.indexOf(state.selectedDice), 1),
+  //         usedDice: [...state.players[ent.id].usedDice, state.selectedDice].sort((a, b) => a - b),
+  //         hasMoved: true,
+  //         position: dest,
+  //       }
+  //     }
+  //   });
+  // },
+  //
   // moveTo: async (entId, tileId) => {
   //   const state = get()
   //   const [x, y, z] = tileId.split(',').map(Number);
@@ -1081,7 +1085,7 @@ export const useGame = create<gameState>()((set, get) => ({
     //     selectables: {},
     //     canSelect: true,
     //   });
-    gameSocket.emit('game:client:displayAbilityRange', name)
+    gameSocket.emit('game:client:displayAbilityRange', ent.id, name)
     // set({
     //   selectedAb: name,
     //   highlights: {},
@@ -1094,13 +1098,12 @@ export const useGame = create<gameState>()((set, get) => ({
   },
   //
   showAbRange: (name) => {
-    const state = get()
-    const ent = state.getSel();
+    const ent = get().getSel();
     if (!ent)
       throw new Error("no ent id!");
     // const { type, range, self } = state.getAbility(name);
     // set({ highlights: {}, selectedDice: null, });
-    gameSocket.emit('game:client:showAbilityRange', name);
+    gameSocket.emit('game:client:showAbilityRange', ent.id, name);
     // selectables: state.paint(ent.position, type, range, self),
   },
 
@@ -1155,13 +1158,19 @@ export const useGame = create<gameState>()((set, get) => ({
 
   clearHighlights: () => {
     gameSocket.emit('game:client:clearHl');
-    set({ highlights: {} });
+    set({ highlights: {}, selectedDice: null });
   },
 
   clearSelectables: () => {
     gameSocket.emit('game:client:clearSl');
-    set({ selectables: {} });
+    set({ selectables: {}, selectedDice: null, canSelect: true });
   },
+
+  clearSelectedAb: () => {
+    gameSocket.emit('game:client:clearSelectedAb');
+    set({ selectedAb: null, selectedDice: null, canSelect: true });
+  },
+
 
   initSocketListeners: () => {
     const handleJoin = (id: string) => {
@@ -1182,7 +1191,7 @@ export const useGame = create<gameState>()((set, get) => ({
     //   });
     // };
     const handleGlobalSync = (state: globalGameState) => {
-      console.log('recieved sync event with character', get().assignedCharacter);
+      console.log('recieved global sync event with character', get().assignedCharacter);
       set({
         phase: state.phase,
         turn: state.turn,

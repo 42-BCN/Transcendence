@@ -31,7 +31,7 @@ export const CHAT_MESSAGES = [
   },
   {
     id: '5',
-    username: 'mvelazqu',
+    username: 'joanavar',
     content: {
       text: 'Yes, and also prevent jump when user scrolls up. Classic chat problem 😅',
     },
@@ -64,7 +64,7 @@ export const CHAT_MESSAGES = [
   },
   {
     id: '9',
-    username: 'mvelazqu',
+    username: 'joanavar',
     content: {
       text: 'Also we need to think about rate limiting before exposing public API.',
     },

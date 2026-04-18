@@ -14,7 +14,7 @@ type Character = {
 export default function ThreejsPage() {
   const [characters, setCharacters] = useState<Character[]>([]);
   return (
-    <div className="h-full w-full">
+    <div className="min-h-screen w-full">
       <RobotsSocketManager onRobots={setCharacters} />
       <RobotsScene characters={characters} />
     </div>
