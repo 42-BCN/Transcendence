@@ -35,14 +35,13 @@ export function Disclosure({ className, children, ...props }: AriaDisclosureProp
 export type DisclosureTriggerProps = {
   title: string;
   className?: string;
-  isExpanded?: boolean;
 };
 
-export function DisclosureTrigger({ title, className, isExpanded }: DisclosureTriggerProps) {
+export function DisclosureTrigger({ title, className }: DisclosureTriggerProps) {
   return (
     <AriaButton slot="trigger" className={disclosureStyles.trigger(className)}>
-      <span className={disclosureStyles.title(isExpanded)}>{title}</span>
-      <Icon name="chevronDown" className={disclosureStyles.icon(isExpanded)} />
+      <span className={disclosureStyles.title()}>{title}</span>
+      <Icon name="chevronDown" className={disclosureStyles.icon()} />
     </AriaButton>
   );
 }

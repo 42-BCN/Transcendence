@@ -21,33 +21,25 @@ function FriendsTabContent() {
   return (
     <Stack gap="md">
       <Disclosure defaultExpanded>
-        {({ isExpanded }) => (
-          <>
-            <DisclosureTrigger title={t('friendsOnline')} isExpanded={isExpanded} />
-            <DisclosurePanel>
-              <Stack gap="sm" className="py-2">
-                <Text variant="body-sm" color="tertiary">
-                  {t('friendsListHint')} (Online)
-                </Text>
-              </Stack>
-            </DisclosurePanel>
-          </>
-        )}
+        <DisclosureTrigger title={t('friendsOnline')} />
+        <DisclosurePanel>
+          <Stack gap="sm" className="py-2">
+            <Text variant="body-sm" color="tertiary">
+              {t('friendsListHint')} (Online)
+            </Text>
+          </Stack>
+        </DisclosurePanel>
       </Disclosure>
 
       <Disclosure>
-        {({ isExpanded }) => (
-          <>
-            <DisclosureTrigger title={t('friendsOffline')} isExpanded={isExpanded} />
-            <DisclosurePanel>
-              <Stack gap="sm" className="py-2">
-                <Text variant="body-sm" color="tertiary">
-                  {t('friendsListHint')} (Offline)
-                </Text>
-              </Stack>
-            </DisclosurePanel>
-          </>
-        )}
+        <DisclosureTrigger title={t('friendsOffline')} />
+        <DisclosurePanel>
+          <Stack gap="sm" className="py-2">
+            <Text variant="body-sm" color="tertiary">
+              {t('friendsListHint')} (Offline)
+            </Text>
+          </Stack>
+        </DisclosurePanel>
       </Disclosure>
     </Stack>
   );
@@ -61,33 +53,25 @@ function RequestsTabContent() {
     <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
       <Stack gap="md">
         <Disclosure id="received">
-          {({ isExpanded }) => (
-            <>
-              <DisclosureTrigger title={t('received')} isExpanded={isExpanded} />
-              <DisclosurePanel>
-                <Stack gap="sm" className="py-2">
-                  <Text variant="body-sm" color="tertiary">
-                    {t('receivedHint')}
-                  </Text>
-                </Stack>
-              </DisclosurePanel>
-            </>
-          )}
+          <DisclosureTrigger title={t('received')} />
+          <DisclosurePanel>
+            <Stack gap="sm" className="py-2">
+              <Text variant="body-sm" color="tertiary">
+                {t('receivedHint')}
+              </Text>
+            </Stack>
+          </DisclosurePanel>
         </Disclosure>
 
         <Disclosure id="sent">
-          {({ isExpanded }) => (
-            <>
-              <DisclosureTrigger title={t('sent')} isExpanded={isExpanded} />
-              <DisclosurePanel>
-                <Stack gap="sm" className="py-2">
-                  <Text variant="body-sm" color="tertiary">
-                    {t('sentHint')}
-                  </Text>
-                </Stack>
-              </DisclosurePanel>
-            </>
-          )}
+          <DisclosureTrigger title={t('sent')} />
+          <DisclosurePanel>
+            <Stack gap="sm" className="py-2">
+              <Text variant="body-sm" color="tertiary">
+                {t('sentHint')}
+              </Text>
+            </Stack>
+          </DisclosurePanel>
         </Disclosure>
       </Stack>
     </DisclosureGroup>
