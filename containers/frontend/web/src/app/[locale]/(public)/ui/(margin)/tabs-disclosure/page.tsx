@@ -11,7 +11,88 @@ import {
   DisclosurePanel,
   Stack,
   Text,
+  DisclosureGroup,
 } from '@components';
+
+/* Sub-componente: Contenido de la pestaña de Amigos */
+function FriendsTabContent() {
+  const t = useTranslations('pages.ui.tabsDisclosure.disclosure');
+
+  return (
+    <Stack gap="md">
+      <Disclosure defaultExpanded>
+        {({ isExpanded }) => (
+          <>
+            <DisclosureTrigger title={t('friendsOnline')} isExpanded={isExpanded} />
+            <DisclosurePanel>
+              <Stack gap="sm" className="py-2">
+                <Text variant="body-sm" color="tertiary">
+                  {t('friendsListHint')} (Online)
+                </Text>
+              </Stack>
+            </DisclosurePanel>
+          </>
+        )}
+      </Disclosure>
+
+      <Disclosure>
+        {({ isExpanded }) => (
+          <>
+            <DisclosureTrigger title={t('friendsOffline')} isExpanded={isExpanded} />
+            <DisclosurePanel>
+              <Stack gap="sm" className="py-2">
+                <Text variant="body-sm" color="tertiary">
+                  {t('friendsListHint')} (Offline)
+                </Text>
+              </Stack>
+            </DisclosurePanel>
+          </>
+        )}
+      </Disclosure>
+    </Stack>
+  );
+}
+
+/* Sub-componente: Contenido de la pestaña de Solicitudes (Modo Acordeón Único) */
+function RequestsTabContent() {
+  const t = useTranslations('pages.ui.tabsDisclosure.disclosure');
+
+  return (
+    <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
+      <Stack gap="md">
+        <Disclosure id="received">
+          {({ isExpanded }) => (
+            <>
+              <DisclosureTrigger title={t('received')} isExpanded={isExpanded} />
+              <DisclosurePanel>
+                <Stack gap="sm" className="py-2">
+                  <Text variant="body-sm" color="tertiary">
+                    {t('receivedHint')}
+                  </Text>
+                </Stack>
+              </DisclosurePanel>
+            </>
+          )}
+        </Disclosure>
+
+        <Disclosure id="sent">
+          {({ isExpanded }) => (
+            <>
+              <DisclosureTrigger title={t('sent')} isExpanded={isExpanded} />
+              <DisclosurePanel>
+                <Stack gap="sm" className="py-2">
+                  <Text variant="body-sm" color="tertiary">
+                    {t('sentHint')}
+                  </Text>
+                </Stack>
+              </DisclosurePanel>
+            </>
+          )}
+        </Disclosure>
+      </Stack>
+    </DisclosureGroup>
+  );
+}
 
 export default function TabsDisclosureDemoPage() {
   const t = useTranslations('pages.ui.tabsDisclosure');
@@ -32,77 +113,11 @@ export default function TabsDisclosureDemoPage() {
         </TabList>
 
         <TabPanel id="friends">
-          <Stack gap="md">
-            <Disclosure defaultExpanded>
-              {({ isExpanded }) => (
-                <>
-                  <DisclosureTrigger
-                    title={t('disclosure.friendsOnline')}
-                    isExpanded={isExpanded}
-                  />
-                  <DisclosurePanel>
-                    <Stack gap="sm" className="py-2">
-                      <Text variant="body-sm" color="tertiary">
-                        {t('disclosure.friendsListHint')} (Online)
-                      </Text>
-                    </Stack>
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
-
-            <Disclosure>
-              {({ isExpanded }) => (
-                <>
-                  <DisclosureTrigger
-                    title={t('disclosure.friendsOffline')}
-                    isExpanded={isExpanded}
-                  />
-                  <DisclosurePanel>
-                    <Stack gap="sm" className="py-2">
-                      <Text variant="body-sm" color="tertiary">
-                        {t('disclosure.friendsListHint')} (Offline)
-                      </Text>
-                    </Stack>
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
-          </Stack>
+          <FriendsTabContent />
         </TabPanel>
 
         <TabPanel id="requests">
-          <Stack gap="md">
-            <Disclosure defaultExpanded>
-              {({ isExpanded }) => (
-                <>
-                  <DisclosureTrigger title={t('disclosure.received')} isExpanded={isExpanded} />
-                  <DisclosurePanel>
-                    <Stack gap="sm" className="py-2">
-                      <Text variant="body-sm" color="tertiary">
-                        {t('disclosure.receivedHint')}
-                      </Text>
-                    </Stack>
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
-
-            <Disclosure>
-              {({ isExpanded }) => (
-                <>
-                  <DisclosureTrigger title={t('disclosure.sent')} isExpanded={isExpanded} />
-                  <DisclosurePanel>
-                    <Stack gap="sm" className="py-2">
-                      <Text variant="body-sm" color="tertiary">
-                        {t('disclosure.sentHint')}
-                      </Text>
-                    </Stack>
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
-          </Stack>
+          <RequestsTabContent />
         </TabPanel>
       </Tabs>
     </Stack>
