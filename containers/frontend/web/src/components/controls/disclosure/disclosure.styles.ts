@@ -13,7 +13,7 @@ export const disclosureStyles = {
       className,
     ),
   title: (isExpanded?: boolean, className?: string) =>
-    cn('text-base font-semibold transition-all', isExpanded && 'text-text-primary', className),
+    cn('text-base font-medium transition-all', isExpanded && 'text-text-primary', className),
   icon: (isExpanded?: boolean, className?: string) =>
     cn(
       'size-5 transition-transform duration-200 ease-out text-text-tertiary',
