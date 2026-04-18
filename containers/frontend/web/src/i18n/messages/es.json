@@ -200,7 +200,9 @@
           "sent": "Enviadas (10)",
           "friendsListHint": "Lista de amigos simplificada...",
           "receivedHint": "Solicitudes entrantes llegadas recientemente.",
-          "sentHint": "Solicitudes que tú has enviado a otros usuarios."
+          "sentHint": "Solicitudes que tú has enviado a otros usuarios.",
+          "statusOnline": "(Conectado)",
+          "statusOffline": "(Desconectado)"
         }
       },
       "scrollArea": {

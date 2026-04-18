@@ -203,7 +203,9 @@ declare const messages: {
           "sent": "Sent (10)",
           "friendsListHint": "Simplified friends list...",
           "receivedHint": "Incoming requests arrived recently.",
-          "sentHint": "Requests you have sent to other users."
+          "sentHint": "Requests you have sent to other users.",
+          "statusOnline": "(Online)",
+          "statusOffline": "(Offline)"
         }
       },
       "scrollArea": {

@@ -25,7 +25,7 @@ function FriendsTabContent() {
         <DisclosurePanel>
           <Stack gap="sm" className="py-2">
             <Text variant="body-sm" color="tertiary">
-              {t('friendsListHint')} (Online)
+              {t('friendsListHint')} {t('statusOnline')}
             </Text>
           </Stack>
         </DisclosurePanel>
@@ -36,7 +36,7 @@ function FriendsTabContent() {
         <DisclosurePanel>
           <Stack gap="sm" className="py-2">
             <Text variant="body-sm" color="tertiary">
-              {t('friendsListHint')} (Offline)
+              {t('friendsListHint')} {t('statusOffline')}
             </Text>
           </Stack>
         </DisclosurePanel>
