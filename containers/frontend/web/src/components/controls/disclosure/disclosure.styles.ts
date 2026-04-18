@@ -21,7 +21,7 @@ export const disclosureStyles = {
   icon: (className?: string) =>
     cn(
       'size-5 transition-transform duration-200 ease-out text-text-tertiary',
-      'scale-y-[-1] group-data-[expanded]:scale-y-100 group-data-[expanded]:text-text-primary',
+      'scale-y-100 group-data-[expanded]:scale-y-[-1] group-data-[expanded]:text-text-primary',
       className,
     ),
   panel: (className?: string) =>
