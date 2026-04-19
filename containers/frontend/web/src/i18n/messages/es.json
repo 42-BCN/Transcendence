@@ -105,7 +105,8 @@
           "scrollArea": "Área de desplazamiento",
           "textArea": "Área de texto",
           "themeTest": "Prueba de tema",
-          "typography": "Tipografía"
+          "typography": "Tipografía",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Botón primitivo",
@@ -189,6 +190,30 @@
         "description": "Este componente es un div que ocupa una altura del 100% y crea un área desplazable.",
         "example": "Ejemplo",
         "itemLabel": "Elemento"
+      },
+      "social": {
+        "title": "Prueba de Componentes Sociales",
+        "description": "Probando primitivos de Avatar y compuestos de UserItem.",
+        "avatarsTitle": "1. Tamaños de Avatar e Imagen por Defecto",
+        "avatarSizes": {
+          "sm": "Pequeño",
+          "md": "Mediano",
+          "lg": "Grande",
+          "fallback": "Por Defecto"
+        },
+        "userItemsTitle": "2. Variantes de UserItem",
+        "socialListLabel": "Ejemplos de Listas Sociales",
+        "status": {
+          "online": "En línea",
+          "sent": "Enviado hace 2 días"
+        },
+        "actions": {
+          "playGame": "Jugar",
+          "sendMessage": "Enviar Mensaje",
+          "acceptRequest": "Aceptar Solicitud",
+          "rejectRequest": "Rechazar Solicitud",
+          "addFriend": "Añadir Amigo"
+        }
       }
     },
     "terms": {
