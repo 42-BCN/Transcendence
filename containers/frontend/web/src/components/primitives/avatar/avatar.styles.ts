@@ -19,5 +19,5 @@ type AvatarStylesProps = {
 };
 
 export function avatarStyles({ size = 'md', className, isFallback }: AvatarStylesProps = {}) {
-  return cn(isFallback ? avatarFallbackClasses : avatarBase, avatarSize[size], className);
+  return cn(avatarBase, avatarSize[size], isFallback && avatarFallbackClasses, className);
 }

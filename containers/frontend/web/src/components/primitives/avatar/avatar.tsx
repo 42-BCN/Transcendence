@@ -1,5 +1,3 @@
-'use client';
-
 import { avatarStyles, type AvatarSize } from './avatar.styles';
 import { Icon } from '../icon';
 
@@ -11,29 +9,12 @@ export type AvatarProps = {
 };
 
 export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarProps) {
-  // const [hasError, setHasError] = useState(false);
-  // const [prevSrc, setPrevSrc] = useState(src);
-
-  // if (src !== prevSrc) {
-  //   setPrevSrc(src);
-  //   setHasError(false);
-  // }
-
-  // const showFallback = !src;
+  const isFallback = !src;
 
   return (
-    <div
-      role="img"
-      aria-label={alt}
-      className={avatarStyles({ size, className, isFallback: !src })}
-    >
+    <div role="img" aria-label={alt} className={avatarStyles({ size, className, isFallback })}>
       {src ? (
-        <img
-          src={src}
-          alt={alt}
-          className="h-full w-full object-cover"
-          onError={() => setHasError(true)}
-        />
+        <img src={src} alt={alt} className="h-full w-full object-cover" />
       ) : (
         <Icon name="user" className="h-2/3 w-2/3" />
       )}
