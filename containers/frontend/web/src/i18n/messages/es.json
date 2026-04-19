@@ -321,8 +321,7 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Correo enviado. Espera para volver a intentarlo.",
-        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo."
+        "success": "Correo enviado. Espera para volver a intentarlo."
       }
     },
     "navigation": {
@@ -384,6 +383,6 @@
     "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde."
   }
 }

@@ -309,6 +309,7 @@
         "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
         "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "rememberedPassword": "Has recordat la teva contrasenya?",
         "backToLogin": "Torna a iniciar sessió"
       },
       "reset": {
@@ -321,8 +322,7 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Correu enviat. Espera per tornar-ho a intentar.",
-        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar."
+        "success": "Correu enviat. Espera per tornar-ho a intentar."
       }
     },
     "navigation": {
@@ -384,6 +384,6 @@
     "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard."
   }
 }

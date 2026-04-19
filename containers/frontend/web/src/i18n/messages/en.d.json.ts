@@ -324,8 +324,7 @@ declare const messages: {
       },
       "messages": {
         "or": "OR",
-        "success": "Email sent. Wait before trying again.",
-        "submitting": "Submitting..."
+        "success": "Email sent. Wait before trying again."
       }
     },
     "navigation": {
