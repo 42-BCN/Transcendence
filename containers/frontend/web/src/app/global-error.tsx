@@ -1,32 +1,23 @@
 'use client';
 
-import enMessages from '@/i18n/messages/en.json';
-import esMessages from '@/i18n/messages/es.json';
-import caMessages from '@/i18n/messages/ca.json';
-import { getLocaleFromDocument } from '@/i18n/get-locale-from-document';
-
-const globalMessages = {
-  en: enMessages.common.globalError,
-  es: esMessages.common.globalError,
-  ca: caMessages.common.globalError,
-} as const;
-
 export default function GlobalError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const locale = getLocaleFromDocument();
-  const t = globalMessages[locale];
+  console.error(error);
 
   return (
-    <html lang={locale}>
+    <html lang="en">
       <body>
-        <h1>{t.title}</h1>
-        <button type="button" onClick={() => reset()}>
-          {t.tryAgain}
-        </button>
+        <main>
+          <h1>Something went wrong</h1>
+          <button type="button" onClick={() => reset()}>
+            Try again
+          </button>
+        </main>
       </body>
     </html>
   );

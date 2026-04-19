@@ -1,4 +1,4 @@
-export const BASE_URL = process.env.BASE_URL ?? 'http://localhost:4000/';
+export const BASE_URL = process.env.BASE_URL ?? 'https://localhost:8443/api/';
 
 export const TEST_EMAIL = process.env.AUTH_TEST_EMAIL ?? 'capapes@fakemail.com';
 export const TEST_PASSWORD = process.env.AUTH_TEST_PASSWORD ?? 'Password123!';
