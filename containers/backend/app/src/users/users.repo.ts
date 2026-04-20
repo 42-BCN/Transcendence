@@ -48,3 +48,18 @@ export async function selectUserDataByUsername(username: string): Promise<UserPu
 
   return row ? mapUserRow(row) : null;
 }
+
+export async function searchUsersByUsername(query: string, limit: number): Promise<UserPublic[]> {
+  const rows = await prisma.user.findMany({
+    where: {
+      username: {
+        contains: query,
+        mode: 'insensitive',
+      },
+    },
+    select: userPublicSelect,
+    take: limit,
+  });
+
+  return rows.map(mapUserRow);
+}

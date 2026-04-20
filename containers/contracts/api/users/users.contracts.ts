@@ -34,4 +34,10 @@ export type UsersListError = (typeof USERS_LIST_ERRORS)[number];
 
 export type UsersListResponse = ApiResponse<UsersListOk, UsersListError, ValidationErrorDetails>;
 
+export type SearchUsersOk = {
+  users: UserPublic[];
+};
+
+export type SearchUsersResponse = ApiResponse<SearchUsersOk, UsersErrorName, ValidationErrorDetails>;
+
 export type UserPublicResponse = ApiResponse<UserPublic, UsersListError, ValidationErrorDetails>;
