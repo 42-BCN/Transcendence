@@ -104,6 +104,7 @@
           "meter": "Medidor",
           "scrollArea": "Área de desplazamiento",
           "textArea": "Área de texto",
+          "tabsDisclosure": "Pestañas y Acordeones",
           "themeTest": "Prueba de tema",
           "typography": "Tipografía",
           "social": "Social"
@@ -184,6 +185,26 @@
         "secondaryText": "Texto secundario",
         "tertiaryText": "Texto terciario",
         "disabledText": "Texto deshabilitado"
+      },
+      "tabsDisclosure": {
+        "title": "Componentes de Navegación",
+        "description": "Demostración técnica de Tabs y Disclosure (Acordeones).",
+        "tabs": {
+          "sectionsLabel": "Secciones sociales",
+          "friends": "Amigos",
+          "requests": "Solicitudes"
+        },
+        "disclosure": {
+          "friendsOnline": "Amigos conectados (12)",
+          "friendsOffline": "Amigos desconectados (30)",
+          "received": "Recibidas (5)",
+          "sent": "Enviadas (10)",
+          "friendsListHint": "Lista de amigos simplificada...",
+          "receivedHint": "Solicitudes entrantes llegadas recientemente.",
+          "sentHint": "Solicitudes que tú has enviado a otros usuarios.",
+          "statusOnline": "(Conectado)",
+          "statusOffline": "(Desconectado)"
+        }
       },
       "scrollArea": {
         "title": "Área desplazable",

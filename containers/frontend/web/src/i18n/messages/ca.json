@@ -104,6 +104,7 @@
           "meter": "Mesurador",
           "scrollArea": "Àrea de desplaçament",
           "textArea": "Àrea de text",
+          "tabsDisclosure": "Pestanyes i Acordions",
           "themeTest": "Prova del tema",
           "typography": "Tipografia",
           "social": "Social"
@@ -184,6 +185,26 @@
         "secondaryText": "Text secundari",
         "tertiaryText": "Text terciari",
         "disabledText": "Text deshabilitat"
+      },
+      "tabsDisclosure": {
+        "title": "Components de Navegació",
+        "description": "Demostració tècnica de Tabs i Disclosure (Acordions).",
+        "tabs": {
+          "sectionsLabel": "Seccions socials",
+          "friends": "Amics",
+          "requests": "Sol·licituds"
+        },
+        "disclosure": {
+          "friendsOnline": "Amics connectats (12)",
+          "friendsOffline": "Amics desconnectats (30)",
+          "received": "Rebudes (5)",
+          "sent": "Enviades (10)",
+          "friendsListHint": "Llista d'amics simplificada...",
+          "receivedHint": "Sol·licituds entrants arribades recentment.",
+          "sentHint": "Sol·licituds que tu has enviat a altres usuaris.",
+          "statusOnline": "(Connectat)",
+          "statusOffline": "(Desconnectat)"
+        }
       },
       "scrollArea": {
         "title": "Àrea de desplaçament",
