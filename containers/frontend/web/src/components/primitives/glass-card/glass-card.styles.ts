@@ -27,7 +27,7 @@ const border = {
 } as const;
 
 const cardLayout = [
-  'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
+  'shadow-[0_8px_32px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity))]',
   'rounded-3xl p-8',
   'transition-all duration-300',
 ];

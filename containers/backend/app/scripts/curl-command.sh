@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-#BASE="https://localhost:8443/api"
-BASE="http://localhost:4000"
+#BASE="http://localhost:4000"
+BASE="https://localhost:8443/api"
+CACERT="../../../../certs/ca.pem"
 COOKIES="./src/scripts/cookies.txt"
 
 EMAIL="test$(date +%s)@example.com"
@@ -14,7 +15,7 @@ echo "-----------------------------------"
 echo "Signup"
 echo "-----------------------------------"
 
-curl -k -X POST "$BASE/auth/signup" \
+curl --cacert "$CACERT" -X POST "$BASE/auth/signup" \
   -H "Content-Type: application/json" \
   -d "{
     \"email\": \"$EMAIL\",
@@ -28,7 +29,7 @@ echo "-----------------------------------"
 echo "Login (saving cookies)"
 echo "-----------------------------------"
 
-curl -k -X POST "$BASE/auth/login" \
+curl --cacert "$CACERT" -X POST "$BASE/auth/login" \
   -H "Content-Type: application/json" \
   -c "$COOKIES" \
   -d "{
@@ -43,7 +44,7 @@ echo "-----------------------------------"
 echo "Get users"
 echo "-----------------------------------"
 
-curl -k "$BASE/users?limit=25&offset=0" \
+curl --cacert "$CACERT" "$BASE/users?limit=25&offset=0" \
   -b "$COOKIES"
 
 echo ""
@@ -53,7 +54,7 @@ echo "-----------------------------------"
 echo "Logout"
 echo "-----------------------------------"
 
-curl -k -X POST "$BASE/auth/logout" \
+curl --cacert "$CACERT" -X POST "$BASE/auth/logout" \
   -b "$COOKIES"
 
 echo ""

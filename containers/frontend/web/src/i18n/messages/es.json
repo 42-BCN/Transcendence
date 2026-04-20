@@ -106,7 +106,8 @@
           "textArea": "Área de texto",
           "tabsDisclosure": "Pestañas y Acordeones",
           "themeTest": "Prueba de tema",
-          "typography": "Tipografía"
+          "typography": "Tipografía",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Botón primitivo",
@@ -210,6 +211,30 @@
         "description": "Este componente es un div que ocupa una altura del 100% y crea un área desplazable.",
         "example": "Ejemplo",
         "itemLabel": "Elemento"
+      },
+      "social": {
+        "title": "Prueba de Componentes Sociales",
+        "description": "Probando primitivos de Avatar y compuestos de UserItem.",
+        "avatarsTitle": "1. Tamaños de Avatar e Imagen por Defecto",
+        "avatarSizes": {
+          "sm": "Pequeño",
+          "md": "Mediano",
+          "lg": "Grande",
+          "fallback": "Por Defecto"
+        },
+        "userItemsTitle": "2. Variantes de UserItem",
+        "socialListLabel": "Ejemplos de Listas Sociales",
+        "status": {
+          "online": "En línea",
+          "sent": "Enviado hace 2 días"
+        },
+        "actions": {
+          "playGame": "Jugar",
+          "sendMessage": "Enviar Mensaje",
+          "acceptRequest": "Aceptar Solicitud",
+          "rejectRequest": "Rechazar Solicitud",
+          "addFriend": "Añadir Amigo"
+        }
       }
     },
     "terms": {
@@ -342,8 +367,7 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Correo enviado. Espera para volver a intentarlo.",
-        "resendError": "✗ No se pudo enviar. Inténtalo de nuevo."
+        "success": "Correo enviado. Espera para volver a intentarlo."
       }
     },
     "navigation": {
@@ -395,7 +419,7 @@
     "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
     "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
     "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
     "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
@@ -405,6 +429,6 @@
     "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde."
   }
 }

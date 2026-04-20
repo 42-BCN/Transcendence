@@ -109,7 +109,8 @@ declare const messages: {
           "textArea": "Text Area",
           "tabsDisclosure": "Tabs & Disclosure",
           "themeTest": "Theme Test",
-          "typography": "Typography"
+          "typography": "Typography",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Button primitive",
@@ -213,6 +214,30 @@ declare const messages: {
         "description": "This component is a div that takes a height of 100% and creates a scrollable area.",
         "example": "Example",
         "itemLabel": "Item"
+      },
+      "social": {
+        "title": "Social Components Test",
+        "description": "Testing Avatar primitives and UserItem composites.",
+        "avatarsTitle": "1. Avatar Sizes & Fallback",
+        "avatarSizes": {
+          "sm": "Small",
+          "md": "Medium",
+          "lg": "Large",
+          "fallback": "Fallback"
+        },
+        "userItemsTitle": "2. UserItem Variants",
+        "socialListLabel": "Social List Examples",
+        "status": {
+          "online": "Online",
+          "sent": "Sent 2 days ago"
+        },
+        "actions": {
+          "playGame": "Play Game",
+          "sendMessage": "Send Message",
+          "acceptRequest": "Accept Request",
+          "rejectRequest": "Reject Request",
+          "addFriend": "Add Friend"
+        }
       }
     },
     "terms": {
@@ -345,8 +370,7 @@ declare const messages: {
       },
       "messages": {
         "or": "OR",
-        "success": "Email sent. Wait before trying again.",
-        "submitting": "Submitting..."
+        "success": "Email sent. Wait before trying again."
       }
     },
     "navigation": {

@@ -6,7 +6,7 @@ script.src = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
 document.head.appendChild(script);
 
 // Second
-const socket = io('http://localhost:3100/chat', {
+const socket = io('https://localhost:8443/chat', {
   path: '/socket.io',
   transports: ['websocket'],
 });

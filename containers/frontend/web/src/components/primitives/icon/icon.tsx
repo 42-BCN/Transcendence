@@ -7,7 +7,7 @@ type IconProps = {
   size?: number;
 };
 
-export function Icon({ name, size = 16, className }: IconProps) {
+export function Icon({ name, size = 20, className }: IconProps) {
   const IconComponent = icons[name];
   return <IconComponent size={size} className={iconStyles.icon(className)} aria-hidden="true" />;
 }

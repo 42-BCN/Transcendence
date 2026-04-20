@@ -81,6 +81,9 @@
   --space-md: var(--space-4);
   --space-lg: var(--space-5);
   --space-xl: var(--space-7);
+
+  --color-shadow-rgb: 0, 0, 0;
+  --color-shadow-opacity: 0.1;
 }
 
 .dark {
@@ -92,7 +95,9 @@
   --color-bg-primary: #020617; /* slate-950 (Dark blue) */
   --color-bg-secondary: #1e293b; /* slate-800 */
   --color-border-primary: #334155; /* slate-700 */
-  --color-grid-line: rgba(255, 255, 255, 0.02); /* Very subtle white for dark mode */
+  --color-grid-line: #ffffff05; /* Very subtle white for dark mode */
+  --color-shadow-rgb: 255, 255, 255;
+  --color-shadow-opacity: 0.1;
 }
 
 .font-caption {
@@ -258,7 +263,7 @@ select:-webkit-autofill:hover {
 
 .fancy-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 25px 45px rgba(var(--color-shadow-rgb), var(--color-shadow-opacity));
 }
 
 .fancy-btn:active {

@@ -46,9 +46,11 @@ export { CheckboxField, type CheckboxFieldProps } from './composites/checkbox-fi
 export { TextAreaField, type TextAreaFieldProps } from './composites/text-area-field';
 export { ContentSection } from './composites/content-section';
 export { TextField, type TextFieldProps } from './composites/text-field';
+export { UserItem, type UserItemProps } from './composites/user-item';
 export { TooltipTrigger } from './composites/tooltip-trigger';
 
 export { AuthPageLayout, type AuthPageLayoutProps } from './primitives/auth-page-layout';
+export { Avatar, type AvatarProps } from './primitives/avatar';
 export { Columns12Overlay, Grid4Overlay, Grid8Overlay } from './primitives/base-grid';
 export { GlassCard, type GlassCardProps } from './primitives/glass-card';
 export {

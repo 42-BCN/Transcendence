@@ -1,10 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const overlayBase = [
-  'absolute top-0 left-0 w-full z-[100]',
-  'h-[var(--page-height)]',
-  'bg-black/30 backdrop-blur-[10px]',
-];
+const overlayBase = ['absolute top-0 left-0 w-full z-[100]', 'h-[var(--page-height)]'];
 
 const overlayRacStates = [
   'data-[entering]:bg-black/30 data-[entering]:backdrop-blur-md',
@@ -16,13 +12,13 @@ export function drawerOverlayStyles() {
 }
 
 const drawerBase = [
-  'fixed left-0 top-0 h-screen',
-  'bg-white',
-  'border-l border-gray-200',
-  'shadow-[-8px_0_20px_rgba(0,0,0,0.1)]',
+  'fixed left-0 top-0 h-screen rounded-lg',
+  'bg-bg-primary/50 dark:bg-bg-primary/30',
+  'backdrop-blur-md',
+  'border-r border-border-primary',
+  'shadow-[8px_0_20px_rgba(var(--color-shadow-rgb),var(--color-shadow-opacity))]',
   'transition-transform duration-300',
   'translate-x-0',
-  'p-4',
 ];
 
 const drawerRacStates = [

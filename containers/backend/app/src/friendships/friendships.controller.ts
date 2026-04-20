@@ -1,27 +1,28 @@
 import type { Request, Response } from 'express';
+
 import type {
   GetFriendsListResponse,
   GetFriendshipsResponse,
-  GetReceivedRequestsResponse,
+  GetPendingRequestsResponse,
   GetSentRequestsResponse,
   SendFriendRequestBody,
   SendFriendRequestResponse,
-  AcceptRequestResponse,
   RespondFriendRequestResponse,
+  DeleteFriendshipResponse,
 } from '@contracts/friendships/friendships.contracts';
 import type {
-  AcceptRequestParam,
   RespondFriendRequestBody,
+  DeleteFriendshipParam,
 } from '@contracts/friendships/friendships.validation';
 
 import {
   getFriendships,
   getFriendsList,
-  getReceivedRequests,
+  getPendingRequests,
   getSentRequests,
   sendFriendRequest,
-  acceptRequest,
   respondToFriendRequest,
+  removeFriendship,
 } from './friendships.service';
 
 export async function getFriendsListController(
@@ -42,12 +43,12 @@ export async function getFriendshipsController(
   res.status(200).json({ ok: true, data: { friendships } });
 }
 
-export async function getReceivedRequestsController(
+export async function getPendingRequestsController(
   req: Request,
-  res: Response<GetReceivedRequestsResponse>,
+  res: Response<GetPendingRequestsResponse>,
 ): Promise<void> {
   const userId = req.session.userId!;
-  const requests = await getReceivedRequests(userId);
+  const requests = await getPendingRequests(userId);
   res.status(200).json({ ok: true, data: { requests } });
 }
 
@@ -73,15 +74,6 @@ export async function sendFriendRequestController(
   });
 }
 
-export async function acceptRequestController(
-  req: Request<AcceptRequestParam>,
-  res: Response<AcceptRequestResponse>,
-): Promise<void> {
-  const userId = req.session.userId!;
-  const friendship = await acceptRequest(req.params.requestId, userId);
-  res.status(200).json({ ok: true, data: { friendship } });
-}
-
 export async function respondFriendRequestController(
   req: Request<object, object, RespondFriendRequestBody>,
   res: Response<RespondFriendRequestResponse>,
@@ -89,4 +81,13 @@ export async function respondFriendRequestController(
   const userId = req.session.userId!;
   const result = await respondToFriendRequest(req.body.friendshipId, userId, req.body.action);
   res.status(200).json({ ok: true, data: result });
+}
+
+export async function deleteFriendshipController(
+  req: Request<DeleteFriendshipParam>,
+  res: Response<DeleteFriendshipResponse>,
+): Promise<void> {
+  const userId = req.session.userId!;
+  await removeFriendship(req.params.friendshipId, userId);
+  res.status(200).json({ ok: true, data: { deleted: true } });
 }

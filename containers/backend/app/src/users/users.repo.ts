@@ -6,6 +6,12 @@ type UserPublicRow = {
   username: string;
 };
 
+type UserSearchRow = {
+  id: string;
+  username: string;
+  avatar: string | null;
+};
+
 function mapUserRow(row: UserPublicRow): UserPublic {
   return {
     id: row.id,
@@ -47,4 +53,25 @@ export async function selectUserDataByUsername(username: string): Promise<UserPu
   });
 
   return row ? mapUserRow(row) : null;
+}
+
+export async function searchUsersByUsername(
+  query: string,
+  limit: number,
+  currentUserId: string,
+): Promise<UserSearchRow[]> {
+  const sanitized = query.replace(/[%_\\]/g, '\\$&');
+
+  const rows = await prisma.$queryRaw<UserSearchRow[]>`
+    SELECT id, username, avatar
+    FROM users
+    WHERE username ILIKE ${'%' + sanitized + '%'}
+      AND id != ${currentUserId}::uuid
+    ORDER BY
+      CASE WHEN username ILIKE ${sanitized} THEN 0 ELSE 1 END,
+      username ASC
+    LIMIT ${limit}
+  `;
+
+  return rows;
 }

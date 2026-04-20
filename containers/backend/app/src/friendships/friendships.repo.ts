@@ -9,8 +9,8 @@ type FriendshipRow = {
   status: 'pending' | 'accepted';
   createdAt: Date;
   updatedAt: Date;
-  user1: { username: string };
-  user2: { username: string };
+  user1: { username: string; avatar: string | null };
+  user2: { username: string; avatar: string | null };
 };
 
 export type FriendshipPairRow = {
@@ -22,11 +22,13 @@ export type FriendshipPairRow = {
 function toPublic(row: FriendshipRow, currentUserId: string): FriendshipPublic {
   const friendId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
   const friendUsername = row.userId1 === currentUserId ? row.user2.username : row.user1.username;
+  const friendAvatar = row.userId1 === currentUserId ? row.user2.avatar : row.user1.avatar;
 
   return {
     id: row.id,
     friendUserId: friendId,
     friendUsername,
+    friendAvatar,
     status: row.status,
     isSender: row.senderId === currentUserId,
     createdAt: row.createdAt,
@@ -75,8 +77,8 @@ export async function createFriendRequest(
       status: 'pending',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -124,7 +126,7 @@ export async function autoAcceptMutualRequest(
 
 export async function listFriendsForUser(
   userId: string,
-): Promise<{ id: string; username: string }[]> {
+): Promise<{ id: string; username: string; avatar: string | null }[]> {
   const friendships = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
@@ -134,8 +136,8 @@ export async function listFriendsForUser(
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { id: true, username: true } },
-      user2: { select: { id: true, username: true } },
+      user1: { select: { id: true, username: true, avatar: true } },
+      user2: { select: { id: true, username: true, avatar: true } },
     },
   });
 
@@ -144,6 +146,7 @@ export async function listFriendsForUser(
     return {
       id: friend.id,
       username: friend.username,
+      avatar: friend.avatar,
     };
   });
 }
@@ -158,15 +161,15 @@ export async function listAcceptedFriendships(userId: string): Promise<Friendshi
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
   return friendships.map((f) => toPublic(f as FriendshipRow, userId));
 }
 
-export async function listReceivedRequests(userId: string): Promise<FriendshipPublic[]> {
+export async function listPendingRequests(userId: string): Promise<FriendshipPublic[]> {
   const requests = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
@@ -179,8 +182,8 @@ export async function listReceivedRequests(userId: string): Promise<FriendshipPu
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -198,8 +201,8 @@ export async function listSentRequests(userId: string): Promise<FriendshipPublic
       createdAt: 'desc',
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -247,6 +250,27 @@ export async function rejectFriendRequest(
   return true;
 }
 
+/** Delete any friendship row (pending or accepted) if the user is one of the two members. */
+export async function deleteFriendship(
+  friendshipId: string,
+  currentUserId: string,
+): Promise<'deleted' | 'not_found' | 'forbidden'> {
+  return prisma.$transaction(async (tx) => {
+    const friendship = await tx.friendship.findUnique({
+      where: { id: friendshipId },
+    });
+
+    if (!friendship) return 'not_found' as const;
+
+    const isMember =
+      friendship.userId1 === currentUserId || friendship.userId2 === currentUserId;
+    if (!isMember) return 'forbidden' as const;
+
+    await tx.friendship.delete({ where: { id: friendshipId } });
+    return 'deleted' as const;
+  });
+}
+
 export async function acceptFriendRequest(
   requestId: string,
   userId: string,
@@ -269,12 +293,48 @@ export async function acceptFriendRequest(
       updatedAt: new Date(),
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
   return toPublic(updated as FriendshipRow, userId);
+}
+
+/**
+ * Batch lookup: returns a Map<otherUserId, {id, status, senderId}> for
+ * all friendships between currentUserId and each of otherUserIds.
+ * Used by the user search endpoint to inject friendship context in O(1).
+ */
+export async function findFriendshipsByUserPairs(
+  currentUserId: string,
+  otherUserIds: string[],
+): Promise<Map<string, FriendshipPairRow>> {
+  if (otherUserIds.length === 0) return new Map();
+
+  const rows = await prisma.friendship.findMany({
+    where: {
+      OR: otherUserIds.map((otherId) => {
+        const [u1, u2] = sortedPair(currentUserId, otherId);
+        return { userId1: u1, userId2: u2 };
+      }),
+    },
+    select: {
+      id: true,
+      userId1: true,
+      userId2: true,
+      status: true,
+      senderId: true,
+    },
+  });
+
+  const map = new Map<string, FriendshipPairRow>();
+  for (const row of rows) {
+    const otherId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
+    map.set(otherId, { id: row.id, status: row.status, senderId: row.senderId });
+  }
+
+  return map;
 }
 
 export async function findUserById(userId: string): Promise<boolean> {
@@ -282,7 +342,7 @@ export async function findUserById(userId: string): Promise<boolean> {
     where: { id: userId },
     select: { id: true },
   });
-  return !!user;
+  return Boolean(user);
 }
 
 export async function findUserBrief(
