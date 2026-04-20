@@ -11,6 +11,9 @@ export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
 export { Tooltip } from './controls/tooltip';
 export { ApiFeedback } from './composites/api-feedback/api-feedback';
+export { FormTitle } from './composites/form-title/form-title';
+export { Divider } from './composites/divider/divider';
+export { MessageBlock } from './composites/text-block/text-block';
 
 export { Drawer } from './composites/drawer';
 export { Form, type FormProps } from './composites/form';
@@ -23,9 +26,11 @@ export { CheckboxField, type CheckboxFieldProps } from './composites/checkbox-fi
 export { TextAreaField, type TextAreaFieldProps } from './composites/text-area-field';
 export { ContentSection } from './composites/content-section';
 export { TextField, type TextFieldProps } from './composites/text-field';
+export { UserItem, type UserItemProps } from './composites/user-item';
 export { TooltipTrigger } from './composites/tooltip-trigger';
 
 export { AuthPageLayout, type AuthPageLayoutProps } from './primitives/auth-page-layout';
+export { Avatar, type AvatarProps } from './primitives/avatar';
 export { Columns12Overlay, Grid4Overlay, Grid8Overlay } from './primitives/base-grid';
 export { GlassCard, type GlassCardProps } from './primitives/glass-card';
 export {
@@ -40,9 +45,11 @@ export {
   type GlassIntensity,
 } from './primitives/glass-card/glass-card.styles';
 export { Icon, type IconName } from './primitives/icon';
+export { InlineLinkPrompt } from './composites/inline-link-prompt/inline-link-prompt';
 export { MessageBubble, type MessageBubbleProps } from './primitives/message-bubble';
 export { ScrollArea, type ScrollAreaProps } from './primitives/scroll-area';
 export { SplitScreenGrid } from './primitives/split-screen-grid';
 export { Stack } from './primitives/stack';
 export { Text } from './primitives/text';
-export { SubmitButton } from './controls/submit-button/submit-button';
+export { SubmitButton } from './composites/submit-button/submit-button';
+export { AsyncCooldownButton } from './composites/async-cooldown-button/async-cooldown-button';

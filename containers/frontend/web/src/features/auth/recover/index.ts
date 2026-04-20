@@ -1,1 +1,2 @@
-export { RecoverFeature } from './recover';
+export { RecoverFeature } from './request/recover';
+export { ResetPasswordFeature } from './reset/reset-password';

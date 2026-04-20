@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { Stack, Text, ContentSection } from '@components';
+import { Stack, Text, ContentSection, ExternalLink } from '@components';
 
 export default async function PrivacyPolicyPage() {
   const t = await getTranslations('pages.privacy');
@@ -53,7 +53,20 @@ export default async function PrivacyPolicyPage() {
           ]}
         />
 
-        <ContentSection title={t('contact.title')} description={t('contact.description')} />
+        <ContentSection
+          title={t('contact.title')}
+          description={t.rich('contact.description', {
+            link: (chunks) => (
+              <ExternalLink
+                as="link"
+                className="font-body"
+                href="https://github.com/42-BCN/Transcendence"
+              >
+                {chunks}
+              </ExternalLink>
+            ),
+          })}
+        />
       </Stack>
     </main>
   );

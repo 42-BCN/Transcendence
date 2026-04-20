@@ -24,6 +24,31 @@ Modern web apps often require HTTPS even in dev because of:
 
 - Improves development experience overrall
 
+## 🔐 Certificate Model: Local CA + Leaf Certificate
+
+This project now uses a **proper certificate chain** instead of a single self-signed cert:
+
+- **CA Certificate (`ca.pem`)**
+  - Acts as the trusted root authority
+  - `basicConstraints: CA:true`
+  - `keyUsage: keyCertSign, cRLSign`
+  - Valid for 10 years (3650 days)
+  - Trust this in your browser/OS
+
+- **Leaf Certificate (`localhost.crt`)**
+  - Server certificate for HTTPS serving
+  - `basicConstraints: CA:false`
+  - `keyUsage: digitalSignature, keyEncipherment`
+  - `extendedKeyUsage: serverAuth`
+  - Valid for 825 days
+  - Signed by the local CA
+
+**Why this matters:**
+- Follows proper TLS semantics: CA certs are for signing, leaf certs are for serving
+- Allows certificate rotation without re-trusting the CA
+- Aligns with production certificate best practices
+- Services only get `NODE_EXTRA_CA_CERTS=/certs/ca.pem` for trust validation
+
 ## Usage
 
 ### Generate the certificates (once)
@@ -60,13 +85,13 @@ Never share or submit to the repository your certificate key
 
 2. Custom -> Trusted certificates -> import
 
-4. Select the file at the root of this repo: localhost.crt
+3. Select the CA file at the root of this repo: ca.pem
 
-6. Click OK
+4. Click OK
 
-7. Close ALL Chrome windows
+5. Close ALL Chrome windows
 
-8. Reopen Chrome and visit:
+6. Reopen Chrome and visit:
 
    https://localhost:8443
 

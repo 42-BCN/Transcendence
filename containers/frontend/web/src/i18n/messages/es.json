@@ -2,7 +2,7 @@
   "common": {
     "globalError": {
       "title": "Algo salió mal",
-      "tryAgain": "Intentar de nuevo"
+      "tryAgain": "Inténtalo de nuevo"
     }
   },
   "components": {
@@ -43,7 +43,7 @@
     },
     "me": {
       "title": "Mi Cuenta",
-      "subtitle": "Accede a los detalles protegidos de tu cuenta."
+      "subtitle": "Accede a los datos protegidos de tu cuenta."
     },
     "privacy": {
       "title": "Política de Privacidad",
@@ -85,7 +85,7 @@
       },
       "contact": {
         "title": "Contacto",
-        "description": "Si tienes alguna pregunta sobre esta política de privacidad o deseas ejercer tus derechos, contáctanos a través de nuestro repositorio de GitHub o comunícate con los administradores del proyecto."
+        "description": "Si tienes alguna pregunta sobre esta política o deseas ejercer tus derechos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>."
       }
     },
     "ui": {
@@ -105,7 +105,8 @@
           "scrollArea": "Área de desplazamiento",
           "textArea": "Área de texto",
           "themeTest": "Prueba de tema",
-          "typography": "Tipografía"
+          "typography": "Tipografía",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Botón primitivo",
@@ -189,6 +190,76 @@
         "description": "Este componente es un div que ocupa una altura del 100% y crea un área desplazable.",
         "example": "Ejemplo",
         "itemLabel": "Elemento"
+      },
+      "social": {
+        "title": "Prueba de Componentes Sociales",
+        "description": "Probando primitivos de Avatar y compuestos de UserItem.",
+        "avatarsTitle": "1. Tamaños de Avatar e Imagen por Defecto",
+        "avatarSizes": {
+          "sm": "Pequeño",
+          "md": "Mediano",
+          "lg": "Grande",
+          "fallback": "Por Defecto"
+        },
+        "userItemsTitle": "2. Variantes de UserItem",
+        "socialListLabel": "Ejemplos de Listas Sociales",
+        "status": {
+          "online": "En línea",
+          "sent": "Enviado hace 2 días"
+        },
+        "actions": {
+          "playGame": "Jugar",
+          "sendMessage": "Enviar Mensaje",
+          "acceptRequest": "Aceptar Solicitud",
+          "rejectRequest": "Rechazar Solicitud",
+          "addFriend": "Añadir Amigo"
+        }
+      }
+    },
+    "terms": {
+      "title": "Términos de Servicio",
+      "lastUpdated": "Última actualización: Abril 2026",
+      "intro": "Bienvenido a Transcendence. El uso de esta plataforma está sujeto a los siguientes Términos de Servicio, que rigen la relación entre tú y el equipo de desarrollo.",
+      "acceptance": {
+        "title": "Aceptación de los Términos",
+        "description": "Al crear una cuenta o utilizar nuestros servicios, aceptas estas condiciones en su totalidad. Si no estás de acuerdo con alguna parte de estos Términos, debes abstenerte de utilizar la plataforma."
+      },
+      "registration": {
+        "title": "Registro de Cuenta",
+        "description": "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades que ocurran bajo tu cuenta.",
+        "items": {
+          "security": "Debes notificarnos inmediatamente cualquier uso no autorizado de tu cuenta.",
+          "accuracy": "Aceptas proporcionar información precisa y completa durante el registro."
+        }
+      },
+      "conduct": {
+        "title": "Conducta del Usuario",
+        "description": "Para mantener un entorno justo, respetuoso y divertido, te comprometes a no:",
+        "items": {
+          "cheating": "Utilizar trampas, software de automatización (bots) o hacks para obtener ventaja.",
+          "harassment": "Acosar, abusar o participar en conductas que dañen a la comunidad o a otros jugadores.",
+          "disruption": "Intentar interrumpir la integridad o seguridad de nuestros servidores."
+        }
+      },
+      "ip": {
+        "title": "Propiedad Intelectual",
+        "description": "Todo el contenido, incluyendo el código del juego, gráficos y marcas registradas, es propiedad de Transcendence. Otorgamos una licencia limitada y no transferible para uso personal y no comercial."
+      },
+      "disclaimer": {
+        "title": "Exención de responsabilidad",
+        "description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona tal cual y según disponibilidad. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores."
+      },
+      "termination": {
+        "title": "Cancelación",
+        "description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto."
+      },
+      "law": {
+        "title": "Ley Aplicable",
+        "description": "Estos Términos se rigen e interpretan de acuerdo con las leyes aplicables a los servicios digitales dentro del ámbito de jurisdicción de este proyecto."
+      },
+      "contact": {
+        "title": "Contacto",
+        "description": "Si tienes preguntas o deseas ejercer cualquier derecho relacionado con estos Términos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>."
       }
     }
   },
@@ -222,8 +293,8 @@
         "login": "Iniciar sesión",
         "signup": "Crear cuenta",
         "continueWithGoogle": "Continuar con Google",
-        "sendEmail": "Enviar email",
-        "resendEmail": "Volver a enviar",
+        "sendEmail": "Enviar correo electrónico",
+        "resendEmail": "Reenviar correo",
         "logoutAriaLabel": "Cerrar sesión"
       },
       "login": {
@@ -243,7 +314,7 @@
         "goToLogin": "Iniciar sesión"
       },
       "verification": {
-        "title": "Verifica tu email",
+        "title": "Verifica tu correo electrónico",
         "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
@@ -263,7 +334,8 @@
         "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
-        "backToLogin": "Volver a iniciar sesión"
+        "rememberedPassword": "¿Has recordado tu contraseña?",
+        "backToLogin": "Volver al inicio de sesión"
       },
       "reset": {
         "title": "Restablecer contraseña",
@@ -274,8 +346,7 @@
       },
       "messages": {
         "or": "O",
-        "success": "Email enviado: Espera para volver a intentarlo.",
-        "submitting": "Submitting..."
+        "success": "Correo enviado. Espera para volver a intentarlo."
       }
     },
     "navigation": {
@@ -327,7 +398,7 @@
     "OUT_OF_RANGE": "Solicitud fuera de rango."
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El email ya existe",
+    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
     "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
     "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
     "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
@@ -337,6 +408,6 @@
     "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde."
   }
 }

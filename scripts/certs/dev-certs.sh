@@ -10,18 +10,20 @@ CERT_DIR="$ROOT_DIR/certs"
 
 CRT="$CERT_DIR/localhost.crt"
 KEY="$CERT_DIR/localhost.key"
+CA="$CERT_DIR/ca.pem"
 
-export CERT_DIR CRT KEY
+export CERT_DIR CRT KEY CA
 
 mkdir -p "$CERT_DIR"
 
 confirm_replace_certs_if_exist() {
-  if [ -f "$CRT" ] || [ -f "$KEY" ]; then
+  if [ -f "$CRT" ] || [ -f "$KEY" ] || [ -f "$CA" ]; then
 cat <<EOF
 
 Existing certificates detected:
-- Certificate: $(pwd)/$CRT
-- Private key:  $(pwd)/$KEY
+- CA certificate: $(pwd)/$CA
+- Certificate:    $(pwd)/$CRT
+- Private key:    $(pwd)/$KEY
 
 Do you want to replace them? [y/N]
 EOF
@@ -29,7 +31,7 @@ EOF
     case "$ans" in
       y|Y|yes|YES)
         echo "Replacing existing certificates..."
-        rm -f "$CRT" "$KEY"
+        rm -f "$CRT" "$KEY" "$CA"
         return 0
         ;;
       *)
@@ -50,13 +52,13 @@ Choose how HTTPS certificates should be generated:
 
   1) mkcert (needs testing)
      - Installs a local trusted CA
-     - No browser warnings
+     - Generates a leaf certificate signed by that CA
      - May require admin password
 
   2) Self-signed certificate (recommended)
+     - Creates a local CA and a separate leaf certificate
+     - Browser will show warning until the CA is trusted
      - No system changes
-     - Browser will show warning
-     - Can be trusted manually later
 
   3) Skip (I already have certificates)
 
@@ -96,5 +98,6 @@ esac
 
 echo
 echo "🎉 Certificates ready in: $CERT_DIR"
-echo "📄 Certificate: $(pwd)/$CRT"
-echo "🔑 Private key:  $(pwd)/$KEY"
+echo "📄 CA certificate:  $(pwd)/$CA"
+echo "📄 Certificate:     $(pwd)/$CRT"
+echo "🔑 Private key:     $(pwd)/$KEY"

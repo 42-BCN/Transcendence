@@ -46,7 +46,7 @@ declare const messages: {
     },
     "me": {
       "title": "My Account",
-      "subtitle": "Access your protected account details."
+      "subtitle": "Access your protected account data."
     },
     "privacy": {
       "title": "Privacy Policy",
@@ -88,7 +88,7 @@ declare const messages: {
       },
       "contact": {
         "title": "Contact",
-        "description": "If you have any questions about this privacy policy or wish to exercise your rights, please contact us through our GitHub repository or reach out to the project administrators."
+        "description": "If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>."
       }
     },
     "ui": {
@@ -108,7 +108,8 @@ declare const messages: {
           "scrollArea": "Scroll Area",
           "textArea": "Text Area",
           "themeTest": "Theme Test",
-          "typography": "Typography"
+          "typography": "Typography",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Button primitive",
@@ -192,6 +193,76 @@ declare const messages: {
         "description": "This component is a div that takes a height of 100% and creates a scrollable area.",
         "example": "Example",
         "itemLabel": "Item"
+      },
+      "social": {
+        "title": "Social Components Test",
+        "description": "Testing Avatar primitives and UserItem composites.",
+        "avatarsTitle": "1. Avatar Sizes & Fallback",
+        "avatarSizes": {
+          "sm": "Small",
+          "md": "Medium",
+          "lg": "Large",
+          "fallback": "Fallback"
+        },
+        "userItemsTitle": "2. UserItem Variants",
+        "socialListLabel": "Social List Examples",
+        "status": {
+          "online": "Online",
+          "sent": "Sent 2 days ago"
+        },
+        "actions": {
+          "playGame": "Play Game",
+          "sendMessage": "Send Message",
+          "acceptRequest": "Accept Request",
+          "rejectRequest": "Reject Request",
+          "addFriend": "Add Friend"
+        }
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: April 2026",
+      "intro": "Welcome to Transcendence. Your use of this platform is subject to the following Terms of Service, which govern the relationship between you and the development team.",
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "description": "By creating an account or using our services, you agree to these conditions in their entirety. If you do not agree with any part of these Terms, you must refrain from using the platform."
+      },
+      "registration": {
+        "title": "Account Registration",
+        "description": "You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account.",
+        "items": {
+          "security": "You must notify us immediately of any unauthorized use of your account.",
+          "accuracy": "You agree to provide accurate and complete information during registration."
+        }
+      },
+      "conduct": {
+        "title": "User Conduct",
+        "description": "To maintain a fair, respectful, and fun environment, you agree not to:",
+        "items": {
+          "cheating": "Use cheats, automation software (bots), or hacks to gain an advantage.",
+          "harassment": "Harass, abuse, or engage in behavior that harms the community or other players.",
+          "disruption": "Attempt to disrupt the integrity or security of our servers."
+        }
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "description": "All content, including game code, graphics, and trademarks, is the property of Transcendence. We grant you a limited, non-transferable license for personal, non-commercial use."
+      },
+      "disclaimer": {
+        "title": "Disclaimers",
+        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided as is and as available. We do not warrant that the service will be uninterrupted, timely, secure, or error-free."
+      },
+      "termination": {
+        "title": "Termination",
+        "description": "We reserve the right to suspend or terminate your account at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties."
+      },
+      "law": {
+        "title": "Governing Law",
+        "description": "These Terms shall be governed by and construed in accordance with the laws applicable to digital services within the scope of this project's jurisdiction."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "description": "If you have any questions or wish to exercise your rights, please contact the development team by opening an issue on our <link>GitHub repository</link>."
       }
     }
   },
@@ -266,6 +337,7 @@ declare const messages: {
         "sent": "We've sent password reset instructions to the address you entered.",
         "checkInbox": "Check your inbox and follow the instructions to set a new password.",
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
+        "rememberedPassword": "Remembered your password?",
         "backToLogin": "Back to login"
       },
       "reset": {
@@ -277,8 +349,7 @@ declare const messages: {
       },
       "messages": {
         "or": "OR",
-        "success": "Email sent. Wait before trying again.",
-        "submitting": "Submitting..."
+        "success": "Email sent. Wait before trying again."
       }
     },
     "navigation": {

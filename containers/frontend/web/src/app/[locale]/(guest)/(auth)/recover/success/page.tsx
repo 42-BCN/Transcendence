@@ -1,5 +1,5 @@
-import RecoverSuccess from '@/features/auth/recover/recover.success';
+import RecoverSuccess from '@/features/auth/recover/resend/recover.success';
 
-export default async function RecoverSuccessPage() {
+export default function RecoverSuccessPage() {
   return <RecoverSuccess />;
 }

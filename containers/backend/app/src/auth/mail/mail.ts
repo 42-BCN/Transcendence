@@ -31,6 +31,12 @@ export type PasswordResetMailInput = {
   locale?: EmailLocale;
 };
 
+export type SignupAccountExistsNoticeMailInput = {
+  toEmail: string;
+  username: string;
+  locale?: EmailLocale;
+};
+
 function interpolate(template: string, values: Record<string, string>): string {
   return template.replace(/{(\w+)}/g, (_match, key: string) => {
     return values[key] ?? '';
@@ -69,6 +75,24 @@ function passwordResetMailContent(input: PasswordResetMailInput): {
   };
 }
 
+function signupAccountExistsNoticeMailContent(input: SignupAccountExistsNoticeMailInput): {
+  subject: string;
+  text: string;
+  html: string;
+} {
+  const baseUrl = getPublicAppBaseUrl();
+  const loginUrl = `${baseUrl}/login`;
+  const recoverUrl = `${baseUrl}/recover`;
+  const locale = input.locale ?? 'en';
+  const copy = mailTemplates[locale].signupAccountExistsNotice;
+
+  return {
+    subject: copy.subject,
+    text: interpolate(copy.text, { name: input.username, loginUrl, recoverUrl }),
+    html: interpolate(copy.html, { name: input.username, loginUrl, recoverUrl }),
+  };
+}
+
 export async function sendSignupVerificationEmail(
   input: SignupVerificationMailInput,
 ): Promise<void> {
@@ -83,6 +107,18 @@ export async function sendSignupVerificationEmail(
 
 export async function sendPasswordResetEmail(input: PasswordResetMailInput): Promise<void> {
   const content = passwordResetMailContent(input);
+  await sendMail({
+    to: input.toEmail,
+    subject: content.subject,
+    text: content.text,
+    html: content.html,
+  });
+}
+
+export async function sendSignupAccountExistsNoticeEmail(
+  input: SignupAccountExistsNoticeMailInput,
+): Promise<void> {
+  const content = signupAccountExistsNoticeMailContent(input);
   await sendMail({
     to: input.toEmail,
     subject: content.subject,

@@ -14,13 +14,14 @@ const uiSubpages = [
   { href: '/ui/text-area', labelKey: 'links.textArea' },
   { href: '/ui/theme-test', labelKey: 'links.themeTest' },
   { href: '/ui/typography', labelKey: 'links.typography' },
+  { href: '/ui/social', labelKey: 'links.social' },
 ] as const;
 
 export default function UiPage() {
   const t = useTranslations('pages.ui.index');
 
   return (
-    <main className="p-5">
+    <main className="p-2 md:ps-10">
       <h1 className="text-2xl font-semibold mb-4">{t('controlComponents')}</h1>
       <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {uiSubpages.map((subpage) => (

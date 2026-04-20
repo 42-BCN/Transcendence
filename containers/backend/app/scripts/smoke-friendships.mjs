@@ -3,10 +3,11 @@
 /**
  * Smoke test: login (seeded users) → friend request → accept → GET /friends & /friendships → DELETE.
  * Requires `npm run db:seed:dev` to have been run first (uses capapes / mfontser seed accounts).
- * Run inside backend container: BASE_URL=http://127.0.0.1:4000 node scripts/smoke-friendships.mjs
+ * Run inside backend container: node scripts/smoke-friendships.mjs
+ * Optional nginx route from a container on the edge network: BASE_URL=https://nginx/api node scripts/smoke-friendships.mjs
  */
 
-const BASE = process.env.BASE_URL ?? 'http://127.0.0.1:4000';
+const BASE = process.env.BASE_URL ?? 'https://localhost:4000';
 
 class Client {
   /** @type {string} */

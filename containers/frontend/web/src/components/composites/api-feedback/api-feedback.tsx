@@ -30,14 +30,14 @@ export function ApiFeedback<TCode extends string>({
 
   const tError = useTranslations('errors');
 
-  if (result.ok || result?.api?.ok)
+  if (result.ok)
     return (
       <Text variant="body-xs" className={apiFeedbackStyles.success}>
         {successMessage}
       </Text>
     );
 
-  const errorKey = result?.api?.error?.code || (result?.error.code as Parameters<typeof tError>[0]);
+  const errorKey = result?.error.code as Parameters<typeof tError>[0];
 
   return (
     <Text variant="body-xs" className={apiFeedbackStyles.error}>

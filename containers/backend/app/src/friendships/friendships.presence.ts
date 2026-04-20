@@ -1,4 +1,4 @@
-const SOCKET_SERVICE_URL = process.env.SOCKET_SERVICE_URL ?? 'http://socket:3100';
+const SOCKET_SERVICE_URL = process.env.SOCKET_SERVICE_URL ?? 'https://socket:3100';
 
 export async function resolveOnlineStatus(userIds: string[]): Promise<Record<string, boolean>> {
   if (userIds.length === 0) return {};

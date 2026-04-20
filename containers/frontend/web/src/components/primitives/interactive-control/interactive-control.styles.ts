@@ -8,14 +8,16 @@ import type {
 } from './interactive-control.types';
 
 const interactiveControlBase = [
-  'inline-flex items-center justify-center gap-3 rounded-md border font-medium',
+  'flex items-center justify-center gap-3 rounded-lg border font-medium',
   'min-h-6 min-w-6 select-none text-text-primary',
   'transition-[background-color,border-color,color,transform,box-shadow,opacity] duration-150 ease-out',
   'outline-none',
+  'transition-transform duration-200 ease-out hover:-translate-y-0.5 active:-translate-y-[0.25px]',
 ];
 
 const interactiveControlVariants: Record<InteractiveControlVariant, string> = {
   primary: 'border-text-primary data-[hovered]:bg-bg-secondary',
+  cta: 'fancy-btn text-white border-none ',
   secondary: 'border-border-primary data-[hovered]:bg-bg-secondary',
   ghost: 'border-transparent data-[hovered]:bg-bg-secondary/60',
 };
@@ -88,5 +90,5 @@ export function interactiveNavLinkStyles(args?: Omit<InteractiveControlStyleProp
 }
 
 export function interactiveIconSlotStyles() {
-  return cn('h-[16px] w-[16px] shrink-0');
+  return cn('h-[20px] w-[20px] flex items-center justify-center shrink-0');
 }

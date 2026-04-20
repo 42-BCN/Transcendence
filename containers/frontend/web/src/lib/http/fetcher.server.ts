@@ -8,23 +8,24 @@ function cookieHeaders(cookie?: string): Record<string, string> {
   return cookie ? { Cookie: cookie } : {};
 }
 
-type ApiError = {
-  ok: false;
-  error: {
-    code: string;
-  };
+const FALLBACK = {
+  data: {
+    ok: false,
+    error: {
+      code: 'FETCH_FAILED',
+    },
+  },
 };
 
 export function withServerAction<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => Promise<TResult>,
-  fallbackError: ApiError = { ok: false, error: { code: 'FETCH_FAILED' } },
 ) {
-  return async (...args: TArgs): Promise<TResult | ApiError> => {
+  return async (...args: TArgs): Promise<TResult> => {
     try {
       return await handler(...args);
     } catch (error) {
       console.error(error);
-      return fallbackError;
+      return FALLBACK as TResult;
     }
   };
 }
@@ -33,7 +34,7 @@ export async function fetchServer<T>(
   endpoint: string,
   method: HttpMethod,
   data?: unknown,
-  opts?: { cookie?: string },
+  opts?: { cookie?: string; acceptLanguage?: string },
 ): Promise<{
   data: T;
   headers: Headers;
@@ -44,6 +45,7 @@ export async function fetchServer<T>(
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      ...(opts?.acceptLanguage ? { 'Accept-Language': opts.acceptLanguage } : {}),
       ...cookieHeaders(opts?.cookie),
     },
     body: jsonBody(data),

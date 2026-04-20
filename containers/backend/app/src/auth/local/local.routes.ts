@@ -8,7 +8,13 @@ import {
   localLoginIpRateLimit,
   localSignupEmailRateLimit,
 } from './local.rate-limit';
-import { postLogin, postLogout, postSignup } from './local.controller';
+import {
+  getSessionIdentity,
+  postGuestSession,
+  postLogin,
+  postLogout,
+  postSignup,
+} from './local.controller';
 
 export const localRouter = Router();
 
@@ -21,3 +27,5 @@ localRouter.post(
   postLogin,
 );
 localRouter.post('/logout', postLogout);
+localRouter.post('/guest/session', postGuestSession);
+localRouter.get('/session/identity', getSessionIdentity);

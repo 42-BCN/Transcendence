@@ -49,10 +49,16 @@ function encodeHeaderValue(value: string): string {
   return value.replace(/\r/g, '').replace(/\n/g, ' ').trim();
 }
 
+function encodeMimeWord(value: string): string {
+  const sanitized = encodeHeaderValue(value);
+  if (/^[\x20-\x7E]*$/.test(sanitized)) return sanitized;
+  return `=?UTF-8?B?${Buffer.from(sanitized, 'utf8').toString('base64')}?=`;
+}
+
 function formatAddress(address: MailAddress): string {
   const email = encodeHeaderValue(address.email);
   const name = address.name?.trim();
-  return name ? `${encodeHeaderValue(name)} <${email}>` : email;
+  return name ? `${encodeMimeWord(name)} <${email}>` : email;
 }
 
 function toBase64Url(value: string): string {
@@ -149,7 +155,7 @@ function buildMimeMessage(input: SendMailInput, config: GmailConfig): string {
   return [
     `From: ${formatAddress(from)}`,
     `To: ${formatAddress(to)}`,
-    `Subject: ${encodeHeaderValue(input.subject)}`,
+    `Subject: ${encodeMimeWord(input.subject)}`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary=\"${boundary}\"`,
     '',

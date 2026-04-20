@@ -1,4 +1,4 @@
-export type InteractiveControlVariant = 'primary' | 'secondary' | 'ghost';
+export type InteractiveControlVariant = 'primary' | 'secondary' | 'ghost' | 'cta';
 
 export type InteractiveControlSize = 'sm' | 'md' | 'lg' | 'icon';
 

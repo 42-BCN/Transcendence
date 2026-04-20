@@ -4,6 +4,7 @@ import type { Namespace, Socket } from 'socket.io';
 import { ChatSendSchema } from '../contracts/sockets/chat/chat.schema';
 import type {
   ChatError,
+  ChatIdentity,
   ChatHistoryType,
   ChatMessage,
   ChatSystemMessage,
@@ -13,6 +14,7 @@ import type {
 
 const MAX_HISTORY = 50;
 const chatHistory: ChatHistoryType = [];
+const chatIdentityCounts = new Map<string, number>();
 
 const pushChatHistory = (message: ChatHistoryType[number]) => {
   chatHistory.push(message);
@@ -75,15 +77,41 @@ export function registerChatSocket(
   nsp: Namespace<ClientToServerChatEvents, ServerToClientChatEvents>,
 ) {
   nsp.on('connection', (socket: Socket<ClientToServerChatEvents, ServerToClientChatEvents>) => {
-    console.log('[Chat Socket] User connected:', socket.id);
+    const identityKey = socket.data.identityKey;
+    const username = socket.data.username;
+
+    if (typeof identityKey !== 'string' || identityKey.length === 0) {
+      socket.disconnect(true);
+      return;
+    }
+
+    if (typeof username !== 'string' || username.length === 0) {
+      socket.disconnect(true);
+      return;
+    }
+
+    const identity: ChatIdentity = {
+      identityKey,
+      username,
+      isGuest: socket.data.isGuest !== false,
+      ...(typeof socket.data.userId === 'string' ? { userId: socket.data.userId } : {}),
+    };
+
+    const previousCount = chatIdentityCounts.get(identityKey) ?? 0;
+    chatIdentityCounts.set(identityKey, previousCount + 1);
+
+    console.log('[Chat Socket] User connected:', username);
+    socket.emit('chat:identity', identity);
     socket.emit('chat:history', chatHistory.slice(-MAX_HISTORY));
-    socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', socket.id));
+    if (previousCount === 0) {
+      socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', username));
+    }
 
     socket.on('chat:send', (payload: unknown) => {
       const res = ChatSendSchema.safeParse(payload);
 
       if (res.success) {
-        socket.broadcast.emit('chat:message', chatMessage(socket.id, res.data.text));
+        socket.broadcast.emit('chat:message', chatMessage(username, res.data.text));
         return;
       }
 
@@ -91,7 +119,14 @@ export function registerChatSocket(
     });
 
     socket.on('disconnect', () => {
-      socket.broadcast.emit('chat:system', systemMessage('USER_LEFT', socket.id));
+      const nextCount = (chatIdentityCounts.get(identityKey) ?? 1) - 1;
+
+      if (nextCount <= 0) {
+        chatIdentityCounts.delete(identityKey);
+        socket.broadcast.emit('chat:system', systemMessage('USER_LEFT', username));
+      } else {
+        chatIdentityCounts.set(identityKey, nextCount);
+      }
     });
   });
 }

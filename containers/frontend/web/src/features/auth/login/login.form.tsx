@@ -10,6 +10,7 @@ import { type LoginReq } from '@/contracts/api/auth/auth.validation';
 
 import { loginAction } from './login.action';
 import { useAutoFocus } from '@/hooks/useAutoFocus';
+import { createSubmitHandler } from '@/lib/http/submitHandler';
 
 export function LoginForm() {
   const t = useTranslations('features.auth');
@@ -18,13 +19,7 @@ export function LoginForm() {
   const identifierRef = useAutoFocus<HTMLInputElement>();
 
   return (
-    <Form
-      action={formAction}
-      onSubmit={(e) => {
-        const res = form.validateBeforeSubmit();
-        if (!res.ok) e.preventDefault();
-      }}
-    >
+    <Form onSubmit={createSubmitHandler(form, formAction)}>
       <TextField
         value={form.values.identifier}
         errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
