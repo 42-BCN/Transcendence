@@ -10,6 +10,7 @@ import type {
   DisclosureGroupProps as AriaDisclosureGroupProps,
   DisclosurePanelProps as AriaDisclosurePanelProps,
   DisclosureProps as AriaDisclosureProps,
+  ButtonProps as AriaButtonProps,
 } from 'react-aria-components';
 
 import { Icon } from '../../primitives/icon';
@@ -36,14 +37,19 @@ export function Disclosure({ className, children, ...props }: DisclosureProps) {
   );
 }
 
-export type DisclosureTriggerProps = {
+export type DisclosureTriggerProps = AriaButtonProps & {
   title: string;
-  className?: string;
 };
 
-export function DisclosureTrigger({ title, className }: DisclosureTriggerProps) {
+export function DisclosureTrigger({ title, className, ...props }: DisclosureTriggerProps) {
   return (
-    <AriaButton slot="trigger" className={disclosureStyles.trigger(className)}>
+    <AriaButton
+      {...props}
+      slot="trigger"
+      className={(values) =>
+        disclosureStyles.trigger(typeof className === 'function' ? className(values) : className)
+      }
+    >
       <span className={disclosureStyles.title()}>{title}</span>
       <Icon name="chevronDown" className={disclosureStyles.icon()} />
     </AriaButton>
