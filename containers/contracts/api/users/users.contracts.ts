@@ -1,6 +1,6 @@
 import type { ApiResponse } from '../http/response';
 import type { ValidationErrorDetails } from '../http/validation';
-import type { UsersErrorName } from './users.errors'; // create this like auth.errors
+import type { UsersErrorName, SearchUsersErrorName } from './users.errors';
 
 export type UserPublic = {
   id: string; // uuid zod can check for it on validation
@@ -47,6 +47,6 @@ export type SearchUsersOk = {
   users: SearchUserResult[];
 };
 
-export type SearchUsersResponse = ApiResponse<SearchUsersOk, UsersErrorName, ValidationErrorDetails>;
+export type SearchUsersResponse = ApiResponse<SearchUsersOk, SearchUsersErrorName, ValidationErrorDetails>;
 
 export type UserPublicResponse = ApiResponse<UserPublic, UsersListError, ValidationErrorDetails>;

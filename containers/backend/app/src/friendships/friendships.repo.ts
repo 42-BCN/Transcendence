@@ -309,13 +309,13 @@ export async function acceptFriendRequest(
 export async function findFriendshipsByUserPairs(
   currentUserId: string,
   otherUserIds: string[],
-): Promise<Map<string, { id: string; status: 'pending' | 'accepted'; senderId: string }>> {
+): Promise<Map<string, FriendshipPairRow>> {
   if (otherUserIds.length === 0) return new Map();
 
   const rows = await prisma.friendship.findMany({
     where: {
       OR: otherUserIds.map((otherId) => {
-        const [u1, u2] = currentUserId < otherId ? [currentUserId, otherId] : [otherId, currentUserId];
+        const [u1, u2] = sortedPair(currentUserId, otherId);
         return { userId1: u1, userId2: u2 };
       }),
     },
@@ -328,7 +328,7 @@ export async function findFriendshipsByUserPairs(
     },
   });
 
-  const map = new Map<string, { id: string; status: 'pending' | 'accepted'; senderId: string }>();
+  const map = new Map<string, FriendshipPairRow>();
   for (const row of rows) {
     const otherId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
     map.set(otherId, { id: row.id, status: row.status, senderId: row.senderId });
