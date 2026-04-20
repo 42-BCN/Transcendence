@@ -301,6 +301,42 @@ export async function acceptFriendRequest(
   return toPublic(updated as FriendshipRow, userId);
 }
 
+/**
+ * Batch lookup: returns a Map<otherUserId, {id, status, senderId}> for
+ * all friendships between currentUserId and each of otherUserIds.
+ * Used by the user search endpoint to inject friendship context in O(1).
+ */
+export async function findFriendshipsByUserPairs(
+  currentUserId: string,
+  otherUserIds: string[],
+): Promise<Map<string, { id: string; status: 'pending' | 'accepted'; senderId: string }>> {
+  if (otherUserIds.length === 0) return new Map();
+
+  const rows = await prisma.friendship.findMany({
+    where: {
+      OR: otherUserIds.map((otherId) => {
+        const [u1, u2] = currentUserId < otherId ? [currentUserId, otherId] : [otherId, currentUserId];
+        return { userId1: u1, userId2: u2 };
+      }),
+    },
+    select: {
+      id: true,
+      userId1: true,
+      userId2: true,
+      status: true,
+      senderId: true,
+    },
+  });
+
+  const map = new Map<string, { id: string; status: 'pending' | 'accepted'; senderId: string }>();
+  for (const row of rows) {
+    const otherId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
+    map.set(otherId, { id: row.id, status: row.status, senderId: row.senderId });
+  }
+
+  return map;
+}
+
 export async function findUserById(userId: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },

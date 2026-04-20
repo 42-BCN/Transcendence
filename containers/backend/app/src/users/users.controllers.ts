@@ -50,6 +50,7 @@ export async function searchUsersController(
   res: Response<SearchUsersResponse, { query: SearchUsersQuery }>,
 ): Promise<void> {
   const { q, limit } = res.locals.query;
-  const results = await searchUsers(q, limit);
+  const currentUserId = req.session.userId!;
+  const results = await searchUsers(q, limit, currentUserId);
   res.status(200).json({ ok: true, data: { users: results } });
 }
