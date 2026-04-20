@@ -43,7 +43,12 @@ export const GetUserByIdParamSchema = z.strictObject({
 
 export const SearchUsersQuerySchema = z
   .object({
-    q: z.string().trim().min(1, { message: VALIDATION.REQUIRED }).max(100, { message: VALIDATION.FIELD_TOO_LONG }),
+    q: z
+      .string()
+      .trim()
+      .min(1, { message: VALIDATION.REQUIRED })
+      .min(2, { message: VALIDATION.FIELD_TOO_SHORT })
+      .max(100, { message: VALIDATION.FIELD_TOO_LONG }),
     limit: intFromQuery(VALIDATION.INVALID_FORMAT).optional(),
   })
   .strict()
@@ -51,7 +56,7 @@ export const SearchUsersQuerySchema = z
     q: q.q,
     limit: q.limit ?? 20,
   }))
-  .refine((q) => q.limit >= 1 && q.limit <= 50, {
+  .refine((q) => q.limit >= 1 && q.limit <= 20, {
     message: VALIDATION.OUT_OF_RANGE,
     path: ['limit'],
   });

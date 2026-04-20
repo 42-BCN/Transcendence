@@ -431,14 +431,20 @@ paths:
     get:
       tags: [Users]
       summary: Search users by partial username
+      description: >
+        Case-insensitive partial match on username. Requires authentication.
+        Excludes the requesting user. Exact matches are ranked first.
+        Rate limited to 10 requests per 10 seconds per user.
       operationId: searchUsers
+      security:
+        - cookieAuth: []
       parameters:
         - in: query
           name: q
           required: true
           schema:
             type: string
-            minLength: 1
+            minLength: 2
         - in: query
           name: limit
           required: false
@@ -446,19 +452,32 @@ paths:
             type: integer
             minimum: 1
             maximum: 20
+            default: 20
       responses:
         '200':
-          description: Matching users
+          description: Matching users with friendship context
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchUsersResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
         '422':
           description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
         '500':
           description: Internal error
           content:
@@ -993,6 +1012,29 @@ components:
                   type: integer
                 count:
                   type: integer
+    SearchUserResult:
+      type: object
+      required: [id, username, avatar, friendshipStatus, senderId, friendshipId]
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        avatar:
+          type: string
+          nullable: true
+        friendshipStatus:
+          type: string
+          enum: [none, pending, accepted]
+        senderId:
+          type: string
+          format: uuid
+          nullable: true
+        friendshipId:
+          type: string
+          format: uuid
+          nullable: true
     SearchUsersResponse:
       type: object
       required: [ok, data]
@@ -1007,7 +1049,7 @@ components:
             users:
               type: array
               items:
-                $ref: '#/components/schemas/UserPublic'
+                $ref: '#/components/schemas/SearchUserResult'
     FriendshipPublic:
       type: object
       required: [id, friendUserId, friendUsername, friendAvatar, status, isSender, createdAt]
