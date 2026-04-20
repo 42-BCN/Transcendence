@@ -7,7 +7,7 @@
  * Optional nginx route from a container on the edge network: BASE_URL=https://nginx/api node scripts/smoke-friendships.mjs
  */
 
-const BASE = process.env.BASE_URL ?? 'https://localhost:4000';
+const BASE = process.env.BASE_URL ?? 'https://127.0.0.1:4000';
 
 class Client {
   /** @type {string} */
@@ -83,22 +83,22 @@ async function main() {
 
   // Cleanup: remove accepted or pending A–B rows so the test is repeatable
   async function cleanupRelationship() {
-    const listA = await a.req('/friendships');
+    const listA = await a.req('/friends/detailed');
     const accA = listA.data.friendships?.find((f) => f.friendUserId === idB);
     if (accA) await a.req(`/friends/${accA.id}`, { method: 'DELETE' });
-    const listB = await b.req('/friendships');
+    const listB = await b.req('/friends/detailed');
     const accB = listB.data.friendships?.find((f) => f.friendUserId === idA);
     if (accB) await b.req(`/friends/${accB.id}`, { method: 'DELETE' });
-    const sentB = await b.req('/friendships/requests/sent');
+    const sentB = await b.req('/friends/requests/sent');
     const pendB = sentB.data.requests?.find((r) => r.friendUserId === idA);
     if (pendB) await b.req(`/friends/${pendB.id}`, { method: 'DELETE' });
-    const sentA = await a.req('/friendships/requests/sent');
+    const sentA = await a.req('/friends/requests/sent');
     const pendA = sentA.data.requests?.find((r) => r.friendUserId === idB);
     if (pendA) await a.req(`/friends/${pendA.id}`, { method: 'DELETE' });
   }
   await cleanupRelationship();
 
-  const sendRes = await b.req('/friendships/request', {
+  const sendRes = await b.req('/friends/request', {
     method: 'POST',
     body: { targetUserId: idA },
     okStatuses: [200, 201],
@@ -107,12 +107,12 @@ async function main() {
   const friendshipId = sendRes.data.friendship?.id;
   assert(friendshipId, 'friendship id from send');
 
-  const received = await a.req('/friendships/requests/pending');
+  const received = await a.req('/friends/requests/pending');
   assert(received.ok === true, 'received list');
   const pending = received.data.requests.find((r) => r.id === friendshipId);
   assert(pending, 'pending request visible to A');
 
-  const acceptRes = await a.req('/friendships/respond', {
+  const acceptRes = await a.req('/friends/respond', {
     method: 'POST',
     body: { friendshipId, action: 'accept' },
   });
@@ -124,8 +124,8 @@ async function main() {
   assert(friendRow, 'B in A friends list');
   assert(typeof friendRow.isOnline === 'boolean', 'isOnline present');
 
-  const list = await a.req('/friendships');
-  assert(list.ok === true, 'GET /friendships');
+  const list = await a.req('/friends/detailed');
+  assert(list.ok === true, 'GET /friends/detailed');
   const row = list.data.friendships.find((f) => f.friendUserId === idB);
   assert(row, 'B in friendships list');
   assert('createdAt' in row, 'FriendshipPublic uses createdAt');

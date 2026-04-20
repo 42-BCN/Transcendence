@@ -76,27 +76,27 @@ curl -sk -X POST https://localhost:8443/api/auth/login \
   -c /tmp/bob.txt
 
 # Alice sends a friend request to Bob (use Bob's ID from signup)
-curl -sk -X POST https://localhost:8443/api/friendships/request \
+curl -sk -X POST https://localhost:8443/api/friends/request \
   -H "Content-Type: application/json" \
   -b /tmp/alice.txt \
   -d '{"targetUserId":"<BOB_ID>"}'
 
 # Bob checks pending requests
-curl -sk https://localhost:8443/api/friendships/requests/pending \
+curl -sk https://localhost:8443/api/friends/requests/pending \
   -b /tmp/bob.txt
 
 # Bob accepts (use the request ID from above)
-curl -sk -X POST https://localhost:8443/api/friendships/respond \
+curl -sk -X POST https://localhost:8443/api/friends/respond \
   -H "Content-Type: application/json" \
   -b /tmp/bob.txt \
   -d '{"friendshipId":"<REQUEST_ID>","action":"accept"}'
 
 # Check Alice's friends list
-curl -sk https://localhost:8443/api/friendships \
+curl -sk https://localhost:8443/api/friends \
   -b /tmp/alice.txt
 
-# Check Bob's friends list
-curl -sk https://localhost:8443/api/friendships \
+# Check Bob's friends list (detailed)
+curl -sk https://localhost:8443/api/friends/detailed \
   -b /tmp/bob.txt
 ~~~
 
@@ -176,23 +176,46 @@ If there are module errors, run `npm ci` again.
 
 ## 📚 API Endpoints
 
-### `POST /api/friendships/request`
-Send a friend request.
+All endpoints are under the single prefix `/api/friends`.
 
-**Body**: `{ "targetUserId": "uuid" }`
+### `GET /api/friends`
+List accepted friends (simple UI format: id, username, avatar, isOnline).
 
-**Response**: `{ "ok": true, "data": { "friendship": {...} } }`
+**Response**: `{ "ok": true, "data": { "friends": [...] } }`
 
 ---
 
-### `GET /api/friendships/requests/pending`
-Get pending (received) requests.
+### `GET /api/friends/detailed`
+List accepted friendships with full details (status, isSender, createdAt, friendAvatar).
+
+**Response**: `{ "ok": true, "data": { "friendships": [...] } }`
+
+---
+
+### `GET /api/friends/requests/pending`
+Get pending (received) requests — only those where currentUser is NOT the sender.
 
 **Response**: `{ "ok": true, "data": { "requests": [...] } }`
 
 ---
 
-### `POST /api/friendships/respond`
+### `GET /api/friends/requests/sent`
+Get sent pending requests.
+
+**Response**: `{ "ok": true, "data": { "requests": [...] } }`
+
+---
+
+### `POST /api/friends/request`
+Send a friend request.
+
+**Body**: `{ "targetUserId": "uuid" }`
+
+**Response**: `{ "ok": true, "data": { "friendship": {...}, "wasAutoAccepted": false } }`
+
+---
+
+### `POST /api/friends/respond`
 Accept or reject a friend request.
 
 **Body**: `{ "friendshipId": "uuid", "action": "accept" | "reject" }`
@@ -205,13 +228,6 @@ Accept or reject a friend request.
 Remove an accepted friendship or cancel a pending one. Only `user_id_1` / `user_id_2` may delete; others get **403**. Missing id → **404** (idempotent repeat delete).
 
 **Response**: `{ "ok": true, "data": { "deleted": true } }`
-
----
-
-### `GET /api/friendships`
-Get the current friends list (accepted).
-
-**Response**: `{ "ok": true, "data": { "friendships": [...] } }`
 
 ---
 
@@ -326,27 +342,27 @@ curl -sk -X POST https://localhost:8443/api/auth/login \
   -c /tmp/bob.txt
 
 # Alice envía friend request a Bob (usa el ID de Bob del signup)
-curl -sk -X POST https://localhost:8443/api/friendships/request \
+curl -sk -X POST https://localhost:8443/api/friends/request \
   -H "Content-Type: application/json" \
   -b /tmp/alice.txt \
   -d '{"targetUserId":"<BOB_ID>"}'
 
 # Bob ve sus requests pendientes
-curl -sk https://localhost:8443/api/friendships/requests/pending \
+curl -sk https://localhost:8443/api/friends/requests/pending \
   -b /tmp/bob.txt
 
 # Bob acepta (usa el request ID de arriba)
-curl -sk -X POST https://localhost:8443/api/friendships/respond \
+curl -sk -X POST https://localhost:8443/api/friends/respond \
   -H "Content-Type: application/json" \
   -b /tmp/bob.txt \
   -d '{"friendshipId":"<REQUEST_ID>","action":"accept"}'
 
 # Ver lista de amigos de Alice
-curl -sk https://localhost:8443/api/friendships \
+curl -sk https://localhost:8443/api/friends \
   -b /tmp/alice.txt
 
-# Ver lista de amigos de Bob
-curl -sk https://localhost:8443/api/friendships \
+# Ver lista de amigos de Bob (detallado)
+curl -sk https://localhost:8443/api/friends/detailed \
   -b /tmp/bob.txt
 ```
 
@@ -426,23 +442,46 @@ Si hay errores de módulos, hacer `npm ci` de nuevo.
 
 ## 📚 API Endpoints
 
-### `POST /api/friendships/request`
-Enviar solicitud de amistad.
+Todos los endpoints están bajo el prefijo único `/api/friends`.
 
-**Body**: `{ "targetUserId": "uuid" }`
+### `GET /api/friends`
+Lista de amigos aceptados (formato UI simple: id, username, avatar, isOnline).
 
-**Response**: `{ "ok": true, "data": { "friendship": {...} } }`
+**Response**: `{ "ok": true, "data": { "friends": [...] } }`
 
 ---
 
-### `GET /api/friendships/requests/pending`
-Obtener solicitudes pendientes (recibidas).
+### `GET /api/friends/detailed`
+Lista de friendships con detalles completos (status, isSender, createdAt, friendAvatar).
+
+**Response**: `{ "ok": true, "data": { "friendships": [...] } }`
+
+---
+
+### `GET /api/friends/requests/pending`
+Solicitudes pendientes recibidas (donde currentUser NO es el sender).
 
 **Response**: `{ "ok": true, "data": { "requests": [...] } }`
 
 ---
 
-### `POST /api/friendships/respond`
+### `GET /api/friends/requests/sent`
+Solicitudes pendientes enviadas.
+
+**Response**: `{ "ok": true, "data": { "requests": [...] } }`
+
+---
+
+### `POST /api/friends/request`
+Enviar solicitud de amistad.
+
+**Body**: `{ "targetUserId": "uuid" }`
+
+**Response**: `{ "ok": true, "data": { "friendship": {...}, "wasAutoAccepted": false } }`
+
+---
+
+### `POST /api/friends/respond`
 Aceptar o rechazar solicitud de amistad.
 
 **Body**: `{ "friendshipId": "uuid", "action": "accept" | "reject" }`
@@ -452,16 +491,9 @@ Aceptar o rechazar solicitud de amistad.
 ---
 
 ### `DELETE /api/friends/:friendshipId`
-Eliminar una amistad aceptada o cancelar una solicitud pendiente. Solo los dos usuarios de la fila pueden borrar; otro usuario recibe **403**. Si el id no existe → **404** (repetir DELETE es idempotente en el sentido de error controlado).
+Eliminar una amistad aceptada o cancelar una solicitud pendiente. Solo los dos usuarios de la fila pueden borrar; otro usuario recibe **403**. Si el id no existe → **404** (repetir DELETE es idempotente).
 
 **Response**: `{ "ok": true, "data": { "deleted": true } }`
-
----
-
-### `GET /api/friendships`
-Obtener lista de amigos actuales (aceptados).
-
-**Response**: `{ "ok": true, "data": { "friendships": [...] } }`
 
 ---
 

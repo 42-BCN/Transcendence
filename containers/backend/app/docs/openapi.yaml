@@ -10,7 +10,6 @@ tags:
   - name: Auth
   - name: Protected
   - name: Users
-  - name: Friendships
   - name: Friends
 paths:
   /health:
@@ -524,223 +523,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
 
-  /friendships:
-    get:
-      tags: [Friendships]
-      summary: List accepted friendships
-      operationId: getFriendships
-      security:
-        - cookieAuth: []
-      responses:
-        '200':
-          description: Friendship list
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendshipsListResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-
-  /friendships/requests/pending:
-    get:
-      tags: [Friendships]
-      summary: List pending received friend requests
-      operationId: getFriendshipsPendingRequests
-      security:
-        - cookieAuth: []
-      responses:
-        '200':
-          description: Pending received requests
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendshipsRequestsResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-
-  /friendships/requests/sent:
-    get:
-      tags: [Friendships]
-      summary: List sent friend requests
-      operationId: getFriendshipsSentRequests
-      security:
-        - cookieAuth: []
-      responses:
-        '200':
-          description: Sent requests
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendshipsRequestsResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-
-  /friendships/request:
-    post:
-      tags: [Friendships]
-      summary: Create a friend request
-      operationId: postFriendshipsRequest
-      security:
-        - cookieAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FriendRequestCreateRequest'
-      responses:
-        '200':
-          description: Friend request auto-accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendRequestCreateResponse'
-        '201':
-          description: Friend request created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendRequestCreateResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '403':
-          description: Forbidden action
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
-          description: Target user not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '409':
-          description: Conflict
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '422':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-
-  /friendships/respond:
-    post:
-      tags: [Friendships]
-      summary: Accept or reject a pending request
-      operationId: postFriendshipsRespond
-      security:
-        - cookieAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FriendshipRespondRequest'
-      responses:
-        '200':
-          description: Request handled
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FriendshipRespondResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '403':
-          description: Forbidden action
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
-          description: Request not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '409':
-          description: Conflict
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '422':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-
-  /friendships/{friendshipId}:
-    delete:
-      tags: [Friendships]
-      summary: Delete a friendship or cancel a pending request
-      operationId: deleteFriendship
-      security:
-        - cookieAuth: []
-      parameters:
-        - in: path
-          name: friendshipId
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Friendship deleted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteFriendshipResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '403':
-          description: User is not a member of this friendship
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '404':
-          description: Friendship not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericErrorResponse'
-        '422':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
-
   /friends:
     get:
       tags: [Friends]
@@ -755,6 +537,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FriendsListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /friends/detailed:
+    get:
+      tags: [Friends]
+      summary: List accepted friendships with full details (status, isSender, createdAt)
+      operationId: getFriendsDetailed
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Detailed friendship list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendshipsListResponse'
         '401':
           description: Unauthorized
           content:
