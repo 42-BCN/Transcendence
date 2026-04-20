@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const tabListBase = 'flex border-b border-border-primary/50 gap-8';
+const tabListBase = 'flex border-b border-border-primary gap-8';
 
 const tabBase = [
   'relative pb-2 cursor-pointer outline-none transition duration-200',

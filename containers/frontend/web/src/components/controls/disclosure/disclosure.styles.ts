@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const disclosureBase = 'border-b border-border-primary/30';
+const disclosureBase = 'border-b border-border-primary';
 
 export const disclosureStyles = {
   container: (className?: string) => cn('group', disclosureBase, className),
