@@ -17,7 +17,7 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} size="md" />
 
-      <div className="flex-1">
+      <div className="flex-1 self-start">
         <Text variant="body-sm" as="p" className="font-bold">
           {username}
         </Text>
