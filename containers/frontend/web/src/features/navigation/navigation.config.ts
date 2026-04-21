@@ -1,7 +1,7 @@
 import type { IconName } from '@components';
 
 // features/navigation/navigation.config.ts
-type NavHref = '/' | '/robots' | '/ui' | '/login' | '/profile';
+type NavHref = '/' | '/robots' | '/ui' | '/login' | '/me';
 
 export type NavItem = {
   href: NavHref;
@@ -17,9 +17,7 @@ const baseNavItems: NavItem[] = [
 
 const publicNavItems: NavItem[] = [{ href: '/login', key: 'login', exact: false, icon: 'logIn' }];
 
-const privateNavItems: NavItem[] = [
-  { href: '/profile', key: 'profile', exact: false, icon: 'user' },
-];
+const privateNavItems: NavItem[] = [{ href: '/me', key: 'profile', exact: false, icon: 'user' }];
 
 export function getMainNavItems(isAuthenticated: boolean): NavItem[] {
   return [...baseNavItems, ...(isAuthenticated ? privateNavItems : publicNavItems)];

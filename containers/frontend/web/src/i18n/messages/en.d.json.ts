@@ -2,482 +2,482 @@
 // See: https://next-intl.dev/docs/workflows/typescript#messages-arguments
 
 declare const messages: {
-  common: {
-    globalError: {
-      title: 'Something went wrong';
-      tryAgain: 'Try again';
-    };
-  };
-  components: {
-    breadcrumb: {
-      home: 'Home';
-      me: 'My Account';
-      'reset-password': 'Reset Password';
-    };
-    submitButton: {
-      pendingLabel: 'Submitting...';
-    };
-    localeSwitcher: {
-      ariaLabel: 'Language';
-      en: 'EN';
-      es: 'ES';
-      ca: 'CA';
-    };
-    textAreaField: {
-      characterCount: '{current} of {max} characters';
-    };
-    footer: {
-      appName: 'Transcendence';
-      privacy: 'Privacy Policy';
-      terms: 'Terms of Service';
-      github: 'GitHub';
-      copyright: '© {year} {appName}. All rights reserved';
-    };
-  };
-  layouts: {
-    locale: {
-      description: 'This is an example of using next-intl in the `app` directory.';
-      title: 'next-intl example';
-    };
-  };
-  pages: {
-    home: {
-      title: 'Hello from Next in Docker 👋';
-      subtitle: 'If you can see this, routing + dev server work.';
-    };
-    notFound: {
-      title: 'Page not found';
-      description: "The page you're looking for doesn't exist.";
-    };
-    me: {
-      title: 'My Account';
-      subtitle: 'Access your protected account data.';
-    };
-    privacy: {
-      title: 'Privacy Policy';
-      lastUpdated: 'Last updated: April 2026';
-      intro: 'At Transcendence, we value your privacy. This policy describes what data we collect, how we use it, how we store it, and what rights you have regarding your personal information.';
-      dataCollected: {
-        title: 'Data Collected';
-        description: 'When you use our platform, we may collect the following information:';
-        items: {
-          email: 'Email address (used for account registration and authentication)';
-          username: 'Username (chosen by you to identify yourself in the game)';
-          usage: 'Usage data (game history, scores, and interaction logs)';
-          technical: 'Technical data (browser type, device information, and IP address for security purposes)';
-        };
-      };
-      dataUsage: {
-        title: 'How We Use Your Data';
-        description: 'The data we collect is used exclusively for the following purposes:';
-        items: {
-          account: 'Account management and authentication';
-          gameplay: 'Providing the game experience and social features';
-          improvement: 'Improving and optimizing the platform';
-          communication: 'Sending necessary communications related to your account';
-        };
-      };
-      storage: {
-        title: 'Data Storage and Security';
-        description: 'Your data is stored securely on our servers. We implement industry-standard security measures including encrypted connections (HTTPS), secure password hashing, and regular security audits. We retain your data only for as long as your account is active or as needed to provide you with our services.';
-      };
-      rights: {
-        title: 'Your Rights';
-        description: 'As a user, you have the following rights regarding your personal data:';
-        items: {
-          access: 'Right to access your personal data';
-          rectification: 'Right to correct inaccurate data';
-          deletion: 'Right to request deletion of your data';
-          portability: 'Right to data portability';
-        };
-      };
-      contact: {
-        title: 'Contact';
-        description: 'If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>.';
-      };
-    };
-    ui: {
-      index: {
-        controlComponents: 'Control components';
-        buttons: 'Buttons';
-        input: 'Input';
-        sampleButtonText: 'Hello';
-        links: {
-          chat: 'Chat';
-          glassCard: 'Glass Card';
-          glassCardAnimated: 'Glass Card Animated';
-          glassCardAnimatedV2: 'Glass Card Animated V2';
-          glassCardAnimatedV3: 'Glass Card Animated V3';
-          messageBubble: 'Message Bubble';
-          meter: 'Meter';
-          scrollArea: 'Scroll Area';
-          textArea: 'Text Area';
-          tabsDisclosure: 'Tabs & Disclosure';
-          themeTest: 'Theme Test';
-          typography: 'Typography';
-          social: 'Social';
-        };
-        viewerTitles: {
-          buttonPrimitive: 'Button primitive';
-          ariaButton: 'Aria Button';
-          uiButton: 'UI button';
-          inputPrimitive: 'Input primitive';
-          ariaInput: 'Aria Input';
-          uiInput: 'UI Input';
-        };
-      };
-      glassCard: {
-        title: 'Glassmorphism Card';
-        cardTitle: 'Glassmorphism';
-        description: 'A glassmorphic card component using backdrop-filters, transparent borders and subtle shadows to blend with any rich textured background.';
-        cta: 'Get Started';
-      };
-      glassCardAnimated: {
-        title: 'Testing saturation';
-        descriptionPrefix: 'This card uses';
-        highlight: 'backdrop-saturate';
-        descriptionSuffix: 'The light spheres gain more life and color as they pass behind the glass.';
-        activate: 'Activate';
-      };
-      glassCardAnimatedV2: {
-        title: 'Dynamic Reflection';
-        descriptionPrefix: 'Here the spheres';
-        highlight: 'move behind the glass';
-        descriptionSuffix: 'The color flows and refracts smoothly as it crosses the edges.';
-        option1: 'Option 1';
-        option2: 'Option 2';
-        option3: 'Option 3';
-      };
-      glassCardAnimatedV3: {
-        title: 'Solid Spheres';
-        descriptionPrefix: 'Here the spheres are';
-        highlight: '100% solid';
-        descriptionMiddle: 'All the distortion comes exclusively from the glass.';
-        nestedPrefix: 'Example of a nested glass component:';
-        activate: 'Activate';
-      };
-      textArea: {
-        title: 'Text area component';
-        ariaLabel: 'Message';
-      };
-      typography: {
-        caption: 'Caption text used for small supporting information or metadata.';
-        bodyXs: 'Extra small body text useful for dense UI areas where space is limited.';
-        bodySm: 'Small body text often appears in secondary descriptions, hints, or helper content.';
-        body: 'This paragraph demonstrates the default body style. It is intentionally longer so you can evaluate the readability, rhythm, and line length of the typography system. When text stretches too wide across the screen, reading becomes harder, so limiting the measure helps maintain comfortable scanning and improves the overall reading experience.';
-        bodyLg: 'Larger body text works well for introductory paragraphs or highlighted descriptions that need a little more visual emphasis without becoming a heading.';
-        headingSm: 'Small heading style rendered as a paragraph for visual testing.';
-        headingMd: 'Medium heading style rendered as a paragraph for inspection.';
-        headingLg: 'Large heading style rendered as a paragraph.';
-        headingXl: 'Extra large heading style rendered as paragraph content.';
-        code: 'const message = "Code styled text rendered in a paragraph.";';
-      };
-      messageBubble: {
-        title: 'Bubble message';
-        userOne: 'John Doe';
-        userTwo: 'Jane Doe';
-        messageOne: 'Hello! My name is ...';
-        messageTwo: 'Hello! This is a test for message preview';
-      };
-      meter: {
-        title: 'Meter';
-        label: 'HP';
-      };
-      themeTest: {
-        title: 'Theme Test Page';
-        description: 'This page demonstrates the dark/light mode implementation. All colors here use CSS variables synchronized with Tailwind.';
-        secondaryBackground: 'Secondary Background';
-        secondaryBackgroundDescription: 'This card uses `bg-bg-secondary`. It should look slightly different from the main background in both modes.';
-        textVariants: 'Text Variants';
-        primaryText: 'Primary Text';
-        secondaryText: 'Secondary Text';
-        tertiaryText: 'Tertiary Text';
-        disabledText: 'Disabled Text';
-      };
-      tabsDisclosure: {
-        title: 'Navigation Components';
-        description: 'Technical demonstration of Tabs and Disclosure (Accordion).';
-        tabs: {
-          sectionsLabel: 'Social sections';
-          friends: 'Friends';
-          requests: 'Requests';
-        };
-        disclosure: {
-          friendsOnline: 'Friends online (12)';
-          friendsOffline: 'Friends offline (30)';
-          received: 'Received (5)';
-          sent: 'Sent (10)';
-          friendsListHint: 'Simplified friends list...';
-          receivedHint: 'Incoming requests arrived recently.';
-          sentHint: 'Requests you have sent to other users.';
-          statusOnline: '(Online)';
-          statusOffline: '(Offline)';
-        };
-      };
-      scrollArea: {
-        title: 'Scroll Area';
-        description: 'This component is a div that takes a height of 100% and creates a scrollable area.';
-        example: 'Example';
-        itemLabel: 'Item';
-      };
-      social: {
-        title: 'Social Components Test';
-        description: 'Testing Avatar primitives and UserItem composites.';
-        avatarsTitle: '1. Avatar Sizes & Fallback';
-        avatarSizes: {
-          sm: 'Small';
-          md: 'Medium';
-          lg: 'Large';
-          fallback: 'Fallback';
-        };
-        userItemsTitle: '2. UserItem Variants';
-        socialListLabel: 'Social List Examples';
-        status: {
-          online: 'Online';
-          sent: 'Sent 2 days ago';
-        };
-        actions: {
-          playGame: 'Play Game';
-          sendMessage: 'Send Message';
-          acceptRequest: 'Accept Request';
-          rejectRequest: 'Reject Request';
-          addFriend: 'Add Friend';
-        };
-      };
-    };
-    terms: {
-      title: 'Terms of Service';
-      lastUpdated: 'Last updated: April 2026';
-      intro: 'Welcome to Transcendence. Your use of this platform is subject to the following Terms of Service, which govern the relationship between you and the development team.';
-      acceptance: {
-        title: 'Acceptance of Terms';
-        description: 'By creating an account or using our services, you agree to these conditions in their entirety. If you do not agree with any part of these Terms, you must refrain from using the platform.';
-      };
-      registration: {
-        title: 'Account Registration';
-        description: 'You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account.';
-        items: {
-          security: 'You must notify us immediately of any unauthorized use of your account.';
-          accuracy: 'You agree to provide accurate and complete information during registration.';
-        };
-      };
-      conduct: {
-        title: 'User Conduct';
-        description: 'To maintain a fair, respectful, and fun environment, you agree not to:';
-        items: {
-          cheating: 'Use cheats, automation software (bots), or hacks to gain an advantage.';
-          harassment: 'Harass, abuse, or engage in behavior that harms the community or other players.';
-          disruption: 'Attempt to disrupt the integrity or security of our servers.';
-        };
-      };
-      ip: {
-        title: 'Intellectual Property';
-        description: 'All content, including game code, graphics, and trademarks, is the property of Transcendence. We grant you a limited, non-transferable license for personal, non-commercial use.';
-      };
-      disclaimer: {
-        title: 'Disclaimers';
-        description: 'Transcendence is an educational and community-driven project. Consequently, the service is provided as is and as available. We do not warrant that the service will be uninterrupted, timely, secure, or error-free.';
-      };
-      termination: {
-        title: 'Termination';
-        description: 'We reserve the right to suspend or terminate your account at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties.';
-      };
-      law: {
-        title: 'Governing Law';
-        description: "These Terms shall be governed by and construed in accordance with the laws applicable to digital services within the scope of this project's jurisdiction.";
-      };
-      contact: {
-        title: 'Contact Us';
-        description: 'If you have any questions or wish to exercise your rights, please contact the development team by opening an issue on our <link>GitHub repository</link>.';
-      };
-    };
-  };
-  features: {
-    auth: {
-      fields: {
-        identifier: {
-          label: 'Email or username';
-          placeholder: 'name@example.com or username';
-          description: 'Use the email address or username you signed up with.';
-        };
-        email: {
-          label: 'Email';
-          placeholder: 'name@example.com';
-        };
-        username: {
-          label: 'Username';
-          placeholder: 'your_username';
-        };
-        password: {
-          label: 'Password';
-          placeholder: 'Enter your password';
-          description: 'Min 8 characters long.';
-        };
-        currentPassword: {
-          label: 'Current password';
-          placeholder: 'Enter your current password';
-        };
-        newPassword: {
-          label: 'New password';
-          placeholder: 'Enter your new password';
-          description: 'Min 8 characters long.';
-        };
-        confirmPassword: {
-          label: 'Confirm password';
-          placeholder: 'Re-enter your password';
-        };
-      };
-      actions: {
-        login: 'Log in';
-        signup: 'Create account';
-        continueWithGoogle: 'Continue with Google';
-        sendEmail: 'Send email';
-        resendEmail: 'Resend email';
-        logoutAriaLabel: 'Log out';
-      };
-      login: {
-        title: 'Log in';
-        submit: 'Log in';
-        forgotPassword: 'Forgot password?';
-        noAccount: 'Don’t have an account?';
-        goToSignup: 'Create one';
-      };
-      signup: {
-        title: 'Create account';
-        privacy: {
-          label: 'I have read and agree to the <link>Privacy Policy</link>';
-          error: 'You must accept the Privacy Policy to continue.';
-        };
-        haveAccount: 'Already have an account?';
-        goToLogin: 'Log in';
-      };
-      verification: {
-        title: 'Check your email';
-        sent: "We've sent you an email to confirm your account.";
-        checkInbox: 'Check your inbox and follow the instructions to activate your account.';
-        checkSpam: "If you can't find it, check your spam folder. If it's not there either, you can resend it.";
-        verifying: 'Verifying your email...';
-        verified: 'Email verified. Redirecting to your profile...';
-        missingToken: 'Verification token is missing.';
-        invalidOrExpired: 'Verification link is invalid or expired.';
-        resending: 'Sending...';
-        isConfirmed: 'Already confirmed?';
-        backToLogin: 'Log In';
-        recoverTitle: 'Recover account';
-        resendTitle: 'Resend verification email';
-        resendDescription: 'Enter the email address you used to create your account.';
-      };
-      recover: {
-        title: 'Check your email';
-        sent: "We've sent password reset instructions to the address you entered.";
-        checkInbox: 'Check your inbox and follow the instructions to set a new password.';
-        checkSpam: "If you can't find it, check your spam folder. If it's not there either, try again later.";
-        rememberedPassword: 'Remembered your password?';
-        backToLogin: 'Back to login';
-      };
-      reset: {
-        title: 'Reset password';
-        description: 'Enter your new password.';
-        submit: 'Save new password';
-        success: 'Password updated successfully.';
-        backToLogin: 'Back to login';
-      };
-      changePassword: {
-        title: 'Change password';
-        description: 'Enter your current password and choose a new one.';
-        submit: 'Save changes';
-        success: 'Password updated successfully.';
-      };
-      messages: {
-        or: 'OR';
-        success: 'Email sent. Wait before trying again.';
-      };
-    };
-    navigation: {
-      home: 'Home';
-      createAccount: 'Create account';
-      login: 'Log in';
-      menu: 'Menu';
-      mainAriaLabel: 'Main navigation';
-      ui: 'UI';
-      game: 'Game';
-      profile: 'Profile';
-      logout: 'Logout';
-      settings: 'Settings';
-    };
-    chat: {
-      messageAriaLabel: 'Message';
-      showChat: 'Show Chat';
-      hideChat: 'Hide Chat';
-    };
-    game: {
-      resetPlan: 'Reset plan';
-      endTurn: 'End turn';
-      healthLabel: 'HP';
-    };
-    settings: {
-      theme: 'Theme';
-      language: 'Language';
-      dark: 'Dark';
-      light: 'Light';
-    };
-    profile: {
-      fail: 'Could not load your profile.';
-      userId: 'User ID';
-      username: 'Username';
-      bio: 'Bio';
-      provider: 'Provider';
-    };
-    social: {
-      title: 'Social';
-      searchPlaceholder: 'Search among your friends or add new ones';
-      searchLabel: 'Search users';
-      friends: {
-        title: 'Friends';
-        online: 'Friends online';
-        offline: 'Friends offline';
-      };
-      requests: {
-        title: 'Requests';
-        received: 'Received';
-        sent: 'Sent';
-        sentSubtitle: 'Sent 2 days ago';
-        noSentRequests: 'No pending sent requests';
-      };
-      actions: {
-        inviteToGame: 'Invite to Game';
-        chat: 'Chat';
-        reject: 'Reject';
-        accept: 'Accept';
-      };
-    };
-  };
-  validation: {
-    REQUIRED: 'This field is required.';
-    INVALID_EMAIL: 'Enter a valid email address.';
-    INVALID_USERNAME: 'Username must be 3–30 characters and contain only letters, numbers, underscores (_), or hyphens (-).';
-    INVALID_EMAIL_OR_USERNAME: 'Enter a valid email address or username.';
-    INVALID_FORMAT: 'Invalid format.';
-    USERNAME_TOO_SHORT: 'Username must be at least 3 characters.';
-    USERNAME_TOO_LONG: 'Username must be no more than 30 characters.';
-    INVALID_USERNAME_FORMAT: 'Username can only contain letters, numbers, underscores (_), and hyphens (-).';
-    FIELD_TOO_SHORT: 'Too short.';
-    FIELD_TOO_LONG: 'Too long.';
-    PASSWORDS_DO_NOT_MATCH: 'Passwords do not match.';
-    OUT_OF_RANGE: 'Query out of range';
-  };
-  errors: {
-    AUTH_EMAIL_ALREADY_EXISTS: 'This email already exists';
-    AUTH_INVALID_CREDENTIALS: 'Invalid credentials';
-    AUTH_ACCOUNT_LOCKED: 'Your account is temporarily locked. Try again later.';
-    AUTH_RATE_LIMITED: 'Too many attempts. Please try again later.';
-    AUTH_NO_PENDING_RECOVER: 'No password reset request was found. Please start again.';
-    AUTH_EMAIL_NOT_VERIFIED: 'Verify your email before signing in.';
-    AUTH_TOKEN_EXPIRED: 'The verification link is invalid or expired.';
-    AUTH_FORBIDDEN: 'The verification link is invalid or expired.';
-    AUTH_INTERNAL_ERROR: 'Something went wrong. Please try again.';
-    VALIDATION_ERROR: 'Validation error: please check the fields and try again.';
-    FETCH_FAILED: 'API request failed. Try again later.';
-  };
+  "common": {
+    "globalError": {
+      "title": "Something went wrong",
+      "tryAgain": "Try again"
+    }
+  },
+  "components": {
+    "breadcrumb": {
+      "home": "Home",
+      "me": "My Account",
+      "reset-password": "Reset Password"
+    },
+    "submitButton": {
+      "pendingLabel": "Submitting..."
+    },
+    "localeSwitcher": {
+      "ariaLabel": "Language",
+      "en": "EN",
+      "es": "ES",
+      "ca": "CA"
+    },
+    "textAreaField": {
+      "characterCount": "{current} of {max} characters"
+    },
+    "footer": {
+      "appName": "Transcendence",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "github": "GitHub",
+      "copyright": "© {year} {appName}. All rights reserved"
+    }
+  },
+  "layouts": {
+    "locale": {
+      "description": "This is an example of using next-intl in the `app` directory.",
+      "title": "next-intl example"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Hello from Next in Docker 👋",
+      "subtitle": "If you can see this, routing + dev server work."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist."
+    },
+    "me": {
+      "title": "My Account",
+      "subtitle": "Access your protected account data."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: April 2026",
+      "intro": "At Transcendence, we value your privacy. This policy describes what data we collect, how we use it, how we store it, and what rights you have regarding your personal information.",
+      "dataCollected": {
+        "title": "Data Collected",
+        "description": "When you use our platform, we may collect the following information:",
+        "items": {
+          "email": "Email address (used for account registration and authentication)",
+          "username": "Username (chosen by you to identify yourself in the game)",
+          "usage": "Usage data (game history, scores, and interaction logs)",
+          "technical": "Technical data (browser type, device information, and IP address for security purposes)"
+        }
+      },
+      "dataUsage": {
+        "title": "How We Use Your Data",
+        "description": "The data we collect is used exclusively for the following purposes:",
+        "items": {
+          "account": "Account management and authentication",
+          "gameplay": "Providing the game experience and social features",
+          "improvement": "Improving and optimizing the platform",
+          "communication": "Sending necessary communications related to your account"
+        }
+      },
+      "storage": {
+        "title": "Data Storage and Security",
+        "description": "Your data is stored securely on our servers. We implement industry-standard security measures including encrypted connections (HTTPS), secure password hashing, and regular security audits. We retain your data only for as long as your account is active or as needed to provide you with our services."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "description": "As a user, you have the following rights regarding your personal data:",
+        "items": {
+          "access": "Right to access your personal data",
+          "rectification": "Right to correct inaccurate data",
+          "deletion": "Right to request deletion of your data",
+          "portability": "Right to data portability"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>."
+      }
+    },
+    "ui": {
+      "index": {
+        "controlComponents": "Control components",
+        "buttons": "Buttons",
+        "input": "Input",
+        "sampleButtonText": "Hello",
+        "links": {
+          "chat": "Chat",
+          "glassCard": "Glass Card",
+          "glassCardAnimated": "Glass Card Animated",
+          "glassCardAnimatedV2": "Glass Card Animated V2",
+          "glassCardAnimatedV3": "Glass Card Animated V3",
+          "messageBubble": "Message Bubble",
+          "meter": "Meter",
+          "scrollArea": "Scroll Area",
+          "textArea": "Text Area",
+          "tabsDisclosure": "Tabs & Disclosure",
+          "themeTest": "Theme Test",
+          "typography": "Typography",
+          "social": "Social"
+        },
+        "viewerTitles": {
+          "buttonPrimitive": "Button primitive",
+          "ariaButton": "Aria Button",
+          "uiButton": "UI button",
+          "inputPrimitive": "Input primitive",
+          "ariaInput": "Aria Input",
+          "uiInput": "UI Input"
+        }
+      },
+      "glassCard": {
+        "title": "Glassmorphism Card",
+        "cardTitle": "Glassmorphism",
+        "description": "A glassmorphic card component using backdrop-filters, transparent borders and subtle shadows to blend with any rich textured background.",
+        "cta": "Get Started"
+      },
+      "glassCardAnimated": {
+        "title": "Testing saturation",
+        "descriptionPrefix": "This card uses",
+        "highlight": "backdrop-saturate",
+        "descriptionSuffix": "The light spheres gain more life and color as they pass behind the glass.",
+        "activate": "Activate"
+      },
+      "glassCardAnimatedV2": {
+        "title": "Dynamic Reflection",
+        "descriptionPrefix": "Here the spheres",
+        "highlight": "move behind the glass",
+        "descriptionSuffix": "The color flows and refracts smoothly as it crosses the edges.",
+        "option1": "Option 1",
+        "option2": "Option 2",
+        "option3": "Option 3"
+      },
+      "glassCardAnimatedV3": {
+        "title": "Solid Spheres",
+        "descriptionPrefix": "Here the spheres are",
+        "highlight": "100% solid",
+        "descriptionMiddle": "All the distortion comes exclusively from the glass.",
+        "nestedPrefix": "Example of a nested glass component:",
+        "activate": "Activate"
+      },
+      "textArea": {
+        "title": "Text area component",
+        "ariaLabel": "Message"
+      },
+      "typography": {
+        "caption": "Caption text used for small supporting information or metadata.",
+        "bodyXs": "Extra small body text useful for dense UI areas where space is limited.",
+        "bodySm": "Small body text often appears in secondary descriptions, hints, or helper content.",
+        "body": "This paragraph demonstrates the default body style. It is intentionally longer so you can evaluate the readability, rhythm, and line length of the typography system. When text stretches too wide across the screen, reading becomes harder, so limiting the measure helps maintain comfortable scanning and improves the overall reading experience.",
+        "bodyLg": "Larger body text works well for introductory paragraphs or highlighted descriptions that need a little more visual emphasis without becoming a heading.",
+        "headingSm": "Small heading style rendered as a paragraph for visual testing.",
+        "headingMd": "Medium heading style rendered as a paragraph for inspection.",
+        "headingLg": "Large heading style rendered as a paragraph.",
+        "headingXl": "Extra large heading style rendered as paragraph content.",
+        "code": "const message = \"Code styled text rendered in a paragraph.\";"
+      },
+      "messageBubble": {
+        "title": "Bubble message",
+        "userOne": "John Doe",
+        "userTwo": "Jane Doe",
+        "messageOne": "Hello! My name is ...",
+        "messageTwo": "Hello! This is a test for message preview"
+      },
+      "meter": {
+        "title": "Meter",
+        "label": "HP"
+      },
+      "themeTest": {
+        "title": "Theme Test Page",
+        "description": "This page demonstrates the dark/light mode implementation. All colors here use CSS variables synchronized with Tailwind.",
+        "secondaryBackground": "Secondary Background",
+        "secondaryBackgroundDescription": "This card uses `bg-bg-secondary`. It should look slightly different from the main background in both modes.",
+        "textVariants": "Text Variants",
+        "primaryText": "Primary Text",
+        "secondaryText": "Secondary Text",
+        "tertiaryText": "Tertiary Text",
+        "disabledText": "Disabled Text"
+      },
+      "tabsDisclosure": {
+        "title": "Navigation Components",
+        "description": "Technical demonstration of Tabs and Disclosure (Accordion).",
+        "tabs": {
+          "sectionsLabel": "Social sections",
+          "friends": "Friends",
+          "requests": "Requests"
+        },
+        "disclosure": {
+          "friendsOnline": "Friends online (12)",
+          "friendsOffline": "Friends offline (30)",
+          "received": "Received (5)",
+          "sent": "Sent (10)",
+          "friendsListHint": "Simplified friends list...",
+          "receivedHint": "Incoming requests arrived recently.",
+          "sentHint": "Requests you have sent to other users.",
+          "statusOnline": "(Online)",
+          "statusOffline": "(Offline)"
+        }
+      },
+      "scrollArea": {
+        "title": "Scroll Area",
+        "description": "This component is a div that takes a height of 100% and creates a scrollable area.",
+        "example": "Example",
+        "itemLabel": "Item"
+      },
+      "social": {
+        "title": "Social Components Test",
+        "description": "Testing Avatar primitives and UserItem composites.",
+        "avatarsTitle": "1. Avatar Sizes & Fallback",
+        "avatarSizes": {
+          "sm": "Small",
+          "md": "Medium",
+          "lg": "Large",
+          "fallback": "Fallback"
+        },
+        "userItemsTitle": "2. UserItem Variants",
+        "socialListLabel": "Social List Examples",
+        "status": {
+          "online": "Online",
+          "sent": "Sent 2 days ago"
+        },
+        "actions": {
+          "playGame": "Play Game",
+          "sendMessage": "Send Message",
+          "acceptRequest": "Accept Request",
+          "rejectRequest": "Reject Request",
+          "addFriend": "Add Friend"
+        }
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: April 2026",
+      "intro": "Welcome to Transcendence. Your use of this platform is subject to the following Terms of Service, which govern the relationship between you and the development team.",
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "description": "By creating an account or using our services, you agree to these conditions in their entirety. If you do not agree with any part of these Terms, you must refrain from using the platform."
+      },
+      "registration": {
+        "title": "Account Registration",
+        "description": "You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account.",
+        "items": {
+          "security": "You must notify us immediately of any unauthorized use of your account.",
+          "accuracy": "You agree to provide accurate and complete information during registration."
+        }
+      },
+      "conduct": {
+        "title": "User Conduct",
+        "description": "To maintain a fair, respectful, and fun environment, you agree not to:",
+        "items": {
+          "cheating": "Use cheats, automation software (bots), or hacks to gain an advantage.",
+          "harassment": "Harass, abuse, or engage in behavior that harms the community or other players.",
+          "disruption": "Attempt to disrupt the integrity or security of our servers."
+        }
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "description": "All content, including game code, graphics, and trademarks, is the property of Transcendence. We grant you a limited, non-transferable license for personal, non-commercial use."
+      },
+      "disclaimer": {
+        "title": "Disclaimers",
+        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided as is and as available. We do not warrant that the service will be uninterrupted, timely, secure, or error-free."
+      },
+      "termination": {
+        "title": "Termination",
+        "description": "We reserve the right to suspend or terminate your account at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties."
+      },
+      "law": {
+        "title": "Governing Law",
+        "description": "These Terms shall be governed by and construed in accordance with the laws applicable to digital services within the scope of this project's jurisdiction."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "description": "If you have any questions or wish to exercise your rights, please contact the development team by opening an issue on our <link>GitHub repository</link>."
+      }
+    }
+  },
+  "features": {
+    "auth": {
+      "fields": {
+        "identifier": {
+          "label": "Email or username",
+          "placeholder": "name@example.com or username",
+          "description": "Use the email address or username you signed up with."
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "name@example.com"
+        },
+        "username": {
+          "label": "Username",
+          "placeholder": "your_username"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "Enter your password",
+          "description": "Min 8 characters long."
+        },
+        "currentPassword": {
+          "label": "Current password",
+          "placeholder": "Enter your current password"
+        },
+        "newPassword": {
+          "label": "New password",
+          "placeholder": "Enter your new password",
+          "description": "Min 8 characters long."
+        },
+        "confirmPassword": {
+          "label": "Confirm password",
+          "placeholder": "Re-enter your password"
+        }
+      },
+      "actions": {
+        "login": "Log in",
+        "signup": "Create account",
+        "continueWithGoogle": "Continue with Google",
+        "sendEmail": "Send email",
+        "resendEmail": "Resend email",
+        "logoutAriaLabel": "Log out"
+      },
+      "login": {
+        "title": "Log in",
+        "submit": "Log in",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don’t have an account?",
+        "goToSignup": "Create one"
+      },
+      "signup": {
+        "title": "Create account",
+        "privacy": {
+          "label": "I have read and agree to the <link>Privacy Policy</link>",
+          "error": "You must accept the Privacy Policy to continue."
+        },
+        "haveAccount": "Already have an account?",
+        "goToLogin": "Log in"
+      },
+      "verification": {
+        "title": "Check your email",
+        "sent": "We've sent you an email to confirm your account.",
+        "checkInbox": "Check your inbox and follow the instructions to activate your account.",
+        "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
+        "verifying": "Verifying your email...",
+        "verified": "Email verified. Redirecting to your profile...",
+        "missingToken": "Verification token is missing.",
+        "invalidOrExpired": "Verification link is invalid or expired.",
+        "resending": "Sending...",
+        "isConfirmed": "Already confirmed?",
+        "backToLogin": "Log In",
+        "recoverTitle": "Recover account",
+        "resendTitle": "Resend verification email",
+        "resendDescription": "Enter the email address you used to create your account."
+      },
+      "recover": {
+        "title": "Check your email",
+        "sent": "We've sent password reset instructions to the address you entered.",
+        "checkInbox": "Check your inbox and follow the instructions to set a new password.",
+        "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
+        "rememberedPassword": "Remembered your password?",
+        "backToLogin": "Back to login"
+      },
+      "reset": {
+        "title": "Reset password",
+        "description": "Enter your new password.",
+        "submit": "Save new password",
+        "success": "Password updated successfully.",
+        "backToLogin": "Back to login"
+      },
+      "changePassword": {
+        "title": "Change password",
+        "description": "Enter your current password and choose a new one.",
+        "submit": "Save changes",
+        "success": "Password updated successfully."
+      },
+      "messages": {
+        "or": "OR",
+        "success": "Email sent. Wait before trying again."
+      }
+    },
+    "navigation": {
+      "home": "Home",
+      "createAccount": "Create account",
+      "login": "Log in",
+      "menu": "Menu",
+      "mainAriaLabel": "Main navigation",
+      "ui": "UI",
+      "game": "Game",
+      "profile": "Profile",
+      "logout": "Logout",
+      "settings": "Settings"
+    },
+    "chat": {
+      "messageAriaLabel": "Message",
+      "showChat": "Show Chat",
+      "hideChat": "Hide Chat"
+    },
+    "game": {
+      "resetPlan": "Reset plan",
+      "endTurn": "End turn",
+      "healthLabel": "HP"
+    },
+    "settings": {
+      "theme": "Theme",
+      "language": "Language",
+      "dark": "Dark",
+      "light": "Light"
+    },
+    "profile": {
+      "fail": "Could not load your profile.",
+      "userId": "User ID",
+      "username": "Username",
+      "bio": "Bio",
+      "provider": "Provider"
+    },
+    "social": {
+      "title": "Social",
+      "searchPlaceholder": "Search among your friends or add new ones",
+      "searchLabel": "Search users",
+      "friends": {
+        "title": "Friends",
+        "online": "Friends online",
+        "offline": "Friends offline"
+      },
+      "requests": {
+        "title": "Requests",
+        "received": "Received",
+        "sent": "Sent",
+        "sentSubtitle": "Sent 2 days ago",
+        "noSentRequests": "No pending sent requests"
+      },
+      "actions": {
+        "inviteToGame": "Invite to Game",
+        "chat": "Chat",
+        "reject": "Reject",
+        "accept": "Accept"
+      }
+    }
+  },
+  "validation": {
+    "REQUIRED": "This field is required.",
+    "INVALID_EMAIL": "Enter a valid email address.",
+    "INVALID_USERNAME": "Username must be 3–30 characters and contain only letters, numbers, underscores (_), or hyphens (-).",
+    "INVALID_EMAIL_OR_USERNAME": "Enter a valid email address or username.",
+    "INVALID_FORMAT": "Invalid format.",
+    "USERNAME_TOO_SHORT": "Username must be at least 3 characters.",
+    "USERNAME_TOO_LONG": "Username must be no more than 30 characters.",
+    "INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
+    "FIELD_TOO_SHORT": "Too short.",
+    "FIELD_TOO_LONG": "Too long.",
+    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+    "OUT_OF_RANGE": "Query out of range"
+  },
+  "errors": {
+    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
+    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
+    "AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
+    "AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
+    "AUTH_NO_PENDING_RECOVER": "No password reset request was found. Please start again.",
+    "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+    "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
+    "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
+    "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "VALIDATION_ERROR": "Validation error: please check the fields and try again.",
+    "FETCH_FAILED": "API request failed. Try again later."
+  }
 };
 export default messages;
