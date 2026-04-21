@@ -9,6 +9,7 @@ export {
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
+export { IconButton, type IconButtonProps } from './composites/icon-button/icon-button';
 export {
   Tabs,
   TabList,

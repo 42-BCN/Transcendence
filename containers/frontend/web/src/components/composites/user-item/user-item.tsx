@@ -8,7 +8,7 @@ export type UserItemProps = {
   avatarUrl?: string | null;
   username: string;
   subtitle?: string;
-  actions?: ReactNode;
+  children?: ReactNode;
   className?: string;
 };
 
