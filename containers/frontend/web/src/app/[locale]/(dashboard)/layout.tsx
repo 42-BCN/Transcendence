@@ -1,10 +1,12 @@
+import type { ReactNode } from 'react';
+import { SplitScreenGrid } from '@components';
 import { getTranslations } from 'next-intl/server';
-import { SplitScreenGrid } from '@/components';
-import { SocialDashboard } from '@/features/social/social-dashboard';
 
-export default async function HomePage() {
+type GameLayoutProps = {
+  children: ReactNode;
+};
+export default async function SocialLayout({ children }: GameLayoutProps) {
   const t = await getTranslations('pages.home');
-
   return (
     <SplitScreenGrid
       full={
@@ -13,7 +15,7 @@ export default async function HomePage() {
           <p>{t('subtitle')}</p>
         </main>
       }
-      side={<SocialDashboard />}
+      side={children}
     />
   );
 }
