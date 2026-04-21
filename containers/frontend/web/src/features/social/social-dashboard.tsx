@@ -187,14 +187,14 @@ export function SocialDashboard() {
   const t = useTranslations('features.social');
 
   return (
-    <aside className="flex h-full w-full flex-col bg-bg-primary/50 backdrop-blur-sm border-l border-border-primary overflow-hidden">
+    <aside className="h-full w-full bg-bg-primary/50 backdrop-blur-sm border-l border-border-primary overflow-hidden">
       <Stack gap="md" className="p-3">
         <Text as="h1" variant="heading-md" className="font-bold">
           {t('title')}
         </Text>
         <TextField labelKey={t('searchLabel')} />
       </Stack>
-      <main className="pt-3">
+      <main>
         <Tabs defaultSelectedKey="friends">
           <TabList className="px-3">
             <Tab id="friends">{t('friends.title')}</Tab>
