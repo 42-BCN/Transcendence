@@ -117,6 +117,28 @@ export type ResetPasswordRes = ApiResponse<
 >;
 
 // ---------------------------------------
+// POST /api/protected/me/reset-password
+// ---------------------------------------
+
+export type ChangePasswordOk = null;
+
+export const AUTH_CHANGE_PASSWORD_ERRORS = [
+  'AUTH_UNAUTHORIZED',
+  'AUTH_FORBIDDEN',
+  'AUTH_INVALID_CREDENTIALS',
+  'AUTH_INTERNAL_ERROR',
+  'VALIDATION_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type ChangePasswordError = (typeof AUTH_CHANGE_PASSWORD_ERRORS)[number];
+
+export type ChangePasswordRes = ApiResponse<
+  ChangePasswordOk,
+  ChangePasswordError,
+  ValidationErrorDetails
+>;
+
+// ---------------------------------------
 // GET /api/auth/callback/google
 // ---------------------------------------
 

@@ -6,6 +6,11 @@
     }
   },
   "components": {
+    "breadcrumb": {
+      "home": "Inicio",
+      "me": "Mi Cuenta",
+      "reset-password": "Restablecer Contraseña"
+    },
     "localeSwitcher": {
       "ariaLabel": "Idioma",
       "en": "EN",
@@ -305,6 +310,15 @@
           "placeholder": "Introduce tu contraseña",
           "description": "Mínimo 8 caracteres."
         },
+        "currentPassword": {
+          "label": "Contraseña actual",
+          "placeholder": "Introduce tu contraseña actual"
+        },
+        "newPassword": {
+          "label": "Nueva contraseña",
+          "placeholder": "Introduce tu nueva contraseña",
+          "description": "Mínimo 8 caracteres."
+        },
         "confirmPassword": {
           "label": "Confirmar contraseña",
           "placeholder": "Vuelve a introducir tu contraseña"
@@ -358,6 +372,12 @@
         "rememberedPassword": "¿Has recordado tu contraseña?",
         "backToLogin": "Volver al inicio de sesión"
       },
+      "changePassword": {
+        "title": "Cambiar contraseña",
+        "description": "Introduce tu contraseña actual y elige una nueva.",
+        "submit": "Guardar cambios",
+        "success": "La contraseña se actualizó correctamente."
+      },
       "reset": {
         "title": "Restablecer contraseña",
         "description": "Introduce tu nueva contraseña.",
@@ -401,7 +421,32 @@
     "profile": {
       "fail": "No se pudo cargar tu perfil.",
       "userId": "ID de usuario",
-      "username": "Nombre de usuario"
+      "username": "Nombre de usuario",
+      "bio": "Biografía",
+      "provider": "Proveedor"
+    },
+    "social": {
+      "title": "Social",
+      "searchPlaceholder": "Buscar entre tus amigos o añadir nuevos",
+      "searchLabel": "Buscar usuarios",
+      "friends": {
+        "title": "Amigos",
+        "online": "Amigos conectados",
+        "offline": "Amigos desconectados"
+      },
+      "requests": {
+        "title": "Solicitudes",
+        "received": "Recibidas",
+        "sent": "Enviadas",
+        "sentSubtitle": "Enviado hace 2 días",
+        "noSentRequests": "No hay solicitudes enviadas pendientes"
+      },
+      "actions": {
+        "inviteToGame": "Invitar a partida",
+        "chat": "Chat",
+        "reject": "Rechazar",
+        "accept": "Aceptar"
+      }
     }
   },
   "validation": {

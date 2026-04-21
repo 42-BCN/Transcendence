@@ -1,7 +1,13 @@
-import type { UserPublic, SearchUserResult } from '@contracts/users/users.contracts';
+import type { UserMeProfile, UserPublic, SearchUserResult } from '@contracts/users/users.contracts';
 import { ApiError } from '@shared';
 
-import { listUsers, selectUserData, selectUserDataByUsername, searchUsersByUsername } from './users.repo';
+import {
+  listUsers,
+  selectUserData,
+  selectUserDataByUsername,
+  selectUserMeProfileData,
+  searchUsersByUsername,
+} from './users.repo';
 import { findFriendshipsByUserPairs } from '../friendships/friendships.repo';
 
 type getUsersProps = {
@@ -23,6 +29,12 @@ export async function findUserById(id: string): Promise<UserPublic> {
 
 export async function userByUsername(username: string): Promise<UserPublic> {
   const data = await selectUserDataByUsername(username);
+  if (!data) throw new ApiError('USER_NOT_FOUND');
+  return data;
+}
+
+export async function findUserMeProfileById(id: string): Promise<UserMeProfile> {
+  const data = await selectUserMeProfileData(id);
   if (!data) throw new ApiError('USER_NOT_FOUND');
   return data;
 }

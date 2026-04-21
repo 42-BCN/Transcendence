@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import { requireAuth } from '@shared';
 
-import { getMeProfile } from './protected.controller';
+import { getMeProfile, postMeResetPassword } from './protected.controller';
 
 export const protectedRouter = Router();
 
@@ -16,3 +16,4 @@ protectedRouter.get('/me', requireAuth, (req, res) => {
 });
 
 protectedRouter.get('/me/profile', requireAuth, getMeProfile);
+protectedRouter.post('/me/reset-password', requireAuth, postMeResetPassword);

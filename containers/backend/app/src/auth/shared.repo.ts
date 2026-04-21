@@ -10,6 +10,7 @@ export type UserWithPassword = Pick<
   | 'email'
   | 'username'
   | 'passwordHash'
+  | 'provider'
   | 'isBlocked'
   | 'failedAttempts'
   | 'lockedUntil'
@@ -34,6 +35,7 @@ const userWithPasswordSelect = {
   email: true,
   username: true,
   passwordHash: true,
+  provider: true,
   isBlocked: true,
   failedAttempts: true,
   lockedUntil: true,
@@ -69,6 +71,13 @@ export function findUserById(id: string): Promise<UserPublic | null> {
   return prisma.user.findUnique({
     where: { id },
     select: userPublicSelect,
+  });
+}
+
+export function findUserByIdWithPassword(id: string): Promise<UserWithPassword | null> {
+  return prisma.user.findUnique({
+    where: { id },
+    select: userWithPasswordSelect,
   });
 }
 

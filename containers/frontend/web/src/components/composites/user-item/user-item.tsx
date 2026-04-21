@@ -8,14 +8,14 @@ export type UserItemProps = {
   avatarUrl?: string | null;
   username: string;
   subtitle?: string;
-  actions?: ReactNode;
+  children?: ReactNode;
   className?: string;
 };
 
-export function UserItem({ avatarUrl, username, subtitle, actions, className }: UserItemProps) {
+export function UserItem({ avatarUrl, username, subtitle, children, className }: UserItemProps) {
   return (
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
-      <Avatar src={avatarUrl} size="md" />
+      <Avatar src={avatarUrl} />
 
       <div className="flex-1 self-start">
         <Text variant="body-sm" as="p" className="font-bold">
@@ -28,7 +28,7 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
         )}
       </div>
 
-      {actions}
+      {children}
     </Stack>
   );
 }

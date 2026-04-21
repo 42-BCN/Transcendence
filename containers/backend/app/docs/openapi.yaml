@@ -374,7 +374,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserMeProfileResponse'
         '401':
           description: Unauthorized
           content:
@@ -971,13 +971,28 @@ components:
               type: string
     UserPublic:
       type: object
-      required: [id, username]
+      required: [id, username, avatar, bio]
       properties:
         id:
           type: string
           format: uuid
         username:
           type: string
+        avatar:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          maxLength: 600
+    UserMeProfile:
+      allOf:
+        - $ref: '#/components/schemas/UserPublic'
+        - type: object
+          required: [provider]
+          properties:
+            provider:
+              type: string
+              enum: [local, google]
     UserResponse:
       type: object
       required: [ok, data]
@@ -987,6 +1002,15 @@ components:
           enum: [true]
         data:
           $ref: '#/components/schemas/UserPublic'
+    UserMeProfileResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: '#/components/schemas/UserMeProfile'
     UsersListResponse:
       type: object
       required: [ok, data]

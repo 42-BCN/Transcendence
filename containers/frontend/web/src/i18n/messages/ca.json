@@ -6,6 +6,11 @@
     }
   },
   "components": {
+    "breadcrumb": {
+      "home": "Inici",
+      "me": "El Meu Compte",
+      "reset-password": "Restablir Contrasenya"
+    },
     "localeSwitcher": {
       "ariaLabel": "Idioma",
       "en": "EN",
@@ -305,6 +310,15 @@
           "placeholder": "Introdueix la teva contrasenya",
           "description": "Mínim 8 caràcters."
         },
+        "currentPassword": {
+          "label": "Contrasenya actual",
+          "placeholder": "Introdueix la teva contrasenya actual"
+        },
+        "newPassword": {
+          "label": "Contrasenya nova",
+          "placeholder": "Introdueix la teva contrasenya nova",
+          "description": "Mínim 8 caràcters."
+        },
         "confirmPassword": {
           "label": "Confirmar contrasenya",
           "placeholder": "Torna a introduir la teva contrasenya"
@@ -366,6 +380,12 @@
         "rememberedPassword": "Has recordat la contrasenya?",
         "backToLogin": "Torna a iniciar sessió"
       },
+      "changePassword": {
+        "title": "Canvia la contrasenya",
+        "description": "Introdueix la teva contrasenya actual i tria'n una de nova.",
+        "submit": "Desa els canvis",
+        "success": "La contrasenya s'ha actualitzat correctament."
+      },
       "messages": {
         "or": "O",
         "success": "Correu enviat. Espera per tornar-ho a intentar."
@@ -402,7 +422,32 @@
     "profile": {
       "fail": "No s'ha pogut carregar el teu perfil.",
       "userId": "ID d'usuari",
-      "username": "Nom d'usuari"
+      "username": "Nom d'usuari",
+      "bio": "Biografia",
+      "provider": "Proveïdor"
+    },
+    "social": {
+      "title": "Social",
+      "searchPlaceholder": "Cerca entre els teus amics o afegeix-ne de nous",
+      "searchLabel": "Cercar usuaris",
+      "friends": {
+        "title": "Amics",
+        "online": "Amics connectats",
+        "offline": "Amics desconnectats"
+      },
+      "requests": {
+        "title": "Sol·licituds",
+        "received": "Rebudes",
+        "sent": "Enviades",
+        "sentSubtitle": "Enviat fa 2 dies",
+        "noSentRequests": "No hi ha sol·licituds enviades pendents"
+      },
+      "actions": {
+        "inviteToGame": "Convidar a partida",
+        "chat": "Chat",
+        "reject": "Rebutjar",
+        "accept": "Acceptar"
+      }
     }
   },
   "validation": {

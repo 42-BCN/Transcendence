@@ -94,6 +94,15 @@ export const ResetPasswordReqSchema = z
 
 export type ResetPasswordReq = z.infer<typeof ResetPasswordReqSchema>;
 
+export const ChangePasswordReqSchema = z
+  .object({
+    currentPassword: z.string().min(1, { message: V.REQUIRED }),
+    newPassword: passwordSchema,
+  })
+  .strict();
+
+export type ChangePasswordReq = z.infer<typeof ChangePasswordReqSchema>;
+
 export const RecoverReqSchema = z
   .object({
     identifier: identifierSchema.transform((val) =>

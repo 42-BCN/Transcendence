@@ -5,6 +5,12 @@ import type { UsersErrorName, SearchUsersErrorName } from './users.errors';
 export type UserPublic = {
   id: string; // uuid zod can check for it on validation
   username: string;
+  avatar: string | null;
+  bio: string;
+};
+
+export type UserMeProfile = UserPublic & {
+  provider: 'local' | 'google';
 };
 
 // ---------------------------------------
@@ -47,6 +53,15 @@ export type SearchUsersOk = {
   users: SearchUserResult[];
 };
 
-export type SearchUsersResponse = ApiResponse<SearchUsersOk, SearchUsersErrorName, ValidationErrorDetails>;
+export type SearchUsersResponse = ApiResponse<
+  SearchUsersOk,
+  SearchUsersErrorName,
+  ValidationErrorDetails
+>;
 
 export type UserPublicResponse = ApiResponse<UserPublic, UsersListError, ValidationErrorDetails>;
+export type UserMeProfileResponse = ApiResponse<
+  UserMeProfile,
+  UsersListError,
+  ValidationErrorDetails
+>;
