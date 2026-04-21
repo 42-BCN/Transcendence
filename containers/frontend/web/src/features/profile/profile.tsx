@@ -11,10 +11,6 @@ export async function Profile() {
   ) : (
     <>
       <Text as="h3" variant="body-sm">
-        {t('username')}
-      </Text>
-      <Text>{data.data.username}</Text>
-      <Text as="h3" variant="body-sm">
         {t('bio')}
       </Text>
       <Text>{data.data.bio}</Text>
