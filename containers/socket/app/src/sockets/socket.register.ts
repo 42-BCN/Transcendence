@@ -14,7 +14,7 @@ export function registerSockets(io: Server) {
 
   friendsNsp.use(requireSessionSocketAuth);
   robotsNsp.use(requireSessionSocketAuth);
-  gameNsp.use(requireSessionSocketAuth);
+  gameNsp.use(attachOptionalChatIdentity);
   chatNsp.use(attachOptionalChatIdentity);
 
   registerFriendsSocket(friendsNsp);

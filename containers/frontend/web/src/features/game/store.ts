@@ -1,7 +1,6 @@
-import { create } from "zustand";
-import TinyQueue from "tinyqueue";
-import type { parse_entity, pos, tile } from "./maps";
-import { gameSocket } from '@/lib/sockets/socket';
+import { create } from 'zustand';
+import type { parse_entity, pos, tile } from './maps';
+import { gameSocket, ensureChatSessionIdentity } from '@/lib/sockets/socket';
 
 export type globalGameState = {
   phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
@@ -12,7 +11,7 @@ export type globalGameState = {
   tiles: Record<string, boolean>;
   history: historyAction[];
   mapBounds: mapInfo;
-}
+};
 
 export type localGameState = {
   highlights: Record<string, boolean>;
@@ -21,9 +20,9 @@ export type localGameState = {
   selectedAb: string | null;
   selectedEnt: string | null;
   selectedDice: number | null;
-}
+};
 
-type gamePhase = "PLAN" | "EXEC" | "ENEMY" | "END"
+type gamePhase = 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
 
 type player = parse_entity & {
   hp: number;
@@ -43,30 +42,30 @@ type enemy = player;
 type entity = player | enemy;
 
 type node = {
-  id: string,
-  pos: pos,
-  g: number,
-  f: number
-}
+  id: string;
+  pos: pos;
+  g: number;
+  f: number;
+};
 
 type mapInfo = {
   width: number;
   height: number;
   depth: number;
-}
+};
 
 type ability = {
   name: string;
   target: string;
   dice: number;
   aftermov: boolean;
-}
+};
 
 type historyAction = {
   who: string;
   moveto: string | null;
   abilities?: ability[];
-}
+};
 
 type abilityInfo = {
   name: string;
@@ -79,7 +78,7 @@ type abilityInfo = {
   AoE?: string;
   AoErange?: number;
   effect?: string[];
-}
+};
 
 type gameState = {
   turn: number;
@@ -144,7 +143,7 @@ type gameState = {
   clearHighlights: () => void;
   clearSelectables: () => void;
   takeAb: (id: string, type: string, ab: abilityInfo, roll: number) => player | enemy;
-}
+};
 
 const clean = {
   canSelect: true,
@@ -159,7 +158,7 @@ const clean = {
 
 export const useGame = create<gameState>()((set, get) => ({
   turn: 1,
-  phase: "PLAN",
+  phase: 'PLAN',
 
   rollQuantity: 0,
   assignedCharacter: 'spectator',
@@ -183,19 +182,17 @@ export const useGame = create<gameState>()((set, get) => ({
 
   nextPhase: async () => {
     const state = get();
-    if (state.phase !== "PLAN")
-      return;
-    set({ ...clean, phase: "EXEC", canSelect: false });
+    if (state.phase !== 'PLAN') return;
+    set({ ...clean, phase: 'EXEC', canSelect: false });
     try {
       await get().executionPhase();
-      set({ ...clean, phase: "ENEMY", canSelect: false });
+      set({ ...clean, phase: 'ENEMY', canSelect: false });
       await get().enemyPhase();
-      set({ phase: "END" });
+      set({ phase: 'END' });
       get().endTurn();
-    }
-    catch (err) {
-      console.error("Turn resolution failed:", err);
-      set({ ...clean, phase: "PLAN", canSelect: true });
+    } catch (err) {
+      console.error('Turn resolution failed:', err);
+      set({ ...clean, phase: 'PLAN', canSelect: true });
     }
   },
 
@@ -227,7 +224,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
   enemyPhase: async () => {
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    console.log("Enemy turn");
+    console.log('Enemy turn');
     await sleep(1000);
   },
 
@@ -254,29 +251,28 @@ export const useGame = create<gameState>()((set, get) => ({
     set({
       ...clean,
       turn: state.turn + 1,
-      phase: "PLAN",
+      phase: 'PLAN',
       history: [],
       clones: {},
       players: updatedPlayers,
       enemies: updatedEnemies,
       canSelect: true,
     });
-    console.log("New turn");
+    console.log('New turn');
   },
 
   selectEntity: (id) => {
     const state = get();
     gameSocket.emit('game:client:selectEntity', id);
     let ent = state.players[id] || state.enemies[id] || state.clones[id];
-    console.log("ent id: ", id);
+    console.log('ent id: ', id);
   },
 
   getSel: () => {
     const s = get();
-    if (!s.selectedEnt)
-      return;
+    if (!s.selectedEnt) return;
     const id = s.selectedEnt;
-    return (s.players[id] || s.enemies[id] || s.clones[id]);
+    return s.players[id] || s.enemies[id] || s.clones[id];
   },
 
   showMoveRange: (mov) => {
@@ -372,67 +368,58 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   selectAbility: (name) => {
-    const state = get()
+    const state = get();
     const ent = state.getSel();
-    if (!ent)
-      throw new Error("no ent id!");
-    gameSocket.emit('game:client:displayAbilityRange', ent.id, name)
+    if (!ent) throw new Error('no ent id!');
+    gameSocket.emit('game:client:displayAbilityRange', ent.id, name);
   },
 
   showAbRange: (name) => {
     const ent = get().getSel();
-    if (!ent)
-      throw new Error("no ent id!");
+    if (!ent) throw new Error('no ent id!');
     gameSocket.emit('game:client:showAbilityRange', ent.id, name);
   },
 
   takeAb: (id, type, ab, roll) => {
     const state = get();
-    const target = type === "enemy" ? { ...state.enemies[id] } : { ...state.players[id] };
+    const target = type === 'enemy' ? { ...state.enemies[id] } : { ...state.players[id] };
 
-    target.hp = target.hp - (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);;
-    if (target.hp < 0)
-      target.hp = 0;
+    target.hp = target.hp - (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);
+    if (target.hp < 0) target.hp = 0;
     const hadStatus = Boolean(target.status);
     if (!target.status && ab.effect) {
       target.status = ab.effect[0];
-      if (target.status !== "push" && !hadStatus)
-        target.statusTurns = Number(ab.effect[1]);
+      if (target.status !== 'push' && !hadStatus) target.statusTurns = Number(ab.effect[1]);
     }
-    return (target);
+    return target;
   },
 
   executeAbility: (who, which, target) => {
     const state = get();
-    if (!which || !who)
-      return;
+    if (!which || !who) return;
     const ent = state.players[who] || state.enemies[who] || state.clones[who];
     const ab = state.getAbility(which);
-    if (!ent)
-      throw new Error("No entity found!");
-    const ability = state.history.find((h) => h.who === who)?.abilities?.find(
-      (a) => a.name === which && a.target === target);
+    if (!ent) throw new Error('No entity found!');
+    const ability = state.history
+      .find((h) => h.who === who)
+      ?.abilities?.find((a) => a.name === which && a.target === target);
     const dvalue = ability?.dice;
-    if (!dvalue)
-      throw new Error("No dice value found when executing ability!");
+    if (!dvalue) throw new Error('No dice value found when executing ability!');
     const roll = Math.ceil(Math.random() * dvalue);
-    if (!ab.cond(roll))
-      return;
+    if (!ab.cond(roll)) return;
     const targets = [target];
     // if (ab.AoE)
     //   targets.push(...state.getAoE(pos, ab.AoEtype, AoErange));
     const changedPlayers: player[] = [];
     const changedEnemies: enemy[] = [];
     targets.forEach((id) => {
-      if (state.enemies[id])
-        changedEnemies.push(state.takeAb(id, "enemy", ab, roll))
-      else if (state.players[id])
-        changedPlayers.push(state.takeAb(id, "player", ab, roll))
-    })
+      if (state.enemies[id]) changedEnemies.push(state.takeAb(id, 'enemy', ab, roll));
+      else if (state.players[id]) changedPlayers.push(state.takeAb(id, 'player', ab, roll));
+    });
     set({
-      players: { ...state.players, ...Object.fromEntries(changedPlayers.map(p => [p.id, p])) },
-      enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map(e => [e.id, e])) },
-    })
+      players: { ...state.players, ...Object.fromEntries(changedPlayers.map((p) => [p.id, p])) },
+      enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map((e) => [e.id, e])) },
+    });
   },
 
   clearSelectedDice: () => {
@@ -451,82 +438,103 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   initSocketListeners: () => {
-    const handleJoin = (id: string) => {
-      console.log(id, 'joined');
-      set({ assignedCharacter: id });
-    };
-    // const handleInit = (initState: GlobalGameState) => {
-    //   console.log('recieved init event with character', get().assignedCharacter);
-    //   set({
-    //     phase: 'PLAN',
-    //     turn: 1,
-    //     tiles: initState.tiles,
-    //     enemies: initState.enemies,
-    //     players: initState.players,
-    //     clones: initState.clones,
-    //     history: initState.history,
-    //     mapBounds: initState.mapBounds,
-    //   });
-    // };
-    const handleGlobalSync = (state: globalGameState) => {
-      console.log('recieved global sync event with character', get().assignedCharacter);
-      set({
-        phase: state.phase,
-        turn: state.turn,
-        tiles: state.tiles,
-        enemies: state.enemies,
-        players: state.players,
-        clones: state.clones,
-        history: state.history,
-        mapBounds: state.mapBounds,
+    const connect = async () => {
+      try {
+        console.log('🔐 Establishing session before connecting to game socket...');
+        await ensureChatSessionIdentity();
+        console.log('✅ Session established, connecting to game socket...');
+      } catch (error) {
+        console.error('❌ Failed to establish session:', error);
+      }
+
+      const handleJoin = (id: string) => {
+        console.log('👤 Player joined with ID:', id);
+        set({ assignedCharacter: id });
+      };
+
+      const handleGlobalSync = (state: globalGameState) => {
+        console.log('📡 Received global sync with mapBounds:', state.mapBounds);
+        set({
+          phase: state.phase,
+          turn: state.turn,
+          tiles: state.tiles,
+          enemies: state.enemies,
+          players: state.players,
+          clones: state.clones,
+          history: state.history,
+          mapBounds: state.mapBounds,
+        });
+      };
+
+      const handleSync = (state: localGameState) => {
+        console.log('🔄 Received sync event');
+        set({
+          highlights: state.highlights,
+          selectables: state.selectables,
+          canSelect: state.canSelect,
+          selectedAb: state.selectedAb,
+          selectedEnt: state.selectedEnt,
+          selectedDice: state.selectedDice,
+        });
+      };
+
+      const handleUpdateRolls = (quantity: number) => {
+        console.log('🎲 Received rolls update:', quantity);
+        set({ rollQuantity: quantity });
+      };
+
+      const handleHighlights = (highlights: Record<string, boolean>) => {
+        console.log('✨ Received highlights');
+        set({ highlights: highlights });
+      };
+
+      const handleSelectables = (selectables: Record<string, boolean>) => {
+        console.log('🎯 Received selectables');
+        set({ selectables: selectables });
+      };
+
+      gameSocket.on('connect', () => {
+        console.log('✅ Connected to game socket server');
       });
-    };
 
-    const handleSync = (state: localGameState) => {
-      console.log('recieved sync event with character', get().assignedCharacter);
-      set({
-        highlights: state.highlights,
-        selectables: state.selectables,
-        canSelect: state.canSelect,
-        selectedAb: state.selectedAb,
-        selectedEnt: state.selectedEnt,
-        selectedDice: state.selectedDice,
+      gameSocket.on('disconnect', (reason) => {
+        console.log('❌ Disconnected from game socket:', reason);
       });
+
+      gameSocket.on('connect_error', (error) => {
+        console.error('🔴 Game socket connection error:', error);
+      });
+
+      gameSocket.on('error', (error) => {
+        console.error('🔴 Game socket error:', error);
+      });
+
+      gameSocket.on('game:server:join', handleJoin);
+      gameSocket.on('game:server:globalSync', handleGlobalSync);
+      gameSocket.on('game:server:sync', handleSync);
+      gameSocket.on('game:server:displayMoveRange', handleHighlights);
+      gameSocket.on('game:server:displayAbilityRange', handleSelectables);
+
+      console.log('🚀 Connecting game socket...');
+      gameSocket.connect();
     };
 
-    const handleUpdateRolls = (quantity: number) => {
-      console.log('Received game rolls update event', quantity);
-      set({ rollQuantity: quantity });
-    };
-    const handleHighlights = (highlights: Record<string, boolean>) => {
-      console.log('Received highlights form server');
-      set({ highlights: highlights });
-    };
-
-    const handleSelectables = (selectables: Record<string, boolean>) => {
-      console.log('Received highlights form server');
-      set({ selectables: selectables });
-    };
-
-    gameSocket.on('connect', () => console.log('Connected to game events socket server'));
-    gameSocket.on('disconnect', () => console.log('Disconnected from game events socket server'));
-    gameSocket.on('game:server:join', handleJoin);
-    // gameSocket.on('game:server:init', handleInit);
-    gameSocket.on('game:server:globalSync', handleGlobalSync);
-    gameSocket.on('game:server:sync', handleSync);
-    gameSocket.on('game:server:displayMoveRange', handleHighlights);
-    gameSocket.on('game:server:displayAbilityRange', handleSelectables);
-    gameSocket.connect();
+    connect().catch((err) => {
+      console.error('❌ Failed to initialize socket listeners:', err);
+    });
   },
 
   cleanupSocketListeners: () => {
     gameSocket.off('connect');
     gameSocket.off('disconnect');
+    gameSocket.off('connect_error');
+    gameSocket.off('error');
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:init');
-    gameSocket.off('game:server:sync');
     gameSocket.off('game:server:globalSync');
+    gameSocket.off('game:server:sync');
+    gameSocket.off('game:server:displayMoveRange');
+    gameSocket.off('game:server:displayAbilityRange');
     gameSocket.disconnect();
   },
-}
-));
+}));

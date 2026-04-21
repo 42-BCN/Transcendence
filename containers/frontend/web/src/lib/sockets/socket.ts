@@ -51,8 +51,38 @@ export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEven
     autoConnect: false,
     transports: ['websocket'],
     withCredentials: true,
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
   },
 );
+
+// Immediate error logging
+gameSocket.on('error', (error) => {
+  console.error('🔴 [gameSocket] error event:', error);
+});
+
+gameSocket.on('connect_error', (error) => {
+  console.error('🔴 [gameSocket] connect_error:', error);
+  if (error instanceof Error) {
+    console.error('  Error message:', error.message);
+    console.error('  Error stack:', error.stack);
+  }
+});
+
+console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
+
+// Global error handlers
+gameSocket.on('error', (error) => {
+  console.error('🔴 gameSocket error:', error);
+});
+
+gameSocket.on('connect_error', (error) => {
+  console.error('🔴 gameSocket connect_error:', error);
+});
+
+console.log('📋 gameSocket configured for URL:', gameSocketUrl);
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,

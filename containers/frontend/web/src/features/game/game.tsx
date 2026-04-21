@@ -27,11 +27,13 @@ function AbButtons() {
   const clearHighlights = useGame((state) => state.clearHighlights);
   const dice = useGame((state) => state.selectedDice);
   const showAbRange = useGame((state) => state.showAbRange);
-  let id = ent.id.startsWith("clone_") ? ent.id.replace("clone_", "") : ent.id;
+  let id = ent.id.startsWith('clone_') ? ent.id.replace('clone_', '') : ent.id;
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map((ability) => (
-        <Button key={ability} className="bg-red-600 text-white"
+        <Button
+          key={ability}
+          className="bg-red-600 text-white"
           onPointerOver={(event) => {
             event.stopPropagation();
             showAbRange(ability);
@@ -39,13 +41,12 @@ function AbButtons() {
           }}
           onPointerOut={(event) => {
             event.stopPropagation();
-            if (selectedAb !== ability)
-              clearSelectables();
+            if (selectedAb !== ability) clearSelectables();
           }}
           onPress={() => {
-            if (assignedCharacter === id)
-              selectAbility(ability);
-          }}>
+            if (assignedCharacter === id) selectAbility(ability);
+          }}
+        >
           {ability}
         </Button>
       ))}
@@ -77,8 +78,7 @@ function DiceButtons() {
             key={i}
             onPointerOver={(event) => {
               event.stopPropagation();
-              if (!ability)
-                showMoveRange(diceNum);
+              if (!ability) showMoveRange(diceNum);
             }}
             onPointerOut={(event) => {
               if (!selectedDice) {
@@ -141,9 +141,8 @@ function EndPlan() {
       onPress={() => nextPhase()}
     >
       {t('endTurn')}
-    </Button >
-  )
-    : null
+    </Button>
+  ) : null;
 }
 
 function HUD() {
@@ -197,8 +196,7 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
-        if (phase !== 'PLAN')
-          return;
+        if (phase !== 'PLAN') return;
         event.stopPropagation();
         moveClone(id);
       }}
@@ -359,7 +357,8 @@ function Scene() {
             }}
           />
         );
-      })}      {Object.values(players).map((p) => (
+      })}{' '}
+      {Object.values(players).map((p) => (
         <Player
           key={p.id}
           id={p.id}
@@ -416,16 +415,43 @@ export function Game() {
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
   const mapBounds = useGame((state) => state.mapBounds);
-  // console.log('selectedDice: ', selectedDice);
+  const [debugInfo, setDebugInfo] = useState('Initializing...');
+  const initRef = useRef(false);
+
   useEffect(() => {
-    initSocketListeners();
-    return cleanupSocketListeners
-  }, [initSocketListeners, cleanupSocketListeners]);
-  return (!mapBounds || mapBounds.width === 0 ?
+    // Only initialize once on mount
+    if (!initRef.current) {
+      initRef.current = true;
+      initSocketListeners();
+    }
+
+    return () => {
+      cleanupSocketListeners();
+    };
+  }, []);
+
+  useEffect(() => {
+    // Debug logging - separate effect so it doesn't trigger re-initialization
+    const debugTimer = setInterval(() => {
+      setDebugInfo(
+        `Character: ${assignedCharacter || 'waiting...'} | Map: ${mapBounds.width}x${mapBounds.height}x${mapBounds.depth}`,
+      );
+    }, 1000);
+
+    return () => {
+      clearInterval(debugTimer);
+    };
+  }, [assignedCharacter, mapBounds]);
+
+  return !mapBounds || mapBounds.width === 0 ? (
     <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
-      <h2>Connecting to Server...</h2>
+      <div className="text-center">
+        <h2>Connecting to Server...</h2>
+        <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
+        <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
+      </div>
     </div>
-    :
+  ) : (
     <>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}
