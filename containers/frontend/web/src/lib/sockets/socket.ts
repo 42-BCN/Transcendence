@@ -25,13 +25,6 @@ type ClientToServerRobotsEvents = {
   moveTo: (target: [number, number, number]) => void;
 };
 
-export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
-  'http://localhost:3100/game',
-  {
-    autoConnect: false,
-  },
-);
-
 export async function ensureChatSessionIdentity(): Promise<void> {
   const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/guest/session`;
 
@@ -50,7 +43,16 @@ export async function ensureChatSessionIdentity(): Promise<void> {
 
 const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
 const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
-//const gameSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
+const gameSocketUrl = new URL('/game', envPublic.socketUrl).toString();
+
+export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
+  gameSocketUrl,
+  {
+    autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+  },
+);
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
