@@ -129,45 +129,35 @@ function FriendsList() {
   const offlineFriends = [{ id: 3, username: 'joanavar', avatarUrl: '/avatars/avatar-3.png' }];
 
   return (
-    <Stack>
-      <Disclosure defaultExpanded>
-        <DisclosureTrigger title={`${t('online')} (${onlineFriends.length})`} />
-        <DisclosurePanel>
-          <Stack gap="sm" className="py-1">
-            {onlineFriends.map((friend, index) => (
-              <Fragment key={friend.id}>
-                <FriendItem
-                  username={friend.username}
-                  avatarUrl={friend.avatarUrl}
-                  subtitle={t('online')}
-                  className="px-0"
-                />
-                {index < onlineFriends.length - 1 && (
-                  <hr className="w-full border-border-primary" />
-                )}
-              </Fragment>
+    <Stack className="divide-y divide-border-primary/50">
+      <Disclosure className="border-b-0">
+        <DisclosureTrigger className="px-6" title={`${t('online')} (${onlineFriends.length})`} />
+        <DisclosurePanel className="pb-0">
+          <Stack gap="none" className="px-6 divide-y divide-border-primary/30">
+            {onlineFriends.map((friend) => (
+              <FriendItem
+                key={friend.id}
+                username={friend.username}
+                avatarUrl={friend.avatarUrl}
+                subtitle={t('online')}
+              />
             ))}
           </Stack>
         </DisclosurePanel>
       </Disclosure>
 
-      <Disclosure>
-        <DisclosureTrigger title={`${t('offline')} (${offlineFriends.length})`} />
-        <DisclosurePanel>
-          <Stack gap="sm" className="py-1">
-            {offlineFriends.map((friend, index) => (
-              <Fragment key={friend.id}>
-                <FriendItem
-                  username={friend.username}
-                  avatarUrl={friend.avatarUrl}
-                  subtitle={t('offline')}
-                  showGameAction={false}
-                  className="px-0"
-                />
-                {index < offlineFriends.length - 1 && (
-                  <hr className="w-full border-border-primary" />
-                )}
-              </Fragment>
+      <Disclosure className="mt-1 border-b-0">
+        <DisclosureTrigger className="px-6" title={`${t('offline')} (${offlineFriends.length})`} />
+        <DisclosurePanel className="pb-0">
+          <Stack gap="none" className="px-6 divide-y divide-border-primary/30">
+            {offlineFriends.map((friend) => (
+              <FriendItem
+                key={friend.id}
+                username={friend.username}
+                avatarUrl={friend.avatarUrl}
+                subtitle={t('offline')}
+                showGameAction={false}
+              />
             ))}
           </Stack>
         </DisclosurePanel>
@@ -190,30 +180,27 @@ function RequestsList() {
 
   return (
     <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
-      <Stack>
-        <Disclosure id="received">
-          <DisclosureTrigger title={`${t('received')} (${requests.length})`} />
-          <DisclosurePanel>
-            <Stack gap="sm" className="py-1">
-              {requests.map((req, index) => (
-                <Fragment key={req.id}>
-                  <RequestItem
-                    username={req.username}
-                    avatarUrl={req.avatarUrl}
-                    subtitle={t(req.subtitleKey)}
-                    className="px-0"
-                  />
-                  {index < requests.length - 1 && <hr className="w-full border-border-primary" />}
-                </Fragment>
+      <Stack className="divide-y divide-border-primary/50">
+        <Disclosure id="received" className="border-b-0">
+          <DisclosureTrigger className="px-6" title={`${t('received')} (${requests.length})`} />
+          <DisclosurePanel className="pb-0">
+            <Stack gap="none" className="px-6 divide-y divide-border-primary/30">
+              {requests.map((req) => (
+                <RequestItem
+                  key={req.id}
+                  username={req.username}
+                  avatarUrl={req.avatarUrl}
+                  subtitle={t(req.subtitleKey)}
+                />
               ))}
             </Stack>
           </DisclosurePanel>
         </Disclosure>
 
-        <Disclosure id="sent">
-          <DisclosureTrigger title={`${t('sent')} (0)`} />
-          <DisclosurePanel>
-            <Text variant="caption" color="tertiary" className="text-center">
+        <Disclosure id="sent" className="mt-1 border-b-0">
+          <DisclosureTrigger className="px-6" title={`${t('sent')} (0)`} />
+          <DisclosurePanel className="pb-0">
+            <Text variant="caption" color="tertiary" className="text-center py-6">
               {t('noSentRequests')}
             </Text>
           </DisclosurePanel>
@@ -249,7 +236,7 @@ export function SocialDashboard() {
           </Stack>
         </header>
 
-        <main className="flex-1 overflow-y-auto px-6 pb-2">
+        <main className="flex-1 overflow-y-auto pb-2">
           <TabPanel id="friends" className="outline-none">
             <FriendsList />
           </TabPanel>
