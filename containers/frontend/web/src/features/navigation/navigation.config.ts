@@ -11,7 +11,7 @@ export type NavItem = {
 };
 const baseNavItems: NavItem[] = [
   { href: '/', key: 'home', exact: true, icon: 'home' },
-  { href: '/robots', key: 'robots', exact: false, icon: 'gamepad' },
+  { href: '/game', key: 'game', exact: false, icon: 'gamepad' },
   { href: '/ui', key: 'ui', exact: false, icon: 'ui' },
 ];
 

@@ -380,7 +380,7 @@ declare const messages: {
       "menu": "Menu",
       "mainAriaLabel": "Main navigation",
       "ui": "UI",
-      "robots": "Robots",
+      "game": "Game",
       "profile": "Profile",
       "logout": "Logout",
       "settings": "Settings"
