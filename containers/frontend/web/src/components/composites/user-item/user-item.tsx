@@ -12,7 +12,7 @@ export type UserItemProps = {
   className?: string;
 };
 
-export function UserItem({ avatarUrl, username, subtitle, actions, className }: UserItemProps) {
+export function UserItem({ avatarUrl, username, subtitle, children, className }: UserItemProps) {
   return (
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} size="md" />
@@ -28,7 +28,7 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
         )}
       </div>
 
-      {actions}
+      {children}
     </Stack>
   );
 }

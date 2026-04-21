@@ -1,7 +1,7 @@
 'use client';
 
-import { Fragment } from 'react';
 import { useTranslations } from 'next-intl';
+
 import {
   Stack,
   Text,
@@ -9,160 +9,150 @@ import {
   TabList,
   Tab,
   TabPanel,
-  Disclosure,
   DisclosureGroup,
-  DisclosureTrigger,
-  DisclosurePanel,
+  DisclosureFull,
   UserItem,
   Icon,
-  Input,
   TooltipTrigger,
   Button,
-  InternalLink,
+  type UserItemProps,
+  TextField,
+  IconName,
 } from '@/components';
 
-interface FriendItemProps {
-  username: string;
-  avatarUrl: string;
-  subtitle: string;
-  showGameAction?: boolean;
-  className?: string;
-}
-
-function FriendItem({
-  username,
-  avatarUrl,
-  subtitle,
-  showGameAction = true,
+function ButtonWithTooltip({
+  label,
+  placement = 'top',
+  onPress,
+  icon,
   className,
-}: FriendItemProps) {
-  const tActions = useTranslations('features.social.actions');
-
-  return (
-    <UserItem
-      username={username}
-      subtitle={subtitle}
-      avatarUrl={avatarUrl}
-      className={className}
-      actions={
-        <Stack direction="horizontal" gap="xs">
-          {showGameAction && (
-            <TooltipTrigger label={tActions('inviteToGame')} placement="top">
-              <Button
-                w="auto"
-                size="icon"
-                variant="secondary"
-                aria-label={tActions('inviteToGame')}
-                icon={<Icon name="gamepad" />}
-              />
-            </TooltipTrigger>
-          )}
-          <TooltipTrigger label={tActions('chat')} placement="top">
-            <InternalLink
-              w="auto"
-              href="/ui"
-              as="button"
-              size="icon"
-              variant="secondary"
-              aria-label={tActions('chat')}
-              icon={<Icon name="messages" />}
-            />
-          </TooltipTrigger>
-        </Stack>
-      }
-    />
-  );
-}
-
-interface RequestItemProps {
-  username: string;
-  avatarUrl: string;
-  subtitle: string;
+}: {
+  label: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right';
+  onPress?: () => void;
+  icon: IconName;
   className?: string;
+}) {
+  return (
+    <TooltipTrigger label={label} placement={placement}>
+      <Button
+        w="auto"
+        size="icon"
+        variant="secondary"
+        icon={<Icon name={icon} />}
+        aria-label={label}
+        className={className}
+        onPress={onPress}
+      />
+    </TooltipTrigger>
+  );
 }
 
-function RequestItem({ username, avatarUrl, subtitle, className }: RequestItemProps) {
+function UserListRequestActions({ username }: { username: string }) {
   const tActions = useTranslations('features.social.actions');
-
   return (
+    <>
+      <ButtonWithTooltip
+        label={tActions('reject')}
+        icon="close"
+        className="text-red-500 border-red-500"
+        onPress={() => console.log(username)}
+      />
+      <ButtonWithTooltip
+        label={tActions('accept')}
+        icon="check"
+        className="text-green-500 border-green-500"
+        onPress={() => console.log(username)}
+      />
+    </>
+  );
+}
+
+function UserListPendingActions({ username }: { username: string }) {
+  const tActions = useTranslations('features.social.actions');
+  return (
+    <ButtonWithTooltip
+      label={tActions('reject')}
+      icon="close"
+      className="text-red-500 border-red-500"
+      onPress={() => console.log(username)}
+    />
+  );
+}
+
+function UserOnlineActions({ username }: { username: string }) {
+  const tActions = useTranslations('features.social.actions');
+  return (
+    <>
+      <ButtonWithTooltip
+        label={tActions('chat')}
+        icon="messages"
+        onPress={() => console.log(username)}
+      />
+      <ButtonWithTooltip
+        label={tActions('inviteToGame')}
+        icon="gamepad"
+        onPress={() => console.log(username)}
+      />
+    </>
+  );
+}
+
+function UserOfflineActions({ username }: { username: string }) {
+  const tActions = useTranslations('features.social.actions');
+  return (
+    <ButtonWithTooltip
+      label={tActions('chat')}
+      icon="messages"
+      onPress={() => console.log(username)}
+    />
+  );
+}
+
+function UsersList({
+  friends,
+  type,
+}: {
+  friends: UserItemProps[];
+  type: 'request' | 'pending' | 'online' | 'offline';
+}) {
+  return friends.map(({ username, subtitle, avatarUrl, className }) => (
     <UserItem
       username={username}
       subtitle={subtitle}
       avatarUrl={avatarUrl}
       className={className}
-      actions={
-        <Stack direction="horizontal" gap="xs">
-          <TooltipTrigger label={tActions('reject')} placement="top">
-            <Button
-              w="auto"
-              size="icon"
-              variant="secondary"
-              icon={<Icon name="close" />}
-              aria-label={tActions('reject')}
-              className="text-red-500 border-red-500"
-            />
-          </TooltipTrigger>
-          <TooltipTrigger label={tActions('accept')} placement="top">
-            <Button
-              w="auto"
-              size="icon"
-              variant="secondary"
-              icon={<Icon name="check" />}
-              aria-label={tActions('accept')}
-              className="text-green-500 border-green-500"
-            />
-          </TooltipTrigger>
-        </Stack>
-      }
-    />
-  );
+      key={username}
+    >
+      {type === 'request' && <UserListRequestActions username={username} />}
+      {type === 'pending' && <UserListPendingActions username={username} />}
+      {type === 'online' && <UserOnlineActions username={username} />}
+      {type === 'offline' && <UserOfflineActions username={username} />}
+    </UserItem>
+  ));
 }
 
 function FriendsList() {
   const t = useTranslations('features.social.friends');
-
   const onlineFriends = [
-    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png' },
-    { id: 2, username: 'mfontser', avatarUrl: '/avatars/avatar-2.png' },
+    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png', subtitle: t('online') },
+    { id: 2, username: 'mfontser', avatarUrl: '/avatars/avatar-2.png', subtitle: t('online') },
   ];
 
-  const offlineFriends = [{ id: 3, username: 'joanavar', avatarUrl: '/avatars/avatar-3.png' }];
+  const offlineFriends = [
+    { id: 3, username: 'joanavar', avatarUrl: '/avatars/avatar-3.png', subtitle: t('offline') },
+  ];
 
   return (
-    <Stack className="divide-y divide-border-primary/50">
-      <Disclosure className="border-b-0">
-        <DisclosureTrigger className="px-6" title={`${t('online')} (${onlineFriends.length})`} />
-        <DisclosurePanel className="pb-0">
-          <Stack gap="none" className="px-6 divide-y divide-border-primary/30">
-            {onlineFriends.map((friend) => (
-              <FriendItem
-                key={friend.id}
-                username={friend.username}
-                avatarUrl={friend.avatarUrl}
-                subtitle={t('online')}
-              />
-            ))}
-          </Stack>
-        </DisclosurePanel>
-      </Disclosure>
+    <>
+      <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
+        <UsersList friends={onlineFriends} type="online" />
+      </DisclosureFull>
 
-      <Disclosure className="mt-1 border-b-0">
-        <DisclosureTrigger className="px-6" title={`${t('offline')} (${offlineFriends.length})`} />
-        <DisclosurePanel className="pb-0">
-          <Stack gap="none" className="px-6 divide-y divide-border-primary/30">
-            {offlineFriends.map((friend) => (
-              <FriendItem
-                key={friend.id}
-                username={friend.username}
-                avatarUrl={friend.avatarUrl}
-                subtitle={t('offline')}
-                showGameAction={false}
-              />
-            ))}
-          </Stack>
-        </DisclosurePanel>
-      </Disclosure>
-    </Stack>
+      <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
+        <UsersList friends={offlineFriends} type="offline" />
+      </DisclosureFull>
+    </>
   );
 }
 
@@ -174,38 +164,21 @@ function RequestsList() {
       id: 1,
       username: 'cmanica-',
       avatarUrl: '/avatars/avatar-4.png',
-      subtitleKey: 'sentSubtitle',
+      subtitle: 'sentSubtitle',
     },
   ];
 
   return (
     <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
-      <Stack className="divide-y divide-border-primary/50">
-        <Disclosure id="received" className="border-b-0">
-          <DisclosureTrigger className="px-6" title={`${t('received')} (${requests.length})`} />
-          <DisclosurePanel className="pb-0">
-            <Stack gap="none" className="px-6 divide-y divide-border-primary/30">
-              {requests.map((req) => (
-                <RequestItem
-                  key={req.id}
-                  username={req.username}
-                  avatarUrl={req.avatarUrl}
-                  subtitle={t(req.subtitleKey)}
-                />
-              ))}
-            </Stack>
-          </DisclosurePanel>
-        </Disclosure>
+      <DisclosureFull id="received" title={`${t('received')} (${requests.length})`}>
+        <UsersList friends={requests} type="request" />
+      </DisclosureFull>
 
-        <Disclosure id="sent" className="mt-1 border-b-0">
-          <DisclosureTrigger className="px-6" title={`${t('sent')} (0)`} />
-          <DisclosurePanel className="pb-0">
-            <Text variant="caption" color="tertiary" className="text-center py-6">
-              {t('noSentRequests')}
-            </Text>
-          </DisclosurePanel>
-        </Disclosure>
-      </Stack>
+      <DisclosureFull id="sent" title={`${t('sent')} (0)`}>
+        <Text variant="caption" color="tertiary" className="text-center py-6 px-3">
+          {t('noSentRequests')}
+        </Text>
+      </DisclosureFull>
     </DisclosureGroup>
   );
 }
@@ -215,28 +188,19 @@ export function SocialDashboard() {
 
   return (
     <aside className="flex h-full w-full flex-col bg-bg-primary/50 backdrop-blur-sm border-l border-border-primary overflow-hidden">
-      <Tabs defaultSelectedKey="friends" className="flex flex-col h-full">
-        <header className="px-6 pt-4 border-b border-border-primary">
-          <Stack gap="md">
-            <Text as="h1" variant="heading-md" className="font-bold">
-              {t('title')}
-            </Text>
+      <Stack gap="md" className="p-3">
+        <Text as="h1" variant="heading-md" className="font-bold">
+          {t('title')}
+        </Text>
+        <TextField labelKey={t('searchLabel')} />
+      </Stack>
+      <main className="pt-3">
+        <Tabs defaultSelectedKey="friends">
+          <TabList className="px-3">
+            <Tab id="friends">{t('friends.title')}</Tab>
+            <Tab id="requests">{t('requests.title')}</Tab>
+          </TabList>
 
-            <Stack gap="xs">
-              <Text variant="caption" color="secondary" className="font-medium">
-                {t('searchLabel')}
-              </Text>
-              <Input />
-            </Stack>
-
-            <TabList>
-              <Tab id="friends">{t('friends.title')}</Tab>
-              <Tab id="requests">{t('requests.title')}</Tab>
-            </TabList>
-          </Stack>
-        </header>
-
-        <main className="flex-1 overflow-y-auto pb-2">
           <TabPanel id="friends" className="outline-none">
             <FriendsList />
           </TabPanel>
@@ -244,8 +208,8 @@ export function SocialDashboard() {
           <TabPanel id="requests" className="outline-none">
             <RequestsList />
           </TabPanel>
-        </main>
-      </Tabs>
+        </Tabs>
+      </main>
     </aside>
   );
 }
