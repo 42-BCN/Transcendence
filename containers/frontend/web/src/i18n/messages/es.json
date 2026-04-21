@@ -402,6 +402,29 @@
       "fail": "No se pudo cargar tu perfil.",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"
+    },
+    "social": {
+      "title": "Social",
+      "searchPlaceholder": "Buscar entre tus amigos o añadir nuevos",
+      "searchLabel": "Buscar usuarios",
+      "friends": {
+        "title": "Amigos",
+        "online": "Amigos conectados",
+        "offline": "Amigos desconectados"
+      },
+      "requests": {
+        "title": "Solicitudes",
+        "received": "Recibidas",
+        "sent": "Enviadas",
+        "sentSubtitle": "Enviado hace 2 días",
+        "noSentRequests": "No hay solicitudes enviadas pendientes"
+      },
+      "actions": {
+        "inviteToGame": "Invitar a partida",
+        "chat": "Chat",
+        "reject": "Rechazar",
+        "accept": "Aceptar"
+      }
     }
   },
   "validation": {

@@ -6,7 +6,7 @@ export const disclosureStyles = {
   container: (className?: string) => cn('group', disclosureBase, className),
   trigger: (className?: string) =>
     cn(
-      'flex w-full items-center justify-between py-5 cursor-pointer outline-none transition-colors',
+      'flex w-full items-center justify-between py-3 cursor-pointer outline-none transition-colors',
       'text-text-secondary data-[hovered]:text-text-primary',
       'data-[expanded]:text-text-primary',
       'data-[focus-visible]:ring-2 data-[focus-visible]:ring-black data-[focus-visible]:ring-offset-2',

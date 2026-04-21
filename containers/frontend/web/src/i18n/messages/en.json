@@ -402,6 +402,29 @@
       "fail": "Could not load your profile.",
       "userId": "User ID",
       "username": "Username"
+    },
+    "social": {
+      "title": "Social",
+      "searchPlaceholder": "Search among your friends or add new ones",
+      "searchLabel": "Search users",
+      "friends": {
+        "title": "Friends",
+        "online": "Friends online",
+        "offline": "Friends offline"
+      },
+      "requests": {
+        "title": "Requests",
+        "received": "Received",
+        "sent": "Sent",
+        "sentSubtitle": "Sent 2 days ago",
+        "noSentRequests": "No pending sent requests"
+      },
+      "actions": {
+        "inviteToGame": "Invite to Game",
+        "chat": "Chat",
+        "reject": "Reject",
+        "accept": "Accept"
+      }
     }
   },
   "validation": {
