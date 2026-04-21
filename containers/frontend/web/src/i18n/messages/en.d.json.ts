@@ -107,8 +107,10 @@ declare const messages: {
           "meter": "Meter",
           "scrollArea": "Scroll Area",
           "textArea": "Text Area",
+          "tabsDisclosure": "Tabs & Disclosure",
           "themeTest": "Theme Test",
-          "typography": "Typography"
+          "typography": "Typography",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Button primitive",
@@ -187,11 +189,55 @@ declare const messages: {
         "tertiaryText": "Tertiary Text",
         "disabledText": "Disabled Text"
       },
+      "tabsDisclosure": {
+        "title": "Navigation Components",
+        "description": "Technical demonstration of Tabs and Disclosure (Accordion).",
+        "tabs": {
+          "sectionsLabel": "Social sections",
+          "friends": "Friends",
+          "requests": "Requests"
+        },
+        "disclosure": {
+          "friendsOnline": "Friends online (12)",
+          "friendsOffline": "Friends offline (30)",
+          "received": "Received (5)",
+          "sent": "Sent (10)",
+          "friendsListHint": "Simplified friends list...",
+          "receivedHint": "Incoming requests arrived recently.",
+          "sentHint": "Requests you have sent to other users.",
+          "statusOnline": "(Online)",
+          "statusOffline": "(Offline)"
+        }
+      },
       "scrollArea": {
         "title": "Scroll Area",
         "description": "This component is a div that takes a height of 100% and creates a scrollable area.",
         "example": "Example",
         "itemLabel": "Item"
+      },
+      "social": {
+        "title": "Social Components Test",
+        "description": "Testing Avatar primitives and UserItem composites.",
+        "avatarsTitle": "1. Avatar Sizes & Fallback",
+        "avatarSizes": {
+          "sm": "Small",
+          "md": "Medium",
+          "lg": "Large",
+          "fallback": "Fallback"
+        },
+        "userItemsTitle": "2. UserItem Variants",
+        "socialListLabel": "Social List Examples",
+        "status": {
+          "online": "Online",
+          "sent": "Sent 2 days ago"
+        },
+        "actions": {
+          "playGame": "Play Game",
+          "sendMessage": "Send Message",
+          "acceptRequest": "Accept Request",
+          "rejectRequest": "Reject Request",
+          "addFriend": "Add Friend"
+        }
       }
     },
     "terms": {
@@ -324,8 +370,7 @@ declare const messages: {
       },
       "messages": {
         "or": "OR",
-        "success": "Email sent. Wait before trying again.",
-        "submitting": "Submitting..."
+        "success": "Email sent. Wait before trying again."
       }
     },
     "navigation": {
@@ -335,7 +380,7 @@ declare const messages: {
       "menu": "Menu",
       "mainAriaLabel": "Main navigation",
       "ui": "UI",
-      "robots": "Robots",
+      "game": "Game",
       "profile": "Profile",
       "logout": "Logout",
       "settings": "Settings"

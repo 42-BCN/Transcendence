@@ -6,6 +6,7 @@ function required(value: string | undefined, name: string): string {
 export const envPublic = {
   appUrl: required(process.env.NEXT_PUBLIC_APP_URL, 'NEXT_PUBLIC_APP_URL'),
   apiBaseUrl: required(process.env.NEXT_PUBLIC_API_BASE_URL, 'NEXT_PUBLIC_API_BASE_URL'),
+  socketUrl: required(process.env.NEXT_PUBLIC_SOCKET_URL, 'NEXT_PUBLIC_SOCKET_URL'),
   localeCookieName: required(
     process.env.NEXT_PUBLIC_LOCALE_COOKIE_NAME,
     'NEXT_PUBLIC_LOCALE_COOKIE_NAME',

@@ -1,6 +1,6 @@
 import type { Namespace, Socket } from 'socket.io';
 import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
-import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint } from './utils';
+import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory } from './utils';
 
 const playerIds: string[] = ['assassin', 'paladin', 'mage', 'alchemist'].reverse();
 const users: Record<string, string> = {};
@@ -30,11 +30,11 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       socket.on('game:client:showMoveRange', (diceValue: number) => {
         if (!gameState.clients[role] || !role)
           return;
-        if (gameState.players[role].hasMoved === true)
+        if (gameState.clients[role].selectedEnt.startsWith('clone_'))
           return (console.log(role, 'has already moved'));
         console.log('Received move range event with dice:',
           diceValue, 'for character', role);
-        const hlId = dijkstra(gameState.players[role].position, diceValue)
+        const hlId = dijkstra(role, gameState.players[role].position, diceValue)
         const hlTiles: Record<string, boolean> = {};
         hlId.forEach((id: string) => (hlTiles[id] = true));
         setClear(role);
@@ -49,7 +49,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         console.log('Received move range event with dice:',
           diceValue, 'for character', role);
         gameState.clients[role].selectedDice = diceValue;
-        const hlId = dijkstra(gameState.players[role].position, diceValue)
+        const hlId = dijkstra(role, gameState.players[role].position, diceValue)
         const hlTiles: Record<string, boolean> = {};
         hlId.forEach((id: string) => (hlTiles[id] = true));
         gameState.clients[role].highlights = hlTiles;
@@ -115,18 +115,16 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         gameState.clients[role].selectedDice = null;
         gameState.clients[role].canSelect = true;
       });
-      socket.on('game:client:clearSelectedAb', () => {
+      socket.on('game:client:clearSelDice', () => {
         if (!gameState.clients[role] || !role)
           return;
-        console.log('Received highlight clear event for character', users[socket.id]);
-        gameState.clients[role].selectedAb = null
+        console.log('Received selected dice clear event for character', users[socket.id]);
         gameState.clients[role].selectedDice = null;
-        gameState.clients[role].canSelect = true;
       });
       socket.on('game:client:moveClone', (tileId: string) => {
         console.log('Received move clone event for character', users[socket.id]);
         const client = gameState.clients[role];
-        if (!client || !role)
+        if (!client || !role || !tileId)
           return;
         if (!client.highlights[tileId] || !client.selectedEnt || !client.selectedDice)
           return;
@@ -141,8 +139,8 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           id: cloneId,
           type: 'clone',
           dice: source.dice.toSpliced(
-            source.dice.indexOf(client.selectedDice), 1),
-          usedDice: [...source.usedDice, client.selectedDice].sort((a, b) => a - b),
+            source.dice.indexOf(gameState.clients[role].selectedDice), 1),
+          usedDice: [...source.usedDice, gameState.clients[role].selectedDice].sort((a, b) => a - b),
           hasMoved: true,
           position: dest,
         };
@@ -150,47 +148,51 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         socket.emit('game:server:sync', gameState.clients[role]);
         nsp.emit('game:server:globalSync', gameState);
       });
-
-      //   socket.on('game:client:moveClone', (tileId: string) => {
-      //     console.log('Received move Clone event to tile:', tileId,
-      //       'for character', users[socket.id]);
-      //     if (!gameState.clients[role] || !role)
-      //       return;
-      //     console.log('Received move Clone event to tile:', tileId,
-      //       'for character', users[socket.id]);
-      //     if (!gameState.clients[role].highlights[tileId]
-      //       || !gameState.clients[role].selectedEnt
-      //       || !gameState.clients[role].selectedDice)
-      //       return;
-      //     const [x, y, z] = tileId.split(',').map(Number);
-      //     const dest = { x, y: (y + 1), z };
-      //     const ent = gameState.players[gameState.clients[role].selectedEnt];
-      //     if (!ent)
-      //       return;
-      //     // addHistory(gameState.clients[role].selectedEnt, "mov", tileId);
-      //     const cloneid = `clone_${role}`
-      //     gameState.clones[cloneid] = {
-      //       ...gameState.players[role],
-      //       id: cloneid,
-      //       type: "clone",
-      //       dice: gameState.players[role].dice.toSpliced(
-      //         gameState.players[role].dice.indexOf(gameState.clients[role].selectedDice), 1),
-      //       usedDice: [...gameState.players[role].usedDice, gameState.clients[role].selectedDice].sort((a, b) => a - b),
-      //       hasMoved: true,
-      //       position: dest
-      //     }
-      //     setClear(role);
-      //     socket.emit('game:server:sync', gameState.clients[role]);
-      //     nsp.emit('game:server:globalSync', gameState);
-      //   });
-      // }
-      socket.on('disconnect', () => {
-        if (role) {
-          playerIds.push(role);
-          delete users[socket.id];
-          delete gameState.clients[role]
-          console.log(role, 'disconnected, role', playerIds[playerIds.length - 1], 'is available again.');
+      socket.on('game:client:addHistoryAbility', (target: string) => {
+        console.log('selected ent:', gameState.clients[role].selectedEnt);
+        console.log('selected dice:', gameState.clients[role].selectedDice);
+        console.log('selected ab:', gameState.clients[role].selectedAb);
+        const entid = gameState.clients[role].selectedEnt;
+        const seldice = gameState.clients[role].selectedDice;
+        if (!entid || !seldice || !gameState.clients[role].selectedAb)
+          return (console.log("Couldn't add ability to history!"));
+        addHistory(entid, "ability", target, seldice, gameState.clients[role].selectedAb);
+        const source = gameState.players[entid] || gameState.clones[entid];
+        if (source.type === "player") {
+          setClear(role);
+          gameState.players[entid] = {
+            ...gameState.players[entid],
+            dice: source.dice.toSpliced(
+              source.dice.indexOf(seldice), 1),
+            usedDice: [...source.usedDice, seldice].sort((a, b) => a - b),
+          }
+        }
+        else if (source.type === "clone") {
+          setClear(role);
+          gameState.clones[entid] = {
+            ...gameState.clones[entid],
+            dice: source.dice.toSpliced(
+              source.dice.indexOf(seldice), 1),
+            usedDice: [...source.usedDice, seldice].sort((a, b) => a - b),
+          }
         }
       });
-    })
+
+      // INFO: helpers/debug
+      socket.on('game:client:sync', () => {
+        socket.emit('game:server:sync', gameState.clients[role]);
+      });
+      socket.on('game:client:globalSync', () => {
+        nsp.emit('game:server:globalSync', gameState);
+      });
+    }
+    socket.on('disconnect', () => {
+      if (role) {
+        playerIds.push(role);
+        delete users[socket.id];
+        delete gameState.clients[role]
+        console.log(role, 'disconnected, role', playerIds[playerIds.length - 1], 'is available again.');
+      }
+    });
+  })
 }

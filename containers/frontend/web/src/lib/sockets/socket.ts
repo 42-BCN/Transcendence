@@ -1,10 +1,10 @@
 import { io, type Socket } from 'socket.io-client';
 
+import { envPublic } from '@/lib/config/env.public';
 import type {
   ServerToClientChatEvents,
   ClientToServerChatEvents,
 } from '@/contracts/sockets/chat/chat.schema';
-// TODO socket url as env variable
 
 import type {
   ServerToClientGameEvents,
@@ -32,16 +32,41 @@ export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEven
   },
 );
 
+export async function ensureChatSessionIdentity(): Promise<void> {
+  const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/guest/session`;
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to initialize chat session identity (${response.status})`);
+  }
+}
+
+const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
+const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
+//const gameSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
+
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
-  'http://localhost:3100/robots',
+  robotsSocketUrl,
   {
     autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
   },
 );
 
 export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEvents> = io(
-  'http://localhost:3100/chat',
+  chatSocketUrl,
   {
     autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+    auth: {},
   },
 );

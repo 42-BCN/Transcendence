@@ -9,6 +9,26 @@ export {
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
+export {
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  type TabsProps,
+  type TabListProps,
+  type TabProps,
+  type TabPanelProps,
+} from './controls/tabs';
+export {
+  Disclosure,
+  DisclosureGroup,
+  DisclosureTrigger,
+  DisclosurePanel,
+  type DisclosureProps,
+  type DisclosureGroupProps,
+  type DisclosureTriggerProps,
+  type DisclosurePanelProps,
+} from './controls/disclosure';
 export { Tooltip } from './controls/tooltip';
 export { ApiFeedback } from './composites/api-feedback/api-feedback';
 export { FormTitle } from './composites/form-title/form-title';
@@ -26,9 +46,11 @@ export { CheckboxField, type CheckboxFieldProps } from './composites/checkbox-fi
 export { TextAreaField, type TextAreaFieldProps } from './composites/text-area-field';
 export { ContentSection } from './composites/content-section';
 export { TextField, type TextFieldProps } from './composites/text-field';
+export { UserItem, type UserItemProps } from './composites/user-item';
 export { TooltipTrigger } from './composites/tooltip-trigger';
 
 export { AuthPageLayout, type AuthPageLayoutProps } from './primitives/auth-page-layout';
+export { Avatar, type AvatarProps } from './primitives/avatar';
 export { Columns12Overlay, Grid4Overlay, Grid8Overlay } from './primitives/base-grid';
 export { GlassCard, type GlassCardProps } from './primitives/glass-card';
 export {

@@ -4,7 +4,6 @@ import { ResetPasswordReqSchema, RecoverReqSchema } from '@contracts/auth/auth.v
 import { validateBody } from '@shared/validation.middleware';
 
 import { recoveryRateLimit } from './recovery.rate-limit';
-
 import { postRecover, postResetPassword } from './recovery.controller';
 
 export const recoveryRouter = Router();

@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
 
-import type { UserPublicResponse, UsersListResponse } from '@contracts/users/users.contracts';
-import type { GetUserByIdParam, GetUsersQuery } from '@contracts/users/users.validation';
+import type { UserPublicResponse, UsersListResponse, SearchUsersResponse } from '@contracts/users/users.contracts';
+import type { GetUserByIdParam, GetUsersQuery, SearchUsersQuery } from '@contracts/users/users.validation';
 
-import { getUsers, findUserById, userByUsername } from './users.service';
+import { getUsers, findUserById, userByUsername, searchUsers } from './users.service';
 
 type Locals = { query: GetUsersQuery };
 
@@ -43,4 +43,14 @@ export async function getUserByUsername(
   const result = await userByUsername(req.params.username);
 
   res.status(200).json({ ok: true, data: result });
+}
+
+export async function searchUsersController(
+  req: Request,
+  res: Response<SearchUsersResponse, { query: SearchUsersQuery }>,
+): Promise<void> {
+  const { q, limit } = res.locals.query;
+  const currentUserId = req.session.userId!;
+  const results = await searchUsers(q, limit, currentUserId);
+  res.status(200).json({ ok: true, data: { users: results } });
 }

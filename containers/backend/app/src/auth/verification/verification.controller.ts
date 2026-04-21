@@ -60,6 +60,8 @@ export async function postVerifyEmail(
   req.session.regenerate((regenErr) => {
     if (regenErr) return sendError(res, 'AUTH_INTERNAL_ERROR');
     req.session.userId = user.id;
+    req.session.guestId = undefined;
+    req.session.guestUsername = undefined;
     req.session.save((saveErr) => {
       if (saveErr) return sendError(res, 'AUTH_INTERNAL_ERROR');
       res.status(200).json({ ok: true, data: null });

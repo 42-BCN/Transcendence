@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --experimental-https --experimental-https-key /certs/localhost.key --experimental-https-cert /certs/localhost.crt --experimental-https-ca /certs/ca.pem",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint src scripts --cache",

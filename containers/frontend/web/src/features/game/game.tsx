@@ -21,9 +21,13 @@ function AbButtons() {
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
+  const clearSelectedDice = useGame((state) => state.clearSelectedDice);
   const clearSelectables = useGame((state) => state.clearSelectables);
-  const clearSelectedAb = useGame((state) => state.clearSelectedAb);
+  const highlights = useGame((state) => state.highlights);
+  const clearHighlights = useGame((state) => state.clearHighlights);
+  const dice = useGame((state) => state.selectedDice);
   const showAbRange = useGame((state) => state.showAbRange);
+  let id = ent.id.startsWith("clone_") ? ent.id.replace("clone_", "") : ent.id;
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map((ability) => (
@@ -31,6 +35,7 @@ function AbButtons() {
           onPointerOver={(event) => {
             event.stopPropagation();
             showAbRange(ability);
+            clearHighlights(ability);
           }}
           onPointerOut={(event) => {
             event.stopPropagation();
@@ -38,7 +43,7 @@ function AbButtons() {
               clearSelectables();
           }}
           onPress={() => {
-            if (assignedCharacter === ent.id)
+            if (assignedCharacter === id)
               selectAbility(ability);
           }}>
           {ability}
@@ -112,7 +117,11 @@ function Reset() {
       className="absolute z-10 top-8 left-8"
       variant="primary"
       w="default"
-      onPress={() => resetHistory(selectedEnt)}
+      onPress={() => {
+        console.log('before:', history);
+        resetHistory(selectedEnt);
+        console.log('after:', history);
+      }}
     >
       {t('resetPlan')}
     </Button>
@@ -175,8 +184,7 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   if (isHighlighted && !selectedAb) color = 'hotpink';
   else if (isSelectable) color = 'red';
   else if (isHovered) color = 'lightgray';
-  if (color === 'hotpink' && isHovered) color = 'lightpink';
-  if (color === 'red' && isHovered) color = 'lightpink';
+  if ((color === 'hotpink' || color === 'red') && isHovered) color = 'lightpink';
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}

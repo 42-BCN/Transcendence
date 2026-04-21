@@ -24,7 +24,7 @@
     "smoke:friends:test": "dotenv -e .env.test -- tsx scripts/smoke/friends.smoke.ts",
     "smoke:dev": "npm run prisma:db:push:dev && npm run db:seed:dev && npm run smoke:auth:dev && npm run smoke:friends:dev",
     "smoke:test": "npm run db:reset:test && npm run prisma:db:push:test && npm run db:seed:test && npm run smoke:auth:test && npm run smoke:friends:test",
-    "smoke:friendships": "dotenv -e .env.development -- node scripts/smoke-friendships.mjs"
+    "smoke:friendships": "dotenv -e .env.development -- sh -c 'NODE_TLS_REJECT_UNAUTHORIZED=0 node scripts/smoke-friendships.mjs'"
   },
   "prisma": {
     "seed": "tsx scripts/seed.ts"

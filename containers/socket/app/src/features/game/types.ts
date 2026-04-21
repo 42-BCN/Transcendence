@@ -85,7 +85,6 @@ export type serverGameState = {
 }
 
 export type clientGameState = {
-  id: string,
   highlights: Record<string, boolean>;
   selectables: Record<string, boolean>;
   canSelect: boolean;

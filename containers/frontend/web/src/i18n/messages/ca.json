@@ -104,8 +104,10 @@
           "meter": "Mesurador",
           "scrollArea": "Àrea de desplaçament",
           "textArea": "Àrea de text",
+          "tabsDisclosure": "Pestanyes i Acordions",
           "themeTest": "Prova del tema",
-          "typography": "Tipografia"
+          "typography": "Tipografia",
+          "social": "Social"
         },
         "viewerTitles": {
           "buttonPrimitive": "Botó primitiu",
@@ -184,11 +186,55 @@
         "tertiaryText": "Text terciari",
         "disabledText": "Text deshabilitat"
       },
+      "tabsDisclosure": {
+        "title": "Components de Navegació",
+        "description": "Demostració tècnica de Tabs i Disclosure (Acordions).",
+        "tabs": {
+          "sectionsLabel": "Seccions socials",
+          "friends": "Amics",
+          "requests": "Sol·licituds"
+        },
+        "disclosure": {
+          "friendsOnline": "Amics connectats (12)",
+          "friendsOffline": "Amics desconnectats (30)",
+          "received": "Rebudes (5)",
+          "sent": "Enviades (10)",
+          "friendsListHint": "Llista d'amics simplificada...",
+          "receivedHint": "Sol·licituds entrants arribades recentment.",
+          "sentHint": "Sol·licituds que tu has enviat a altres usuaris.",
+          "statusOnline": "(Connectat)",
+          "statusOffline": "(Desconnectat)"
+        }
+      },
       "scrollArea": {
         "title": "Àrea de desplaçament",
         "description": "Aquest component és un div que ocupa una alçada del 100% i crea una àrea de desplaçament.",
         "example": "Exemple",
         "itemLabel": "Element"
+      },
+      "social": {
+        "title": "Prova de Components Socials",
+        "description": "Provant primitius d'Avatar i compostos d'UserItem.",
+        "avatarsTitle": "1. Mides d'Avatar i Imatge per Defecte",
+        "avatarSizes": {
+          "sm": "Petit",
+          "md": "Mitjà",
+          "lg": "Gran",
+          "fallback": "Per Defecte"
+        },
+        "userItemsTitle": "2. Variants d'UserItem",
+        "socialListLabel": "Exemples de Llistes Socials",
+        "status": {
+          "online": "En línia",
+          "sent": "Enviat fa 2 dies"
+        },
+        "actions": {
+          "playGame": "Jugar",
+          "sendMessage": "Enviar Missatge",
+          "acceptRequest": "Acceptar Sol·licitud",
+          "rejectRequest": "Rebutjar Sol·licitud",
+          "addFriend": "Afegir Amic"
+        }
       }
     },
     "terms": {
@@ -309,6 +355,7 @@
         "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
         "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "rememberedPassword": "Has recordat la teva contrasenya?",
         "backToLogin": "Torna a iniciar sessió"
       },
       "reset": {
@@ -321,8 +368,7 @@
       },
       "messages": {
         "or": "O",
-        "resendSuccess": "✓ Correu enviat. Espera per tornar-ho a intentar.",
-        "resendError": "✗ No s'ha pogut enviar. Torna-ho a intentar."
+        "success": "Correu enviat. Espera per tornar-ho a intentar."
       }
     },
     "navigation": {
@@ -332,7 +378,7 @@
       "menu": "Menú",
       "mainAriaLabel": "Navegació principal",
       "ui": "UI",
-      "robots": "Robots",
+      "game": "Joc",
       "profile": "Perfil",
       "logout": "Tancar sessió",
       "settings": "Configuració"
@@ -384,6 +430,6 @@
     "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard."
   }
 }

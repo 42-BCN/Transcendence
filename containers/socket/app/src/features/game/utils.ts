@@ -27,12 +27,135 @@ export function initClientGameState(id: string) {
 }
 
 export function setClear(id: string) {
-  gameState.clients[id].id = id;
+  if (!gameState?.clients[id])
+    return;
   gameState.clients[id].highlights = {};
   gameState.clients[id].selectables = {};
   gameState.clients[id].canSelect = true;
   gameState.clients[id].selectedAb = null;
   gameState.clients[id].selectedDice = null;
+}
+
+export function resetHistory(id: string) {
+  const newHistory = gameState.history.filter((action) => action.who !== id);
+  const { [`clone_${id}`]: _, ...remainingClones } = gameState.clones;
+  const player = gameState.players[id];
+  gameState.history = [...newHistory];
+  gameState.players[id] = {
+    ...player,
+    dice: [...player.dice, ...player.usedDice].sort((a, b) => a - b),
+    usedDice: [],
+    hasMoved: false,
+  }
+  gameState.clones = { ...remainingClones };
+}
+
+// export function addHistory(id: string, type: string, target: string, dice: number, ability: string) {
+// const who = id.startsWith("clone_") ? id.replace("clone_", "") : id;
+// const exists = gameState.history.some((h) => h.who === who);
+//    const ent = state.players[id] || state.enemies[id] || state.clones[id];
+
+
+// if (!exists && len >= 4)
+//   return;
+// console.log("history: ", gameState.history);
+// let lastAction = null;
+// const newHistory = [...gameState.history];
+// //getprev
+// for (let i = 0; i < len; ++i) {
+//   if (who !== newHistory[i].who)
+//     continue;
+//   [lastAction] = newHistory.splice(i, 1);
+//   break;
+// }
+// if (!lastAction) {
+//   newHistory.push({
+//     who: who,
+//     moveto: type === "mov" ? target : null,
+//     abilities: type === "ability" ? [{ name: ability, target: target, dice: dice, aftermov: false }] : [],
+//   });
+//   console.log("newHistory: ", newHistory);
+//   return { history: newHistory };
+// }
+// const newAction = { ...lastAction };
+// if (type === "ability") {
+//   const aftermov = Boolean(lastAction.moveto) && id !== who;
+//   newAction.abilities = [...(lastAction.abilities || []), {
+//     name: ability,
+//     target: target,
+//     dice: dice,
+//     aftermov: aftermov
+//   }];
+//   if (lastAction.moveto && !aftermov) {
+//     const { [`clone_${who}`]: _, ...remainingClones } = gameState.clones;
+//     newAction.moveto = null;
+//     newHistory.push(newAction);
+//     console.log("newHistory from inside the clone deletion: ", newHistory);
+//     return { clones: { ...remainingClones }, history: newHistory };
+//   }
+// }
+// else if (type === "mov") {
+//   newAction.moveto = target;
+//   newAction.abilities = lastAction.abilities?.filter((ab) => ab.aftermov === false) || [];
+// }
+// newHistory.push(newAction);
+// console.log("newHistory: ", newHistory);
+// return { history: newHistory };
+// }
+
+export function addHistory(id: string, type: string, target: string, dice: number, ability: string) {
+  const len = gameState.history.length;
+  const who = id.startsWith("clone_") ? id.replace("clone_", "") : id;
+  const exists = gameState.history.some((h) => h.who === who);
+
+  if (!exists && len >= 4)
+    return;
+  console.log("history: ", gameState.history);
+  let lastAction = null;
+  const newHistory = [...gameState.history];
+  //getprev
+  for (let i = 0; i < len; ++i) {
+    if (who !== newHistory[i].who)
+      continue;
+    [lastAction] = newHistory.splice(i, 1);
+    break;
+  }
+  if (!lastAction) {
+    newHistory.push({
+      who: who,
+      moveto: type === "mov" ? target : null,
+      abilities: type === "ability" ? [{ name: ability, target: target, dice: dice, aftermov: false }] : [],
+    });
+    console.log("newHistory: ", newHistory);
+    gameState.history = newHistory;
+    return;
+  }
+  const newAction = { ...lastAction };
+  if (type === "ability") {
+    const aftermov = Boolean(lastAction.moveto) && id !== who;
+    newAction.abilities = [...(lastAction.abilities || []), {
+      name: ability,
+      target: target,
+      dice: dice,
+      aftermov: aftermov
+    }];
+    if (lastAction.moveto && !aftermov) {
+      const { [`clone_${who}`]: _, ...remainingClones } = gameState.clones;
+      newAction.moveto = null;
+      newHistory.push(newAction);
+      console.log("newHistory from inside the clone deletion: ", newHistory);
+      gameState.clones = { ...remainingClones };
+      gameState.history = newHistory;
+      return;
+    }
+  }
+  else if (type === "mov") {
+    newAction.moveto = target;
+    newAction.abilities = lastAction.abilities?.filter((ab) => ab.aftermov === false) || [];
+  }
+  newHistory.push(newAction);
+  console.log("newHistory: ", newHistory);
+  gameState.history = newHistory;
 }
 
 export async function moveTo(entId: string, tileId: string) {
@@ -301,7 +424,7 @@ export function paint(who: string, pos: pos, type: string, range: number, self: 
     default:
       valid = {};
   }
-  valid[gameState.clients[who].selectedEnt] = false;
+  valid[gameState.clients[who].selectedEnt] = false
   if (self)
     valid[gameState.clients[who].selectedEnt] = true;
   return (valid);
@@ -497,6 +620,19 @@ export function getAbility(name: string) {
   }
 }
 
+export function checkEntnc(id: string, x: number, y: number, z: number) {
+  const entities = [
+    ...Object.values(gameState.players),
+    ...Object.values(gameState.enemies),
+    ...[...Object.values(gameState.clones)].filter((clone) => clone.id != `clone_${id}`),
+  ];
+
+  return entities.find((e) =>
+    e.position.x === x
+    && e.position.y === y
+    && e.position.z === z);
+}
+
 export function checkEnt(x: number, y: number, z: number) {
   const entities = [
     ...Object.values(gameState.players),
@@ -522,12 +658,17 @@ export function isBlocked(x: number, y: number, z: number) {
   return (gameState.tiles[key] || checkEnt(x, y, z) ? true : false);
 }
 
+export function isBlockednc(id: string, x: number, y: number, z: number) {
+  const key = `${x},${y},${z}`;
+  return (gameState.tiles[key] || checkEntnc(id, x, y, z) ? true : false);
+}
+
 export function hasFloor(x: number, y: number, z: number) {
   return (y - 1 < 0 || (isBlocked(x, y - 1, z)
     && !checkEnt(x, y - 1, z)) ? true : false)
 }
 
-export function dijkstra(pos: pos, maxCost: number) {
+export function dijkstra(id: string, pos: pos, maxCost: number) {
   const initial = `${pos.x},${pos.y},${pos.z}`;
   const MOV = [
     [1, 0, 0], [-1, 0, 0],
@@ -551,7 +692,7 @@ export function dijkstra(pos: pos, maxCost: number) {
       const nx = x + dx;
       const ny = y + dy;
       const nz = z + dz;
-      if (isOOB(nx, ny, nz) || isBlocked(nx, ny, nz)
+      if (isOOB(nx, ny, nz) || isBlockednc(id, nx, ny, nz)
         || !hasFloor(nx, ny, nz))
         continue;
       const stepCost = dy === 1 ? 2 : 1;

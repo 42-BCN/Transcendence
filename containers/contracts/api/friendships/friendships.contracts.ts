@@ -6,6 +6,7 @@ export type FriendshipPublic = {
   id: string;
   friendUserId: string;
   friendUsername: string;
+  friendAvatar: string | null;
   status: 'pending' | 'accepted';
   isSender: boolean;
   createdAt: Date;
@@ -33,9 +34,9 @@ export type GetFriendshipsResponse = ApiResponse<
   ValidationErrorDetails
 >;
 
-export type GetReceivedRequestsOk = { requests: FriendshipPublic[] };
-export type GetReceivedRequestsResponse = ApiResponse<
-  GetReceivedRequestsOk,
+export type GetPendingRequestsOk = { requests: FriendshipPublic[] };
+export type GetPendingRequestsResponse = ApiResponse<
+  GetPendingRequestsOk,
   FriendshipsErrorName,
   ValidationErrorDetails
 >;
@@ -58,19 +59,19 @@ export type SendFriendRequestResponse = ApiResponse<
   ValidationErrorDetails
 >;
 
-export type AcceptRequestOk = { friendship: FriendshipPublic };
-export type AcceptRequestResponse = ApiResponse<
-  AcceptRequestOk,
-  FriendshipsErrorName,
-  ValidationErrorDetails
->;
-
 export type RespondFriendRequestOk = {
   friendship?: FriendshipPublic;
   action: 'accept' | 'reject';
 };
 export type RespondFriendRequestResponse = ApiResponse<
   RespondFriendRequestOk,
+  FriendshipsErrorName,
+  ValidationErrorDetails
+>;
+
+export type DeleteFriendshipOk = { deleted: true };
+export type DeleteFriendshipResponse = ApiResponse<
+  DeleteFriendshipOk,
   FriendshipsErrorName,
   ValidationErrorDetails
 >;

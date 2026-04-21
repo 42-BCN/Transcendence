@@ -60,6 +60,7 @@ export const routing = defineRouting({
     '/ui/meter': '/ui/meter',
     '/ui/scroll-area': '/ui/scroll-area',
     '/ui/text-area': '/ui/text-area',
+    '/ui/tabs-disclosure': '/ui/tabs-disclosure',
     '/ui/theme-test': '/ui/theme-test',
     '/ui/typography': '/ui/typography',
     '/robots': '/robots',
