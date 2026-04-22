@@ -1,9 +1,8 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Stack, Icon, InternalLink, Text } from '@components';
-import { useLocale } from 'next-intl';
 
 type BreadcrumbItem = {
   label: string;
@@ -24,7 +23,6 @@ function formatSegmentLabel(segment: string) {
 
 export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
   const pathname = usePathname();
-  const locale = useLocale();
   const t = useTranslations('components.breadcrumb');
 
   const getBreadcrumbItems = (): BreadcrumbItem[] => {
@@ -32,7 +30,6 @@ export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
 
     // Auto-generate breadcrumbs from current pathname
     const segments: string[] = pathname
-      .replace(`/${locale}`, '')
       .split('/')
       .filter((s: string) => s && s !== '(dashboard)' && s !== '(private)');
 
