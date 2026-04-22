@@ -16,9 +16,13 @@ import type {
 import { Icon } from '../../primitives/icon';
 import { disclosureStyles } from './disclosure.styles';
 
-export type DisclosureProps = AriaDisclosureProps;
-export type DisclosureGroupProps = AriaDisclosureGroupProps;
-export type DisclosurePanelProps = AriaDisclosurePanelProps;
+type StringClassName = {
+  className?: string;
+};
+
+export type DisclosureProps = Omit<AriaDisclosureProps, 'className'> & StringClassName;
+export type DisclosureGroupProps = Omit<AriaDisclosureGroupProps, 'className'> & StringClassName;
+export type DisclosurePanelProps = Omit<AriaDisclosurePanelProps, 'className'> & StringClassName;
 
 export function DisclosureGroup({ className, ...props }: DisclosureGroupProps) {
   return <AriaDisclosureGroup {...props} className={className} />;
@@ -26,30 +30,20 @@ export function DisclosureGroup({ className, ...props }: DisclosureGroupProps) {
 
 export function Disclosure({ className, children, ...props }: DisclosureProps) {
   return (
-    <AriaDisclosure
-      {...props}
-      className={(values) =>
-        disclosureStyles.container(typeof className === 'function' ? className(values) : className)
-      }
-    >
+    <AriaDisclosure {...props} className={disclosureStyles.container(className)}>
       {(values) => (typeof children === 'function' ? children(values) : children)}
     </AriaDisclosure>
   );
 }
 
-export type DisclosureTriggerProps = AriaButtonProps & {
-  title: string;
-};
+export type DisclosureTriggerProps = Omit<AriaButtonProps, 'className'> &
+  StringClassName & {
+    title: string;
+  };
 
 export function DisclosureTrigger({ title, className, ...props }: DisclosureTriggerProps) {
   return (
-    <AriaButton
-      {...props}
-      slot="trigger"
-      className={(values) =>
-        disclosureStyles.trigger(typeof className === 'function' ? className(values) : className)
-      }
-    >
+    <AriaButton {...props} slot="trigger" className={disclosureStyles.trigger(className)}>
       <span className={disclosureStyles.title()}>{title}</span>
       <Icon name="chevronDown" className={disclosureStyles.icon()} />
     </AriaButton>
@@ -57,12 +51,5 @@ export function DisclosureTrigger({ title, className, ...props }: DisclosureTrig
 }
 
 export function DisclosurePanel({ className, ...props }: DisclosurePanelProps) {
-  return (
-    <AriaDisclosurePanel
-      {...props}
-      className={(values) =>
-        disclosureStyles.panel(typeof className === 'function' ? className(values) : className)
-      }
-    />
-  );
+  return <AriaDisclosurePanel {...props} className={disclosureStyles.panel(className)} />;
 }

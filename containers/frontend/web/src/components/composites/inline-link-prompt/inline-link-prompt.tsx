@@ -1,4 +1,6 @@
-import { Stack, Text, InternalLink } from '@components';
+import { Stack } from '@components/primitives/stack';
+import { Text } from '@components/primitives/text';
+import { InternalLink } from '@components/controls/link';
 
 type InlineLinkPromptProps = {
   text: string;

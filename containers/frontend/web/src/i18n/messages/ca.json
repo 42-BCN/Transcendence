@@ -403,6 +403,29 @@
       "fail": "No s'ha pogut carregar el teu perfil.",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
+    },
+    "social": {
+      "title": "Social",
+      "searchPlaceholder": "Cerca entre els teus amics o afegeix-ne de nous",
+      "searchLabel": "Cercar usuaris",
+      "friends": {
+        "title": "Amics",
+        "online": "Amics connectats",
+        "offline": "Amics desconnectats"
+      },
+      "requests": {
+        "title": "Sol·licituds",
+        "received": "Rebudes",
+        "sent": "Enviades",
+        "sentSubtitle": "Enviat fa 2 dies",
+        "noSentRequests": "No hi ha sol·licituds pendents"
+      },
+      "actions": {
+        "inviteToGame": "Convidar a partida",
+        "chat": "Chat",
+        "reject": "Rebutjar",
+        "accept": "Acceptar"
+      }
     }
   },
   "validation": {
