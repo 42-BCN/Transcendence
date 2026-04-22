@@ -11,7 +11,7 @@ export default async function ProtectedLayout({ children }: { children: ReactNod
   return (
     <Stack className="p-5 pt-3 h-full" gap="md">
       <Breadcrumb />
-      <Stack direction="horizontal" gap="rg" align="center">
+      <Stack direction="horizontal" gap="regular" align="center">
         <Avatar src="" size="lg" />
         <div>
           <Text as="h2">{data.data.username}</Text>
