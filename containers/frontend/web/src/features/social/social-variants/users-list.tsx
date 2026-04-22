@@ -31,21 +31,17 @@ export function UsersList({ friends, type }: UsersListProps) {
   }
 
   return friends.map((item) => {
-    // Determine which data to show based on type
-    const isFriendship = 'requester' in item;
-    const user = isFriendship
-      ? type === 'request'
-        ? item.requester
-        : item.addressee
-      : (item as FriendPublic);
-
-    const id = isFriendship ? item.id : user.id;
+    // Standardize data from different contracts (FriendPublic vs FriendshipPublic)
+    const username =
+      'friendUsername' in item ? item.friendUsername : (item as FriendPublic).username;
+    const avatarUrl = 'friendAvatar' in item ? item.friendAvatar : (item as FriendPublic).avatar;
+    const id = item.id;
 
     return (
-      <UserItem username={user.username} avatarUrl={user.avatar ?? undefined} key={id}>
+      <UserItem username={username} avatarUrl={avatarUrl ?? undefined} key={id}>
         {type === 'request' && <RequestButtons friendshipId={id} />}
         {type === 'pending' && <PendingButton friendshipId={id} />}
-        {type === 'online' && <OnlineButtons username={user.username} friendshipId={id} />}
+        {type === 'online' && <OnlineButtons username={username} friendshipId={id} />}
         {type === 'offline' && <OfflineButtons friendshipId={id} />}
       </UserItem>
     );
