@@ -6,7 +6,7 @@ type StackBaseProps = {
   children?: ReactNode;
   className?: string;
   direction?: 'vertical' | 'horizontal';
-  gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg';
+  gap?: 'none' | 'xs' | 'sm' | 'rg' | 'md' | 'lg';
   align?: 'start' | 'center' | 'end' | 'stretch' | 'baseline';
   justify?: 'start' | 'center' | 'end' | 'between';
 };

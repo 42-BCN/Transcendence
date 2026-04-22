@@ -9,6 +9,7 @@ type UserPublicRow = {
 };
 
 type UserMeProfileRow = UserPublicRow & {
+  email: string;
   provider: 'local' | 'google';
 };
 
@@ -30,6 +31,7 @@ function mapUserRow(row: UserPublicRow): UserPublic {
 function mapUserMeProfileRow(row: UserMeProfileRow): UserMeProfile {
   return {
     ...mapUserRow(row),
+    email: row.email,
     provider: row.provider,
   };
 }
@@ -43,6 +45,7 @@ const userPublicSelect = {
 
 const userMeProfileSelect = {
   ...userPublicSelect,
+  email: true,
   provider: true,
 } as const;
 

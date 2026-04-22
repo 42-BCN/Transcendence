@@ -47,7 +47,8 @@ declare const messages: {
     },
     "notFound": {
       "title": "Page not found",
-      "description": "The page you're looking for doesn't exist."
+      "description": "The page you're looking for doesn't exist.",
+      "backToHome": "Back to Home"
     },
     "me": {
       "title": "My Account",

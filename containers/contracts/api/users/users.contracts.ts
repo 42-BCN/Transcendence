@@ -10,6 +10,7 @@ export type UserPublic = {
 };
 
 export type UserMeProfile = UserPublic & {
+  email: string;
   provider: 'local' | 'google';
 };
 

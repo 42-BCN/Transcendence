@@ -10,15 +10,13 @@ export async function Profile() {
     <div>{t('fail')}</div>
   ) : (
     <>
-      <Text as="h3" variant="body-sm">
-        {t('bio')}
-      </Text>
-      <Text>{data.data.bio}</Text>
-      <Text as="h3" variant="body-sm">
-        {t('provider')}
-      </Text>
-      <Text>{data.data.provider}</Text>
-      <InternalLink as="button" href="/me/edit">
+      <div className="flex-1">
+        <Text as="h3" variant="body-xs" className="text-text-secondary ">
+          {t('bio')}
+        </Text>
+        <Text variant="body-sm">{data.data.bio || 'no-bio'}</Text>
+      </div>
+      <InternalLink as="button" variant="cta" href="/me/edit">
         Edit profile
       </InternalLink>
       <InternalLink as="button" href="/me/reset-password">

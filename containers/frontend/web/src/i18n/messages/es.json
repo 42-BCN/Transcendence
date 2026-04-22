@@ -44,7 +44,8 @@
     },
     "notFound": {
       "title": "Página no encontrada",
-      "description": "La página que buscas no existe."
+      "description": "La página que buscas no existe.",
+      "backToHome": "Volver al inicio"
     },
     "me": {
       "title": "Mi Cuenta",

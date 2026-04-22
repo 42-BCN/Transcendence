@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { InternalLink, Stack, Text } from '@components';
+import { InternalLink, MessageBlock, Stack, Text } from '@components';
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -14,22 +14,12 @@ export default function PrivateError({ error, reset }: ErrorProps) {
   }, [error]);
 
   return (
-    <Stack gap="lg" align="center" className="min-h-[60vh] justify-center">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Something went wrong</h2>
-        <p className="text-text-secondary mb-4">
-          {error.message || 'An unexpected error occurred'}
-        </p>
-        <Stack direction="horizontal" gap="sm">
-          <button
-            onClick={reset}
-            className="px-4 py-2 bg-bg-secondary rounded-md hover:bg-bg-tertiary"
-          >
-            Try again
-          </button>
-          <InternalLink href="/">Back to Home</InternalLink>
-        </Stack>
-      </div>
+    <Stack align="center" className="min-h-[60vh] text-center" justify="center" gap="sm">
+      <MessageBlock
+        title="Something went wrong"
+        messages={[error.message || 'An unexpected error occurred']}
+      />
+      <InternalLink href="/">Back to Home</InternalLink>
     </Stack>
   );
 }

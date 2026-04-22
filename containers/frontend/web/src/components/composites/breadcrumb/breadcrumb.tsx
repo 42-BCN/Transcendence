@@ -64,12 +64,12 @@ export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
   if (breadcrumbItems.length === 0) return null;
 
   return (
-    <Stack direction="horizontal" align="center" gap="sm" className="mb-4">
+    <Stack direction="horizontal" align="center" gap="sm">
       {breadcrumbItems.map((item, index) => (
         <Stack key={item.href} direction="horizontal" align="center" gap="sm">
           {index > 0 && <Icon name="chevronRight" size={16} className="text-text-tertiary" />}
           {index === breadcrumbItems.length - 1 ? (
-            <Text variant="body-sm" className="text-text-secondary font-medium">
+            <Text variant="body-xs" className="text-text-secondary font-medium">
               {item.label}
             </Text>
           ) : (

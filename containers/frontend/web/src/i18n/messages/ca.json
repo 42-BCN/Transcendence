@@ -44,7 +44,8 @@
     },
     "notFound": {
       "title": "Pàgina no trobada",
-      "description": "La pàgina que busques no existeix."
+      "description": "La pàgina que busques no existeix.",
+      "backToHome": "Torna a l'inici"
     },
     "me": {
       "title": "El Meu Compte",
