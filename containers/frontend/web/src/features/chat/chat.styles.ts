@@ -1,6 +1,6 @@
 export const chatStyles = {
   wrapper:
-    'h-full bg-bg-primary/50 dark:bg-bg-primary/30 backdrop-blur-sm rounded-xl overflow-hidden border-l border-border-primary',
+    'h-[100dvh] bg-bg-primary/50 dark:bg-bg-primary/30 backdrop-blur-sm rounded-xl overflow-hidden border-l border-border-primary',
 
   header: {
     wrapper:
