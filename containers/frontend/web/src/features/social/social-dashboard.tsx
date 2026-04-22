@@ -20,12 +20,20 @@ import { UsersList } from './social-variants';
 function FriendsList() {
   const t = useTranslations('features.social.friends');
   const onlineFriends = [
-    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png', subtitle: t('online') },
-    { id: 2, username: 'mfontser', avatarUrl: '/avatars/avatar-2.png', subtitle: t('online') },
+    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png' /*, subtitle: t('online') */ },
+    {
+      id: 2,
+      username: 'mfontser',
+      avatarUrl: '/avatars/avatar-2.png' /*, subtitle: t('online') */,
+    },
   ];
 
   const offlineFriends = [
-    { id: 3, username: 'joanavar', avatarUrl: '/avatars/avatar-3.png', subtitle: t('offline') },
+    {
+      id: 3,
+      username: 'joanavar',
+      avatarUrl: '/avatars/avatar-3.png' /*, subtitle: t('offline') */,
+    },
   ];
 
   return (
@@ -49,7 +57,7 @@ function RequestsList() {
       id: 1,
       username: 'cmanica-',
       avatarUrl: '/avatars/avatar-4.png',
-      subtitle: 'sentSubtitle',
+      // subtitle: 'sentSubtitle',
     },
   ];
 

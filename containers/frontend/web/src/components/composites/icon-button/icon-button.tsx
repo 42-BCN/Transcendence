@@ -1,4 +1,6 @@
-import { type IconName, Button, TooltipTrigger, Icon } from '@components';
+import { Button } from '@components/controls/button';
+import { TooltipTrigger } from '@components/composites/tooltip-trigger';
+import { Icon, type IconName } from '@components/primitives/icon';
 
 export type IconButtonProps = {
   label: string;

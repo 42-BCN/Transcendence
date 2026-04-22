@@ -417,7 +417,7 @@
         "received": "Recibidas",
         "sent": "Enviadas",
         "sentSubtitle": "Enviado hace 2 días",
-        "noSentRequests": "No hay solicitudes enviadas pendientes"
+        "noSentRequests": "No hay solicitudes pendientes"
       },
       "actions": {
         "inviteToGame": "Invitar a partida",

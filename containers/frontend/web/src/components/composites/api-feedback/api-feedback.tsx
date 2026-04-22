@@ -1,6 +1,6 @@
 'use client';
 
-import { Text } from '@components';
+import { Text } from '@components/primitives/text';
 import { useTranslations } from 'next-intl';
 import { apiFeedbackStyles } from './api-feedback.styles';
 
