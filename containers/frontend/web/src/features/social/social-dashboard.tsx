@@ -23,8 +23,8 @@ function FriendsList() {
   const t = useTranslations('features.social.friends');
   const { friends, isLoading } = useSocialData();
 
-  const onlineFriends = friends.filter((f) => f.online);
-  const offlineFriends = friends.filter((f) => !f.online);
+  const onlineFriends = friends.filter((f) => f.isOnline);
+  const offlineFriends = friends.filter((f) => !f.isOnline);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
