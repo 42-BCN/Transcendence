@@ -1,7 +1,5 @@
 import { useTranslations } from 'next-intl';
 import { IconButton } from '@/components/composites/icon-button/icon-button';
-import { useSocialActions } from '../hooks/use-social-actions';
-
 export function OnlineButtons({
   username,
   friendshipId,
@@ -10,7 +8,6 @@ export function OnlineButtons({
   friendshipId: string;
 }) {
   const tActions = useTranslations('features.social.actions');
-  const { handleDelete } = useSocialActions();
 
   return (
     <>
