@@ -9,11 +9,8 @@ export async function ChangePasswordFeature() {
 
   return (
     <>
-      <Text as="h1" variant="heading-sm">
+      <Text as="h1" variant="body-lg" className="font-bold">
         {t('changePassword.title')}
-      </Text>
-      <Text as="p" variant="body-sm">
-        {t('changePassword.description')}
       </Text>
       <ChangePasswordForm />
     </>

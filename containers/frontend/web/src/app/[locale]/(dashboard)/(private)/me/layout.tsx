@@ -7,9 +7,9 @@ export default async function ProtectedLayout({ children }: { children: ReactNod
   const data = await protectedMeProfileAction();
   console.log('ProtectedLayout data:', data);
   return (
-    <Stack className="p-5 h-full" gap="md">
+    <Stack className="p-5 pt-3 h-full" gap="md">
       <Breadcrumb />
-      <Stack direction="horizontal" gap="rg" className="mt-2">
+      <Stack direction="horizontal" gap="rg" align="center">
         <Avatar src="" size="lg" />
         <div>
           <Text as="h2">{data.data.username}</Text>

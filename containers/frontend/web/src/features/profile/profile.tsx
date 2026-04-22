@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { protectedMeProfileAction } from './profile.action';
-import { InternalLink, Text } from '@components';
+import { Button, InternalLink, Text } from '@components';
 
 export async function Profile() {
   const t = await getTranslations('features.profile');
@@ -19,9 +19,10 @@ export async function Profile() {
       <InternalLink as="button" variant="cta" href="/me/edit">
         Edit profile
       </InternalLink>
-      <InternalLink as="button" href="/me/reset-password">
+      <InternalLink as="button" variant="cta" href="/me/reset-password">
         Change Password
       </InternalLink>
+      <Button className="border-slate-500 text-slate-500">Delete Account</Button>
     </>
   );
 }
