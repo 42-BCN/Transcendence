@@ -441,7 +441,7 @@
         "received": "Rebudes",
         "sent": "Enviades",
         "sentSubtitle": "Enviat fa 2 dies",
-        "noSentRequests": "No hi ha sol·licituds enviades pendents"
+        "noSentRequests": "No hi ha sol·licituds pendents"
       },
       "actions": {
         "inviteToGame": "Convidar a partida",

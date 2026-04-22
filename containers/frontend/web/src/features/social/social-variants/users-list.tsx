@@ -15,7 +15,7 @@ export function UsersList({
   return friends.map(({ username, subtitle, avatarUrl, className }) => (
     <UserItem
       username={username}
-      subtitle={subtitle}
+      // subtitle={subtitle}
       avatarUrl={avatarUrl}
       className={className}
       key={username}

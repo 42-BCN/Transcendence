@@ -21,11 +21,11 @@ export function UserItem({ avatarUrl, username, subtitle, children, className }:
         <Text variant="body-sm" as="p" className="font-bold">
           {username}
         </Text>
-        {subtitle && (
+        {/* {subtitle && (
           <Text variant="caption" as="p" color="tertiary">
             {subtitle}
           </Text>
-        )}
+        )} */}
       </div>
 
       {children}

@@ -12,6 +12,7 @@ import {
   DisclosureGroup,
   DisclosureFull,
   TextField,
+  glassCardStyles,
 } from '@/components';
 
 import { UsersList } from './social-variants';
@@ -19,16 +20,24 @@ import { UsersList } from './social-variants';
 function FriendsList() {
   const t = useTranslations('features.social.friends');
   const onlineFriends = [
-    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png', subtitle: t('online') },
-    { id: 2, username: 'mfontser', avatarUrl: '/avatars/avatar-2.png', subtitle: t('online') },
+    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png' /*, subtitle: t('online') */ },
+    {
+      id: 2,
+      username: 'mfontser',
+      avatarUrl: '/avatars/avatar-2.png' /*, subtitle: t('online') */,
+    },
   ];
 
   const offlineFriends = [
-    { id: 3, username: 'joanavar', avatarUrl: '/avatars/avatar-3.png', subtitle: t('offline') },
+    {
+      id: 3,
+      username: 'joanavar',
+      avatarUrl: '/avatars/avatar-3.png' /*, subtitle: t('offline') */,
+    },
   ];
 
   return (
-    <>
+    <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
         <UsersList friends={onlineFriends} type="online" />
       </DisclosureFull>
@@ -36,7 +45,7 @@ function FriendsList() {
       <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
         <UsersList friends={offlineFriends} type="offline" />
       </DisclosureFull>
-    </>
+    </DisclosureGroup>
   );
 }
 
@@ -48,12 +57,12 @@ function RequestsList() {
       id: 1,
       username: 'cmanica-',
       avatarUrl: '/avatars/avatar-4.png',
-      subtitle: 'sentSubtitle',
+      // subtitle: t('sentSubtitle'),
     },
   ];
 
   return (
-    <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
+    <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
       <DisclosureFull id="received" title={`${t('received')} (${requests.length})`}>
         <UsersList friends={requests} type="request" />
       </DisclosureFull>
@@ -76,7 +85,7 @@ export function SocialDashboard() {
         <Text as="h1" variant="heading-md" className="font-bold">
           {t('title')}
         </Text>
-        <TextField labelKey={t('searchLabel')} />
+        <TextField labelKey="features.social.searchLabel" />
       </Stack>
       <main>
         <Tabs defaultSelectedKey="friends">
