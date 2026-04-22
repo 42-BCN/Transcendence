@@ -12,6 +12,7 @@ import {
   DisclosureGroup,
   DisclosureFull,
   TextField,
+  glassCardStyles,
 } from '@/components';
 
 import { UsersList } from './social-variants';
@@ -28,7 +29,7 @@ function FriendsList() {
   ];
 
   return (
-    <>
+    <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
         <UsersList friends={onlineFriends} type="online" />
       </DisclosureFull>
@@ -36,7 +37,7 @@ function FriendsList() {
       <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
         <UsersList friends={offlineFriends} type="offline" />
       </DisclosureFull>
-    </>
+    </DisclosureGroup>
   );
 }
 
@@ -53,7 +54,7 @@ function RequestsList() {
   ];
 
   return (
-    <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
+    <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
       <DisclosureFull id="received" title={`${t('received')} (${requests.length})`}>
         <UsersList friends={requests} type="request" />
       </DisclosureFull>
@@ -71,12 +72,18 @@ export function SocialDashboard() {
   const t = useTranslations('features.social');
 
   return (
-    <aside className="h-full w-full bg-bg-primary/50 backdrop-blur-sm border-l border-border-primary overflow-hidden">
+    <aside
+      className={glassCardStyles({
+        intensity: 'medium',
+        blur: 'sm',
+        className: 'h-full w-full overflow-hidden rounded-l-md rounded-r-none border-r-0 p-0',
+      })}
+    >
       <Stack gap="md" className="p-3">
         <Text as="h1" variant="heading-md" className="font-bold">
           {t('title')}
         </Text>
-        <TextField labelKey={t('searchLabel')} />
+        <TextField labelKey="features.social.searchLabel" />
       </Stack>
       <main>
         <Tabs defaultSelectedKey="friends">
