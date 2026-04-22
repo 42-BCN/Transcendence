@@ -1,12 +1,6 @@
 import { useCallback } from 'react';
 import { useSocialStore } from '../store/use-social-store';
-import {
-  getFriendsList,
-  getPendingRequests,
-  getSentRequests,
-  respondToRequest,
-  deleteFriendship,
-} from '../actions/social.actions';
+import { getFriendsList, getPendingRequests, getSentRequests } from '../actions/social.actions';
 
 export function useSocialData() {
   const friends = useSocialStore((s) => s.friends);
@@ -37,43 +31,11 @@ export function useSocialData() {
     }
   }, [setFriends, setPendingReceived, setPendingSent, setLoading, setError]);
 
-  const handleResponse = useCallback(
-    async (id: string, action: 'accept' | 'reject') => {
-      setLoading(true);
-      try {
-        if ((await respondToRequest(id, action)).ok) await refreshAll();
-        else setError('Response failed');
-      } catch {
-        setError('Network error');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [refreshAll, setLoading, setError],
-  );
-
-  const handleDelete = useCallback(
-    async (id: string) => {
-      setLoading(true);
-      try {
-        if ((await deleteFriendship(id)).ok) await refreshAll();
-        else setError('Delete failed');
-      } catch {
-        setError('Network error');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [refreshAll, setLoading, setError],
-  );
-
   return {
     friends,
     pendingReceived,
     pendingSent,
     isLoading,
     refreshAll,
-    handleResponse,
-    handleDelete,
   };
 }
