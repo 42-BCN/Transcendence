@@ -57,7 +57,7 @@ function RequestsList() {
       id: 1,
       username: 'cmanica-',
       avatarUrl: '/avatars/avatar-4.png',
-      // subtitle: 'sentSubtitle',
+      // subtitle: t('sentSubtitle'),
     },
   ];
 

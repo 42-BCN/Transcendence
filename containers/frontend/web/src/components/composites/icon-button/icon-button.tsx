@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@components/controls/button';
 import { TooltipTrigger } from '@components/composites/tooltip-trigger';
 import { Icon, type IconName } from '@components/primitives/icon';
