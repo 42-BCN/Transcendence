@@ -8,11 +8,11 @@ export type UserItemProps = {
   avatarUrl?: string | null;
   username: string;
   subtitle?: string;
-  actions?: ReactNode;
+  children?: ReactNode;
   className?: string;
 };
 
-export function UserItem({ avatarUrl, username, subtitle, actions, className }: UserItemProps) {
+export function UserItem({ avatarUrl, username, subtitle, children, className }: UserItemProps) {
   return (
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} size="md" />
@@ -21,14 +21,14 @@ export function UserItem({ avatarUrl, username, subtitle, actions, className }: 
         <Text variant="body-sm" as="p" className="font-bold">
           {username}
         </Text>
-        {subtitle && (
+        {/* {subtitle && (
           <Text variant="caption" as="p" color="tertiary">
             {subtitle}
           </Text>
-        )}
+        )} */}
       </div>
 
-      {actions}
+      {children}
     </Stack>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
-import { Button } from '@components';
+import { Button } from '@components/controls/button';
 import { useTranslations } from 'next-intl';
 
 type SubmitButtonProps = {

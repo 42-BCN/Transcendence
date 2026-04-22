@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { Button } from '@components';
+import { Button } from '@components/controls/button';
 import { useCooldown } from '@/hooks';
 
 type AsyncCooldownButtonProps = {

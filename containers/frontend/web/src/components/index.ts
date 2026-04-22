@@ -9,6 +9,7 @@ export {
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
 export { TextArea, type TextAreaProps } from './controls/text-area';
+export { IconButton, type IconButtonProps } from './composites/icon-button/icon-button';
 export {
   Tabs,
   TabList,
@@ -34,7 +35,10 @@ export { ApiFeedback } from './composites/api-feedback/api-feedback';
 export { FormTitle } from './composites/form-title/form-title';
 export { Divider } from './composites/divider/divider';
 export { MessageBlock } from './composites/text-block/text-block';
-
+export {
+  DisclosureFull,
+  type DisclosureFullProps,
+} from './composites/disclosure-full/disclosure-full';
 export { Drawer } from './composites/drawer';
 export { Form, type FormProps } from './composites/form';
 export { Meter, type MeterProps } from './composites/meter';

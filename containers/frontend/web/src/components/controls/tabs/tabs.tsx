@@ -15,58 +15,32 @@ import type {
 
 import { tabsStyles } from './tabs.styles';
 
-export type TabsProps = AriaTabsProps;
-export type TabListProps<T extends object> = AriaTabListProps<T>;
-export type TabProps = AriaTabProps;
-export type TabPanelProps = AriaTabPanelProps;
+type StringClassName = {
+  className?: string;
+};
+
+export type TabsProps = Omit<AriaTabsProps, 'className'> & StringClassName;
+export type TabListProps<T extends object> = Omit<AriaTabListProps<T>, 'className'> &
+  StringClassName;
+export type TabProps = Omit<AriaTabProps, 'className'> & StringClassName;
+export type TabPanelProps = Omit<AriaTabPanelProps, 'className'> & StringClassName;
 
 export function Tabs({ className, ...props }: TabsProps) {
-  return (
-    <AriaTabs
-      {...props}
-      className={(values) =>
-        (typeof className === 'function' ? className(values) : className) || ''
-      }
-    />
-  );
+  return <AriaTabs {...props} className={className} />;
 }
 
 export function TabList<T extends object>({ className, ...props }: TabListProps<T>) {
-  return (
-    <AriaTabList
-      {...props}
-      className={(values) =>
-        tabsStyles.tabList(typeof className === 'function' ? className(values) : className)
-      }
-    />
-  );
+  return <AriaTabList {...props} className={tabsStyles.tabList(className)} />;
 }
 
 export function Tab({ className, children, ...props }: TabProps) {
   return (
-    <AriaTab
-      {...props}
-      className={(values) =>
-        tabsStyles.tab(typeof className === 'function' ? className(values) : className)
-      }
-    >
-      {(values) => (
-        <>
-          {typeof children === 'function' ? children(values) : children}
-          <div data-selected={values.isSelected || undefined} className={tabsStyles.indicator()} />
-        </>
-      )}
+    <AriaTab {...props} className={tabsStyles.tab(className)}>
+      {(values) => (typeof children === 'function' ? children(values) : children)}
     </AriaTab>
   );
 }
 
 export function TabPanel({ className, ...props }: TabPanelProps) {
-  return (
-    <AriaTabPanel
-      {...props}
-      className={(values) =>
-        tabsStyles.panel(typeof className === 'function' ? className(values) : className)
-      }
-    />
-  );
+  return <AriaTabPanel {...props} className={tabsStyles.panel(className)} />;
 }
