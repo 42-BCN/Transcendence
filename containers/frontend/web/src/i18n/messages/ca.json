@@ -416,9 +416,13 @@
       "requests": {
         "title": "Sol·licituds",
         "received": "Rebudes",
-        "sent": "Enviades",
-        "sentSubtitle": "Enviat fa 2 dies",
-        "noSentRequests": "No hi ha sol·licituds pendents"
+        "sent": "Enviades"
+      },
+      "emptyStates": {
+        "online": "No hi ha amics connectats",
+        "offline": "No hi ha amics desconnectats",
+        "request": "No tens sol·licituds pendents",
+        "pending": "No has enviat sol·licituds"
       },
       "actions": {
         "inviteToGame": "Convidar a partida",

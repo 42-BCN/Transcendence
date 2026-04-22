@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -16,33 +17,28 @@ import {
 } from '@/components';
 
 import { UsersList } from './social-variants';
+import { useSocialData } from './hooks/use-social-data';
 
 function FriendsList() {
   const t = useTranslations('features.social.friends');
-  const onlineFriends = [
-    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png' /*, subtitle: t('online') */ },
-    {
-      id: 2,
-      username: 'mfontser',
-      avatarUrl: '/avatars/avatar-2.png' /*, subtitle: t('online') */,
-    },
-  ];
+  const { friends, isLoading } = useSocialData();
 
-  const offlineFriends = [
-    {
-      id: 3,
-      username: 'joanavar',
-      avatarUrl: '/avatars/avatar-3.png' /*, subtitle: t('offline') */,
-    },
-  ];
+  const onlineFriends = friends.filter((f) => f.online);
+  const offlineFriends = friends.filter((f) => !f.online);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
-      <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
+      <DisclosureFull
+        id="online"
+        title={`${t('online')} (${isLoading ? '...' : onlineFriends.length})`}
+      >
         <UsersList friends={onlineFriends} type="online" />
       </DisclosureFull>
 
-      <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
+      <DisclosureFull
+        id="offline"
+        title={`${t('offline')} (${isLoading ? '...' : offlineFriends.length})`}
+      >
         <UsersList friends={offlineFriends} type="offline" />
       </DisclosureFull>
     </DisclosureGroup>
@@ -51,26 +47,19 @@ function FriendsList() {
 
 function RequestsList() {
   const t = useTranslations('features.social.requests');
-
-  const requests = [
-    {
-      id: 1,
-      username: 'cmanica-',
-      avatarUrl: '/avatars/avatar-4.png',
-      // subtitle: t('sentSubtitle'),
-    },
-  ];
+  const { pendingReceived, pendingSent, isLoading } = useSocialData();
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
-      <DisclosureFull id="received" title={`${t('received')} (${requests.length})`}>
-        <UsersList friends={requests} type="request" />
+      <DisclosureFull
+        id="received"
+        title={`${t('received')} (${isLoading ? '...' : pendingReceived.length})`}
+      >
+        <UsersList friends={pendingReceived} type="request" />
       </DisclosureFull>
 
-      <DisclosureFull id="sent" title={`${t('sent')} (0)`}>
-        <Text variant="caption" color="tertiary" className="text-center py-6 px-3">
-          {t('noSentRequests')}
-        </Text>
+      <DisclosureFull id="sent" title={`${t('sent')} (${isLoading ? '...' : pendingSent.length})`}>
+        <UsersList friends={pendingSent} type="pending" />
       </DisclosureFull>
     </DisclosureGroup>
   );
@@ -78,6 +67,11 @@ function RequestsList() {
 
 export function SocialDashboard() {
   const t = useTranslations('features.social');
+  const { refreshAll } = useSocialData();
+
+  useEffect(() => {
+    refreshAll();
+  }, [refreshAll]);
 
   return (
     <aside

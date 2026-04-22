@@ -1,8 +1,16 @@
 import { useTranslations } from 'next-intl';
-import { IconButton } from '@components';
+import { IconButton } from '@/components/composites/icon-button/icon-button';
+import { useSocialData } from '../hooks/use-social-data';
 
-export function OnlineButtons({ username }: { username: string }) {
+export function OnlineButtons({
+  username,
+  friendshipId,
+}: {
+  username: string;
+  friendshipId: string;
+}) {
   const tActions = useTranslations('features.social.actions');
+  const { handleDelete: _handleDelete } = useSocialData();
 
   return (
     <>
@@ -10,7 +18,7 @@ export function OnlineButtons({ username }: { username: string }) {
       <IconButton
         label={tActions('inviteToGame')}
         icon="gamepad"
-        onPress={() => console.log(username)}
+        onPress={() => console.log(friendshipId)}
       />
     </>
   );

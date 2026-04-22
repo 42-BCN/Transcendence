@@ -418,9 +418,13 @@ declare const messages: {
       "requests": {
         "title": "Requests",
         "received": "Received",
-        "sent": "Sent",
-        "sentSubtitle": "Sent 2 days ago",
-        "noSentRequests": "No pending sent requests"
+        "sent": "Sent"
+      },
+      "emptyStates": {
+        "online": "No friends online right now",
+        "offline": "No friends offline",
+        "request": "No pending friend requests",
+        "pending": "No sent requests pending"
       },
       "actions": {
         "inviteToGame": "Invite to Game",
