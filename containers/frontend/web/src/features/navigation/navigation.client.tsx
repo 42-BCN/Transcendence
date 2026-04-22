@@ -7,7 +7,7 @@ import { NavigationProvider } from './navigation.context';
 import { NavigationHeader } from './navigation-header';
 import { NavigationMain } from './navigation-main';
 import { NavigationFooter } from './navigation-footer';
-import { Button as UiButton, Drawer, Stack, glassCardStyles } from '@components';
+import { Drawer, Stack, glassCardStyles, IconButton } from '@components';
 import { DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
 import { useTranslations } from 'next-intl';
@@ -63,9 +63,13 @@ function MobileNavigation(args: NavigationClientProps) {
   return (
     <NavigationProvider value={value}>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
-        <UiButton variant="ghost" w="auto" className="md:hidden absolute top-5 left-2 z-20">
-          {t('menu')}
-        </UiButton>
+        <IconButton
+          label={t('menu')}
+          className="md:hidden fixed top-5 left-[24px] z-[30] pointer-events-auto"
+          icon={isOpen ? 'close' : 'menu'}
+          placement="right"
+        />
+
         <Drawer>
           <Stack
             as="nav"
