@@ -55,5 +55,5 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
   if (!result.ok) return result;
 
   const locale = await getLocale();
-  redirect({ href: '/profile', locale });
+  redirect({ href: '/me', locale });
 }

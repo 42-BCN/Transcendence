@@ -5,6 +5,13 @@ import type { UsersErrorName, SearchUsersErrorName } from './users.errors';
 export type UserPublic = {
   id: string; // uuid zod can check for it on validation
   username: string;
+  avatar: string | null;
+  bio: string;
+};
+
+export type UserMeProfile = UserPublic & {
+  email: string;
+  provider: 'local' | 'google';
 };
 
 // ---------------------------------------
@@ -47,6 +54,31 @@ export type SearchUsersOk = {
   users: SearchUserResult[];
 };
 
-export type SearchUsersResponse = ApiResponse<SearchUsersOk, SearchUsersErrorName, ValidationErrorDetails>;
+export type SearchUsersResponse = ApiResponse<
+  SearchUsersOk,
+  SearchUsersErrorName,
+  ValidationErrorDetails
+>;
 
-export type UserPublicResponse = ApiResponse<UserPublic, UsersListError, ValidationErrorDetails>;
+export const USER_PUBLIC_ERRORS = [
+  'INTERNAL_ERROR',
+  'VALIDATION_ERROR',
+  'USER_NOT_FOUND',
+] as const satisfies readonly UsersErrorName[];
+
+export type UserPublicError = (typeof USER_PUBLIC_ERRORS)[number];
+
+export const USER_ME_PROFILE_ERRORS = [
+  'INTERNAL_ERROR',
+  'USER_NOT_FOUND',
+  'AUTH_UNAUTHORIZED',
+] as const satisfies readonly UsersErrorName[];
+
+export type UserMeProfileError = (typeof USER_ME_PROFILE_ERRORS)[number];
+
+export type UserPublicResponse = ApiResponse<UserPublic, UserPublicError, ValidationErrorDetails>;
+export type UserMeProfileResponse = ApiResponse<
+  UserMeProfile,
+  UserMeProfileError,
+  ValidationErrorDetails
+>;

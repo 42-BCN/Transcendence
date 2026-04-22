@@ -36,8 +36,8 @@ export async function GET(req: Request) {
     return res;
   }
 
-  const location = upstream.headers.get('location') || '/profile';
-  const safeLocation = location.startsWith('/') ? location : '/profile';
+  const location = upstream.headers.get('location') || '/me';
+  const safeLocation = location.startsWith('/') ? location : '/me';
   const res = NextResponse.redirect(safeLocation, { status: upstream.status || 302 });
   if (setCookie) res.headers.set('set-cookie', setCookie);
   return res;
