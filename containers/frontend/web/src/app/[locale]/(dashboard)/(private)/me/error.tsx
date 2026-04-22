@@ -5,7 +5,6 @@ import { InternalLink, MessageBlock, Stack, Text } from '@components';
 
 interface ErrorProps {
   error: Error & { digest?: string };
-  reset: () => void;
 }
 
 export default function PrivateError({ error, reset }: ErrorProps) {

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { SplitScreenGrid } from '@components';
+import { glassCardStyles, SplitScreenGrid } from '@components';
 import { getTranslations } from 'next-intl/server';
 
 type SocialLayoutProps = {
@@ -16,7 +16,13 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
         </main>
       }
       side={
-        <aside className="h-full w-full bg-bg-primary/50 backdrop-blur-sm border-l border-border-primary overflow-hidden">
+        <aside
+          className={glassCardStyles({
+            intensity: 'medium',
+            blur: 'sm',
+            className: 'h-full w-full overflow-hidden rounded-l-md rounded-r-none border-r-0 p-0',
+          })}
+        >
           {children}
         </aside>
       }

@@ -12,7 +12,6 @@ import {
   DisclosureGroup,
   DisclosureFull,
   TextField,
-  glassCardStyles,
 } from '@/components';
 
 import { UsersList } from './social-variants';

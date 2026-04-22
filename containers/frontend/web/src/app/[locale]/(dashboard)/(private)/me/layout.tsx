@@ -5,7 +5,9 @@ import { protectedMeProfileAction } from '@/features/profile/profile.action';
 
 export default async function ProtectedLayout({ children }: { children: ReactNode }) {
   const data = await protectedMeProfileAction();
-  console.log('ProtectedLayout data:', data);
+  if (!data.ok) {
+    return <div>Failed to load profile data</div>;
+  }
   return (
     <Stack className="p-5 pt-3 h-full" gap="md">
       <Breadcrumb />
