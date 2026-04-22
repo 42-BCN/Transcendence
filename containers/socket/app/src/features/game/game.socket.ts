@@ -24,9 +24,12 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     }
     else {
       users[socket.id] = role;
+      socket.emit('game:server:sync', gameState.clients[role])
       console.log('Emitted join server event with role:', role);
-      gameState.clients[role] = initClientGameState(socket.id);
-      socket.emit('game:server:join', role);
+      if (!gameState.clients[role]) {
+        gameState.clients[role] = initClientGameState(socket.id);
+        socket.emit('game:server:join', role);
+      }
       socket.on('game:client:showMoveRange', (diceValue: number) => {
         if (!gameState.clients[role] || !role)
           return;
@@ -190,7 +193,6 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       if (role) {
         playerIds.push(role);
         delete users[socket.id];
-        delete gameState.clients[role]
         console.log(role, 'disconnected, role', playerIds[playerIds.length - 1], 'is available again.');
       }
     });

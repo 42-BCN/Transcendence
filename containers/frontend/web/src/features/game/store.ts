@@ -467,6 +467,8 @@ export const useGame = create<gameState>()((set, get) => ({
       };
 
       const handleSync = (state: localGameState) => {
+        if (!state)
+          return;
         console.log('🔄 Received sync event');
         set({
           highlights: state.highlights,
