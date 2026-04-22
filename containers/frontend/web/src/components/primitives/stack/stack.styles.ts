@@ -10,6 +10,7 @@ const gap = {
   none: '',
   xs: 'gap-1',
   sm: 'gap-2',
+  regular: 'gap-3',
   md: 'gap-4',
   lg: 'gap-6',
 } as const;

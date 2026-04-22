@@ -64,3 +64,14 @@ export async function registerSuccessfulPasswordLogin(userId: string): Promise<v
     },
   });
 }
+
+export async function updatePasswordHash(userId: string, passwordHash: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      passwordHash,
+      failedAttempts: 0,
+      lockedUntil: null,
+    },
+  });
+}

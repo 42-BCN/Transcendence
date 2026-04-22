@@ -9,6 +9,11 @@ declare const messages: {
     }
   },
   "components": {
+    "breadcrumb": {
+      "home": "Home",
+      "me": "My Account",
+      "reset-password": "Reset Password"
+    },
     "submitButton": {
       "pendingLabel": "Submitting..."
     },
@@ -42,7 +47,8 @@ declare const messages: {
     },
     "notFound": {
       "title": "Page not found",
-      "description": "The page you're looking for doesn't exist."
+      "description": "The page you're looking for doesn't exist.",
+      "backToHome": "Back to Home"
     },
     "me": {
       "title": "My Account",
@@ -308,6 +314,15 @@ declare const messages: {
           "placeholder": "Enter your password",
           "description": "Min 8 characters long."
         },
+        "currentPassword": {
+          "label": "Current password",
+          "placeholder": "Enter your current password"
+        },
+        "newPassword": {
+          "label": "New password",
+          "placeholder": "Enter your new password",
+          "description": "Min 8 characters long."
+        },
         "confirmPassword": {
           "label": "Confirm password",
           "placeholder": "Re-enter your password"
@@ -368,6 +383,12 @@ declare const messages: {
         "success": "Password updated successfully.",
         "backToLogin": "Back to login"
       },
+      "changePassword": {
+        "title": "Change password",
+        "description": "Enter your current password and choose a new one.",
+        "submit": "Save changes",
+        "success": "Password updated successfully."
+      },
       "messages": {
         "or": "OR",
         "success": "Email sent. Wait before trying again."
@@ -404,7 +425,9 @@ declare const messages: {
     "profile": {
       "fail": "Could not load your profile.",
       "userId": "User ID",
-      "username": "Username"
+      "username": "Username",
+      "bio": "Bio",
+      "provider": "Provider"
     },
     "social": {
       "title": "Social",

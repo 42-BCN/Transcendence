@@ -1,9 +1,16 @@
-import type { UserPublic } from '@contracts/users/users.contracts';
+import type { UserMeProfile, UserPublic } from '@contracts/users/users.contracts';
 import { prisma } from '@/lib/prisma';
 
 type UserPublicRow = {
   id: string;
   username: string;
+  avatar: string | null;
+  bio: string;
+};
+
+type UserMeProfileRow = UserPublicRow & {
+  email: string;
+  provider: 'local' | 'google';
 };
 
 type UserSearchRow = {
@@ -16,12 +23,30 @@ function mapUserRow(row: UserPublicRow): UserPublic {
   return {
     id: row.id,
     username: row.username,
+    avatar: row.avatar,
+    bio: row.bio,
+  };
+}
+
+function mapUserMeProfileRow(row: UserMeProfileRow): UserMeProfile {
+  return {
+    ...mapUserRow(row),
+    email: row.email,
+    provider: row.provider,
   };
 }
 
 const userPublicSelect = {
   id: true,
   username: true,
+  avatar: true,
+  bio: true,
+} as const;
+
+const userMeProfileSelect = {
+  ...userPublicSelect,
+  email: true,
+  provider: true,
 } as const;
 
 export async function listUsers(limit: number, offset: number): Promise<UserPublic[]> {
@@ -53,6 +78,15 @@ export async function selectUserDataByUsername(username: string): Promise<UserPu
   });
 
   return row ? mapUserRow(row) : null;
+}
+
+export async function selectUserMeProfileData(id: string): Promise<UserMeProfile | null> {
+  const row = await prisma.user.findUnique({
+    where: { id },
+    select: userMeProfileSelect,
+  });
+
+  return row ? mapUserMeProfileRow(row) : null;
 }
 
 export async function searchUsersByUsername(
