@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Button } from '@components';
+import { Button, IconButton } from '@components';
 import { ChatFeature } from '@/features/chat';
 
 export default function GameSidePage() {
@@ -10,11 +10,13 @@ export default function GameSidePage() {
   const [chatVisible, setChatVisible] = useState(false);
   return (
     <>
-      <div className="absolute top-4 right-4 z-20">
-        <Button onPress={() => setChatVisible((v) => !v)} w="auto">
-          {chatVisible ? t('hideChat') : t('showChat')}
-        </Button>
-      </div>
+      <IconButton
+        onPress={() => setChatVisible((v) => !v)}
+        icon="messages"
+        label={chatVisible ? t('hideChat') : t('showChat')}
+        className="absolute bottom-4 right-4 z-20 pointer-events-auto"
+      />
+
       <ChatFeature isVisible={chatVisible} />
     </>
   );

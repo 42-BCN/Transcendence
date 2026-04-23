@@ -20,7 +20,8 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
           className={glassCardStyles({
             intensity: 'medium',
             blur: 'sm',
-            className: 'h-full w-full overflow-hidden rounded-l-md rounded-r-none border-r-0 p-0',
+            className:
+              'h-[100dvh] w-full overflow-hidden rounded-l-md rounded-r-none border-r-0 p-0',
           })}
         >
           {children}
