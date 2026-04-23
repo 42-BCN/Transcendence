@@ -56,7 +56,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
 
-      <body className="h-svh min-h-svh flex text-text-primary bg-bg-primary transition-colors duration-300">
+      <body className="min-h-[100-dvh] flex text-text-primary bg-bg-primary transition-colors duration-300">
         <div
           className="fixed inset-0 -z-10 bg-[linear-gradient(var(--color-grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-grid-line)_1px,transparent_1px)] bg-[size:30px_30px]"
           aria-hidden="true"
