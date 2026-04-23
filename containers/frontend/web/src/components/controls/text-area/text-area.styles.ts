@@ -1,7 +1,7 @@
 import { cn } from '@/lib/styles/cn';
 
 const textAreaBase = [
-  'font-body-sm',
+  'font-body',
   'w-full px-2 py-2 min-h-6 max-h-[160px]',
   'border border-border-primary rounded-md',
   'bg-bg-primary text-text-primary',
