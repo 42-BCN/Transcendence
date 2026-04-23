@@ -4,6 +4,8 @@ import type {
   FriendshipPublic,
 } from '@/contracts/api/friendships/friendships.contracts';
 
+export type PendingListKey = 'pendingReceived' | 'pendingSent';
+
 interface SocialState {
   friends: FriendPublic[];
   pendingReceived: FriendshipPublic[];
@@ -17,6 +19,9 @@ interface SocialState {
   setPendingSent: (requests: FriendshipPublic[]) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
+  removePendingById: (list: PendingListKey, id: string) => void;
+
+  // setOptimisticReject: (id) => ()
 }
 
 export const useSocialStore = create<SocialState>((set) => ({
@@ -31,4 +36,9 @@ export const useSocialStore = create<SocialState>((set) => ({
   setPendingSent: (pendingSent) => set({ pendingSent }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
+
+  removePendingById: (list, id) =>
+    set((state) => ({
+      [list]: state[list].filter((item) => item.id !== id),
+    })),
 }));
