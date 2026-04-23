@@ -11,19 +11,10 @@ export function useSocialActions() {
   const handleResponse = useCallback(
     async (id: string, action: 'accept' | 'reject') => {
       setLoading(true);
-      try {
-        const response = await respondToRequest(id, action);
-        if (response.ok) {
-          await refreshAll();
-        } else {
-          setError('Response failed');
-        }
-      } catch (error) {
-        console.error('[useSocialActions] handleResponse error:', error);
-        setError('Network error');
-      } finally {
-        setLoading(false);
-      }
+      const response = await respondToRequest(id, action);
+      if (response.ok) await refreshAll();
+      else return response.error.code;
+      setLoading(false);
     },
     [refreshAll, setLoading, setError],
   );
@@ -31,20 +22,12 @@ export function useSocialActions() {
   const handleDelete = useCallback(
     async (id: string) => {
       setLoading(true);
-      try {
-        const response = await deleteFriendship(id);
-        if (response.ok) {
-          await refreshAll();
-        } else {
-          setError('Delete failed');
-        }
-      } catch (error) {
-        console.error('[useSocialActions] handleDelete error:', error);
-        setError('Network error');
-      } finally {
-        setLoading(false);
-      }
+      const response = await deleteFriendship(id);
+      if (response.ok) await refreshAll();
+      else setError('Delete failed');
+      setLoading(false);
     },
+
     [refreshAll, setLoading, setError],
   );
 

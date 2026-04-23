@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { useSocialStore } from '../store/use-social-store';
-import { getFriendsList, getPendingRequests, getSentRequests } from '../actions/social.actions';
+import {
+  getFriendsList,
+  getPendingRequests,
+  getSentRequests,
+} from '../actions/social.server.actions';
 
 export function useSocialData() {
   const friends = useSocialStore((s) => s.friends);
