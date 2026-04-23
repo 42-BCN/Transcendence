@@ -40,7 +40,7 @@ export function getGoogleCallback(req: Request, res: Response, next: NextFunctio
       req.session.guestUsername = undefined;
       req.session.save((saveErr) => {
         if (saveErr) return next(saveErr);
-        return res.status(302).redirect('/profile');
+        return res.status(302).redirect('/me');
       });
     });
   })(req, res, next);

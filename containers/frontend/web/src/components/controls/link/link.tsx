@@ -74,7 +74,7 @@ export function InternalLink(args: InternalLinkProps) {
       {...props}
     >
       {icon && <span className={iconStyles()}>{icon}</span>}
-      {children}
+      {variant === 'cta' ? <span className="z-10">{children}</span> : children}
     </AriaLink>
   );
 }

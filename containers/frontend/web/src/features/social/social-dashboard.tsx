@@ -12,7 +12,6 @@ import {
   DisclosureGroup,
   DisclosureFull,
   TextField,
-  glassCardStyles,
 } from '@/components';
 
 import { UsersList } from './social-variants';
@@ -80,13 +79,7 @@ export function SocialDashboard() {
   const t = useTranslations('features.social');
 
   return (
-    <aside
-      className={glassCardStyles({
-        intensity: 'medium',
-        blur: 'sm',
-        className: 'h-full w-full overflow-hidden rounded-l-md rounded-r-none border-r-0 p-0',
-      })}
-    >
+    <>
       <Stack gap="md" className="p-3">
         <Text as="h1" variant="heading-md" className="font-bold">
           {t('title')}
@@ -109,6 +102,6 @@ export function SocialDashboard() {
           </TabPanel>
         </Tabs>
       </main>
-    </aside>
+    </>
   );
 }

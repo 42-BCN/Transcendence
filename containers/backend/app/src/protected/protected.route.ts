@@ -1,8 +1,10 @@
 import { Router } from 'express';
 
+import { ChangePasswordReqSchema } from '@contracts/auth/auth.validation';
 import { requireAuth } from '@shared';
+import { validateBody } from '@shared/validation.middleware';
 
-import { getMeProfile } from './protected.controller';
+import { getMeProfile, postMeResetPassword } from './protected.controller';
 
 export const protectedRouter = Router();
 
@@ -16,3 +18,9 @@ protectedRouter.get('/me', requireAuth, (req, res) => {
 });
 
 protectedRouter.get('/me/profile', requireAuth, getMeProfile);
+protectedRouter.post(
+  '/me/reset-password',
+  requireAuth,
+  validateBody(ChangePasswordReqSchema),
+  postMeResetPassword,
+);

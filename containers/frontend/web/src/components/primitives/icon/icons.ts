@@ -14,6 +14,7 @@ import {
   Sun,
   Moon,
   ChevronDown,
+  ChevronRight,
   UserPlus,
   Check,
 } from 'lucide-react';
@@ -36,6 +37,7 @@ export const icons = {
   chevronDown: ChevronDown,
   userAdd: UserPlus,
   check: Check,
+  chevronRight: ChevronRight,
 };
 
 export type IconName = keyof typeof icons;

@@ -31,7 +31,7 @@ async function verifyEmailFlow({
 
   if (verification.ok) {
     setState('success');
-    router.replace('/profile');
+    router.replace('/me');
     return;
   }
 

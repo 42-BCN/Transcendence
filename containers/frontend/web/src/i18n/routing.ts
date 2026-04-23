@@ -64,10 +64,20 @@ export const routing = defineRouting({
     '/ui/theme-test': '/ui/theme-test',
     '/ui/typography': '/ui/typography',
     '/robots': '/robots',
-    '/profile': {
-      en: '/profile',
-      es: '/perfil',
-      ca: '/perfil',
+    '/me': {
+      en: '/me',
+      es: '/mi-cuenta',
+      ca: '/el-meu-compte',
+    },
+    '/me/reset-password': {
+      en: '/me/reset-password',
+      es: '/mi-cuenta/cambiar-contrasena',
+      ca: '/el-meu-compte/canviar-contrasenya',
+    },
+    '/me/edit': {
+      en: '/me/edit',
+      es: '/mi-cuenta/editar',
+      ca: '/el-meu-compte/editar',
     },
     '/privacy': {
       en: '/privacy',

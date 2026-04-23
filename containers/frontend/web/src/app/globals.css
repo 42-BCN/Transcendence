@@ -97,7 +97,7 @@
   --color-border-primary: #334155; /* slate-700 */
   --color-grid-line: #ffffff05; /* Very subtle white for dark mode */
   --color-shadow-rgb: 255, 255, 255;
-  --color-shadow-opacity: 0.1;
+  --color-shadow-opacity: 0.05;
 }
 
 .font-caption {

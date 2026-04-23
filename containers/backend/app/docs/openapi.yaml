@@ -364,17 +364,18 @@ paths:
   /protected/me/profile:
     get:
       tags: [Protected]
-      summary: Get the current user's public profile
+      summary: Get the current authenticated user's profile
+      description: Returns the current authenticated user's own profile data.
       operationId: getProtectedMeProfile
       security:
         - cookieAuth: []
       responses:
         '200':
-          description: Public profile
+          description: Current user profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserMeProfileResponse'
         '401':
           description: Unauthorized
           content:
@@ -387,6 +388,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
+
+  /protected/me/reset-password:
+    post:
+      tags: [Protected]
+      summary: Change password for the current authenticated user
+      description: Verifies the current password and updates it for the authenticated local account.
+      operationId: postProtectedMeResetPassword
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullResponse'
+        '401':
+          description: Unauthorized or current password is invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: Forbidden (blocked account or unsupported auth provider)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /users:
     get:
@@ -917,6 +958,18 @@ components:
           type: string
           minLength: 8
           maxLength: 128
+    ChangePasswordRequest:
+      type: object
+      additionalProperties: false
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+          minLength: 1
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 128
     SignupResponse:
       type: object
       required: [ok, data]
@@ -971,13 +1024,31 @@ components:
               type: string
     UserPublic:
       type: object
-      required: [id, username]
+      required: [id, username, avatar, bio]
       properties:
         id:
           type: string
           format: uuid
         username:
           type: string
+        avatar:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          maxLength: 600
+    UserMeProfile:
+      allOf:
+        - $ref: '#/components/schemas/UserPublic'
+        - type: object
+          required: [email, provider]
+          properties:
+            email:
+              type: string
+              format: email
+            provider:
+              type: string
+              enum: [local, google]
     UserResponse:
       type: object
       required: [ok, data]
@@ -987,6 +1058,15 @@ components:
           enum: [true]
         data:
           $ref: '#/components/schemas/UserPublic'
+    UserMeProfileResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: '#/components/schemas/UserMeProfile'
     UsersListResponse:
       type: object
       required: [ok, data]

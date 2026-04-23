@@ -77,3 +77,4 @@ export { Stack } from './primitives/stack';
 export { Text } from './primitives/text';
 export { SubmitButton } from './composites/submit-button/submit-button';
 export { AsyncCooldownButton } from './composites/async-cooldown-button/async-cooldown-button';
+export { Breadcrumb, type BreadcrumbProps } from './composites/breadcrumb';

@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
-import { SplitScreenGrid } from '@components';
+import { glassBackgroundStyles, glassBorderStyles, SplitScreenGrid } from '@components';
 import { getTranslations } from 'next-intl/server';
+import { cn } from '@/lib/styles/cn';
 
-type GameLayoutProps = {
+type SocialLayoutProps = {
   children: ReactNode;
 };
-export default async function SocialLayout({ children }: GameLayoutProps) {
+export default async function SocialLayout({ children }: SocialLayoutProps) {
   const t = await getTranslations('pages.home');
   return (
     <SplitScreenGrid
@@ -15,7 +16,17 @@ export default async function SocialLayout({ children }: GameLayoutProps) {
           <p>{t('subtitle')}</p>
         </main>
       }
-      side={children}
+      side={
+        <aside
+          className={cn(
+            glassBackgroundStyles({ intensity: 'medium', blur: 'sm' }),
+            glassBorderStyles(),
+            'h-full w-full overflow-hidden rounded-l-md rounded-r-none border-r-0',
+          )}
+        >
+          {children}
+        </aside>
+      }
     />
   );
 }
