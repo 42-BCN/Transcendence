@@ -20,6 +20,7 @@ const interactiveControlVariants: Record<InteractiveControlVariant, string> = {
   cta: 'fancy-btn text-white border-none ',
   secondary: 'border-border-primary data-[hovered]:bg-bg-secondary',
   ghost: 'border-transparent data-[hovered]:bg-bg-secondary/60',
+  full: 'bg-success data-[hovered]:bg-green/80 border-none text-white',
 };
 
 const interactiveControlSizes: Record<InteractiveControlSize, string> = {

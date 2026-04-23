@@ -3,6 +3,7 @@
 import { Button } from '@components/controls/button';
 import { TooltipTrigger } from '@components/composites/tooltip-trigger';
 import { Icon, type IconName } from '@components/primitives/icon';
+import { InteractiveControlVariant } from '@components/primitives/interactive-control';
 
 export type IconButtonProps = {
   label: string;
@@ -10,16 +11,18 @@ export type IconButtonProps = {
   onPress?: () => void;
   icon: IconName;
   className?: string;
+  variant?: InteractiveControlVariant;
 };
 
 export function IconButton(props: IconButtonProps) {
-  const { label, placement = 'top', onPress, icon, className } = props;
+  const { label, placement = 'top', onPress, icon, className, variant = 'secondary' } = props;
+
   return (
     <TooltipTrigger label={label} placement={placement}>
       <Button
         w="auto"
         size="icon"
-        variant="secondary"
+        variant={variant}
         icon={<Icon name={icon} />}
         aria-label={label}
         className={className}
