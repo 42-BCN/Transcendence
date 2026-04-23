@@ -14,7 +14,7 @@ export default function GameSidePage() {
         onPress={() => setChatVisible((v) => !v)}
         icon="messages"
         label={chatVisible ? t('hideChat') : t('showChat')}
-        className="absolute bottom-4 right-4 z-20 pointer-events-auto"
+        className="absolute top-4 right-4 z-20 pointer-events-auto"
       />
 
       <ChatFeature isVisible={chatVisible} />
