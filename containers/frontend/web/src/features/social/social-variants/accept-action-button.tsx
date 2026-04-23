@@ -7,8 +7,9 @@ import { respondToRequest } from '../actions/social.actions';
 
 export function AcceptActionButton({ friendshipId }: { friendshipId: string }) {
   const tActions = useTranslations('features.social.actions');
+  const tErrors = useTranslations('errors');
   const acceptPendingById = useSocialStore((s) => s.acceptPendingById);
-  const [error, setError] = useState(undefined);
+  const [error, setError] = useState<any>(undefined);
 
   const handleResponse = useCallback(
     async (id: string) => {
@@ -29,7 +30,7 @@ export function AcceptActionButton({ friendshipId }: { friendshipId: string }) {
       />
       {error && (
         <Text variant="caption" color="danger" className="w-full text-end">
-          {error.code}
+          {tErrors(error.code as any)}
         </Text>
       )}
     </>

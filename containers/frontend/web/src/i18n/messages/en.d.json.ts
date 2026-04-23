@@ -482,7 +482,14 @@ declare const messages: {
     "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
     "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
     "VALIDATION_ERROR": "Validation error: please check the fields and try again.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "API request failed. Try again later.",
+    "UNAUTHORIZED_ACTION": "Action not allowed.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "Request not found or no longer available.",
+    "FRIENDSHIP_ALREADY_ACCEPTED": "This request was already accepted.",
+    "FRIENDSHIP_NOT_FOUND": "Friendship not found.",
+    "USER_NOT_FOUND": "User not found.",
+    "USER_ALREADY_FRIEND": "You are already friends.",
+    "CANNOT_ADD_SELF": "You cannot add yourself."
   }
 };
 export default messages;

@@ -480,6 +480,13 @@
     "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
-    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard."
+    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard.",
+    "UNAUTHORIZED_ACTION": "Acció no permesa.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
+    "FRIENDSHIP_ALREADY_ACCEPTED": "Aquesta sol·licitud ja ha estat acceptada.",
+    "FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
+    "USER_NOT_FOUND": "Usuari no trobat.",
+    "USER_ALREADY_FRIEND": "Ja sou amics.",
+    "CANNOT_ADD_SELF": "No et pots afegir a tu mateix."
   }
 }

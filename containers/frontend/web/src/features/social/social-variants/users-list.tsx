@@ -32,7 +32,6 @@ export function UsersList({ friends, type }: UsersListProps) {
 
   return friends?.map((item) => {
     const { id, username, avatar } = item;
-    console.log('[UsersList] item:', item);
     return (
       <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
         {type === 'request' && (

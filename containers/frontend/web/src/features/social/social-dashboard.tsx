@@ -21,7 +21,6 @@ import { useSocialData } from './hooks/use-social-data';
 function FriendsList() {
   const t = useTranslations('features.social.friends');
   const { friends, isLoading } = useSocialData();
-  console.log(friends);
   const onlineFriends = friends?.filter((f) => f.isOnline);
   const offlineFriends = friends?.filter((f) => !f.isOnline);
 

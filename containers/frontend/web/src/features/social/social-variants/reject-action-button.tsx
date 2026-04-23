@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 
 import { Text, IconButton } from '@components';
 import { PendingListKey, useSocialStore } from '../store/use-social-store';
-import { respondToRequest } from '../actions/social.actions';
+import { respondToRequest, deleteFriendship } from '../actions/social.actions';
 
 export function RejectActionButton({
   type,
@@ -13,26 +13,34 @@ export function RejectActionButton({
   friendshipId: string;
 }) {
   const tActions = useTranslations('features.social.actions');
+  const tErrors = useTranslations('errors');
   const removePendingById = useSocialStore((s) => s.removePendingById);
-  const [error, setError] = useState(undefined);
+  const [error, setError] = useState<any>(undefined);
 
-  const handleResponse = useCallback(async (id: string, action: 'accept' | 'reject') => {
-    const response = await respondToRequest(id, action);
-    if (response.ok) removePendingById(type, id);
-    else setError(response.error);
-  }, []);
+  const handleResponse = useCallback(
+    async (id: string, listType: PendingListKey) => {
+      const response =
+        listType === 'pendingSent'
+          ? await deleteFriendship(id)
+          : await respondToRequest(id, 'reject');
+
+      if (response.ok) removePendingById(listType, id);
+      else setError(response.error);
+    },
+    [removePendingById],
+  );
 
   return (
     <>
       <IconButton
-        label={tActions('reject')}
+        label={tActions(type === 'pendingSent' ? 'cancel' : 'reject')}
         icon="close"
         className="text-red-500 border-red-500"
-        onPress={() => handleResponse(friendshipId, 'reject')}
+        onPress={() => handleResponse(friendshipId, type)}
       />
       {error && (
         <Text variant="caption" color="danger" className="w-full text-end">
-          {error.code}
+          {tErrors(error.code as any)}
         </Text>
       )}
     </>

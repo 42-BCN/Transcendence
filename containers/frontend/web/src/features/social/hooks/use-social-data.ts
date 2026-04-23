@@ -25,7 +25,6 @@ export function useSocialData() {
         getPendingRequests(),
         getSentRequests(),
       ]);
-      console.log(f, s, r);
       if (f.status === 'fulfilled' && f.value.ok) setFriends(f.value.data.friendships);
       if (r.status === 'fulfilled' && r.value.ok) setPendingReceived(r.value.data.requests);
       if (s.status === 'fulfilled' && s.value.ok) setPendingSent(s.value.data.requests);
