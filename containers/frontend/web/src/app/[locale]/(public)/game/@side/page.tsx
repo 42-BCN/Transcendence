@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 
-import { Button, IconButton } from '@components';
+import { IconButton } from '@components';
 import { ChatFeature } from '@/features/chat';
 
 export default function GameSidePage() {
