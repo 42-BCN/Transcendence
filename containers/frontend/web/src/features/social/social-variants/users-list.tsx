@@ -7,10 +7,10 @@ import type {
   FriendshipPublic,
 } from '@/contracts/api/friendships/friendships.contracts';
 
-import { PendingButton } from './pending-buttons';
-import { RequestButtons } from './request-buttons';
 import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
+import { AcceptActionButton } from './accept-action-button';
+import { RejectActionButton } from './reject-action-button';
 
 interface UsersListProps {
   friends: (FriendPublic | FriendshipPublic)[];
@@ -30,11 +30,18 @@ export function UsersList({ friends, type }: UsersListProps) {
     );
   }
 
-  return friends?.map(({ id, username, avatar }) => {
+  return friends?.map((item) => {
+    const { id, username, avatar } = item;
+    console.log('[UsersList] item:', item);
     return (
       <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
-        {type === 'request' && <RequestButtons friendshipId={id} />}
-        {type === 'pending' && <PendingButton friendshipId={id} />}
+        {type === 'request' && (
+          <>
+            <RejectActionButton friendshipId={id} type="pendingReceived" />
+            <AcceptActionButton friendshipId={id} />
+          </>
+        )}
+        {type === 'pending' && <RejectActionButton friendshipId={id} type="pendingSent" />}
         {type === 'online' && <OnlineButtons username={username} friendshipId={id} />}
         {type === 'offline' && <OfflineButtons friendshipId={id} />}
       </UserItem>

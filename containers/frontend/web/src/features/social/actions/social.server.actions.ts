@@ -25,6 +25,7 @@ export async function getFriendsList() {
     );
     return response.data;
   })();
+  console.log(result);
   return result;
 }
 

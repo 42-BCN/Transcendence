@@ -20,8 +20,7 @@ interface SocialState {
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   removePendingById: (list: PendingListKey, id: string) => void;
-
-  // setOptimisticReject: (id) => ()
+  acceptPendingById: (id: string) => void;
 }
 
 export const useSocialStore = create<SocialState>((set) => ({
@@ -41,4 +40,22 @@ export const useSocialStore = create<SocialState>((set) => ({
     set((state) => ({
       [list]: state[list].filter((item) => item.id !== id),
     })),
+
+  acceptPendingById: (id) =>
+    set((state) => {
+      const request = state.pendingReceived.find((r) => r.id === id);
+      if (!request) return state;
+
+      const newFriend: FriendPublic = {
+        id: request.id,
+        username: request.username,
+        avatar: request.avatar,
+        isOnline: false, //pending
+      };
+
+      return {
+        pendingReceived: state.pendingReceived.filter((r) => r.id !== id),
+        friends: [...state.friends, newFriend],
+      };
+    }),
 }));
