@@ -5,11 +5,11 @@ import { fetchClient } from '@/lib/http/fetcher.client';
 
 export async function logoutAction() {
   try {
-    const response = await fetchClient<LogoutRes>('/api/auth/logout', 'POST', undefined, {
+    const result = await fetchClient<LogoutRes>('/api/auth/logout', 'POST', undefined, {
       withAuth: true,
     });
 
-    return response.data;
+    return result.data;
   } catch {
     return { ok: false, error: { code: 'AUTH_INTERNAL_ERROR' } };
   }
