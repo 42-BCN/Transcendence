@@ -50,16 +50,16 @@ export async function notifyFriendAccepted(userA: UserBrief, userB: UserBrief): 
         event: 'friends:accepted',
         userId: userA.userId,
         payload: {
-          friendUserId: userB.userId,
-          friendUsername: userB.username,
+          userId: userB.userId,
+          username: userB.username,
         },
       }),
       postNotify({
         event: 'friends:accepted',
         userId: userB.userId,
         payload: {
-          friendUserId: userA.userId,
-          friendUsername: userA.username,
+          userId: userA.userId,
+          username: userA.username,
         },
       }),
     ]);

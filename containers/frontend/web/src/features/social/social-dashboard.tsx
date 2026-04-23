@@ -21,22 +21,22 @@ import { useSocialData } from './hooks/use-social-data';
 function FriendsList() {
   const t = useTranslations('features.social.friends');
   const { friends, isLoading } = useSocialData();
-
-  const onlineFriends = friends.filter((f) => f.isOnline);
-  const offlineFriends = friends.filter((f) => !f.isOnline);
+  console.log(friends);
+  const onlineFriends = friends?.filter((f) => f.isOnline);
+  const offlineFriends = friends?.filter((f) => !f.isOnline);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull
         id="online"
-        title={`${t('online')} (${isLoading ? '...' : onlineFriends.length})`}
+        title={`${t('online')} (${isLoading ? '...' : onlineFriends?.length})`}
       >
         <UsersList friends={onlineFriends} type="online" />
       </DisclosureFull>
 
       <DisclosureFull
         id="offline"
-        title={`${t('offline')} (${isLoading ? '...' : offlineFriends.length})`}
+        title={`${t('offline')} (${isLoading ? '...' : offlineFriends?.length})`}
       >
         <UsersList friends={offlineFriends} type="offline" />
       </DisclosureFull>
@@ -52,12 +52,12 @@ function RequestsList() {
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
       <DisclosureFull
         id="received"
-        title={`${t('received')} (${isLoading ? '...' : pendingReceived.length})`}
+        title={`${t('received')} (${isLoading ? '...' : pendingReceived?.length})`}
       >
         <UsersList friends={pendingReceived} type="request" />
       </DisclosureFull>
 
-      <DisclosureFull id="sent" title={`${t('sent')} (${isLoading ? '...' : pendingSent.length})`}>
+      <DisclosureFull id="sent" title={`${t('sent')} (${isLoading ? '...' : pendingSent?.length})`}>
         <UsersList friends={pendingSent} type="pending" />
       </DisclosureFull>
     </DisclosureGroup>

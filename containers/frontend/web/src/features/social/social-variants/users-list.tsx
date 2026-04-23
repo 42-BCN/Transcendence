@@ -20,7 +20,7 @@ interface UsersListProps {
 export function UsersList({ friends, type }: UsersListProps) {
   const t = useTranslations('features.social.emptyStates');
 
-  if (friends.length === 0) {
+  if (friends?.length === 0) {
     return (
       <Stack align="center" justify="center" className="py-3 px-3 text-center">
         <Text variant="caption" color="tertiary">
@@ -30,15 +30,9 @@ export function UsersList({ friends, type }: UsersListProps) {
     );
   }
 
-  return friends.map((item) => {
-    // Standardize data from different contracts (FriendPublic vs FriendshipPublic)
-    const username =
-      'friendUsername' in item ? item.friendUsername : (item as FriendPublic).username;
-    const avatarUrl = 'friendAvatar' in item ? item.friendAvatar : (item as FriendPublic).avatar;
-    const id = item.id;
-
+  return friends?.map(({ id, username, avatar }) => {
     return (
-      <UserItem username={username} avatarUrl={avatarUrl ?? undefined} key={id}>
+      <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
         {type === 'request' && <RequestButtons friendshipId={id} />}
         {type === 'pending' && <PendingButton friendshipId={id} />}
         {type === 'online' && <OnlineButtons username={username} friendshipId={id} />}

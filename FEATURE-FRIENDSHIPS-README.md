@@ -186,7 +186,7 @@ List accepted friends (simple UI format: id, username, avatar, isOnline).
 ---
 
 ### `GET /api/friends/detailed`
-List accepted friendships with full details (status, isSender, createdAt, friendAvatar).
+List accepted friendships with full details (status, isSender, createdAt, avatar).
 
 **Response**: `{ "ok": true, "data": { "friendships": [...] } }`
 
@@ -452,7 +452,7 @@ Lista de amigos aceptados (formato UI simple: id, username, avatar, isOnline).
 ---
 
 ### `GET /api/friends/detailed`
-Lista de friendships con detalles completos (status, isSender, createdAt, friendAvatar).
+Lista de friendships con detalles completos (status, isSender, createdAt, avatar).
 
 **Response**: `{ "ok": true, "data": { "friendships": [...] } }`
 
