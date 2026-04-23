@@ -46,17 +46,13 @@ export type node = {
   f: number
 }
 
-export type ability = {
-  name: string;
+export type historyAction = {
+  who: string;
+  type: string;
   target: string;
   dice: number;
   aftermov: boolean;
-}
-
-export type historyAction = {
-  who: string;
-  moveto: string | null;
-  abilities?: ability[];
+  abName: string | null;
 }
 
 export type abilityInfo = {
@@ -76,6 +72,7 @@ export type serverGameState = {
   phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
   turn: number,
   players: Record<string, entity>;
+  ghosts: Record<string, entity>;
   clones: Record<string, entity>;
   enemies: Record<string, entity>;
   tiles: Record<string, boolean>;

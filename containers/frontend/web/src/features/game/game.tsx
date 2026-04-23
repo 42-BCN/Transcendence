@@ -441,7 +441,7 @@ export function Game() {
     return () => {
       clearInterval(debugTimer);
     };
-  }, [assignedCharacter, mapBounds]);
+  }, [mapBounds]);
 
   return !mapBounds || mapBounds.width === 0 ? (
     <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">

@@ -41,31 +41,19 @@ type enemy = player;
 
 type entity = player | enemy;
 
-type node = {
-  id: string;
-  pos: pos;
-  g: number;
-  f: number;
-};
-
 type mapInfo = {
   width: number;
   height: number;
   depth: number;
 };
 
-type ability = {
-  name: string;
+export type historyAction = {
+  who: string;
+  type: string;
   target: string;
   dice: number;
   aftermov: boolean;
-};
-
-type historyAction = {
-  who: string;
-  moveto: string | null;
-  abilities?: ability[];
-};
+}
 
 type abilityInfo = {
   name: string;
@@ -438,92 +426,86 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   initSocketListeners: () => {
-    const connect = async () => {
-      try {
-        console.log('🔐 Establishing session before connecting to game socket...');
-        await ensureChatSessionIdentity();
-        console.log('✅ Session established, connecting to game socket...');
-      } catch (error) {
-        console.error('❌ Failed to establish session:', error);
-      }
-
-      const handleJoin = (id: string) => {
-        console.log('👤 Player joined with ID:', id);
-        set({ assignedCharacter: id });
-      };
-
-      const handleGlobalSync = (state: globalGameState) => {
-        console.log('📡 Received global sync with mapBounds:', state.mapBounds);
-        set({
-          phase: state.phase,
-          turn: state.turn,
-          tiles: state.tiles,
-          enemies: state.enemies,
-          players: state.players,
-          clones: state.clones,
-          history: state.history,
-          mapBounds: state.mapBounds,
-        });
-      };
-
-      const handleSync = (state: localGameState) => {
-        if (!state)
-          return;
-        console.log('🔄 Received sync event');
-        set({
-          highlights: state.highlights,
-          selectables: state.selectables,
-          canSelect: state.canSelect,
-          selectedAb: state.selectedAb,
-          selectedEnt: state.selectedEnt,
-          selectedDice: state.selectedDice,
-        });
-      };
-
-      const handleUpdateRolls = (quantity: number) => {
-        console.log('🎲 Received rolls update:', quantity);
-        set({ rollQuantity: quantity });
-      };
-
-      const handleHighlights = (highlights: Record<string, boolean>) => {
-        console.log('✨ Received highlights');
-        set({ highlights: highlights });
-      };
-
-      const handleSelectables = (selectables: Record<string, boolean>) => {
-        console.log('🎯 Received selectables');
-        set({ selectables: selectables });
-      };
-
-      gameSocket.on('connect', () => {
-        console.log('✅ Connected to game socket server');
-      });
-
-      gameSocket.on('disconnect', (reason) => {
-        console.log('❌ Disconnected from game socket:', reason);
-      });
-
-      gameSocket.on('connect_error', (error) => {
-        console.error('🔴 Game socket connection error:', error);
-      });
-
-      gameSocket.on('error', (error) => {
-        console.error('🔴 Game socket error:', error);
-      });
-
-      gameSocket.on('game:server:join', handleJoin);
-      gameSocket.on('game:server:globalSync', handleGlobalSync);
-      gameSocket.on('game:server:sync', handleSync);
-      gameSocket.on('game:server:displayMoveRange', handleHighlights);
-      gameSocket.on('game:server:displayAbilityRange', handleSelectables);
-
-      console.log('🚀 Connecting game socket...');
-      gameSocket.connect();
+    const handleJoin = (id: string) => {
+      console.log('👤 Player joined with ID:', id);
+      set({ assignedCharacter: id });
     };
 
-    connect().catch((err) => {
-      console.error('❌ Failed to initialize socket listeners:', err);
+    const handleGlobalSync = (state: globalGameState) => {
+      console.log('📡 Received global sync with mapBounds:', state.mapBounds);
+      set({
+        phase: state.phase,
+        turn: state.turn,
+        tiles: state.tiles,
+        enemies: state.enemies,
+        players: state.players,
+        clones: state.clones,
+        history: state.history,
+        mapBounds: state.mapBounds,
+      });
+    };
+
+    const handleSync = (state: localGameState) => {
+      if (!state)
+        return;
+      console.log('🔄 Received sync event');
+      set({
+        highlights: state.highlights,
+        selectables: state.selectables,
+        canSelect: state.canSelect,
+        selectedAb: state.selectedAb,
+        selectedEnt: state.selectedEnt,
+        selectedDice: state.selectedDice,
+      });
+    };
+
+    const handleUpdateRolls = (quantity: number) => {
+      console.log('🎲 Received rolls update:', quantity);
+      set({ rollQuantity: quantity });
+    };
+
+    const handleHighlights = (highlights: Record<string, boolean>) => {
+      console.log('✨ Received highlights');
+      set({ highlights: highlights });
+    };
+
+    const handleSelectables = (selectables: Record<string, boolean>) => {
+      console.log('🎯 Received selectables');
+      set({ selectables: selectables });
+    };
+
+    gameSocket.on('connect', () => {
+      console.log('✅ Connected to game socket server');
     });
+
+    gameSocket.on('disconnect', (reason) => {
+      console.log('❌ Disconnected from game socket:', reason);
+    });
+
+    gameSocket.on('connect_error', (error) => {
+      console.error('🔴 Game socket connection error:', error);
+    });
+
+    gameSocket.on('error', (error) => {
+      console.error('🔴 Game socket error:', error);
+    });
+
+    gameSocket.on('game:server:join', handleJoin);
+    gameSocket.on('game:server:globalSync', handleGlobalSync);
+    gameSocket.on('game:server:sync', handleSync);
+    gameSocket.on('game:server:displayMoveRange', handleHighlights);
+    gameSocket.on('game:server:displayAbilityRange', handleSelectables);
+
+    ensureChatSessionIdentity()
+      .then(() => {
+        console.log('✅ Session established, connecting to game socket...');
+      })
+      .catch((err) => {
+        console.error('❌ Session failed, attempting to connect anyway:', err);
+      })
+      .finally(() => {
+        gameSocket.connect();
+      });
   },
 
   cleanupSocketListeners: () => {
@@ -539,4 +521,5 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:displayAbilityRange');
     gameSocket.disconnect();
   },
+
 }));

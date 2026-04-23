@@ -24,20 +24,26 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     }
     else {
       users[socket.id] = role;
-      socket.emit('game:server:sync', gameState.clients[role])
-      console.log('Emitted join server event with role:', role);
-      if (!gameState.clients[role]) {
-        gameState.clients[role] = initClientGameState(socket.id);
-        socket.emit('game:server:join', role);
-      }
+      gameState.clients[role] = initClientGameState(socket.id);
+      socket.emit('game:server:join', role);
+      if (gameState.clients[role])
+        socket.emit('game:server:sync', gameState.clients[role]);
       socket.on('game:client:showMoveRange', (diceValue: number) => {
         if (!gameState.clients[role] || !role)
           return;
-        if (gameState.clients[role].selectedEnt.startsWith('clone_'))
+        if (gameState.clients[role].selectedEnt.startsWith('clone_')
+          && gameState.clones[`clone_${role}`].hasMoved === true)
           return (console.log(role, 'has already moved'));
         console.log('Received move range event with dice:',
           diceValue, 'for character', role);
-        const hlId = dijkstra(role, gameState.players[role].position, diceValue)
+        const selEnt = gameState.clients[role].selectedEnt;
+        if (!selEnt)
+          return;
+        const ent = gameState.players[selEnt] || gameState.ghosts[selEnt]
+          || gameState.enemies[selEnt] || gameState.clones[selEnt];
+        if (!ent)
+          return;
+        const hlId = dijkstra(selEnt, ent.position, diceValue)
         const hlTiles: Record<string, boolean> = {};
         hlId.forEach((id: string) => (hlTiles[id] = true));
         setClear(role);
@@ -51,11 +57,17 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           return (console.log(role, 'has already moved'));
         console.log('Received move range event with dice:',
           diceValue, 'for character', role);
-        gameState.clients[role].selectedDice = diceValue;
-        const hlId = dijkstra(role, gameState.players[role].position, diceValue)
+        const selEnt = gameState.clients[role].selectedEnt;
+        if (selEnt?.replace("clone_", "") !== role)
+          return;
+        const ent = gameState.players[role] || gameState.clones[selEnt];
+        if (!ent)
+          return;
+        const hlId = dijkstra(selEnt, ent.position, diceValue);
         const hlTiles: Record<string, boolean> = {};
         hlId.forEach((id: string) => (hlTiles[id] = true));
         gameState.clients[role].highlights = hlTiles;
+        gameState.clients[role].selectedDice = diceValue;
         socket.emit('game:server:sync', gameState.clients[role])
       });
       socket.on('game:client:selectEntity', (id: string) => {
@@ -137,6 +149,8 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         const [x, y, z] = tileId.split(',').map(Number);
         const dest = { x, y: y + 1, z };
         const cloneId = `clone_${role}`;
+        gameState.ghosts[role] = { ...gameState.players[role] };
+        delete gameState.players[role];
         gameState.clones[cloneId] = {
           ...source,
           id: cloneId,
