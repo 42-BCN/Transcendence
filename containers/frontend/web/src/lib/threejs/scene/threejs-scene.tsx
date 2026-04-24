@@ -5,7 +5,7 @@ import { Grid, OrbitControls } from '@react-three/drei';
 export function ThreejsScene({ children }: { children: ReactNode }) {
   return (
     <Canvas
-      className="w-full h-full"
+      className="w-full h-[100dvh]"
       camera={{
         position: [8, 8, 8], // 👈 isometric angle
         fov: 45,
