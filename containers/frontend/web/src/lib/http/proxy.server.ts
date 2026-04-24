@@ -4,6 +4,10 @@ import { parseJsonSafe } from './parse-json-safe';
 
 const API_BASE_URL = envServer.apiBaseUrl;
 
+type HeadersWithSetCookie = Headers & {
+  getSetCookie?: () => string[];
+};
+
 export async function proxyJsonWithSetCookie(args: {
   endpoint: string;
   method: HttpMethod;
@@ -19,9 +23,11 @@ export async function proxyJsonWithSetCookie(args: {
     cache: 'no-store',
   });
 
-  const data = await parseJsonSafe(res);
+  const text = await res.text();
+  const data = await parseJsonSafe(text);
 
-  const setCookie = (res.headers as any).getSetCookie?.() ?? res.headers.get('set-cookie');
+  const headers = res.headers as HeadersWithSetCookie;
+  const setCookie = headers.getSetCookie?.() ?? headers.get('set-cookie');
 
   return { status: res.status, data, setCookie };
 }
