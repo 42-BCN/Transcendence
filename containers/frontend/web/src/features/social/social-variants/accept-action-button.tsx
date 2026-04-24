@@ -11,7 +11,7 @@ export function AcceptActionButton({ friendshipId }: { friendshipId: string }) {
   const acceptPendingById = useSocialStore((s) => s.acceptPendingById);
   const [error, setError] = useState<any>(undefined);
 
-  const handleResponse = useCallback(
+  const handleClick = useCallback(
     async (id: string) => {
       const response = await respondToRequest(id, 'accept');
       if (response.ok) acceptPendingById(id);
@@ -26,7 +26,7 @@ export function AcceptActionButton({ friendshipId }: { friendshipId: string }) {
         label={tActions('accept')}
         icon="check"
         className="text-green-500 border-green-500"
-        onPress={() => handleResponse(friendshipId)}
+        onPress={() => handleClick(friendshipId)}
       />
       {error && (
         <Text variant="caption" color="danger" className="w-full text-end">

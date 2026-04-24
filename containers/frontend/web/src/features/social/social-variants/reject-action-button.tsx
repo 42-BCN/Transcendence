@@ -17,7 +17,7 @@ export function RejectActionButton({
   const removePendingById = useSocialStore((s) => s.removePendingById);
   const [error, setError] = useState<any>(undefined);
 
-  const handleResponse = useCallback(
+  const handleClick = useCallback(
     async (id: string, listType: PendingListKey) => {
       const response =
         listType === 'pendingSent'
@@ -36,7 +36,7 @@ export function RejectActionButton({
         label={tActions(type === 'pendingSent' ? 'cancel' : 'reject')}
         icon="close"
         className="text-red-500 border-red-500"
-        onPress={() => handleResponse(friendshipId, type)}
+        onPress={() => handleClick(friendshipId, type)}
       />
       {error && (
         <Text variant="caption" color="danger" className="w-full text-end">

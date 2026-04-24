@@ -450,7 +450,8 @@
         "inviteToGame": "Invitar a partida",
         "chat": "Chat",
         "reject": "Rechazar",
-        "accept": "Aceptar"
+        "accept": "Aceptar",
+        "cancel": "Cancelar"
       }
     }
   },

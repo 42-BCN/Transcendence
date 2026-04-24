@@ -451,7 +451,8 @@
         "inviteToGame": "Convidar a partida",
         "chat": "Chat",
         "reject": "Rebutjar",
-        "accept": "Acceptar"
+        "accept": "Acceptar",
+        "cancel": "Cancel·lar"
       }
     }
   },

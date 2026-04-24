@@ -453,7 +453,8 @@ declare const messages: {
         "inviteToGame": "Invite to Game",
         "chat": "Chat",
         "reject": "Reject",
-        "accept": "Accept"
+        "accept": "Accept",
+        "cancel": "Cancel"
       }
     }
   },
