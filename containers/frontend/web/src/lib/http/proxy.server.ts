@@ -24,7 +24,7 @@ export async function proxyJsonWithSetCookie(args: {
   });
 
   const text = await res.text();
-  const data = await parseJsonSafe(text);
+  const data = parseJsonSafe(text);
 
   const headers = res.headers as HeadersWithSetCookie;
   const setCookie = headers.getSetCookie?.() ?? headers.get('set-cookie');

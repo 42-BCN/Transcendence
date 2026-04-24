@@ -1,6 +1,6 @@
 import { FALLBACK } from './fallback';
 
-export async function parseJsonSafe<T>(text: string): Promise<T | null> {
+export function parseJsonSafe<T>(text: string): T | null {
   if (!text) return null;
 
   try {
