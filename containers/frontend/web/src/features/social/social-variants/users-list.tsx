@@ -32,7 +32,7 @@ export function UsersList({ friends, type, error }: UsersListProps) {
     );
   }
 
-  if (friends?.length === 0) {
+  if (friends.length === 0) {
     return (
       <Stack align="center" justify="center" className="py-3 px-3 text-center">
         <Text variant="caption" color="tertiary">
@@ -42,7 +42,7 @@ export function UsersList({ friends, type, error }: UsersListProps) {
     );
   }
 
-  return friends?.map((item) => {
+  return friends.map((item) => {
     const { id, username, avatar } = item;
     return (
       <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
