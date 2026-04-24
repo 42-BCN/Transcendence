@@ -5,8 +5,9 @@ import { cookies } from 'next/headers';
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 7;
 
 function getSetCookieHeaders(headers: Headers): string[] {
-  if (typeof headers.getSetCookie === 'function') {
-    return headers.getSetCookie();
+  const headersWithGetSetCookie = headers as Headers & { getSetCookie?: () => string[] };
+  if (typeof headersWithGetSetCookie.getSetCookie === 'function') {
+    return headersWithGetSetCookie.getSetCookie();
   }
 
   const setCookie = headers.get('set-cookie');
