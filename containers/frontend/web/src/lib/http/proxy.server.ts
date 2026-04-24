@@ -8,11 +8,31 @@ type HeadersWithSetCookie = Headers & {
   getSetCookie?: () => string[];
 };
 
+function getSetCookies(headers: Headers): string[] {
+  const headersWithSetCookie = headers as HeadersWithSetCookie;
+
+  const setCookies = headersWithSetCookie.getSetCookie?.();
+
+  if (setCookies?.length) {
+    return setCookies;
+  }
+
+  const setCookie = headers.get('set-cookie');
+
+  return setCookie ? [setCookie] : [];
+}
+
+export function appendSetCookies(headers: Headers, setCookies: string[]) {
+  for (const setCookie of setCookies) {
+    headers.append('set-cookie', setCookie);
+  }
+}
+
 export async function proxyJsonWithSetCookie(args: {
   endpoint: string;
   method: HttpMethod;
   body: unknown;
-}): Promise<{ status: number; data: unknown; setCookie: string | string[] | null }> {
+}): Promise<{ status: number; data: unknown; setCookies: string[] }> {
   const res = await fetch(`${API_BASE_URL}${args.endpoint}`, {
     method: args.method,
     headers: {
@@ -26,8 +46,9 @@ export async function proxyJsonWithSetCookie(args: {
   const text = await res.text();
   const data = parseJsonSafe(text);
 
-  const headers = res.headers as HeadersWithSetCookie;
-  const setCookie = headers.getSetCookie?.() ?? headers.get('set-cookie');
-
-  return { status: res.status, data, setCookie };
+  return {
+    status: res.status,
+    data,
+    setCookies: getSetCookies(res.headers),
+  };
 }
