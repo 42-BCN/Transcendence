@@ -486,7 +486,9 @@
     "FRIENDSHIP_ALREADY_ACCEPTED": "This request was already accepted.",
     "FRIENDSHIP_NOT_FOUND": "Friendship not found.",
     "USER_NOT_FOUND": "User not found.",
-    "USER_ALREADY_FRIEND": "You are already friends.",
-    "CANNOT_ADD_SELF": "You cannot add yourself."
+    "INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "FRIENDSHIP_ALREADY_EXISTS": "You are already friends.",
+    "FRIENDSHIP_SELF_REQUEST": "You cannot add yourself.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "A friend request has already been sent."
   }
 }

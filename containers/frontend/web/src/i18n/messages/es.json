@@ -486,7 +486,9 @@
     "FRIENDSHIP_ALREADY_ACCEPTED": "Esta solicitud ya ha sido aceptada.",
     "FRIENDSHIP_NOT_FOUND": "No se ha encontrado la amistad.",
     "USER_NOT_FOUND": "Usuario no encontrado.",
-    "USER_ALREADY_FRIEND": "Ya sois amigos.",
-    "CANNOT_ADD_SELF": "No puedes añadirte a ti mismo."
+    "INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+    "FRIENDSHIP_ALREADY_EXISTS": "Ya sois amigos.",
+    "FRIENDSHIP_SELF_REQUEST": "No puedes añadirte a ti mismo.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad."
   }
 }

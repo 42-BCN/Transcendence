@@ -487,7 +487,9 @@
     "FRIENDSHIP_ALREADY_ACCEPTED": "Aquesta sol·licitud ja ha estat acceptada.",
     "FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
     "USER_NOT_FOUND": "Usuari no trobat.",
-    "USER_ALREADY_FRIEND": "Ja sou amics.",
-    "CANNOT_ADD_SELF": "No et pots afegir a tu mateix."
+    "INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "FRIENDSHIP_ALREADY_EXISTS": "Ja sou amics.",
+    "FRIENDSHIP_SELF_REQUEST": "No et pots afegir a tu mateix.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat."
   }
 }
