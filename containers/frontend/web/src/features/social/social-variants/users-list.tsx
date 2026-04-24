@@ -12,6 +12,7 @@ export function UsersList({
   friends: UserItemProps[];
   type: 'request' | 'pending' | 'online' | 'offline';
 }) {
+  console.log(friends);
   return friends.map(({ username, subtitle, avatarUrl, className }) => (
     <UserItem
       username={username}
