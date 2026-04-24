@@ -1,7 +1,5 @@
 'use server';
 
-import { cookies } from 'next/headers';
-
 import type { VerifyEmailRes } from '@/contracts/api/auth/auth.contract';
 import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
 import { VerifyEmailReqSchema } from '@/contracts/api/auth/auth.validation';
