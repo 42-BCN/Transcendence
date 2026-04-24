@@ -5,6 +5,9 @@ import { Text, IconButton } from '@components';
 import { PendingListKey, useSocialStore } from '../store/use-social-store';
 import { respondToRequest, deleteFriendship } from '../actions/social.actions';
 
+import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';
+import type { ApiErrorShape } from '@/contracts/api/http/response';
+
 export function RejectActionButton({
   type,
   friendshipId,
@@ -15,7 +18,9 @@ export function RejectActionButton({
   const tActions = useTranslations('features.social.actions');
   const tErrors = useTranslations('errors');
   const removePendingById = useSocialStore((s) => s.removePendingById);
-  const [error, setError] = useState<any>(undefined);
+  const [error, setError] = useState<
+    ApiErrorShape<FriendshipsErrorName | 'VALIDATION_ERROR'> | undefined
+  >(undefined);
 
   const handleClick = useCallback(
     async (id: string, listType: PendingListKey) => {
