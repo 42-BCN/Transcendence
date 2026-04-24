@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
-import { ChangePasswordRes } from '@/contracts/api/auth/auth.contract';
+import type { ChangePasswordRes } from '@/contracts/api/auth/auth.contract';
 
 export async function changePasswordAction(_prevState: unknown, formData: FormData) {
   const currentPassword = String(formData.get('currentPassword') ?? '');
