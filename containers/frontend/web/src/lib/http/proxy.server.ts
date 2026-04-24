@@ -1,5 +1,6 @@
 import type { HttpMethod } from './utils';
 import { envServer } from '../config/env.server';
+import { parseJsonSafe } from './parse-json-safe';
 
 const API_BASE_URL = envServer.apiBaseUrl;
 
@@ -7,7 +8,7 @@ export async function proxyJsonWithSetCookie(args: {
   endpoint: string;
   method: HttpMethod;
   body: unknown;
-}): Promise<{ status: number; data: unknown; setCookie: string | null }> {
+}): Promise<{ status: number; data: unknown; setCookie: string | string[] | null }> {
   const res = await fetch(`${API_BASE_URL}${args.endpoint}`, {
     method: args.method,
     headers: {
@@ -18,8 +19,9 @@ export async function proxyJsonWithSetCookie(args: {
     cache: 'no-store',
   });
 
-  const data = await res.json();
-  const setCookie = res.headers.get('set-cookie');
+  const data = await parseJsonSafe(res);
+
+  const setCookie = (res.headers as any).getSetCookie?.() ?? res.headers.get('set-cookie');
 
   return { status: res.status, data, setCookie };
 }
