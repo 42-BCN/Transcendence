@@ -1,6 +1,9 @@
 import { fetchClient } from '@/lib/http/fetcher.client';
 
-import type { RespondFriendRequestResponse } from '@/contracts/api/friendships/friendships.contracts';
+import type {
+  RespondFriendRequestResponse,
+  DeleteFriendshipResponse,
+} from '@/contracts/api/friendships/friendships.contracts';
 import {
   RespondFriendRequestBodySchema,
   DeleteFriendshipParamSchema,
@@ -35,7 +38,7 @@ export async function deleteFriendship(friendshipId: string) {
     return { ok: false as const, error: { code: 'VALIDATION_ERROR' } };
   }
 
-  const response = await fetchClient<any>(
+  const response = await fetchClient<DeleteFriendshipResponse>(
     `/api/friends/${parsed.data.friendshipId}`,
     'DELETE',
     undefined,
