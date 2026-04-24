@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
-import { IconButton } from '@/components/composites/icon-button/icon-button';
+import { IconButton } from '@components';
+
 export function OnlineButtons({
   username,
   friendshipId,

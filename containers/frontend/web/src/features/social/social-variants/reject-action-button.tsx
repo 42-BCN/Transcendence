@@ -40,7 +40,8 @@ export function RejectActionButton({
       <IconButton
         label={tActions(type === 'pendingSent' ? 'cancel' : 'reject')}
         icon="close"
-        className="text-red-500 border-red-500"
+        variant="secondary"
+        className="text-danger border-danger"
         onPress={() => handleClick(friendshipId, type)}
       />
       {error && (

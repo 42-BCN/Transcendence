@@ -30,7 +30,8 @@ export function AcceptActionButton({ friendshipId }: { friendshipId: string }) {
       <IconButton
         label={tActions('accept')}
         icon="check"
-        className="text-green-500 border-green-500"
+        variant="primary"
+        className="bg-success text-white"
         onPress={() => handleClick(friendshipId)}
       />
       {error && (
