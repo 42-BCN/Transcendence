@@ -8,7 +8,7 @@ import { SocialDashboard } from '@/features/social/social-dashboard';
 export default async function HomePage() {
   const [f, r, s] = await Promise.all([getFriendsList(), getPendingRequests(), getSentRequests()]);
   const initialData = {
-    friends: f.ok ? f.data.friendships : [],
+    friends: f.ok ? f.data.friends : [],
     pendingReceived: r.ok ? r.data.requests : [],
     pendingSent: s.ok ? s.data.requests : [],
     errors: {

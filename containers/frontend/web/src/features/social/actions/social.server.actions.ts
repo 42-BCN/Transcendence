@@ -15,14 +15,9 @@ import type {
 export async function getFriendsList() {
   const cookie = (await cookies()).toString();
   const result = await withServerAction(async () => {
-    const response = await fetchServer<GetFriendsListResponse>(
-      '/friends/detailed',
-      'GET',
-      undefined,
-      {
-        cookie,
-      },
-    );
+    const response = await fetchServer<GetFriendsListResponse>('/friends', 'GET', undefined, {
+      cookie,
+    });
     return response.data;
   })();
   return result;

@@ -41,11 +41,11 @@ function FriendsList({ error }: { error?: string }) {
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
-      <DisclosureFull id="online" title={`${t('online')} (${onlineFriends?.length || 0})`}>
+      <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
         <UsersList friends={onlineFriends} type="online" error={error} />
       </DisclosureFull>
 
-      <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends?.length || 0})`}>
+      <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
         <UsersList friends={offlineFriends} type="offline" error={error} />
       </DisclosureFull>
     </DisclosureGroup>
@@ -59,11 +59,11 @@ function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
-      <DisclosureFull id="received" title={`${t('received')} (${pendingReceived?.length || 0})`}>
+      <DisclosureFull id="received" title={`${t('received')} (${pendingReceived.length})`}>
         <UsersList friends={pendingReceived} type="request" error={errors.pendingReceived} />
       </DisclosureFull>
 
-      <DisclosureFull id="sent" title={`${t('sent')} (${pendingSent?.length || 0})`}>
+      <DisclosureFull id="sent" title={`${t('sent')} (${pendingSent.length})`}>
         <UsersList friends={pendingSent} type="pending" error={errors.pendingSent} />
       </DisclosureFull>
     </DisclosureGroup>
