@@ -31,7 +31,7 @@ function toPublic(row: FriendshipRow, currentUserId: string): FriendshipPublic {
     avatar,
     status: row.status,
     isSender: row.senderId === currentUserId,
-    createdAt: row.createdAt,
+    createdAt: row.createdAt.toISOString(),
   };
 }
 
@@ -115,8 +115,8 @@ export async function autoAcceptMutualRequest(
       },
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
