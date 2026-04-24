@@ -1,21 +1,14 @@
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 import { envServer } from '../config/env.server';
+import { FALLBACK } from './fallback';
+import { parseJsonSafe } from './parse-json-safe';
 
 const API_BASE_URL = envServer.apiBaseUrl;
 
 function cookieHeaders(cookie?: string): Record<string, string> {
   return cookie ? { Cookie: cookie } : {};
 }
-
-const FALLBACK = {
-  data: {
-    ok: false,
-    error: {
-      code: 'FETCH_FAILED',
-    },
-  },
-};
 
 export function withServerAction<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => Promise<TResult>,
@@ -52,7 +45,7 @@ export async function fetchServer<T>(
     cache: 'no-store',
   });
   const text = await res.text();
-  const json = text ? JSON.parse(text) : null;
+  const json = await parseJsonSafe<T>(text);
   if (!res.ok) {
     return { data: json as T, headers: res.headers, status: res.status };
   }
