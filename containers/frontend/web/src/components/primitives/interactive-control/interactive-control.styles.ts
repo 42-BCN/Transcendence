@@ -16,7 +16,7 @@ const interactiveControlBase = [
 ];
 
 const interactiveControlVariants: Record<InteractiveControlVariant, string> = {
-  primary: 'border-text-primary data-[hovered]:bg-bg-secondary',
+  primary: 'bg-text-primary text-bg-primary data-[hovered]:opacity-90 border-transparent',
   cta: 'fancy-btn text-white border-none ',
   secondary: 'border-border-primary data-[hovered]:bg-bg-secondary',
   ghost: 'border-transparent data-[hovered]:bg-bg-secondary/60',

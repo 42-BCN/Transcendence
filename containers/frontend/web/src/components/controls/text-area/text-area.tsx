@@ -19,6 +19,11 @@ const handleInput: InputEventHandler<HTMLTextAreaElement> = (e) => {
 
 export function TextArea(props: TextAreaProps) {
   return (
-    <AriaTextArea {...props} onInput={handleInput} className={textAreaStyles(props.className)} />
+    <AriaTextArea
+      inputMode="text"
+      {...props}
+      onInput={handleInput}
+      className={textAreaStyles(props.className)}
+    />
   );
 }
