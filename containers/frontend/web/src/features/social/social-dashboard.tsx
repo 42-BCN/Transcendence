@@ -16,60 +16,72 @@ import {
 } from '@/components';
 
 import { UsersList } from './social-variants';
-import { useSocialData } from './hooks/use-social-data';
+import type {
+  FriendPublic,
+  FriendshipPublic,
+} from '@/contracts/api/friendships/friendships.contracts';
+import { useSocialStore } from './store/use-social-store';
 
-function FriendsList() {
+export interface SocialInitialData {
+  friends: FriendPublic[];
+  pendingReceived: FriendshipPublic[];
+  pendingSent: FriendshipPublic[];
+  errors: {
+    friends?: string;
+    pendingReceived?: string;
+    pendingSent?: string;
+  };
+}
+
+function FriendsList({ error }: { error?: string }) {
   const t = useTranslations('features.social.friends');
-  const { friends, isLoading } = useSocialData();
-  const onlineFriends = friends?.filter((f) => f.isOnline);
-  const offlineFriends = friends?.filter((f) => !f.isOnline);
+  const friends = useSocialStore((s) => s.friends);
+  const onlineFriends = friends.filter((f) => f.isOnline);
+  const offlineFriends = friends.filter((f) => !f.isOnline);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
-      <DisclosureFull
-        id="online"
-        title={`${t('online')} (${isLoading ? '...' : onlineFriends?.length})`}
-      >
-        <UsersList friends={onlineFriends} type="online" />
+      <DisclosureFull id="online" title={`${t('online')} (${onlineFriends?.length || 0})`}>
+        <UsersList friends={onlineFriends} type="online" error={error} />
       </DisclosureFull>
 
-      <DisclosureFull
-        id="offline"
-        title={`${t('offline')} (${isLoading ? '...' : offlineFriends?.length})`}
-      >
-        <UsersList friends={offlineFriends} type="offline" />
+      <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends?.length || 0})`}>
+        <UsersList friends={offlineFriends} type="offline" error={error} />
       </DisclosureFull>
     </DisclosureGroup>
   );
 }
 
-function RequestsList() {
+function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
   const t = useTranslations('features.social.requests');
-  const { pendingReceived, pendingSent, isLoading } = useSocialData();
+  const pendingReceived = useSocialStore((s) => s.pendingReceived);
+  const pendingSent = useSocialStore((s) => s.pendingSent);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
-      <DisclosureFull
-        id="received"
-        title={`${t('received')} (${isLoading ? '...' : pendingReceived?.length})`}
-      >
-        <UsersList friends={pendingReceived} type="request" />
+      <DisclosureFull id="received" title={`${t('received')} (${pendingReceived?.length || 0})`}>
+        <UsersList friends={pendingReceived} type="request" error={errors.pendingReceived} />
       </DisclosureFull>
 
-      <DisclosureFull id="sent" title={`${t('sent')} (${isLoading ? '...' : pendingSent?.length})`}>
-        <UsersList friends={pendingSent} type="pending" />
+      <DisclosureFull id="sent" title={`${t('sent')} (${pendingSent?.length || 0})`}>
+        <UsersList friends={pendingSent} type="pending" error={errors.pendingSent} />
       </DisclosureFull>
     </DisclosureGroup>
   );
 }
 
-export function SocialDashboard() {
+export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
   const t = useTranslations('features.social');
-  const { refreshAll } = useSocialData();
+
+  const setFriends = useSocialStore((s) => s.setFriends);
+  const setPendingReceived = useSocialStore((s) => s.setPendingReceived);
+  const setPendingSent = useSocialStore((s) => s.setPendingSent);
 
   useEffect(() => {
-    refreshAll();
-  }, [refreshAll]);
+    setFriends(initialData.friends);
+    setPendingReceived(initialData.pendingReceived);
+    setPendingSent(initialData.pendingSent);
+  }, [initialData, setFriends, setPendingReceived, setPendingSent]);
 
   return (
     <>
@@ -87,11 +99,11 @@ export function SocialDashboard() {
           </TabList>
 
           <TabPanel id="friends" className="outline-none">
-            <FriendsList />
+            <FriendsList error={initialData.errors.friends} />
           </TabPanel>
 
           <TabPanel id="requests" className="outline-none">
-            <RequestsList />
+            <RequestsList errors={initialData.errors} />
           </TabPanel>
         </Tabs>
       </main>

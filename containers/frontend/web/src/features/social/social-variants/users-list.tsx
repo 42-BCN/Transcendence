@@ -15,10 +15,22 @@ import { RejectActionButton } from './reject-action-button';
 interface UsersListProps {
   friends: (FriendPublic | FriendshipPublic)[];
   type: 'request' | 'pending' | 'online' | 'offline';
+  error?: string;
 }
 
-export function UsersList({ friends, type }: UsersListProps) {
+export function UsersList({ friends, type, error }: UsersListProps) {
   const t = useTranslations('features.social.emptyStates');
+  const tErrors = useTranslations('errors');
+
+  if (error) {
+    return (
+      <Stack align="center" justify="center" className="py-3 px-3 text-center">
+        <Text variant="caption" color="danger">
+          {tErrors(error as any)}
+        </Text>
+      </Stack>
+    );
+  }
 
   if (friends?.length === 0) {
     return (

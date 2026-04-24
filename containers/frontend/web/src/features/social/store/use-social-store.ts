@@ -10,15 +10,11 @@ interface SocialState {
   friends: FriendPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
-  isLoading: boolean;
-  error: string | null;
 
   // Actions
   setFriends: (friends: FriendPublic[]) => void;
   setPendingReceived: (requests: FriendshipPublic[]) => void;
   setPendingSent: (requests: FriendshipPublic[]) => void;
-  setLoading: (isLoading: boolean) => void;
-  setError: (error: string | null) => void;
   removePendingById: (list: PendingListKey, id: string) => void;
   acceptPendingById: (id: string) => void;
 }
@@ -27,14 +23,10 @@ export const useSocialStore = create<SocialState>((set) => ({
   friends: [],
   pendingReceived: [],
   pendingSent: [],
-  isLoading: false,
-  error: null,
 
   setFriends: (friends) => set({ friends }),
   setPendingReceived: (pendingReceived) => set({ pendingReceived }),
   setPendingSent: (pendingSent) => set({ pendingSent }),
-  setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
 
   removePendingById: (list, id) =>
     set((state) => ({
@@ -47,7 +39,7 @@ export const useSocialStore = create<SocialState>((set) => ({
       if (!request) return state;
 
       const newFriend: FriendPublic = {
-        id: request.id,
+        id: request.userId,
         username: request.username,
         avatar: request.avatar,
         isOnline: false, //pending
