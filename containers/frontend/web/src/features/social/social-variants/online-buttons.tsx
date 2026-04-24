@@ -1,13 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { IconButton } from '@components';
 
-export function OnlineButtons({
-  username,
-  friendshipId,
-}: {
-  username: string;
-  friendshipId: string;
-}) {
+export function OnlineButtons({ username, userId }: { username: string; userId: string }) {
   const tActions = useTranslations('features.social.actions');
 
   return (
@@ -16,7 +10,7 @@ export function OnlineButtons({
       <IconButton
         label={tActions('inviteToGame')}
         icon="gamepad"
-        onPress={() => console.log(friendshipId)}
+        onPress={() => console.log(userId)}
       />
     </>
   );

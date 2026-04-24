@@ -53,8 +53,8 @@ export function UsersList({ friends, type, error }: UsersListProps) {
           </>
         )}
         {type === 'pending' && <RejectActionButton friendshipId={id} type="pendingSent" />}
-        {type === 'online' && <OnlineButtons username={username} friendshipId={id} />}
-        {type === 'offline' && <OfflineButtons friendshipId={id} />}
+        {type === 'online' && <OnlineButtons username={username} userId={id} />}
+        {type === 'offline' && <OfflineButtons userId={id} />}
       </UserItem>
     );
   });
