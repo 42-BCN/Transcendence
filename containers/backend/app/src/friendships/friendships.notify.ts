@@ -5,7 +5,7 @@ import {
   type FriendAcceptedNotificationPayload,
   type FriendRejectedNotificationPayload,
   type FriendRequestNotificationPayload,
-} from '../contracts/sockets/friendships/friendships.schema';
+} from '@contracts/sockets/friendships/friendships.schema';
 import { logEvents } from './friendships.logs';
 
 const SOCKET_SERVICE_URL = process.env.SOCKET_SERVICE_URL ?? 'https://socket:3100';

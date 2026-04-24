@@ -3,7 +3,8 @@ import type { Request, Response } from 'express';
 import {
   FriendshipInternalNotifyBodySchema,
   FriendshipPresenceCheckBodySchema,
-} from '../contracts/sockets/friendships/friendships.schema';
+  friendshipSocketEvents,
+} from '@contracts/sockets/friendships/friendships.schema';
 import { emitToUser, getUsersOnlineStatus } from '../features/friends.socket';
 import { logEvents } from '../socket.logs';
 
@@ -44,7 +45,19 @@ export function handleInternalNotify(req: Request, res: Response): void {
     socketEvent: body.event,
     userId: body.userId,
   });
-  emitToUser(body.userId, body.event, body.payload);
+
+  switch (body.event) {
+    case friendshipSocketEvents.request:
+      emitToUser(body.userId, body.event, body.payload);
+      break;
+    case friendshipSocketEvents.accepted:
+      emitToUser(body.userId, body.event, body.payload);
+      break;
+    case friendshipSocketEvents.rejected:
+      emitToUser(body.userId, body.event, body.payload);
+      break;
+  }
+
   res.json({ ok: true });
 }
 

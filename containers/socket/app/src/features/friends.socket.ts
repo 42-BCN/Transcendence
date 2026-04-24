@@ -1,12 +1,15 @@
 import type { Namespace, Socket } from 'socket.io';
 
 import {
-  friendshipSocketPayloadSchemas,
+  FriendAcceptedNotificationPayloadSchema,
+  FriendRejectedNotificationPayloadSchema,
+  FriendRequestNotificationPayloadSchema,
+  friendshipSocketEvents,
   friendshipSocketUserIdSchema,
   type FriendshipSocketEvent,
   type FriendshipSocketPayloadByEvent,
   type ServerToClientFriendshipEvents,
-} from '../contracts/sockets/friendships/friendships.schema';
+} from '@contracts/sockets/friendships/friendships.schema';
 import { logEvents } from '../socket.logs';
 
 type ClientToServerFriendshipEvents = Record<string, never>;
@@ -24,9 +27,7 @@ export function registerFriendsSocket(
 
   nsp.on(
     'connection',
-    (
-      socket: Socket<ClientToServerFriendshipEvents, ServerToClientFriendshipEvents>,
-    ) => {
+    (socket: Socket<ClientToServerFriendshipEvents, ServerToClientFriendshipEvents>) => {
       const parsedUserId = friendshipSocketUserIdSchema.safeParse(socket.data.userId);
 
       if (!parsedUserId.success) {
@@ -71,13 +72,27 @@ function decrementOnline(userId: string) {
   else onlineCounts.set(userId, next);
 }
 
-export function emitToUser<TEvent extends FriendshipSocketEvent>(
+export function emitToUser(
   userId: string,
-  event: TEvent,
-  payload: FriendshipSocketPayloadByEvent[TEvent],
+  event: typeof friendshipSocketEvents.request,
+  payload: FriendshipSocketPayloadByEvent[typeof friendshipSocketEvents.request],
+): void;
+export function emitToUser(
+  userId: string,
+  event: typeof friendshipSocketEvents.accepted,
+  payload: FriendshipSocketPayloadByEvent[typeof friendshipSocketEvents.accepted],
+): void;
+export function emitToUser(
+  userId: string,
+  event: typeof friendshipSocketEvents.rejected,
+  payload: FriendshipSocketPayloadByEvent[typeof friendshipSocketEvents.rejected],
+): void;
+export function emitToUser(
+  userId: string,
+  event: FriendshipSocketEvent,
+  payload: FriendshipSocketPayloadByEvent[FriendshipSocketEvent],
 ): void {
   const parsedUserId = friendshipSocketUserIdSchema.safeParse(userId);
-  const parsedPayload = friendshipSocketPayloadSchemas[event].safeParse(payload);
 
   if (!parsedUserId.success) {
     logEvents.error({
@@ -89,15 +104,66 @@ export function emitToUser<TEvent extends FriendshipSocketEvent>(
     return;
   }
 
-  if (!parsedPayload.success) {
-    logEvents.error({
-      event: 'friends_socket_emit_validation_failed',
-      socketEvent: event,
-      userId: parsedUserId.data,
-      reason: 'invalid_payload',
-      errors: parsedPayload.error.flatten(),
-    });
-    return;
+  switch (event) {
+    case friendshipSocketEvents.request: {
+      const parsedPayload = FriendRequestNotificationPayloadSchema.safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(friendshipSocketEvents.request, parsedPayload.data);
+      break;
+    }
+
+    case friendshipSocketEvents.accepted: {
+      const parsedPayload = FriendAcceptedNotificationPayloadSchema.safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(friendshipSocketEvents.accepted, parsedPayload.data);
+      break;
+    }
+
+    case friendshipSocketEvents.rejected: {
+      const parsedPayload = FriendRejectedNotificationPayloadSchema.safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(friendshipSocketEvents.rejected, parsedPayload.data);
+      break;
+    }
   }
 
   logEvents.info({
@@ -105,7 +171,6 @@ export function emitToUser<TEvent extends FriendshipSocketEvent>(
     socketEvent: event,
     userId: parsedUserId.data,
   });
-  friendsNsp?.to(`user:${parsedUserId.data}`).emit(event, parsedPayload.data);
 }
 
 export function getUsersOnlineStatus(userIds: string[]): Record<string, boolean> {

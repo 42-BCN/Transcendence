@@ -8,7 +8,12 @@
     "outDir": "dist",
     "baseUrl": "./",
     "paths": {
-      "@contracts/*": ["src/contracts/api/*"],
+      "@contracts/*": [
+        "src/contracts/api/*",
+        "src/contracts/*",
+        "../../contracts/api/*",
+        "../../contracts/*"
+      ],
       "@shared": ["src/shared/index.ts"],
       "@shared/*": ["src/shared/*"],
       "@/*": ["src/*"],
