@@ -15,7 +15,7 @@ export type ExternalLinkProps = InteractiveControlStyleProps & {
 
 export function ExternalLink(args: ExternalLinkProps) {
   const {
-    variant = 'primary',
+    variant = 'secondary',
     size = 'md',
     w = 'full',
     className,
@@ -55,7 +55,7 @@ export function InternalLink(args: InternalLinkProps) {
   const {
     children,
     href,
-    variant = 'primary',
+    variant = 'secondary',
     size = 'md',
     w = 'full',
     className,

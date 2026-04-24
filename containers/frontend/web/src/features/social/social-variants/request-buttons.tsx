@@ -8,13 +8,15 @@ export function RequestButtons({ username }: { username: string }) {
       <IconButton
         label={tActions('reject')}
         icon="close"
-        className="text-red-500 border-red-500"
+        variant="secondary"
+        className="text-danger border-danger"
         onPress={() => console.log(username)}
       />
       <IconButton
         label={tActions('accept')}
         icon="check"
-        variant="full"
+        variant="primary"
+        className="bg-success text-white"
         onPress={() => console.log(username)}
       />
     </>

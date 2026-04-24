@@ -52,6 +52,8 @@ export default {
         border: {
           primary: 'var(--color-border-primary)',
         },
+        success: 'var(--color-success)',
+        danger: 'var(--color-danger)',
       },
 
       spacing: {
