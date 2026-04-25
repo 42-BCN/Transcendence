@@ -1,6 +1,7 @@
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 
+// TODO check when merged to main fallback
 export async function fetchClient<T>(
   endpoint: string,
   method: HttpMethod,
