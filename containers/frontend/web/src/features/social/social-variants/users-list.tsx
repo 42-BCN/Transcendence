@@ -5,7 +5,7 @@ import { Text } from '@/components/primitives/text';
 import type {
   FriendPublic,
   FriendshipPublic,
-} from '@/contra{cts/api/}friendships/friendships.contracts';
+} from '@/contracts/api/friendships/friendships.contracts';
 
 import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
