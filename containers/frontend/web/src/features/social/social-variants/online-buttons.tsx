@@ -6,7 +6,7 @@ export function OnlineButtons({ username, userId }: { username: string; userId: 
 
   return (
     <>
-      <IconButton label={tActions('chat')} icon="messages" onPress={() => console.log(username)} />
+      <IconButton label={tActions('chat')} icon="messages" onPress={() => console.log(userId)} />
       <IconButton
         label={tActions('inviteToGame')}
         icon="gamepad"

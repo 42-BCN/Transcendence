@@ -5,7 +5,7 @@ import { Text } from '@/components/primitives/text';
 import type {
   FriendPublic,
   FriendshipPublic,
-} from '@/contracts/api/friendships/friendships.contracts';
+} from '@/contra{cts/api/}friendships/friendships.contracts';
 
 import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
@@ -24,10 +24,11 @@ export function UsersList({ friends, type, error }: UsersListProps) {
   const tErrors = useTranslations('errors');
 
   if (error) {
+    const errorMessage = tErrors.has(error) ? tErrors(error) : error;
     return (
       <Stack align="center" justify="center" className="py-3 px-3 text-center">
         <Text variant="caption" color="danger">
-          {tErrors(error)}
+          {errorMessage}
         </Text>
       </Stack>
     );
