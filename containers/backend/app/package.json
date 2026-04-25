@@ -20,6 +20,8 @@
     "db:seed:test": "dotenv -e .env.test -- prisma db seed",
     "smoke:auth:dev": "dotenv -e .env.development -- tsx scripts/smoke/auth.smoke.ts",
     "smoke:friends:dev": "dotenv -e .env.development -- tsx scripts/smoke/friends.smoke.ts",
+    "friends:accept:dev": "dotenv -e .env.development -- sh -c 'NODE_TLS_REJECT_UNAUTHORIZED=0 tsx scripts/friends.accept-seeded.ts'",
+    "friends:accept:container": "dotenv -e .env.development -- sh -c 'BASE_URL=https://127.0.0.1:4000 NODE_TLS_REJECT_UNAUTHORIZED=0 tsx scripts/friends.accept-seeded.ts'",
     "smoke:auth:test": "dotenv -e .env.test -- tsx scripts/smoke/auth.smoke.ts",
     "smoke:friends:test": "dotenv -e .env.test -- tsx scripts/smoke/friends.smoke.ts",
     "smoke:dev": "npm run prisma:db:push:dev && npm run db:seed:dev && npm run smoke:auth:dev && npm run smoke:friends:dev",

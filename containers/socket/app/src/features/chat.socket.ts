@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import type { Namespace, Socket } from 'socket.io';
 
-import { ChatSendSchema } from '../contracts/sockets/chat/chat.schema';
+import { ChatSendSchema } from '@contracts/sockets/chat/chat.schema';
 import type {
   ChatError,
   ChatIdentity,
@@ -10,7 +10,7 @@ import type {
   ChatSystemMessage,
   ClientToServerChatEvents,
   ServerToClientChatEvents,
-} from '../contracts/sockets/chat/chat.schema';
+} from '@contracts/sockets/chat/chat.schema';
 
 const MAX_HISTORY = 50;
 const chatHistory: ChatHistoryType = [];
