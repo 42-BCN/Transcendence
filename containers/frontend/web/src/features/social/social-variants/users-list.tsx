@@ -11,11 +11,12 @@ import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
 import { AcceptActionButton } from './accept-action-button';
 import { RejectActionButton } from './reject-action-button';
+import type { SocialErrorCode } from '../social-dashboard';
 
 interface UsersListProps {
   friends: (FriendPublic | FriendshipPublic)[];
   type: 'request' | 'pending' | 'online' | 'offline';
-  error?: string;
+  error?: SocialErrorCode;
 }
 
 export function UsersList({ friends, type, error }: UsersListProps) {
@@ -26,7 +27,7 @@ export function UsersList({ friends, type, error }: UsersListProps) {
     return (
       <Stack align="center" justify="center" className="py-3 px-3 text-center">
         <Text variant="caption" color="danger">
-          {tErrors(error as any)}
+          {tErrors(error)}
         </Text>
       </Stack>
     );

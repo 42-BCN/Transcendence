@@ -21,19 +21,22 @@ import type {
   FriendshipPublic,
 } from '@/contracts/api/friendships/friendships.contracts';
 import { useSocialStore } from './store/use-social-store';
+import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';
+
+export type SocialErrorCode = FriendshipsErrorName | 'FETCH_FAILED';
 
 export interface SocialInitialData {
   friends: FriendPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
   errors: {
-    friends?: string;
-    pendingReceived?: string;
-    pendingSent?: string;
+    friends?: SocialErrorCode;
+    pendingReceived?: SocialErrorCode;
+    pendingSent?: SocialErrorCode;
   };
 }
 
-function FriendsList({ error }: { error?: string }) {
+function FriendsList({ error }: { error?: SocialErrorCode }) {
   const t = useTranslations('features.social.friends');
   const friends = useSocialStore((s) => s.friends);
   const onlineFriends = friends.filter((f) => f.isOnline);
