@@ -6,6 +6,7 @@ import type {
   FriendPublic,
   FriendshipPublic,
 } from '@/contracts/api/friendships/friendships.contracts';
+import type { SearchUserResult } from '@/contracts/api/users/users.contracts';
 
 import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
@@ -13,8 +14,8 @@ import { AcceptActionButton } from './accept-action-button';
 import { RejectActionButton } from './reject-action-button';
 
 interface UsersListProps {
-  friends: (FriendPublic | FriendshipPublic)[];
-  type: 'request' | 'pending' | 'online' | 'offline';
+  friends: (FriendPublic | FriendshipPublic | SearchUserResult)[];
+  type: 'request' | 'pending' | 'online' | 'offline' | 'search';
 }
 
 export function UsersList({ friends, type }: UsersListProps) {

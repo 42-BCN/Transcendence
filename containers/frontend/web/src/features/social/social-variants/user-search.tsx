@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { SearchInput } from '@components';
 import { useSocialStore } from '../store/use-social-store';

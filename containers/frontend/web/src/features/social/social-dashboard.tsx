@@ -111,7 +111,7 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
       </Stack>
       <main>
         {useSocialStore((state) => state.searchQuery).trim() !== '' ? (
-          <SearchResults />
+          <UsersList friends={useSocialStore((state) => state.searchResults)} type="search" />
         ) : (
           <Tabs defaultSelectedKey="friends">
             <TabList className="px-3">
