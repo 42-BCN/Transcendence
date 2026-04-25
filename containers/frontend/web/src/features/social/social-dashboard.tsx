@@ -12,10 +12,9 @@ import {
   TabPanel,
   DisclosureGroup,
   DisclosureFull,
-  TextField,
 } from '@/components';
 
-import { UsersList } from './social-variants';
+import { UserSearch, UsersList } from './social-variants';
 import type {
   FriendPublic,
   FriendshipPublic,
@@ -92,7 +91,7 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
         <Text as="h1" variant="heading-md" className="font-bold">
           {t('title')}
         </Text>
-        <TextField labelKey="features.social.searchLabel" />
+        <UserSearch />
       </Stack>
       <main>
         <Tabs defaultSelectedKey="friends">

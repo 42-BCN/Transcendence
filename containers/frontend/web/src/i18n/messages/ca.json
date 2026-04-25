@@ -429,8 +429,8 @@
     },
     "social": {
       "title": "Social",
-      "searchPlaceholder": "Cerca entre els teus amics o afegeix-ne de nous",
-      "searchLabel": "Cercar usuaris",
+      "searchPlaceholder": "Cerca usuaris",
+      "searchLabel": "Cercador",
       "friends": {
         "title": "Amics",
         "online": "Amics connectats",

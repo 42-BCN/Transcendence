@@ -20,4 +20,5 @@ export const textFieldStyles = {
   label: () => cn(textFieldBase.label, textFieldRACStates),
   description: () => cn(textFieldBase.description),
   error: () => cn(textFieldBase.error),
+  input: (args?: { hasIcon?: boolean }) => cn(args?.hasIcon && 'pl-5'),
 };

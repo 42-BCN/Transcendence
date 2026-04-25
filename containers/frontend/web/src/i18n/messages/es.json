@@ -428,8 +428,8 @@
     },
     "social": {
       "title": "Social",
-      "searchPlaceholder": "Buscar entre tus amigos o añadir nuevos",
-      "searchLabel": "Buscar usuarios",
+      "searchPlaceholder": "Buscar usuarios",
+      "searchLabel": "Buscador",
       "friends": {
         "title": "Amigos",
         "online": "Amigos conectados",
