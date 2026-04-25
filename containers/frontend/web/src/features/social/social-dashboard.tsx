@@ -15,7 +15,7 @@ import {
   TextField,
 } from '@/components';
 
-import { UsersList } from './social-variants';
+import { UsersList, SocialError } from './social-variants';
 import type {
   FriendPublic,
   FriendshipPublic,
@@ -45,11 +45,19 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
-        <UsersList friends={onlineFriends} type="online" error={error} />
+        {error ? (
+          <SocialError error={error} />
+        ) : (
+          <UsersList friends={onlineFriends} type="online" />
+        )}
       </DisclosureFull>
 
       <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
-        <UsersList friends={offlineFriends} type="offline" error={error} />
+        {error ? (
+          <SocialError error={error} />
+        ) : (
+          <UsersList friends={offlineFriends} type="offline" />
+        )}
       </DisclosureFull>
     </DisclosureGroup>
   );
@@ -63,11 +71,19 @@ function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
       <DisclosureFull id="received" title={`${t('received')} (${pendingReceived.length})`}>
-        <UsersList friends={pendingReceived} type="request" error={errors.pendingReceived} />
+        {errors.pendingReceived ? (
+          <SocialError error={errors.pendingReceived} />
+        ) : (
+          <UsersList friends={pendingReceived} type="request" />
+        )}
       </DisclosureFull>
 
       <DisclosureFull id="sent" title={`${t('sent')} (${pendingSent.length})`}>
-        <UsersList friends={pendingSent} type="pending" error={errors.pendingSent} />
+        {errors.pendingSent ? (
+          <SocialError error={errors.pendingSent} />
+        ) : (
+          <UsersList friends={pendingSent} type="pending" />
+        )}
       </DisclosureFull>
     </DisclosureGroup>
   );
