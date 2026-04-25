@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 
 import { Text, IconButton } from '@components';
 import { PendingListKey, useSocialStore } from '../store/use-social-store';
-import { respondToRequest, deleteFriendship } from '../actions/social.actions';
+import { respondToRequest, deleteFriendship } from '../actions/friendships.actions';
 
 import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';
 import type { ApiErrorShape } from '@/contracts/api/http/response';
