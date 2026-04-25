@@ -10,8 +10,6 @@ const FALLBACK = {
   },
 };
 
-// TODO check const fallback merge conflict
-
 export async function fetchClient<T>(
   endpoint: string,
   method: HttpMethod,
