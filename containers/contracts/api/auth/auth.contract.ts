@@ -68,15 +68,17 @@ export type ResendVerificationOk = null;
 
 export const AUTH_RESEND_VERIFICATION_ERRORS = [
   'AUTH_RATE_LIMITED',
-  'AUTH_RESEND_VERIFICATION_NOT_FOUND',
-  'AUTH_RESEND_VERIFICATION_COOLDOWN',
   'AUTH_INTERNAL_ERROR',
   'VALIDATION_ERROR',
 ] as const satisfies readonly AuthErrorName[];
 
 export type ResendVerificationError = (typeof AUTH_RESEND_VERIFICATION_ERRORS)[number];
 
-export type ResendVerificationRes = ApiResponse<ResendVerificationOk, ResendVerificationError>;
+export type ResendVerificationRes = ApiResponse<
+  ResendVerificationOk,
+  ResendVerificationError,
+  ValidationErrorDetails
+>;
 
 // ---------------------------------------
 // POST /api/auth/verify-email
@@ -141,8 +143,7 @@ export type ChangePasswordRes = ApiResponse<
 // ---------------------------------------
 // GET /api/auth/callback/google
 // ---------------------------------------
-
-export type GoogleCallbackOk = null;
+// Success redirects with 302, JSON is only for error cases.
 
 export const AUTH_GOOGLE_CALLBACK_ERRORS = [
   'AUTH_CSRF_FAILED',
@@ -152,10 +153,10 @@ export const AUTH_GOOGLE_CALLBACK_ERRORS = [
 
 export type GoogleCallbackError = (typeof AUTH_GOOGLE_CALLBACK_ERRORS)[number];
 
-export type GoogleCallbackRes = ApiResponse<GoogleCallbackOk, GoogleCallbackError>;
+export type GoogleCallbackRes = ApiResponse<null, GoogleCallbackError>;
 
 // ---------------------------------------
-// GET /api/auth/me
+// GET /api/protected/me
 // ---------------------------------------
 
 export type AuthMeOk = {

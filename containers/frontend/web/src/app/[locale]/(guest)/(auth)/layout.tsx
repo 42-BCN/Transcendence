@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <main className="flex justify-center md:justify-end w-full md:pe-11 items-center">
+    <main className="flex justify-center md:min-h-[100dvh] md:justify-end w-full md:pe-11 items-center">
       <Stack
         className={glassCardStyles({
           className:
