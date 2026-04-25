@@ -447,7 +447,8 @@ declare const messages: {
         "online": "No friends online right now",
         "offline": "No friends offline",
         "request": "No pending friend requests",
-        "pending": "No sent requests pending"
+        "pending": "No sent requests pending",
+        "search": "No users found"
       },
       "actions": {
         "inviteToGame": "Invite to Game",

@@ -8,7 +8,8 @@ import { searchUsers } from '../actions/users.actions';
 
 export function UserSearch() {
   const t = useTranslations('features.social');
-  const [query, setQuery] = useState('');
+  const query = useSocialStore((state) => state.searchQuery);
+  const setQuery = useSocialStore((state) => state.setSearchQuery);
   const setSearchResults = useSocialStore((state) => state.setSearchResults);
 
   useEffect(() => {

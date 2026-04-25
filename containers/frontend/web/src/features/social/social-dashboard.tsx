@@ -14,7 +14,7 @@ import {
   DisclosureFull,
 } from '@/components';
 
-import { UserSearch, UsersList } from './social-variants';
+import { UserSearch, UsersList, SearchResults } from './social-variants';
 import type {
   FriendPublic,
   FriendshipPublic,
@@ -94,20 +94,24 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
         <UserSearch />
       </Stack>
       <main>
-        <Tabs defaultSelectedKey="friends">
-          <TabList className="px-3">
-            <Tab id="friends">{t('friends.title')}</Tab>
-            <Tab id="requests">{t('requests.title')}</Tab>
-          </TabList>
+        {useSocialStore((state) => state.searchQuery).trim() !== '' ? (
+          <SearchResults />
+        ) : (
+          <Tabs defaultSelectedKey="friends">
+            <TabList className="px-3">
+              <Tab id="friends">{t('friends.title')}</Tab>
+              <Tab id="requests">{t('requests.title')}</Tab>
+            </TabList>
 
-          <TabPanel id="friends" className="outline-none">
-            <FriendsList error={initialData.errors.friends} />
-          </TabPanel>
+            <TabPanel id="friends" className="outline-none">
+              <FriendsList error={initialData.errors.friends} />
+            </TabPanel>
 
-          <TabPanel id="requests" className="outline-none">
-            <RequestsList errors={initialData.errors} />
-          </TabPanel>
-        </Tabs>
+            <TabPanel id="requests" className="outline-none">
+              <RequestsList errors={initialData.errors} />
+            </TabPanel>
+          </Tabs>
+        )}
       </main>
     </>
   );

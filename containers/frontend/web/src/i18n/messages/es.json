@@ -444,7 +444,8 @@
         "online": "No hay amigos conectados",
         "offline": "No hay amigos desconectados",
         "request": "No tienes solicitudes pendientes",
-        "pending": "No has enviado solicitudes"
+        "pending": "No has enviado solicitudes",
+        "search": "No se han encontrado usuarios"
       },
       "actions": {
         "inviteToGame": "Invitar a partida",

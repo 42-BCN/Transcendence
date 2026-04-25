@@ -445,7 +445,8 @@
         "online": "No hi ha amics connectats",
         "offline": "No hi ha amics desconnectats",
         "request": "No tens sol·licituds pendents",
-        "pending": "No has enviat sol·licituds"
+        "pending": "No has enviat sol·licituds",
+        "search": "No s’han trobat usuaris"
       },
       "actions": {
         "inviteToGame": "Convidar a partida",
