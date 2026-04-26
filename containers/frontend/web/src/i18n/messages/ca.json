@@ -455,6 +455,13 @@
         "accept": "Acceptar",
         "cancel": "Cancel·lar",
         "addFriend": "Afegir amic"
+      },
+      "guest": {
+        "title": "Connecta amb la comunitat",
+        "body": "Per buscar amics, veure qui està en línia i jugar partides, necessites un compte.",
+        "login": "Iniciar sessió",
+        "noAccount": "No tens compte?",
+        "signup": "Crear-ne un"
       }
     }
   },

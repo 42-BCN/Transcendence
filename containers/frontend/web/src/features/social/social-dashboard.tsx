@@ -14,7 +14,7 @@ import {
   DisclosureFull,
 } from '@/components';
 
-import { UserSearch, UsersList, SocialError } from './social-variants';
+import { UserSearch, UsersList, SocialError, SocialGuestView } from './social-variants';
 import type {
   FriendPublic,
   FriendshipPublic,
@@ -88,14 +88,14 @@ function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
     </DisclosureGroup>
   );
 }
-function SocialHeader() {
+function SocialHeader({ isGuest }: { isGuest?: boolean }) {
   const t = useTranslations('features.social');
   return (
     <Stack gap="md" className="p-3">
       <Text as="h1" variant="heading-md" className="font-bold">
-        {t('title')}
+        {isGuest ? t('guest.title') : t('title')}
       </Text>
-      <UserSearch />
+      {!isGuest && <UserSearch />}
     </Stack>
   );
 }
@@ -133,6 +133,8 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
   const setPendingSent = useSocialStore((s) => s.setPendingSent);
   const setCurrentUserId = useSocialStore((s) => s.setCurrentUserId);
 
+  const isGuest = !initialData.currentUserId;
+
   useEffect(() => {
     setFriends(initialData.friends);
     setPendingReceived(initialData.pendingReceived);
@@ -144,10 +146,8 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
 
   return (
     <>
-      <SocialHeader />
-      <main>
-        <SocialContent initialData={initialData} />
-      </main>
+      <SocialHeader isGuest={isGuest} />
+      <main>{isGuest ? <SocialGuestView /> : <SocialContent initialData={initialData} />}</main>
     </>
   );
 }

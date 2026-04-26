@@ -454,6 +454,13 @@
         "accept": "Aceptar",
         "cancel": "Cancelar",
         "addFriend": "Añadir amigo"
+      },
+      "guest": {
+        "title": "Conecta con la comunidad",
+        "body": "Para buscar amigos, ver quién está online y jugar partidas, necesitas una cuenta.",
+        "login": "Iniciar sesión",
+        "noAccount": "¿No tienes cuenta?",
+        "signup": "Crear una"
       }
     }
   },

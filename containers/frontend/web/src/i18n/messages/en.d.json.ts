@@ -457,6 +457,13 @@ declare const messages: {
         "accept": "Accept",
         "cancel": "Cancel",
         "addFriend": "Add friend"
+      },
+      "guest": {
+        "title": "Connect with the community",
+        "body": "To find friends, see who's online and play games, you need an account.",
+        "login": "Login",
+        "noAccount": "Don't have an account?",
+        "signup": "Create one"
       }
     }
   },
