@@ -25,7 +25,7 @@ export function InviteActionButton({ userId }: InviteActionButtonProps) {
     const result = await sendFriendRequest(userId);
 
     if (result.ok) {
-      addPendingRequest(result.data.friendship);
+      addPendingRequest(result.data.friendship, result.data.wasAutoAccepted);
     } else {
       setError(result.error);
     }
