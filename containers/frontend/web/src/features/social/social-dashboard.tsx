@@ -12,10 +12,9 @@ import {
   TabPanel,
   DisclosureGroup,
   DisclosureFull,
-  TextField,
 } from '@/components';
 
-import { UsersList, SocialError } from './social-variants';
+import { UserSearch, UsersList, SocialError } from './social-variants';
 import type {
   FriendPublic,
   FriendshipPublic,
@@ -29,6 +28,7 @@ export interface SocialInitialData {
   friends: FriendPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
+  currentUserId?: string;
   errors: {
     friends?: SocialErrorCode;
     pendingReceived?: SocialErrorCode;
@@ -88,43 +88,65 @@ function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
     </DisclosureGroup>
   );
 }
+function SocialHeader() {
+  const t = useTranslations('features.social');
+  return (
+    <Stack gap="md" className="p-3">
+      <Text as="h1" variant="heading-md" className="font-bold">
+        {t('title')}
+      </Text>
+      <UserSearch />
+    </Stack>
+  );
+}
+
+function SocialContent({ initialData }: { initialData: SocialInitialData }) {
+  const t = useTranslations('features.social');
+  const searchQuery = useSocialStore((state) => state.searchQuery);
+  const searchResults = useSocialStore((state) => state.searchResults);
+
+  if (searchQuery.trim() !== '') {
+    return <UsersList friends={searchResults} type="search" />;
+  }
+
+  return (
+    <Tabs defaultSelectedKey="friends">
+      <TabList className="px-3">
+        <Tab id="friends">{t('friends.title')}</Tab>
+        <Tab id="requests">{t('requests.title')}</Tab>
+      </TabList>
+
+      <TabPanel id="friends" className="outline-none">
+        <FriendsList error={initialData.errors.friends} />
+      </TabPanel>
+
+      <TabPanel id="requests" className="outline-none">
+        <RequestsList errors={initialData.errors} />
+      </TabPanel>
+    </Tabs>
+  );
+}
 
 export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
-  const t = useTranslations('features.social');
-
   const setFriends = useSocialStore((s) => s.setFriends);
   const setPendingReceived = useSocialStore((s) => s.setPendingReceived);
   const setPendingSent = useSocialStore((s) => s.setPendingSent);
+  const setCurrentUserId = useSocialStore((s) => s.setCurrentUserId);
 
   useEffect(() => {
     setFriends(initialData.friends);
     setPendingReceived(initialData.pendingReceived);
     setPendingSent(initialData.pendingSent);
-  }, [initialData, setFriends, setPendingReceived, setPendingSent]);
+    if (initialData.currentUserId) {
+      setCurrentUserId(initialData.currentUserId);
+    }
+  }, [initialData, setFriends, setPendingReceived, setPendingSent, setCurrentUserId]);
 
   return (
     <>
-      <Stack gap="md" className="p-3">
-        <Text as="h1" variant="heading-md" className="font-bold">
-          {t('title')}
-        </Text>
-        <TextField labelKey="features.social.searchLabel" />
-      </Stack>
+      <SocialHeader />
       <main>
-        <Tabs defaultSelectedKey="friends">
-          <TabList className="px-3">
-            <Tab id="friends">{t('friends.title')}</Tab>
-            <Tab id="requests">{t('requests.title')}</Tab>
-          </TabList>
-
-          <TabPanel id="friends" className="outline-none">
-            <FriendsList error={initialData.errors.friends} />
-          </TabPanel>
-
-          <TabPanel id="requests" className="outline-none">
-            <RequestsList errors={initialData.errors} />
-          </TabPanel>
-        </Tabs>
+        <SocialContent initialData={initialData} />
       </main>
     </>
   );

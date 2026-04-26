@@ -3,10 +3,12 @@ import { fetchClient } from '@/lib/http/fetcher.client';
 import type {
   RespondFriendRequestResponse,
   DeleteFriendshipResponse,
+  SendFriendRequestResponse,
 } from '@/contracts/api/friendships/friendships.contracts';
 import {
   RespondFriendRequestBodySchema,
   DeleteFriendshipParamSchema,
+  SendFriendRequestBodySchema,
 } from '@/contracts/api/friendships/friendships.validation';
 
 /**
@@ -42,6 +44,26 @@ export async function deleteFriendship(friendshipId: string) {
     `/api/friends/${parsed.data.friendshipId}`,
     'DELETE',
     undefined,
+    {
+      withAuth: true,
+    },
+  );
+  return response.data;
+}
+
+/**
+ * Sends a friend request to a user.
+ */
+export async function sendFriendRequest(targetUserId: string) {
+  const parsed = SendFriendRequestBodySchema.safeParse({ targetUserId });
+  if (!parsed.success) {
+    return { ok: false as const, error: { code: 'VALIDATION_ERROR' } };
+  }
+
+  const response = await fetchClient<SendFriendRequestResponse>(
+    '/api/friends/request',
+    'POST',
+    parsed.data,
     {
       withAuth: true,
     },
