@@ -452,7 +452,8 @@
         "chat": "Chat",
         "reject": "Rechazar",
         "accept": "Aceptar",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "addFriend": "Añadir Amigo"
       }
     }
   },

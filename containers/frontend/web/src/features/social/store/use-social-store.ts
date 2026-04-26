@@ -44,23 +44,35 @@ export const useSocialStore = create<SocialState>((set) => ({
   removePendingById: (list, id) =>
     set((state) => ({
       [list]: state[list].filter((item) => item.id !== id),
+      searchResults: state.searchResults.map((item) =>
+        item.friendshipId === id || item.id === id
+          ? { ...item, friendshipStatus: 'none', friendshipId: null, senderId: null }
+          : item,
+      ),
     })),
 
   acceptPendingById: (id) =>
     set((state) => {
       const request = state.pendingReceived.find((r) => r.id === id);
-      if (!request) return state;
+      const isSearchItem = !request && state.searchResults.find((r) => r.friendshipId === id);
+
+      if (!request && !isSearchItem) return state;
+
+      const userData = request || state.searchResults.find((r) => r.friendshipId === id)!;
 
       const newFriend: FriendPublic = {
-        id: request.userId,
-        username: request.username,
-        avatar: request.avatar,
-        isOnline: false, //pending
+        id: request ? request.userId : (userData as SearchUserResult).id,
+        username: userData.username,
+        avatar: userData.avatar,
+        isOnline: false,
       };
 
       return {
         pendingReceived: state.pendingReceived.filter((r) => r.id !== id),
         friends: [...state.friends, newFriend],
+        searchResults: state.searchResults.map((item) =>
+          item.friendshipId === id ? { ...item, friendshipStatus: 'accepted' } : item,
+        ),
       };
     }),
 }));

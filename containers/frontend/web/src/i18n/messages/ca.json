@@ -453,7 +453,8 @@
         "chat": "Chat",
         "reject": "Rebutjar",
         "accept": "Acceptar",
-        "cancel": "Cancel·lar"
+        "cancel": "Cancel·lar",
+        "addFriend": "Afegir amic"
       }
     }
   },

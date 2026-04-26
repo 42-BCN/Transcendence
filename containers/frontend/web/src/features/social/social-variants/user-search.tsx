@@ -23,7 +23,7 @@ export function UserSearch() {
 
         const result = await searchUsers(query);
         if (result.ok) {
-          setSearchResults(result.data);
+          setSearchResults(result.data.users);
         } else {
           setSearchResults([]);
         }

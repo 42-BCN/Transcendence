@@ -6,7 +6,7 @@ import { SearchUsersQuerySchema } from '@/contracts/api/users/users.validation';
  * Searches for users by username.
  */
 export async function searchUsers(query: string, limit: number = 20) {
-  const parsed = SearchUsersQuerySchema.safeParse({ q: query, limit });
+  const parsed = SearchUsersQuerySchema.safeParse({ q: query, limit: String(limit) });
   if (!parsed.success) {
     return { ok: false as const, error: { code: 'VALIDATION_ERROR' } };
   }
@@ -19,5 +19,7 @@ export async function searchUsers(query: string, limit: number = 20) {
       withAuth: true,
     },
   );
+  if (!response.data.ok) return response.data;
+
   return response.data;
 }

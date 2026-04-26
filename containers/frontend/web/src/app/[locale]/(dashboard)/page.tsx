@@ -18,7 +18,7 @@ export default async function HomePage() {
     friends: f.ok ? f.data.friends : [],
     pendingReceived: r.ok ? r.data.requests : [],
     pendingSent: s.ok ? s.data.requests : [],
-    currentUserId: me?.id,
+    currentUserId: me.ok ? me.data.id : undefined,
     errors: {
       friends: f.ok === false ? f.error.code : undefined,
       pendingReceived: r.ok === false ? r.error.code : undefined,

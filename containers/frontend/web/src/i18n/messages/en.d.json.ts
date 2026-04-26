@@ -455,7 +455,8 @@ declare const messages: {
         "chat": "Chat",
         "reject": "Reject",
         "accept": "Accept",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "addFriend": "Add Friend"
       }
     }
   },
