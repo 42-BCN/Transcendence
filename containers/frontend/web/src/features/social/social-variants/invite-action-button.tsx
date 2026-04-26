@@ -26,12 +26,6 @@ export function InviteActionButton({ userId }: InviteActionButtonProps) {
   }, [userId, addPendingRequest]);
 
   return (
-    <IconButton
-      label={t('addFriend')}
-      icon="userAdd"
-      variant="secondary"
-      onPress={handleInvite}
-      isLoading={isPending}
-    />
+    <IconButton label={t('addFriend')} icon="userAdd" variant="secondary" onPress={handleInvite} />
   );
 }
