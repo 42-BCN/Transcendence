@@ -432,7 +432,7 @@ declare const messages: {
     "social": {
       "title": "Social",
       "searchPlaceholder": "Search users",
-      "searchLabel": "Searcher",
+      "searchLabel": "Search",
       "friends": {
         "title": "Friends",
         "online": "Friends online",

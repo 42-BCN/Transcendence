@@ -46,7 +46,7 @@ export const useSocialStore = create<SocialState>((set) => ({
     set((state) => ({
       [list]: state[list].filter((item) => item.id !== id),
       searchResults: state.searchResults.map((item) =>
-        item.friendshipId === id || item.id === id
+        item.friendshipId === id
           ? { ...item, friendshipStatus: 'none', friendshipId: null, senderId: null }
           : item,
       ),
