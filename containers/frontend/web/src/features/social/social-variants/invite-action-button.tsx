@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { IconButton, Icon } from '@components';
+import { useSocialStore } from '../store/use-social-store';
+import { IconButton } from '@components';
 import { sendFriendRequest } from '../actions/friendships.actions';
 
 interface InviteActionButtonProps {
@@ -11,8 +12,8 @@ interface InviteActionButtonProps {
 
 export function InviteActionButton({ userId }: InviteActionButtonProps) {
   const t = useTranslations('features.social.actions');
+  const addPendingRequest = useSocialStore((state) => state.addPendingRequest);
   const [isPending, setIsPending] = useState(false);
-  const [isSent, setIsSent] = useState(false);
 
   const handleInvite = useCallback(async () => {
     setIsPending(true);
@@ -20,17 +21,9 @@ export function InviteActionButton({ userId }: InviteActionButtonProps) {
     setIsPending(false);
 
     if (result.ok) {
-      setIsSent(true);
+      addPendingRequest(result.data.friendship);
     }
-  }, [userId]);
-
-  if (isSent) {
-    return (
-      <div className="flex h-10 w-10 items-center justify-center text-success">
-        <Icon name="check" size={24} />
-      </div>
-    );
-  }
+  }, [userId, addPendingRequest]);
 
   return (
     <IconButton

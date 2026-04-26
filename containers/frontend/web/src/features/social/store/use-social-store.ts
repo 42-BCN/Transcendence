@@ -24,6 +24,7 @@ interface SocialState {
   setCurrentUserId: (id: string) => void;
   removePendingById: (list: PendingListKey, id: string) => void;
   acceptPendingById: (id: string) => void;
+  addPendingRequest: (friendship: FriendshipPublic) => void;
 }
 
 export const useSocialStore = create<SocialState>((set) => ({
@@ -75,4 +76,19 @@ export const useSocialStore = create<SocialState>((set) => ({
         ),
       };
     }),
+
+  addPendingRequest: (friendship) =>
+    set((state) => ({
+      pendingSent: [...state.pendingSent, friendship],
+      searchResults: state.searchResults.map((item) =>
+        item.id === friendship.userId
+          ? {
+              ...item,
+              friendshipStatus: 'pending',
+              friendshipId: friendship.id,
+              senderId: state.currentUserId,
+            }
+          : item,
+      ),
+    })),
 }));
