@@ -88,17 +88,50 @@ function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
     </DisclosureGroup>
   );
 }
+function SocialHeader() {
+  const t = useTranslations('features.social');
+  return (
+    <Stack gap="md" className="p-3">
+      <Text as="h1" variant="heading-md" className="font-bold">
+        {t('title')}
+      </Text>
+      <UserSearch />
+    </Stack>
+  );
+}
+
+function SocialContent({ initialData }: { initialData: SocialInitialData }) {
+  const t = useTranslations('features.social');
+  const searchQuery = useSocialStore((state) => state.searchQuery);
+  const searchResults = useSocialStore((state) => state.searchResults);
+
+  if (searchQuery.trim() !== '') {
+    return <UsersList friends={searchResults} type="search" />;
+  }
+
+  return (
+    <Tabs defaultSelectedKey="friends">
+      <TabList className="px-3">
+        <Tab id="friends">{t('friends.title')}</Tab>
+        <Tab id="requests">{t('requests.title')}</Tab>
+      </TabList>
+
+      <TabPanel id="friends" className="outline-none">
+        <FriendsList error={initialData.errors.friends} />
+      </TabPanel>
+
+      <TabPanel id="requests" className="outline-none">
+        <RequestsList errors={initialData.errors} />
+      </TabPanel>
+    </Tabs>
+  );
+}
 
 export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
-  const t = useTranslations('features.social');
-
   const setFriends = useSocialStore((s) => s.setFriends);
   const setPendingReceived = useSocialStore((s) => s.setPendingReceived);
   const setPendingSent = useSocialStore((s) => s.setPendingSent);
   const setCurrentUserId = useSocialStore((s) => s.setCurrentUserId);
-
-  const searchQuery = useSocialStore((state) => state.searchQuery);
-  const searchResults = useSocialStore((state) => state.searchResults);
 
   useEffect(() => {
     setFriends(initialData.friends);
@@ -111,31 +144,9 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
 
   return (
     <>
-      <Stack gap="md" className="p-3">
-        <Text as="h1" variant="heading-md" className="font-bold">
-          {t('title')}
-        </Text>
-        <UserSearch />
-      </Stack>
+      <SocialHeader />
       <main>
-        {searchQuery.trim() !== '' ? (
-          <UsersList friends={searchResults} type="search" />
-        ) : (
-          <Tabs defaultSelectedKey="friends">
-            <TabList className="px-3">
-              <Tab id="friends">{t('friends.title')}</Tab>
-              <Tab id="requests">{t('requests.title')}</Tab>
-            </TabList>
-
-            <TabPanel id="friends" className="outline-none">
-              <FriendsList error={initialData.errors.friends} />
-            </TabPanel>
-
-            <TabPanel id="requests" className="outline-none">
-              <RequestsList errors={initialData.errors} />
-            </TabPanel>
-          </Tabs>
-        )}
+        <SocialContent initialData={initialData} />
       </main>
     </>
   );
