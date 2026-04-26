@@ -28,6 +28,7 @@ export interface SocialInitialData {
   friends: FriendPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
+  currentUserId?: string;
   errors: {
     friends?: SocialErrorCode;
     pendingReceived?: SocialErrorCode;
@@ -94,12 +95,19 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
   const setFriends = useSocialStore((s) => s.setFriends);
   const setPendingReceived = useSocialStore((s) => s.setPendingReceived);
   const setPendingSent = useSocialStore((s) => s.setPendingSent);
+  const setCurrentUserId = useSocialStore((s) => s.setCurrentUserId);
+
+  const searchQuery = useSocialStore((state) => state.searchQuery);
+  const searchResults = useSocialStore((state) => state.searchResults);
 
   useEffect(() => {
     setFriends(initialData.friends);
     setPendingReceived(initialData.pendingReceived);
     setPendingSent(initialData.pendingSent);
-  }, [initialData, setFriends, setPendingReceived, setPendingSent]);
+    if (initialData.currentUserId) {
+      setCurrentUserId(initialData.currentUserId);
+    }
+  }, [initialData, setFriends, setPendingReceived, setPendingSent, setCurrentUserId]);
 
   return (
     <>
@@ -110,8 +118,8 @@ export function SocialDashboard({ initialData }: { initialData: SocialInitialDat
         <UserSearch />
       </Stack>
       <main>
-        {useSocialStore((state) => state.searchQuery).trim() !== '' ? (
-          <UsersList friends={useSocialStore((state) => state.searchResults)} type="search" />
+        {searchQuery.trim() !== '' ? (
+          <UsersList friends={searchResults} type="search" />
         ) : (
           <Tabs defaultSelectedKey="friends">
             <TabList className="px-3">

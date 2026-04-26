@@ -13,6 +13,7 @@ interface SocialState {
   pendingSent: FriendshipPublic[];
   searchResults: SearchUserResult[];
   searchQuery: string;
+  currentUserId: string | null;
 
   // Actions
   setFriends: (friends: FriendPublic[]) => void;
@@ -20,6 +21,7 @@ interface SocialState {
   setPendingSent: (requests: FriendshipPublic[]) => void;
   setSearchResults: (results: SearchUserResult[]) => void;
   setSearchQuery: (query: string) => void;
+  setCurrentUserId: (id: string) => void;
   removePendingById: (list: PendingListKey, id: string) => void;
   acceptPendingById: (id: string) => void;
 }
@@ -30,12 +32,14 @@ export const useSocialStore = create<SocialState>((set) => ({
   pendingSent: [],
   searchResults: [],
   searchQuery: '',
+  currentUserId: null,
 
   setFriends: (friends) => set({ friends }),
   setPendingReceived: (pendingReceived) => set({ pendingReceived }),
   setPendingSent: (pendingSent) => set({ pendingSent }),
   setSearchResults: (searchResults) => set({ searchResults }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
+  setCurrentUserId: (currentUserId) => set({ currentUserId }),
 
   removePendingById: (list, id) =>
     set((state) => ({

@@ -1,23 +1,19 @@
+'use client';
+
 import { useTranslations } from 'next-intl';
 import { UserItem } from '@/components/composites/user-item/user-item';
 import { Stack } from '@/components/primitives/stack';
 import { Text } from '@/components/primitives/text';
-import type {
-  FriendPublic,
-  FriendshipPublic,
-} from '@/contracts/api/friendships/friendships.contracts';
-import type { SearchUserResult } from '@/contracts/api/users/users.contracts';
-
-import { OnlineButtons } from './online-buttons';
-import { OfflineButtons } from './offline-buttons';
-import { AcceptActionButton } from './accept-action-button';
-import { RejectActionButton } from './reject-action-button';
+import { UserActions, type SocialUserItem } from './user-actions';
 
 interface UsersListProps {
-  friends: (FriendPublic | FriendshipPublic | SearchUserResult)[];
+  friends: SocialUserItem[];
   type: 'request' | 'pending' | 'online' | 'offline' | 'search';
 }
 
+/**
+ * Polymorphic component for rendering lists of users in the social feature.
+ */
 export function UsersList({ friends, type }: UsersListProps) {
   const t = useTranslations('features.social.emptyStates');
 
@@ -31,20 +27,9 @@ export function UsersList({ friends, type }: UsersListProps) {
     );
   }
 
-  return friends.map((item) => {
-    const { id, username, avatar } = item;
-    return (
-      <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
-        {type === 'request' && (
-          <>
-            <RejectActionButton friendshipId={id} type="pendingReceived" />
-            <AcceptActionButton friendshipId={id} />
-          </>
-        )}
-        {type === 'pending' && <RejectActionButton friendshipId={id} type="pendingSent" />}
-        {type === 'online' && <OnlineButtons username={username} userId={id} />}
-        {type === 'offline' && <OfflineButtons userId={id} />}
-      </UserItem>
-    );
-  });
+  return friends.map((item) => (
+    <UserItem key={item.id} username={item.username} avatarUrl={item.avatar ?? undefined}>
+      <UserActions item={item} type={type} />
+    </UserItem>
+  ));
 }
