@@ -36,7 +36,7 @@ function SearchActions({
   friends: FriendPublic[];
 }) {
   const { id, friendshipStatus: status, friendshipId, senderId, username } = item;
-  const isSender = senderId === currentUserId;
+  const isSender = currentUserId !== null && senderId === currentUserId;
 
   return (
     <>
