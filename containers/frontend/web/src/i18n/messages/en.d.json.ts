@@ -441,15 +441,20 @@ declare const messages: {
       "requests": {
         "title": "Requests",
         "received": "Received",
-        "sent": "Sent",
-        "sentSubtitle": "Sent 2 days ago",
-        "noSentRequests": "No pending sent requests"
+        "sent": "Sent"
+      },
+      "emptyStates": {
+        "online": "No friends online right now",
+        "offline": "No friends offline",
+        "request": "No pending friend requests",
+        "pending": "No sent requests pending"
       },
       "actions": {
         "inviteToGame": "Invite to Game",
         "chat": "Chat",
         "reject": "Reject",
-        "accept": "Accept"
+        "accept": "Accept",
+        "cancel": "Cancel"
       }
     }
   },
@@ -478,7 +483,16 @@ declare const messages: {
     "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
     "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
     "VALIDATION_ERROR": "Validation error: please check the fields and try again.",
-    "FETCH_FAILED": "API request failed. Try again later."
+    "FETCH_FAILED": "API request failed. Try again later.",
+    "UNAUTHORIZED_ACTION": "Action not allowed.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "Request not found or no longer available.",
+    "FRIENDSHIP_ALREADY_ACCEPTED": "This request was already accepted.",
+    "FRIENDSHIP_NOT_FOUND": "Friendship not found.",
+    "USER_NOT_FOUND": "User not found.",
+    "INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "FRIENDSHIP_ALREADY_EXISTS": "You are already friends.",
+    "FRIENDSHIP_SELF_REQUEST": "You cannot add yourself.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "A friend request has already been sent."
   }
 };
 export default messages;

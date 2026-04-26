@@ -84,16 +84,16 @@ async function main() {
   // Cleanup: remove accepted or pending A–B rows so the test is repeatable
   async function cleanupRelationship() {
     const listA = await a.req('/friends/detailed');
-    const accA = listA.data.friendships?.find((f) => f.friendUserId === idB);
+    const accA = listA.data.friendships?.find((f) => f.userId === idB);
     if (accA) await a.req(`/friends/${accA.id}`, { method: 'DELETE' });
     const listB = await b.req('/friends/detailed');
-    const accB = listB.data.friendships?.find((f) => f.friendUserId === idA);
+    const accB = listB.data.friendships?.find((f) => f.userId === idA);
     if (accB) await b.req(`/friends/${accB.id}`, { method: 'DELETE' });
     const sentB = await b.req('/friends/requests/sent');
-    const pendB = sentB.data.requests?.find((r) => r.friendUserId === idA);
+    const pendB = sentB.data.requests?.find((r) => r.userId === idA);
     if (pendB) await b.req(`/friends/${pendB.id}`, { method: 'DELETE' });
     const sentA = await a.req('/friends/requests/sent');
-    const pendA = sentA.data.requests?.find((r) => r.friendUserId === idB);
+    const pendA = sentA.data.requests?.find((r) => r.userId === idB);
     if (pendA) await a.req(`/friends/${pendA.id}`, { method: 'DELETE' });
   }
   await cleanupRelationship();
@@ -126,19 +126,16 @@ async function main() {
 
   const list = await a.req('/friends/detailed');
   assert(list.ok === true, 'GET /friends/detailed');
-  const row = list.data.friendships.find((f) => f.friendUserId === idB);
+  const row = list.data.friendships.find((f) => f.userId === idB);
   assert(row, 'B in friendships list');
   assert('createdAt' in row, 'FriendshipPublic uses createdAt');
-  assert('friendAvatar' in row, 'FriendshipPublic uses friendAvatar');
+  assert('avatar' in row, 'FriendshipPublic uses avatar');
 
   const delRes = await a.req(`/friends/${friendshipId}`, { method: 'DELETE' });
   assert(delRes.ok === true && delRes.data?.deleted === true, 'DELETE /friends/:friendshipId');
 
   const friendsAfter = await a.req('/friends');
-  assert(
-    !friendsAfter.data.friends.find((f) => f.id === idB),
-    'GET /friends omits removed user',
-  );
+  assert(!friendsAfter.data.friends.find((f) => f.id === idB), 'GET /friends omits removed user');
 
   await a.req(`/friends/${friendshipId}`, { method: 'DELETE', okStatuses: [404] });
 

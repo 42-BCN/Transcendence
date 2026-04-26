@@ -1132,17 +1132,17 @@ components:
                 $ref: '#/components/schemas/SearchUserResult'
     FriendshipPublic:
       type: object
-      required: [id, friendUserId, friendUsername, friendAvatar, status, isSender, createdAt]
+      required: [id, userId, username, avatar, status, isSender, createdAt]
       properties:
         id:
           type: string
           format: uuid
-        friendUserId:
+        userId:
           type: string
           format: uuid
-        friendUsername:
+        username:
           type: string
-        friendAvatar:
+        avatar:
           type: string
           nullable: true
         status:

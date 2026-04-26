@@ -23,9 +23,9 @@ type UserLookup = {
 
 type FriendshipPublic = {
   id: string;
-  friendUserId: string;
-  friendUsername: string;
-  friendAvatar: string | null;
+  userId: string;
+  username: string;
+  avatar: string | null;
   status: 'pending' | 'accepted';
   isSender: boolean;
   createdAt: string | Date;
@@ -95,7 +95,7 @@ function friendUsernamesOf(items: FriendPublic[]): string[] {
 }
 
 function requestUsernamesOf(items: FriendshipPublic[]): string[] {
-  return items.map((item) => item.friendUsername).sort();
+  return items.map((item) => item.username).sort();
 }
 
 async function testListAcceptedFriends(): Promise<void> {

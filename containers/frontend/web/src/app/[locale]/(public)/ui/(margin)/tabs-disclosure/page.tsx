@@ -50,7 +50,7 @@ function RequestsTabContent() {
   const t = useTranslations('pages.ui.tabsDisclosure.disclosure');
 
   return (
-    <DisclosureGroup selectionMode="single" defaultExpandedKeys={['received']}>
+    <DisclosureGroup allowsMultipleExpanded={false} defaultExpandedKeys={['received']}>
       <Stack gap="md">
         <Disclosure id="received">
           <DisclosureTrigger title={t('received')} />
