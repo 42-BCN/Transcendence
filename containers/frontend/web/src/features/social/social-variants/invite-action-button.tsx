@@ -16,16 +16,13 @@ export function InviteActionButton({ userId }: InviteActionButtonProps) {
   const tActions = useTranslations('features.social.actions');
   const tErrors = useTranslations('errors');
   const addPendingRequest = useSocialStore((state) => state.addPendingRequest);
-  const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<
     ApiErrorShape<FriendshipsErrorName | 'VALIDATION_ERROR'> | undefined
   >(undefined);
 
   const handleInvite = useCallback(async () => {
     setError(undefined);
-    setIsPending(true);
     const result = await sendFriendRequest(userId);
-    setIsPending(false);
 
     if (result.ok) {
       addPendingRequest(result.data.friendship);

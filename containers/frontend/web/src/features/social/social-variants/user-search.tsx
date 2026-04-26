@@ -13,26 +13,28 @@ export function UserSearch() {
   const setSearchResults = useSocialStore((state) => state.setSearchResults);
 
   useEffect(() => {
+    let ignore = false;
     // 300ms debounce as per original issue requirement
-    const timer = setTimeout(() => {
-      const performSearch = async () => {
-        if (!query.trim()) {
-          setSearchResults([]);
-          return;
-        }
+    const timer = setTimeout(async () => {
+      if (!query.trim()) {
+        if (!ignore) setSearchResults([]);
+        return;
+      }
 
-        const result = await searchUsers(query);
+      const result = await searchUsers(query);
+      if (!ignore) {
         if (result.ok) {
           setSearchResults(result.data.users);
         } else {
           setSearchResults([]);
         }
-      };
-
-      void performSearch();
+      }
     }, 300);
 
-    return () => clearTimeout(timer);
+    return () => {
+      ignore = true;
+      clearTimeout(timer);
+    };
   }, [query, setSearchResults]);
 
   return (

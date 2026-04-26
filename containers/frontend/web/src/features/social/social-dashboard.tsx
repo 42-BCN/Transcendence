@@ -14,7 +14,7 @@ import {
   DisclosureFull,
 } from '@/components';
 
-import { UserSearch, UsersList, SocialError, SearchResults } from './social-variants';
+import { UserSearch, UsersList, SocialError } from './social-variants';
 import type {
   FriendPublic,
   FriendshipPublic,
