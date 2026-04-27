@@ -27,14 +27,26 @@ const createInitialState = (initialData: SocialInitialData) => ({
   searchQuery: '',
 });
 
+const updateResults = (
+  results: GroupedSearchResults,
+  predicate: (item: any) => boolean,
+  update: (item: any) => any,
+): GroupedSearchResults => ({
+  online: results.online.map((i) => (predicate(i) ? update(i) : i)),
+  offline: results.offline.map((i) => (predicate(i) ? update(i) : i)),
+  requests: results.requests.map((i) => (predicate(i) ? update(i) : i)),
+  pending: results.pending.map((i) => (predicate(i) ? update(i) : i)),
+  none: results.none.map((i) => (predicate(i) ? update(i) : i)),
+});
+
 const handleRemovePending =
   (list: PendingListKey, id: string) =>
   (state: SocialState): Partial<SocialState> => ({
     [list]: state[list].filter((item) => item.id !== id),
-    searchResults: state.searchResults.map((item) =>
-      item.friendshipId === id
-        ? { ...item, friendshipStatus: 'none', friendshipId: null, senderId: null }
-        : item,
+    searchResults: updateResults(
+      state.searchResults,
+      (item) => item.friendshipId === id,
+      (item) => ({ ...item, friendshipStatus: 'none', friendshipId: null, senderId: null }),
     ),
   });
 
@@ -60,8 +72,10 @@ const handleAcceptPending =
     return {
       pendingReceived: state.pendingReceived.filter((r) => r.id !== id),
       friends: [...state.friends, newFriend],
-      searchResults: state.searchResults.map((item) =>
-        item.friendshipId === id ? { ...item, friendshipStatus: 'accepted' } : item,
+      searchResults: updateResults(
+        state.searchResults,
+        (item) => item.friendshipId === id,
+        (item) => ({ ...item, friendshipStatus: 'accepted' }),
       ),
     };
   };
@@ -79,25 +93,25 @@ const handleAddPending =
 
       return {
         friends: [...state.friends, newFriend],
-        searchResults: state.searchResults.map((item) =>
-          item.id === friendship.userId
-            ? { ...item, friendshipStatus: 'accepted', friendshipId: friendship.id }
-            : item,
+        searchResults: updateResults(
+          state.searchResults,
+          (item) => item.id === friendship.userId,
+          (item) => ({ ...item, friendshipStatus: 'accepted', friendshipId: friendship.id }),
         ),
       };
     }
 
     return {
       pendingSent: [...state.pendingSent, friendship],
-      searchResults: state.searchResults.map((item) =>
-        item.id === friendship.userId
-          ? {
-              ...item,
-              friendshipStatus: 'pending',
-              friendshipId: friendship.id,
-              senderId: state.currentUserId,
-            }
-          : item,
+      searchResults: updateResults(
+        state.searchResults,
+        (item) => item.id === friendship.userId,
+        (item) => ({
+          ...item,
+          friendshipStatus: 'pending',
+          friendshipId: friendship.id,
+          senderId: state.currentUserId,
+        }),
       ),
     };
   };
