@@ -12,7 +12,11 @@ export function Avatar({ src, alt = 'Avatar', size = 'md', className }: AvatarPr
   const isFallback = !src;
 
   return (
-    <div role="img" aria-label={alt} className={avatarStyles({ size, className, isFallback })}>
+    <div
+      role={isFallback ? 'img' : undefined}
+      aria-label={isFallback ? alt : undefined}
+      className={avatarStyles({ size, className, isFallback })}
+    >
       {src ? (
         <img src={src} alt={alt} className="h-full w-full object-cover" />
       ) : (

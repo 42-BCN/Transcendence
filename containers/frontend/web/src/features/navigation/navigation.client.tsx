@@ -11,12 +11,33 @@ import { Drawer, Stack, glassCardStyles, IconButton } from '@components';
 import { DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
 import { useTranslations } from 'next-intl';
+import { useMediaQuery } from '@/hooks/use-media-query';
+
+type NavigationPosition = 'fixed' | 'absolute';
 
 type NavigationClientProps = {
   locale: string;
   mainNavItems: NavItem[];
   isAuthenticated: boolean;
+  mode?: 'auto' | 'desktop' | 'mobile';
+  position?: 'fixed' | 'absolute';
+  showFooter?: boolean;
+  showSettings?: boolean;
+  forceVisibleTrigger?: boolean;
 };
+
+const navigationPositionClassNames = {
+  fixed: {
+    desktop: 'fixed h-screen',
+    mobileTrigger: 'fixed',
+    mobileDrawer: 'h-[100dvh]',
+  },
+  absolute: {
+    desktop: 'absolute h-full',
+    mobileTrigger: 'absolute',
+    mobileDrawer: 'h-full',
+  },
+} as const;
 
 function getMobileNavigationValue(locale: string, closeNavigation: () => void) {
   return {
@@ -27,45 +48,36 @@ function getMobileNavigationValue(locale: string, closeNavigation: () => void) {
   };
 }
 
-const mobileNavigationClassName =
-  'group z-10 flex h-[100dvh] w-full overflow-y-auto overscroll-contain px-2 py-4 rounded-s-none rounded-e-md';
-
-export function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const media = window.matchMedia(query);
-
-    const listener = () => setMatches(media.matches);
-    listener();
-
-    media.addEventListener('change', listener);
-    return () => media.removeEventListener('change', listener);
-  }, [query]);
-
-  return matches;
+function getMobileNavigationClassName(position: NavigationPosition) {
+  return `group z-10 flex ${navigationPositionClassNames[position].mobileDrawer} w-full overflow-y-auto overscroll-contain rounded-s-none rounded-e-md px-2 py-4`;
 }
-
 function MobileNavigation(args: NavigationClientProps) {
+  const position = args.position ?? 'fixed';
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations('features.navigation');
   const pathname = usePathname();
+
   const closeNavigation = useCallback(() => {
     setIsOpen(false);
   }, []);
+
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
   const value = useMemo(
     () => getMobileNavigationValue(args.locale, closeNavigation),
     [args.locale, closeNavigation],
   );
+
   return (
     <NavigationProvider value={value}>
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <IconButton
           label={t('menu')}
-          className="md:hidden fixed top-5 left-[24px] z-[30] pointer-events-auto"
+          className={`${args.forceVisibleTrigger ? '' : 'md:hidden'} ${
+            navigationPositionClassNames[position].mobileTrigger
+          } pointer-events-auto left-[24px] top-5 z-[30]`}
           icon={isOpen ? 'close' : 'menu'}
           placement="right"
         />
@@ -74,20 +86,20 @@ function MobileNavigation(args: NavigationClientProps) {
           <Stack
             as="nav"
             aria-label={t('mainAriaLabel')}
-            className={mobileNavigationClassName}
+            className={getMobileNavigationClassName(position)}
             align="start"
           >
             <NavigationHeader />
             <NavigationMain {...args} />
-            <Settings />
+            {args.showSettings !== false && <Settings />}
           </Stack>
         </Drawer>
       </DialogTrigger>
     </NavigationProvider>
   );
 }
-
 function DesktopNavigation(args: NavigationClientProps) {
+  const position = args.position ?? 'fixed';
   const t = useTranslations('features.navigation');
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -117,22 +129,35 @@ function DesktopNavigation(args: NavigationClientProps) {
         className={glassCardStyles({
           intensity: 'medium',
           blur: 'sm',
-          className: `group py-4 z-10 fixed h-screen overflow-y-auto ${isExpanded ? 'w-44' : 'w-min'} px-2 top-0 rounded-s-none rounded-e-md`,
+          className: `group top-0 z-10 overflow-y-auto rounded-s-none rounded-e-md px-2 py-4 ${
+            navigationPositionClassNames[position].desktop
+          } ${isExpanded ? 'w-44' : 'w-min'}`,
         })}
         align="start"
       >
         <NavigationHeader />
         <NavigationMain {...args} />
-        <NavigationFooter />
+        {args.showFooter !== false && <NavigationFooter />}
       </Stack>
     </NavigationProvider>
   );
 }
 
-export function NavigationClient(args: NavigationClientProps) {
+export function NavigationClient({
+  mode = 'auto',
+  position = 'fixed',
+  ...args
+}: NavigationClientProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  if (mode === 'desktop') return <DesktopNavigation {...args} position={position} />;
+  if (mode === 'mobile') return <MobileNavigation {...args} position={position} />;
 
   if (isDesktop === null) return null;
 
-  return isDesktop ? <DesktopNavigation {...args} /> : <MobileNavigation {...args} />;
+  return isDesktop ? (
+    <DesktopNavigation {...args} position={position} />
+  ) : (
+    <MobileNavigation {...args} position={position} />
+  );
 }

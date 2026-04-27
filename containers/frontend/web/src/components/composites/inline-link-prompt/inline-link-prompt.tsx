@@ -1,11 +1,12 @@
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { InternalLink } from '@components/controls/link';
+import type { InternalLinkProps } from '@components/controls/link';
 
 type InlineLinkPromptProps = {
   text: string;
   linkLabel: string;
-  href: string;
+  href: InternalLinkProps['href'];
 };
 
 export function InlineLinkPrompt({ text, linkLabel, href }: InlineLinkPromptProps) {
@@ -14,6 +15,7 @@ export function InlineLinkPrompt({ text, linkLabel, href }: InlineLinkPromptProp
       <Text as="span" variant="caption">
         {text}
       </Text>
+
       <InternalLink href={href}>{linkLabel}</InternalLink>
     </Stack>
   );

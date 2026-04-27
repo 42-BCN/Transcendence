@@ -2,11 +2,15 @@
 
 import { usePathname } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+
 import { Stack, Icon, InternalLink, Text } from '@components';
+import type { InternalLinkProps } from '@components/controls/link';
+
+type BreadcrumbHref = InternalLinkProps['href'];
 
 type BreadcrumbItem = {
   label: string;
-  href: string;
+  href: BreadcrumbHref;
 };
 
 export interface BreadcrumbProps {
@@ -21,6 +25,10 @@ function formatSegmentLabel(segment: string) {
     .join(' ');
 }
 
+function toBreadcrumbHref(href: string): BreadcrumbHref {
+  return href as BreadcrumbHref;
+}
+
 export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
   const pathname = usePathname();
   const t = useTranslations('components.breadcrumb');
@@ -28,10 +36,9 @@ export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
   const getBreadcrumbItems = (): BreadcrumbItem[] => {
     if (items) return items;
 
-    // Auto-generate breadcrumbs from current pathname
-    const segments: string[] = pathname
+    const segments = pathname
       .split('/')
-      .filter((s: string) => s && s !== '(dashboard)' && s !== '(private)');
+      .filter((segment) => segment && segment !== '(dashboard)' && segment !== '(private)');
 
     const breadcrumbs: BreadcrumbItem[] = [];
 
@@ -47,9 +54,10 @@ export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
       'reset-password': t('reset-password'),
     };
 
-    segments.forEach((segment: string, index: number) => {
-      const href = `/${segments.slice(0, index + 1).join('/')}`;
+    segments.forEach((segment, index) => {
+      const href = toBreadcrumbHref(`/${segments.slice(0, index + 1).join('/')}`);
       const label = staticLabels[segment] ?? formatSegmentLabel(segment);
+
       breadcrumbs.push({ label, href });
     });
 
@@ -63,8 +71,9 @@ export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
   return (
     <Stack direction="horizontal" align="center" gap="sm">
       {breadcrumbItems.map((item, index) => (
-        <Stack key={item.href} direction="horizontal" align="center" gap="sm">
+        <Stack key={String(item.href)} direction="horizontal" align="center" gap="sm">
           {index > 0 && <Icon name="chevronRight" size={16} className="text-text-tertiary" />}
+
           {index === breadcrumbItems.length - 1 ? (
             <Text variant="body-xs" className="text-text-secondary font-medium">
               {item.label}
