@@ -1,7 +1,7 @@
 import type { IconName } from '@components';
 
 // features/navigation/navigation.config.ts
-type NavHref = '/' | '/robots' | '/ui' | '/login' | '/me';
+type NavHref = '/' | '/robots' | '/ui' | '/login' | '/me' | '/game';
 
 export type NavItem = {
   href: NavHref;

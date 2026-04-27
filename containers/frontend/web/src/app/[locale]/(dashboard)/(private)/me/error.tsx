@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { InternalLink, MessageBlock, Stack, Text } from '@components';
+import { InternalLink, MessageBlock, Stack } from '@components';
 
 interface ErrorProps {
   error: Error & { digest?: string };
 }
 
-export default function PrivateError({ error, reset }: ErrorProps) {
+export default function PrivateError({ error }: ErrorProps) {
   useEffect(() => {
     console.error(error);
   }, [error]);

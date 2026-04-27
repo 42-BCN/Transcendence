@@ -123,6 +123,24 @@ services:
       timeout: 5s
       retries: 5
 
+  storybook:
+    build:
+      context: ./frontend
+      dockerfile: ./docker/Dockerfile
+    working_dir: /app
+    command: npm run storybook -- --host 0.0.0.0
+    ports:
+      - "6006:6006"
+    env_file:
+      - ./frontend/docker/.env.development
+    volumes:
+      - ./frontend/web:/app
+      - node_modules:/app/node_modules
+      - ${CERT_DIR:-../certs}:/certs:ro
+      - ./contracts:/app/src/contracts:ro
+    networks:
+      - edge
+
   nginx:
     image: nginx:alpine
     ports:
