@@ -87,8 +87,26 @@ function SocialHeader() {
 function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
   const t = useTranslations('features.social');
   const searchQuery = useSocialStore((state) => state.searchQuery);
+  const searchResults = useSocialStore((state) => state.searchResults);
 
   if (searchQuery.trim() !== '') {
+    const isEmpty =
+      searchResults.online.length === 0 &&
+      searchResults.offline.length === 0 &&
+      searchResults.requests.length === 0 &&
+      searchResults.pending.length === 0 &&
+      searchResults.none.length === 0;
+
+    if (isEmpty) {
+      return (
+        <Stack align="center" justify="center" className="px-3 py-3 text-center">
+          <Text variant="caption" color="tertiary">
+            {t('emptyStates.search')}
+          </Text>
+        </Stack>
+      );
+    }
+
     return <SearchResults />;
   }
 
