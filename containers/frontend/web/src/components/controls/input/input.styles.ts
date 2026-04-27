@@ -4,7 +4,7 @@ const inputBase = [
   'font-body-sm',
   'border rounded-lg',
   'w-full px-2 py-2',
-  'bg-bg-primary text-text-primary placeholder:text-text-disabled autofill:bg-white autofill:text-black',
+  'bg-bg-primary text-text-primary autofill:bg-white autofill:text-black',
   'outline-none transition',
 ];
 
@@ -36,7 +36,7 @@ const inputRacStates = [
 
 const inputWrapperBase = ['relative inline-flex w-full items-center'];
 
-const inputIconBase = ['pointer-events-none absolute', 'text-text-disabled'];
+const inputIconBase = ['pointer-events-none absolute', 'text-text-secondary'];
 
 const inputIconPositions = {
   start: 'left-2',
