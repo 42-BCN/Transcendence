@@ -47,7 +47,6 @@ export const SearchUsersQuerySchema = z
       .string()
       .trim()
       .min(1, { message: VALIDATION.REQUIRED })
-      .min(2, { message: VALIDATION.FIELD_TOO_SHORT })
       .max(100, { message: VALIDATION.FIELD_TOO_LONG }),
     limit: intFromQuery(VALIDATION.INVALID_FORMAT).optional(),
   })

@@ -45,7 +45,7 @@ export async function fetchServer<T>(
     cache: 'no-store',
   });
   const text = await res.text();
-  const json = await parseJsonSafe<T>(text);
+  const json = parseJsonSafe<T>(text);
   if (!res.ok) {
     return { data: json as T, headers: res.headers, status: res.status };
   }
