@@ -19,6 +19,11 @@ const POKEMON_USERNAMES = [
   'mewtwo',
   'dragonite',
   'lapras',
+  'gyarados',
+  'vaporeon',
+  'jolteon',
+  'flareon',
+  'ditto',
 ] as const;
 
 type SeedUserRef = {
@@ -36,8 +41,18 @@ type FriendshipSeed =
 const FRIENDSHIP_SEEDS: FriendshipSeed[] = [
   { type: 'accepted', a: 'pikachu', b: 'bulbasaur' },
   { type: 'accepted', a: 'pikachu', b: 'squirtle' },
+  // Pikachu Sent (Total 4)
   { type: 'pending', from: 'pikachu', to: 'charmander' },
+  { type: 'pending', from: 'pikachu', to: 'mew' },
+  { type: 'pending', from: 'pikachu', to: 'mewtwo' },
+  { type: 'pending', from: 'pikachu', to: 'dragonite' },
+  // Pikachu Received (Total 5)
   { type: 'pending', from: 'eevee', to: 'pikachu' },
+  { type: 'pending', from: 'lapras', to: 'pikachu' },
+  { type: 'pending', from: 'gyarados', to: 'pikachu' },
+  { type: 'pending', from: 'vaporeon', to: 'pikachu' },
+  { type: 'pending', from: 'jolteon', to: 'pikachu' },
+  // Others
   { type: 'pending', from: 'mew', to: 'mewtwo' },
   { type: 'accepted', a: 'dragonite', b: 'lapras' },
   // snorlax intentionally isolated

@@ -11,7 +11,7 @@ const inputBase = [
 const inputVariants = {
   default: 'border-border-primary',
   subtle: 'border-transparent bg-bg-secondary',
-  danger: 'border-red-500',
+  danger: 'border-danger',
 } as const;
 
 const inputSizes = {
@@ -24,7 +24,7 @@ const inputSizes = {
 const inputRacStates = [
   'data-[focus-visible]:ring-2 data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-blue-500',
   'data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed',
-  'data-[invalid]:border-red-500',
+  'data-[invalid]:border-danger',
   'data-[focused]:bg-bg-primary data-[focused]:border-text-primary',
   'data-[hovered]:border-text-primary',
 ];

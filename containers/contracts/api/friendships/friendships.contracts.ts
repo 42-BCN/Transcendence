@@ -4,12 +4,12 @@ import type { FriendshipsErrorName } from './friendships.errors';
 
 export type FriendshipPublic = {
   id: string;
-  friendUserId: string;
-  friendUsername: string;
-  friendAvatar: string | null;
+  userId: string;
+  username: string;
+  avatar: string | null;
   status: 'pending' | 'accepted';
   isSender: boolean;
-  createdAt: Date;
+  createdAt: string;
 };
 
 /** Accepted friend row for GET /friends (other user only, no session tokens). */

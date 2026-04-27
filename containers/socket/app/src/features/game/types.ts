@@ -30,9 +30,11 @@ export type player = parse_entity & {
   statusTurns: number;
   facing: string;
   abilities: string[];
+  abilitiesCD: Record<string, number>;
   dice: number[];
   usedDice: number[];
   hasMoved: boolean;
+  isDead: boolean;
 };
 
 export type enemy = player;
@@ -70,6 +72,12 @@ export type abilityInfo = {
   effect?: string[];
 }
 
+export type vfx = {
+  id: string;
+  type: string;
+  amount: string | number | null;
+}
+
 export type serverGameState = {
   phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
   turn: number,
@@ -80,6 +88,7 @@ export type serverGameState = {
   tiles: Record<string, boolean>;
   clients: Record<string, clientGameState>
   history: historyAction[];
+  vfx: vfx[];
   mapBounds: mapInfo,
 }
 

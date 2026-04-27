@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -14,69 +15,92 @@ import {
   TextField,
 } from '@/components';
 
-import { UsersList } from './social-variants';
+import { UsersList, SocialError } from './social-variants';
+import type {
+  FriendPublic,
+  FriendshipPublic,
+} from '@/contracts/api/friendships/friendships.contracts';
+import { useSocialStore } from './store/use-social-store';
+import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';
 
-function FriendsList() {
+export type SocialErrorCode = FriendshipsErrorName | 'FETCH_FAILED';
+
+export interface SocialInitialData {
+  friends: FriendPublic[];
+  pendingReceived: FriendshipPublic[];
+  pendingSent: FriendshipPublic[];
+  errors: {
+    friends?: SocialErrorCode;
+    pendingReceived?: SocialErrorCode;
+    pendingSent?: SocialErrorCode;
+  };
+}
+
+function FriendsList({ error }: { error?: SocialErrorCode }) {
   const t = useTranslations('features.social.friends');
-  const onlineFriends = [
-    { id: 1, username: 'capapes', avatarUrl: '/avatars/avatar-1.png' /*, subtitle: t('online') */ },
-    {
-      id: 2,
-      username: 'mfontser',
-      avatarUrl: '/avatars/avatar-2.png' /*, subtitle: t('online') */,
-    },
-  ];
-
-  const offlineFriends = [
-    {
-      id: 3,
-      username: 'joanavar',
-      avatarUrl: '/avatars/avatar-3.png' /*, subtitle: t('offline') */,
-    },
-  ];
+  const friends = useSocialStore((s) => s.friends);
+  const onlineFriends = friends.filter((f) => f.isOnline);
+  const offlineFriends = friends.filter((f) => !f.isOnline);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
-        <UsersList friends={onlineFriends} type="online" />
+        {error ? (
+          <SocialError error={error} />
+        ) : (
+          <UsersList friends={onlineFriends} type="online" />
+        )}
       </DisclosureFull>
 
       <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
-        <UsersList friends={offlineFriends} type="offline" />
+        {error ? (
+          <SocialError error={error} />
+        ) : (
+          <UsersList friends={offlineFriends} type="offline" />
+        )}
       </DisclosureFull>
     </DisclosureGroup>
   );
 }
 
-function RequestsList() {
+function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
   const t = useTranslations('features.social.requests');
-
-  const requests = [
-    {
-      id: 1,
-      username: 'cmanica-',
-      avatarUrl: '/avatars/avatar-4.png',
-      // subtitle: t('sentSubtitle'),
-    },
-  ];
+  const pendingReceived = useSocialStore((s) => s.pendingReceived);
+  const pendingSent = useSocialStore((s) => s.pendingSent);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
-      <DisclosureFull id="received" title={`${t('received')} (${requests.length})`}>
-        <UsersList friends={requests} type="request" />
+      <DisclosureFull id="received" title={`${t('received')} (${pendingReceived.length})`}>
+        {errors.pendingReceived ? (
+          <SocialError error={errors.pendingReceived} />
+        ) : (
+          <UsersList friends={pendingReceived} type="request" />
+        )}
       </DisclosureFull>
 
-      <DisclosureFull id="sent" title={`${t('sent')} (0)`}>
-        <Text variant="caption" color="tertiary" className="text-center py-6 px-3">
-          {t('noSentRequests')}
-        </Text>
+      <DisclosureFull id="sent" title={`${t('sent')} (${pendingSent.length})`}>
+        {errors.pendingSent ? (
+          <SocialError error={errors.pendingSent} />
+        ) : (
+          <UsersList friends={pendingSent} type="pending" />
+        )}
       </DisclosureFull>
     </DisclosureGroup>
   );
 }
 
-export function SocialDashboard() {
+export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
   const t = useTranslations('features.social');
+
+  const setFriends = useSocialStore((s) => s.setFriends);
+  const setPendingReceived = useSocialStore((s) => s.setPendingReceived);
+  const setPendingSent = useSocialStore((s) => s.setPendingSent);
+
+  useEffect(() => {
+    setFriends(initialData.friends);
+    setPendingReceived(initialData.pendingReceived);
+    setPendingSent(initialData.pendingSent);
+  }, [initialData, setFriends, setPendingReceived, setPendingSent]);
 
   return (
     <>
@@ -94,11 +118,11 @@ export function SocialDashboard() {
           </TabList>
 
           <TabPanel id="friends" className="outline-none">
-            <FriendsList />
+            <FriendsList error={initialData.errors.friends} />
           </TabPanel>
 
           <TabPanel id="requests" className="outline-none">
-            <RequestsList />
+            <RequestsList errors={initialData.errors} />
           </TabPanel>
         </Tabs>
       </main>

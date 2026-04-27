@@ -6,6 +6,9 @@
     "outDir": "dist",
     "rootDir": "src",
     "baseUrl": "./",
+    "paths": {
+      "@contracts/*": ["src/contracts/*", "../../contracts/*"]
+    },
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,

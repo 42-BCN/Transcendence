@@ -1,29 +1,49 @@
-import { type UserItemProps, UserItem } from '@components';
+import { useTranslations } from 'next-intl';
+import { UserItem } from '@/components/composites/user-item/user-item';
+import { Stack } from '@/components/primitives/stack';
+import { Text } from '@/components/primitives/text';
+import type {
+  FriendPublic,
+  FriendshipPublic,
+} from '@/contracts/api/friendships/friendships.contracts';
 
-import { PendingButton } from './pending-buttons';
-import { RequestButtons } from './request-buttons';
 import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
+import { AcceptActionButton } from './accept-action-button';
+import { RejectActionButton } from './reject-action-button';
 
-export function UsersList({
-  friends,
-  type,
-}: {
-  friends: UserItemProps[];
+interface UsersListProps {
+  friends: (FriendPublic | FriendshipPublic)[];
   type: 'request' | 'pending' | 'online' | 'offline';
-}) {
-  return friends.map(({ username, subtitle, avatarUrl, className }) => (
-    <UserItem
-      username={username}
-      // subtitle={subtitle}
-      avatarUrl={avatarUrl}
-      className={className}
-      key={username}
-    >
-      {type === 'request' && <RequestButtons username={username} />}
-      {type === 'pending' && <PendingButton username={username} />}
-      {type === 'online' && <OnlineButtons username={username} />}
-      {type === 'offline' && <OfflineButtons username={username} />}
-    </UserItem>
-  ));
+}
+
+export function UsersList({ friends, type }: UsersListProps) {
+  const t = useTranslations('features.social.emptyStates');
+
+  if (friends.length === 0) {
+    return (
+      <Stack align="center" justify="center" className="py-3 px-3 text-center">
+        <Text variant="caption" color="tertiary">
+          {t(type)}
+        </Text>
+      </Stack>
+    );
+  }
+
+  return friends.map((item) => {
+    const { id, username, avatar } = item;
+    return (
+      <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
+        {type === 'request' && (
+          <>
+            <RejectActionButton friendshipId={id} type="pendingReceived" />
+            <AcceptActionButton friendshipId={id} />
+          </>
+        )}
+        {type === 'pending' && <RejectActionButton friendshipId={id} type="pendingSent" />}
+        {type === 'online' && <OnlineButtons username={username} userId={id} />}
+        {type === 'offline' && <OfflineButtons userId={id} />}
+      </UserItem>
+    );
+  });
 }

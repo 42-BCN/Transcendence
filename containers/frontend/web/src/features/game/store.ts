@@ -11,6 +11,7 @@ export type globalGameState = {
   tiles: Record<string, boolean>;
   history: historyAction[];
   mapBounds: mapInfo;
+  vfx: vfx[];
   readyPlayers: string[];
   activePlayers: string[];
 };
@@ -34,10 +35,17 @@ type player = parse_entity & {
   statusTurns: number;
   facing: string;
   abilities: string[];
+  abilitiesCD: Record<string, number>;
   dice: number[];
   usedDice: number[];
   hasMoved: boolean;
 };
+
+type vfx = {
+  id: string;
+  type: string;
+  amount: string | number | null;
+}
 
 type enemy = player;
 

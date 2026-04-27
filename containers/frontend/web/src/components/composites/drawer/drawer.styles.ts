@@ -1,6 +1,6 @@
 import { cn } from '@/lib/styles/cn';
 
-const overlayBase = ['absolute top-0 left-0 w-full z-[100]', 'h-[var(--page-height)]'];
+const overlayBase = ['absolute top-0 left-0 w-full z-[100]', 'h-[100dvh]'];
 
 const overlayRacStates = [
   'data-[entering]:bg-black/30 data-[entering]:backdrop-blur-md',

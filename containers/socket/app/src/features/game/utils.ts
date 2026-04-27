@@ -15,6 +15,7 @@ export const gameState: serverGameState = {
   tiles: {},
   clients: {},
   history: [],
+  vfx: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
 };
 
@@ -108,22 +109,23 @@ export async function enemyPhase(sync: () => void) {
 
 export async function endTurn(sync: () => void) {
   sync();
-  Object.keys(gameState.players).forEach((id) => {
-    updateCooldowns(id);
-    const player = gameState.players[id];
-    if (!player)
-      return console.log('no player in end turn');
-    player.dice = [...player.dice, ...player.usedDice].sort((a, b) => a - b);
-    player.usedDice = [];
-    player.hasMoved = false;
-  });
-  Object.keys(gameState.enemies).forEach((id) => {
-    const enemy = gameState.enemies[id];
-    if (!enemy)
-      return console.log('no enemy in end turn');
-    enemy.dice = [...enemy.dice, ...enemy.usedDice].sort((a, b) => a - b);
-    enemy.usedDice = [];
-    enemy.hasMoved = false;
+  const entities = { ...gameState.players, ...gameState.enemies }
+  Object.keys(entities).forEach((id) => {
+    const ent = entities[id];
+    if (!ent)
+      return console.log('no ent in end turn');
+    updateCooldowns(ent.id);
+    if (ent.isDead) {
+      if (ent.type === 'player')
+        delete gameState.players[id];
+      else if (ent.type === 'enemy')
+        delete gameState.enemies[id];
+    }
+    else {
+      ent.dice = [...ent.dice, ...ent.usedDice].sort((a, b) => a - b);
+      ent.usedDice = [];
+      ent.hasMoved = false;
+    }
   });
   gameState.turn = gameState.turn + 1;
   gameState.phase = 'PLAN';
@@ -133,8 +135,14 @@ export async function endTurn(sync: () => void) {
 }
 
 export function updateCooldowns(id: string) {
-  // TODO: otro dia
-  // return;
+  const ent = gameState.players[id] || gameState.enemies[id];
+  if (!ent)
+    return (console.log("ent not found in update cooldowns"));
+  ent.abilities.forEach((ab) => {
+    if (ent.abilitiesCD[ab])
+      if (--ent.abilitiesCD[ab] === 0)
+        delete ent.abilitiesCD[ab];
+  })
 }
 
 export function resetHistory(who: string) {
@@ -270,9 +278,14 @@ export function takeAb(id: string, ab: abilityInfo, roll: number) {
   const target = gameState.enemies[id] || gameState.players[id];
   if (!target)
     return console.log('target not found in takeAb');
+  // TODO: send signal with the damage dealt to make a html of how much it was done
   target.hp -= (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);
-  if (target.hp < 0)
+  if (target.hp <= 0) {
     target.hp = 0;
+    target.usedDice = [...target.dice, ...target.usedDice];
+    target.dice = [];
+    target.isDead = true;
+  }
   const hadStatus = Boolean(target.status);
   if (ab.effect && ab.effect[STATUS_TYPE] && !target.status) {
     target.status = ab.effect[STATUS_TYPE];
@@ -334,6 +347,13 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
     restructureHistory(who, deleted);
     gameState.history = gameState.history.filter((action) => !deleted.has(action.id));
   }
+  if (type === 'ability') {
+    const ent = gameState.players[id] || gameState.clones[id];
+    ent.abilitiesCD[ability] = getAbility(ability)?.cd;
+  }
+  // const deleted = new Set<string>()
+  // restructureHistory(who, deleted);
+  // gameState.history = gameState.history.filter((action) => !deleted.has(action.id));
   const actionNumber = gameState.history.reduce((count, action) => {
     return action.who === who ? count + 1 : count
   }, 1);
@@ -387,126 +407,85 @@ export function initState() {
   tiles.forEach((tile) => {
     worldMap[tile.id] = true;
   });
+  const base = () => ({
+    usedDice: [],
+    status: null,
+    statusTurns: 0,
+    hasMoved: false,
+    facing: 'center',
+    isDead: false,
+    abilitiesCD: {},
+  })
   entities.forEach((entity) => {
     switch (entity.type) {
       case "assassin":
         playEnt[entity.id] = {
-          ...entity, type: "player", hp: 13, maxHp: 13, armor: 0,
+          ...base(), ...entity, type: "player", hp: 13, maxHp: 13, armor: 0,
           abilities: ["Stab", "Dagger Throw", "Kick", "Restrain"],
           dice: [4, 4, 4, 4, 8],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "paladin":
         playEnt[entity.id] = {
-          ...entity, type: "player", hp: 16, maxHp: 16, armor: 0,
+          ...base(), ...entity, type: "player", hp: 16, maxHp: 16, armor: 0,
           abilities: ["Thrust", "Defend", "Shield Bash", "Vertical Slash"],
           dice: [6, 6, 6, 6],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "mage":
         playEnt[entity.id] = {
-          ...entity, type: "player", hp: 8, maxHp: 8, armor: 0,
+          ...base(), ...entity, type: "player", hp: 8, maxHp: 8, armor: 0,
           abilities: ["Fire Breath", "Azure Comet", "Small Meteor", "Rising Thorns"],
           dice: [4, 8, 12],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "alchemist":
         playEnt[entity.id] = {
-          ...entity, type: "player", hp: 10, maxHp: 10, armor: 0,
+          ...base(), ...entity, type: "player", hp: 10, maxHp: 10, armor: 0,
           abilities: ["Stimulant", "Vacuum Flask", "Bombastic Flask", "Oxidation"],
           dice: [6, 8, 10],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "drone":
         enemEnt[entity.id] = {
-          ...entity, type: "drone", hp: 3, maxHp: 3, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 3, maxHp: 3, armor: 0,
           abilities: ["Swoop"],
           dice: [4, 4, 4],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "crawler":
         enemEnt[entity.id] = {
-          ...entity, type: "drone", hp: 4, maxHp: 4, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 4, maxHp: 4, armor: 0,
           abilities: ["Claw"],
           dice: [4, 4, 6],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "spawner":
         enemEnt[entity.id] = {
-          ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 0,
           abilities: ["Spawn Drone", "Spawn Crawler"],
           dice: [4, 6],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "mortar":
         enemEnt[entity.id] = {
-          ...entity, type: "enemy", hp: 12, maxHp: 12, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 12, maxHp: 12, armor: 0,
           abilities: ["Shoot", "Reload"],
           dice: [6, 6],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "centurion":
         enemEnt[entity.id] = {
-          ...entity, type: "enemy", hp: 20, maxHp: 20, armor: 2,
+          ...base(), ...entity, type: "enemy", hp: 20, maxHp: 20, armor: 2,
           abilities: ["Charge", "Atomic Bomb"],
           dice: [6, 8, 8],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
       case "jaeger":
         enemEnt[entity.id] = {
-          ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 1,
+          ...base(), ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 1,
           abilities: ["Push", "Railgun"],
           dice: [6, 6, 10],
-          usedDice: [],
-          facing: "center",
-          status: null,
-          statusTurns: 0,
-          hasMoved: false,
         }
         break;
     }

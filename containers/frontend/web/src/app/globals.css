@@ -50,6 +50,8 @@
   --color-text-secondary: #4d4d4d;
   --color-text-tertiary: #808080;
   --color-text-disabled: #b3b3b3;
+  --color-success: #059669; /* emerald-600 */
+  --color-danger: #e11d48; /* rose-600 */
 
   /* background colors */
   --color-bg-primary: #f1f5f9; /* Corresponds to slate-100 (original) */
@@ -98,6 +100,8 @@
   --color-grid-line: #ffffff05; /* Very subtle white for dark mode */
   --color-shadow-rgb: 255, 255, 255;
   --color-shadow-opacity: 0.05;
+  --color-danger: #f43f5e; /* rose-500 */
+  --color-success: #10b981; /* emerald-500 */
 }
 
 .font-caption {

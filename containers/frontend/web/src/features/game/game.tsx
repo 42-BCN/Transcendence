@@ -18,38 +18,46 @@ function AbButtons() {
   const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
+  const abilityCD = useGame((state) => state.players[state.selectedEnt]?.abilitiesCD);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
   const clearSelectables = useGame((state) => state.clearSelectables);
-  const highlights = useGame((state) => state.highlights);
   const showAbRange = useGame((state) => state.showAbRange);
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
-      {ent?.abilities.map((ability) => (
-        <Button
-          key={ability}
-          className="bg-red-600 text-white"
-          onPointerOver={(event) => {
-            event.stopPropagation();
-            if (!selectedAb && Object.keys(highlights).length === 0)
-              showAbRange(ability);
-          }}
-          onPointerOut={(event) => {
-            event.stopPropagation();
-            if (!selectedAb)
-              clearSelectables();
-          }}
-          onPress={() => {
-            if (assignedCharacter === ent.id.replace('clone_', '')) {
-              if (Object.keys(highlights).length === 0)
-                clearHighlights();
-              selectAbility(ability);
-            }
-          }}
-        >
-          {ability}
-        </Button>
-      ))}
+      {ent?.abilities.map((ability) => {
+        const cd = abilityCD?.[ability] || 0;
+        const cn = cd === 0 ? "bg-red-600 text-white" : "bg-gray-600 text-white"
+        return (
+          <Button
+            key={ability}
+            className={cn}
+            onMouseEnter={(event) => {
+              if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
+                console.log('enter');
+                event.stopPropagation();
+                showAbRange(ability);
+              }
+            }}
+            onMouseLeave={(event) => {
+              if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
+                console.log('exit');
+                event.stopPropagation();
+                clearSelectables();
+              }
+            }}
+            onPress={() => {
+              if (cd === 0 && assignedCharacter === ent.id.replace('clone_', '')) {
+                if (Object.keys(useGame.getState().highlights).length === 0)
+                  clearHighlights();
+                selectAbility(ability);
+              }
+            }}
+          >
+            {ability} {cd > 0 ? `(${cd})` : ""}
+          </Button>
+        )
+      })}
     </div>
   );
 }
@@ -77,12 +85,12 @@ function DiceButtons() {
         {ent?.dice.map((diceNum, i) => (
           <Button
             key={i}
-            onPointerOver={(event) => {
+            onMouseEnter={(event) => {
               event.stopPropagation();
               if (!ability)
                 showMoveRange(diceNum);
             }}
-            onPointerOut={(event) => {
+            onMouseLeave={(event) => {
               if (!selectedDice) {
                 event.stopPropagation();
                 clearHighlights();
@@ -90,7 +98,7 @@ function DiceButtons() {
             }}
             onPress={() => {
               if (assignedCharacter === ent.id.replace('clone_', '')) {
-                ability ? selectDice(diceNum) : movDice(diceNum);
+                canSelect ? selectDice(diceNum) : movDice(diceNum);
               }
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -462,10 +470,6 @@ export function Game() {
       <Reset />
       <EndPlan />
       <Canvas
-        onContextMenu={(e) => {
-          e.preventDefault();
-          handleRightClick();
-        }}
       >
         <Scene />
       </Canvas>

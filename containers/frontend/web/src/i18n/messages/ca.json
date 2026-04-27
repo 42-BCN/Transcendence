@@ -439,15 +439,20 @@
       "requests": {
         "title": "Sol·licituds",
         "received": "Rebudes",
-        "sent": "Enviades",
-        "sentSubtitle": "Enviat fa 2 dies",
-        "noSentRequests": "No hi ha sol·licituds pendents"
+        "sent": "Enviades"
+      },
+      "emptyStates": {
+        "online": "No hi ha amics connectats",
+        "offline": "No hi ha amics desconnectats",
+        "request": "No tens sol·licituds pendents",
+        "pending": "No has enviat sol·licituds"
       },
       "actions": {
         "inviteToGame": "Convidar a partida",
         "chat": "Chat",
         "reject": "Rebutjar",
-        "accept": "Acceptar"
+        "accept": "Acceptar",
+        "cancel": "Cancel·lar"
       }
     }
   },
@@ -476,6 +481,15 @@
     "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
     "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
-    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard."
+    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard.",
+    "UNAUTHORIZED_ACTION": "Acció no permesa.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
+    "FRIENDSHIP_ALREADY_ACCEPTED": "Aquesta sol·licitud ja ha estat acceptada.",
+    "FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
+    "USER_NOT_FOUND": "Usuari no trobat.",
+    "INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "FRIENDSHIP_ALREADY_EXISTS": "Ja sou amics.",
+    "FRIENDSHIP_SELF_REQUEST": "No et pots afegir a tu mateix.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat."
   }
 }

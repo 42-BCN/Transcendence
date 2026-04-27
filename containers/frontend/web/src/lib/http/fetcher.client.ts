@@ -1,6 +1,15 @@
 import { jsonBody } from './utils';
 import type { HttpMethod } from './utils';
 
+const FALLBACK = {
+  data: {
+    ok: false,
+    error: {
+      code: 'FETCH_FAILED',
+    },
+  },
+};
+
 export async function fetchClient<T>(
   endpoint: string,
   method: HttpMethod,
@@ -11,22 +20,30 @@ export async function fetchClient<T>(
   headers: Headers;
   status: number;
 }> {
-  const res = await fetch(endpoint, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: jsonBody(data),
-    credentials: opts?.withAuth ? 'include' : 'omit',
-  });
+  try {
+    const res = await fetch(endpoint, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: jsonBody(data),
+      credentials: opts?.withAuth ? 'include' : 'omit',
+    });
 
-  const text = await res.text();
-  const json = text ? (JSON.parse(text) as T) : (null as T);
+    const text = await res.text();
+    const json = text ? (JSON.parse(text) as T) : (null as T);
 
-  return {
-    data: json,
-    headers: res.headers,
-    status: res.status,
-  };
+    return {
+      data: json,
+      headers: res.headers,
+      status: res.status,
+    };
+  } catch (error) {
+    return {
+      data: FALLBACK.data as T,
+      headers: new Headers(),
+      status: 0,
+    };
+  }
 }

@@ -245,7 +245,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           await nextPhase(gsync);
           for (const id in gameState.clients) {
             setClear(id);
-            socket.emit('game:server:sync', gameState.clients[id]);
+            nsp.emit('game:server:sync', gameState.clients[id]);
           }
         }
       });
