@@ -1,6 +1,6 @@
+/* eslint-disable local/no-literal-ui-strings */
 'use client';
 
-import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -15,26 +15,9 @@ import {
 } from '@/components';
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
-import type {
-  FriendPublic,
-  FriendshipPublic,
-} from '@/contracts/api/friendships/friendships.contracts';
-import { useSocialStore } from './store/use-social-store';
-import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';
-
-export type SocialErrorCode = FriendshipsErrorName | 'FETCH_FAILED';
-
-export interface SocialInitialData {
-  friends: FriendPublic[];
-  pendingReceived: FriendshipPublic[];
-  pendingSent: FriendshipPublic[];
-  currentUserId?: string;
-  errors: {
-    friends?: SocialErrorCode;
-    pendingReceived?: SocialErrorCode;
-    pendingSent?: SocialErrorCode;
-  };
-}
+import type { SocialErrorCode, SocialInitialData } from './store/social-store.types';
+import { SocialStoreProvider, useSocialStore } from './store/social-store.provider';
+import { SearchResults } from './social-variants/users-list';
 
 function FriendsList({ error }: { error?: SocialErrorCode }) {
   const t = useTranslations('features.social.friends');
@@ -88,6 +71,7 @@ function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
     </DisclosureGroup>
   );
 }
+
 function SocialHeader() {
   const t = useTranslations('features.social');
   return (
@@ -100,13 +84,12 @@ function SocialHeader() {
   );
 }
 
-function SocialContent({ initialData }: { initialData: SocialInitialData }) {
+function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
   const t = useTranslations('features.social');
   const searchQuery = useSocialStore((state) => state.searchQuery);
-  const searchResults = useSocialStore((state) => state.searchResults);
 
   if (searchQuery.trim() !== '') {
-    return <UsersList friends={searchResults} type="search" />;
+    return <SearchResults />;
   }
 
   return (
@@ -117,37 +100,28 @@ function SocialContent({ initialData }: { initialData: SocialInitialData }) {
       </TabList>
 
       <TabPanel id="friends" className="outline-none">
-        <FriendsList error={initialData.errors.friends} />
+        <FriendsList error={errors.friends} />
       </TabPanel>
 
       <TabPanel id="requests" className="outline-none">
-        <RequestsList errors={initialData.errors} />
+        <RequestsList
+          errors={{
+            pendingReceived: errors.pendingReceived,
+            pendingSent: errors.pendingSent,
+          }}
+        />
       </TabPanel>
     </Tabs>
   );
 }
 
 export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
-  const setFriends = useSocialStore((s) => s.setFriends);
-  const setPendingReceived = useSocialStore((s) => s.setPendingReceived);
-  const setPendingSent = useSocialStore((s) => s.setPendingSent);
-  const setCurrentUserId = useSocialStore((s) => s.setCurrentUserId);
-
-  useEffect(() => {
-    setFriends(initialData.friends);
-    setPendingReceived(initialData.pendingReceived);
-    setPendingSent(initialData.pendingSent);
-    if (initialData.currentUserId) {
-      setCurrentUserId(initialData.currentUserId);
-    }
-  }, [initialData, setFriends, setPendingReceived, setPendingSent, setCurrentUserId]);
-
   return (
-    <>
+    <SocialStoreProvider initialData={initialData}>
       <SocialHeader />
       <main>
-        <SocialContent initialData={initialData} />
+        <SocialContent errors={initialData.errors} />
       </main>
-    </>
+    </SocialStoreProvider>
   );
 }

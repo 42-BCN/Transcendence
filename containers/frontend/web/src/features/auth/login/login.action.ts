@@ -11,7 +11,7 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
   const result = await withServerAction(async () => {
     const identifier = String(formData.get('identifier') ?? '');
     const password = String(formData.get('password') ?? '');
-
+    console.log(formData);
     const { data, headers } = await fetchServer<LoginRes>('/auth/login', 'POST', {
       identifier,
       password,

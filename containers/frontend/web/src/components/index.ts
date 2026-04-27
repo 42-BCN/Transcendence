@@ -50,7 +50,6 @@ export { CheckboxField, type CheckboxFieldProps } from './composites/checkbox-fi
 export { TextAreaField, type TextAreaFieldProps } from './composites/text-area-field';
 export { ContentSection } from './composites/content-section';
 export { TextField, type TextFieldProps } from './composites/text-field';
-export { SearchInput, type SearchInputProps } from './composites/search-input';
 export { UserItem, type UserItemProps } from './composites/user-item';
 export { TooltipTrigger } from './composites/tooltip-trigger';
 

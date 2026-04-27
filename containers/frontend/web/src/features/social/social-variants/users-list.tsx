@@ -1,35 +1,83 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { UserItem } from '@/components/composites/user-item/user-item';
-import { Stack } from '@/components/primitives/stack';
-import { Text } from '@/components/primitives/text';
-import { UserActions, type SocialUserItem } from './user-actions';
+
+import { Stack, Text, UserItem } from '@components';
+
+import type {
+  FriendPublic,
+  FriendshipPublic,
+} from '@/contracts/api/friendships/friendships.contracts';
+import type { SearchUserResult } from '@/contracts/api/users/users.contracts';
+
+import { useSocialStore } from '../store/social-store.provider';
+import { OnlineButtons } from './online-buttons';
+import { OfflineButtons } from './offline-buttons';
+import { InviteActionButton } from './invite-action-button';
+import { AcceptActionButton } from './accept-action-button';
+import { RejectActionButton } from './reject-action-button';
+
+export type SocialUserItem = FriendPublic | FriendshipPublic | SearchUserResult;
+
+export type UsersListType = 'request' | 'pending' | 'online' | 'offline' | 'search';
 
 interface UsersListProps {
   friends: SocialUserItem[];
-  type: 'request' | 'pending' | 'online' | 'offline' | 'search';
+  type: UsersListType;
+  feedback?: boolean;
 }
 
-/**
- * Polymorphic component for rendering lists of users in the social feature.
- */
-export function UsersList({ friends, type }: UsersListProps) {
+export function RequestActions({ friendshipId }: { friendshipId: string }) {
+  return (
+    <>
+      <RejectActionButton friendshipId={friendshipId} type="pendingReceived" />
+      <AcceptActionButton friendshipId={friendshipId} />
+    </>
+  );
+}
+
+export function PendingActions({ friendshipId }: { friendshipId: string }) {
+  return <RejectActionButton friendshipId={friendshipId} type="pendingSent" />;
+}
+
+export function UsersList({ friends, type, feedback = true }: UsersListProps) {
   const t = useTranslations('features.social.emptyStates');
 
   if (friends.length === 0) {
-    return (
-      <Stack align="center" justify="center" className="py-3 px-3 text-center">
+    return feedback ? (
+      <Stack align="center" justify="center" className="px-3 py-3 text-center">
         <Text variant="caption" color="tertiary">
           {t(type)}
         </Text>
       </Stack>
-    );
+    ) : null;
   }
 
-  return friends.map((item) => (
-    <UserItem key={item.id} username={item.username} avatarUrl={item.avatar ?? undefined}>
-      <UserActions item={item} type={type} />
-    </UserItem>
-  ));
+  return friends.map((item) => {
+    const { id, username, avatar } = item;
+
+    return (
+      <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
+        {type === 'request' && <RequestActions friendshipId={item.id} />}
+        {type === 'pending' && <PendingActions friendshipId={id} />}
+        {type === 'online' && <OnlineButtons username={username} userId={id} />}
+        {type === 'offline' && <OfflineButtons userId={id} />}
+        {type === 'search' && <InviteActionButton userId={id} />}
+      </UserItem>
+    );
+  });
+}
+
+export function SearchResults() {
+  const searchResults = useSocialStore((state) => state.searchResults);
+
+  return (
+    <>
+      <UsersList friends={searchResults.online} type="online" feedback={false} />
+      <UsersList friends={searchResults.offline} type="offline" feedback={false} />
+      <UsersList friends={searchResults.requests} type="request" feedback={false} />
+      <UsersList friends={searchResults.pending} type="pending" feedback={false} />
+      <UsersList friends={searchResults.none} type="search" feedback={false} />
+    </>
+  );
 }

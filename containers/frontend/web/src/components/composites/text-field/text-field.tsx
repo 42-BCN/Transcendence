@@ -1,7 +1,6 @@
 'use client';
 
-import React, { type Ref } from 'react';
-import { cn } from '@/lib/styles/cn';
+import type { Ref } from 'react';
 import { FieldError, Label, Text, TextField as AriaTextField } from 'react-aria-components';
 import type { TextFieldProps as AriaTextFieldProps } from 'react-aria-components';
 
@@ -19,7 +18,6 @@ export type TextFieldProps = Omit<AriaTextFieldProps, 'children' | 'className'> 
   errorKey?: I18nKey;
   inputProps?: InputProps;
   inputRef?: Ref<HTMLInputElement>;
-  icon?: React.ReactNode;
 };
 
 export function TextField({
@@ -28,7 +26,6 @@ export function TextField({
   errorKey,
   inputProps,
   inputRef,
-  icon,
   ...props
 }: TextFieldProps) {
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
@@ -42,23 +39,7 @@ export function TextField({
       isInvalid={isInvalid}
     >
       <Label className={textFieldStyles.label()}>{t(labelKey)}</Label>
-      <div className="relative flex items-center">
-        {icon && (
-          <div className="pointer-events-none absolute left-2 text-text-disabled">{icon}</div>
-        )}
-        <Input
-          {...inputProps}
-          ref={inputRef}
-          className={(props) =>
-            cn(
-              textFieldStyles.input({ hasIcon: Boolean(icon) }),
-              typeof inputProps?.className === 'function'
-                ? inputProps.className(props)
-                : inputProps?.className,
-            )
-          }
-        />
-      </div>
+      <Input {...inputProps} ref={inputRef} />
       {descriptionKey && (
         <Text slot="description" className={textFieldStyles.description()}>
           {t(descriptionKey)}

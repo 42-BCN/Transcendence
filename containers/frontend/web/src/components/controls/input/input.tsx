@@ -1,34 +1,48 @@
 'use client';
 
-import { forwardRef, type Ref } from 'react';
+import { forwardRef } from 'react';
 import type { InputProps as AriaInputProps } from 'react-aria-components';
 import { Input as AriaInput } from 'react-aria-components';
 
-import { inputStyles } from './input.styles';
+import { Icon } from '../../primitives/icon';
+import type { IconName } from '../../primitives/icon';
+import { inputStyles, inputWrapperStyles, inputIconStyles } from './input.styles';
 import type { InputSize as Size, InputVariant as Variant } from './input.styles';
-import { cn } from '@/lib/styles/cn';
 
 export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | 'onKeyDown'> & {
   variant?: Variant;
   size?: Size;
-  ref?: Ref<HTMLInputElement>;
-  className?: AriaInputProps['className'];
+  icon?: IconName;
+  iconPosition?: 'start' | 'end';
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { variant = 'default', size = 'md', className, ...props },
+  { variant = 'default', size = 'md', icon, iconPosition = 'start', ...props },
   ref,
 ) {
+  if (!icon) {
+    return <AriaInput {...props} ref={ref} className={inputStyles({ variant, size })} />;
+  }
+
   return (
-    <AriaInput
-      {...props}
-      ref={ref}
-      className={(values) =>
-        cn(
-          inputStyles({ variant, size }),
-          typeof className === 'function' ? className(values) : className,
-        )
-      }
-    />
+    <span className={inputWrapperStyles()}>
+      {iconPosition === 'start' ? (
+        <Icon name={icon} className={inputIconStyles({ position: 'start' })} aria-hidden />
+      ) : null}
+
+      <AriaInput
+        {...props}
+        ref={ref}
+        className={inputStyles({
+          variant,
+          size,
+          iconPosition,
+        })}
+      />
+
+      {iconPosition === 'end' ? (
+        <Icon name={icon} className={inputIconStyles({ position: 'end' })} aria-hidden />
+      ) : null}
+    </span>
   );
 });
