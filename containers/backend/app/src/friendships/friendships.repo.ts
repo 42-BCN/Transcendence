@@ -21,17 +21,17 @@ export type FriendshipPairRow = {
 
 function toPublic(row: FriendshipRow, currentUserId: string): FriendshipPublic {
   const friendId = row.userId1 === currentUserId ? row.userId2 : row.userId1;
-  const friendUsername = row.userId1 === currentUserId ? row.user2.username : row.user1.username;
-  const friendAvatar = row.userId1 === currentUserId ? row.user2.avatar : row.user1.avatar;
+  const username = row.userId1 === currentUserId ? row.user2.username : row.user1.username;
+  const avatar = row.userId1 === currentUserId ? row.user2.avatar : row.user1.avatar;
 
   return {
     id: row.id,
-    friendUserId: friendId,
-    friendUsername,
-    friendAvatar,
+    userId: friendId,
+    username,
+    avatar,
     status: row.status,
     isSender: row.senderId === currentUserId,
-    createdAt: row.createdAt,
+    createdAt: row.createdAt.toISOString(),
   };
 }
 
@@ -115,8 +115,8 @@ export async function autoAcceptMutualRequest(
       },
     },
     include: {
-      user1: { select: { username: true } },
-      user2: { select: { username: true } },
+      user1: { select: { username: true, avatar: true } },
+      user2: { select: { username: true, avatar: true } },
     },
   });
 
@@ -262,8 +262,7 @@ export async function deleteFriendship(
 
     if (!friendship) return 'not_found' as const;
 
-    const isMember =
-      friendship.userId1 === currentUserId || friendship.userId2 === currentUserId;
+    const isMember = friendship.userId1 === currentUserId || friendship.userId2 === currentUserId;
     if (!isMember) return 'forbidden' as const;
 
     await tx.friendship.delete({ where: { id: friendshipId } });

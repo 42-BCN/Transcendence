@@ -289,15 +289,20 @@
       "requests": {
         "title": "Solicitudes",
         "received": "Recibidas",
-        "sent": "Enviadas",
-        "sentSubtitle": "Enviado hace 2 días",
-        "noSentRequests": "No hay solicitudes pendientes"
+        "sent": "Enviadas"
+      },
+      "emptyStates": {
+        "online": "No hay amigos conectados",
+        "offline": "No hay amigos desconectados",
+        "request": "No tienes solicitudes pendientes",
+        "pending": "No has enviado solicitudes"
       },
       "actions": {
         "inviteToGame": "Invitar a partida",
         "chat": "Chat",
         "reject": "Rechazar",
-        "accept": "Aceptar"
+        "accept": "Aceptar",
+        "cancel": "Cancelar"
       }
     }
   },
@@ -326,6 +331,15 @@
     "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
-    "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde."
+    "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde.",
+    "UNAUTHORIZED_ACTION": "Acción no permitida.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "La solicitud no existe o ya no está disponible.",
+    "FRIENDSHIP_ALREADY_ACCEPTED": "Esta solicitud ya ha sido aceptada.",
+    "FRIENDSHIP_NOT_FOUND": "No se ha encontrado la amistad.",
+    "USER_NOT_FOUND": "Usuario no encontrado.",
+    "INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+    "FRIENDSHIP_ALREADY_EXISTS": "Ya sois amigos.",
+    "FRIENDSHIP_SELF_REQUEST": "No puedes añadirte a ti mismo.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad."
   }
 }
