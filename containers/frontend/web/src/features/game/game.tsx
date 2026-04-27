@@ -14,20 +14,15 @@ import { Text } from '@components/primitives/text';
 
 const s = 0.975;
 
-// no hace falta reiniciar active,
-// active se destruye cuando ret null
 function AbButtons() {
   const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
-  const clearSelectedDice = useGame((state) => state.clearSelectedDice);
+  const clearHighlights = useGame((state) => state.clearHighlights);
   const clearSelectables = useGame((state) => state.clearSelectables);
   const highlights = useGame((state) => state.highlights);
-  const clearHighlights = useGame((state) => state.clearHighlights);
-  const dice = useGame((state) => state.selectedDice);
   const showAbRange = useGame((state) => state.showAbRange);
-  let id = ent.id.startsWith('clone_') ? ent.id.replace('clone_', '') : ent.id;
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
       {ent?.abilities.map((ability) => (
@@ -36,15 +31,20 @@ function AbButtons() {
           className="bg-red-600 text-white"
           onPointerOver={(event) => {
             event.stopPropagation();
-            showAbRange(ability);
-            clearHighlights(ability);
+            if (!selectedAb && Object.keys(highlights).length === 0)
+              showAbRange(ability);
           }}
           onPointerOut={(event) => {
             event.stopPropagation();
-            if (selectedAb !== ability) clearSelectables();
+            if (!selectedAb)
+              clearSelectables();
           }}
           onPress={() => {
-            if (assignedCharacter === id) selectAbility(ability);
+            if (assignedCharacter === ent.id.replace('clone_', '')) {
+              if (Object.keys(highlights).length === 0)
+                clearHighlights();
+              selectAbility(ability);
+            }
           }}
         >
           {ability}
@@ -64,6 +64,7 @@ function DiceButtons() {
   const selectedDice = useGame((state) => state.selectedDice);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
+  const highlights = useGame((state) => state.highlights);
 
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
@@ -78,7 +79,8 @@ function DiceButtons() {
             key={i}
             onPointerOver={(event) => {
               event.stopPropagation();
-              if (!ability) showMoveRange(diceNum);
+              if (!ability)
+                showMoveRange(diceNum);
             }}
             onPointerOut={(event) => {
               if (!selectedDice) {
@@ -87,7 +89,7 @@ function DiceButtons() {
               }
             }}
             onPress={() => {
-              if (assignedCharacter === ent.id) {
+              if (assignedCharacter === ent.id.replace('clone_', '')) {
                 ability ? selectDice(diceNum) : movDice(diceNum);
               }
             }}
@@ -98,29 +100,24 @@ function DiceButtons() {
           </Button>
         ))}
       </div>
-      {/* Roll Total Display */}
-      {/* <div className="px-4 py-2 bg-purple-600 text-white rounded font-bold text-center"> */}
-      {/*   Total Rolls: {rollQuantity} */}
-      {/* </div> */}
     </div>
   );
 }
 
 function Reset() {
   const t = useTranslations('features.game');
-  const selectedEnt = useGame((state) => state.selectedEnt);
   const history = useGame((state) => state.history);
   const resetHistory = useGame((state) => state.resetHistory);
-  if (!history.find((h) => h.who === selectedEnt) || !selectedEnt) return null;
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
+  if (!history.some((h) => h.who === assignedCharacter))
+    return null;
   return (
     <Button
       className="absolute z-10 top-8 left-8"
       variant="primary"
       w="default"
       onPress={() => {
-        console.log('before:', history);
-        resetHistory(selectedEnt);
-        console.log('after:', history);
+        resetHistory();
       }}
     >
       {t('resetPlan')}
@@ -132,8 +129,9 @@ function EndPlan() {
   const t = useTranslations('features.game');
   const nextPhase = useGame((state) => state.nextPhase);
   const phase = useGame((state) => state.phase);
-  const historyLength = useGame((state) => state.history.length);
-  return phase === 'PLAN' && historyLength === 4 ? (
+  const activePlayers = useGame((state) => state.activePlayers);
+  const readyPlayers = useGame((state) => state.readyPlayers);
+  return phase === 'PLAN' ? (
     <Button
       className="absolute z-10 bottom-8 right-64"
       variant="primary"
@@ -141,6 +139,8 @@ function EndPlan() {
       onPress={() => nextPhase()}
     >
       {t('endTurn')}
+      <br />
+      {readyPlayers?.length} / {activePlayers?.length}
     </Button>
   ) : null;
 }
@@ -165,7 +165,6 @@ function HUD() {
         </div>
         <DiceButtons />
       </Stack>
-      <Reset />
     </>
   );
 }
@@ -414,12 +413,12 @@ export function Game() {
   const selectedDice = useGame((state) => state.selectedDice);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
+  const handleRightClick = useGame((state) => state.handleRightClick);
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
 
   useEffect(() => {
-    // Only initialize once on mount
     if (!initRef.current) {
       initRef.current = true;
       initSocketListeners();
@@ -431,7 +430,6 @@ export function Game() {
   }, []);
 
   useEffect(() => {
-    // Debug logging - separate effect so it doesn't trigger re-initialization
     const debugTimer = setInterval(() => {
       setDebugInfo(
         `Character: ${assignedCharacter || 'waiting...'} | Map: ${mapBounds.width}x${mapBounds.height}x${mapBounds.depth}`,
@@ -461,8 +459,14 @@ export function Game() {
         <Text className="absolute z-10 top-[10%] left-[10%] flex gap-4">{`d${selectedDice}`}</Text>
       )}
       <HUD />
+      <Reset />
       <EndPlan />
-      <Canvas>
+      <Canvas
+        onContextMenu={(e) => {
+          e.preventDefault();
+          handleRightClick();
+        }}
+      >
         <Scene />
       </Canvas>
     </>

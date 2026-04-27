@@ -47,12 +47,14 @@ export type node = {
 }
 
 export type historyAction = {
+  id: string;
   who: string;
   type: string;
   target: string;
   dice: number;
   aftermov: boolean;
   abName: string | null;
+  dependsOn: string | null;
 }
 
 export type abilityInfo = {

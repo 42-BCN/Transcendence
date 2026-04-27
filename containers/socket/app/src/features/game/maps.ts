@@ -57,7 +57,7 @@ ooowwwwoow
 oooowwoooo
 woooowooow
 owooowoooo
-ooooawoooo
+oplmawoooo
 `
 
 export const emptyMap = ``

@@ -11,6 +11,8 @@ export type globalGameState = {
   tiles: Record<string, boolean>;
   history: historyAction[];
   mapBounds: mapInfo;
+  readyPlayers: string[];
+  activePlayers: string[];
 };
 
 export type localGameState = {
@@ -82,6 +84,8 @@ type gameState = {
   tiles: Record<string, boolean>;
   history: historyAction[];
   mapBounds: mapInfo;
+  readyPlayers: string[];
+  activePlayers: string[];
 
   //local state
   typeEnt: string | null;
@@ -114,16 +118,6 @@ type gameState = {
   moveClone: (tileId: string) => void;
   init: (entities: parse_entity[], tiles: tile[], mapInfo: mapInfo) => void;
   checkEnt: (x: number, y: number, z: number) => entity | undefined;
-  isOOB: (x: number, y: number, z: number) => boolean;
-  isBlocked: (x: number, y: number, z: number) => boolean;
-  hasFloor: (x: number, y: number, z: number) => boolean;
-  dijkstra: (pos: pos, maxCost: number) => string[];
-  Astar: (src: pos, dest: pos) => string[] | undefined;
-  isValid: (x: number, y: number, z: number) => boolean;
-  euclidTiles: (pos: pos, range: number, is3D: boolean) => Record<string, boolean>;
-  hasLoS: (pos: pos, x: number, y: number, z: number) => number;
-  crossTiles: (pos: pos, range: number) => Record<string, boolean>;
-  paint: (pos: pos, type: string, range: number, self: boolean) => Record<string, boolean>;
   selectAbility: (name: string) => void;
   showAbRange: (name: string) => void;
   getAbility: (name: string) => abilityInfo;
@@ -169,84 +163,8 @@ export const useGame = create<gameState>()((set, get) => ({
   mapBounds: { width: 0, height: 0, depth: 0 },
 
   nextPhase: async () => {
-    const state = get();
-    if (state.phase !== 'PLAN') return;
-    set({ ...clean, phase: 'EXEC', canSelect: false });
-    try {
-      await get().executionPhase();
-      set({ ...clean, phase: 'ENEMY', canSelect: false });
-      await get().enemyPhase();
-      set({ phase: 'END' });
-      get().endTurn();
-    } catch (err) {
-      console.error('Turn resolution failed:', err);
-      set({ ...clean, phase: 'PLAN', canSelect: true });
-    }
-  },
-
-  executionPhase: async () => {
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    const history = get().history;
-
-    for (const action of history) {
-      for (const ab of action.abilities ?? []) {
-        if (!ab.aftermov) {
-          get().executeAbility(action.who, ab.name, ab.target);
-          await sleep(400);
-        }
-      }
-      if (action.moveto) {
-        const cloneKey = `clone_${action.who}`;
-        const { [cloneKey]: _, ...remainingClones } = get().clones;
-        set({ clones: remainingClones });
-        await get().moveTo(action.who, action.moveto);
-      }
-      for (const ab of action.abilities ?? []) {
-        if (ab.aftermov) {
-          get().executeAbility(action.who, ab.name, ab.target);
-          await sleep(400);
-        }
-      }
-    }
-  },
-
-  enemyPhase: async () => {
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-    console.log('Enemy turn');
-    await sleep(1000);
-  },
-
-  endTurn: () => {
-    const state = get();
-    const updatedPlayers = { ...state.players };
-    Object.keys(updatedPlayers).forEach((id) => {
-      updatedPlayers[id] = {
-        ...updatedPlayers[id],
-        dice: [...updatedPlayers[id].dice, ...updatedPlayers[id].usedDice].sort((a, b) => a - b),
-        usedDice: [],
-        hasMoved: false,
-      };
-    });
-    const updatedEnemies = { ...state.enemies };
-    Object.keys(updatedEnemies).forEach((id) => {
-      updatedEnemies[id] = {
-        ...updatedEnemies[id],
-        dice: [...updatedEnemies[id].dice, ...updatedEnemies[id].usedDice].sort((a, b) => a - b),
-        usedDice: [],
-        hasMoved: false,
-      };
-    });
-    set({
-      ...clean,
-      turn: state.turn + 1,
-      phase: 'PLAN',
-      history: [],
-      clones: {},
-      players: updatedPlayers,
-      enemies: updatedEnemies,
-      canSelect: true,
-    });
-    console.log('New turn');
+    gameSocket.emit('game:client:toggleEndTurn');
+    gameSocket.emit('game:client:nextPhase');
   },
 
   selectEntity: (id) => {
@@ -275,83 +193,18 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.emit('game:client:selectDice', dice);
   },
 
-  resetHistory: (id) => {
-    const state = get();
-    const newHistory = state.history.filter((action) => action.who !== id);
-    const { [`clone_${id}`]: _, ...remainingClones } = state.clones;
-    return set({
-      history: [...newHistory],
-      players: {
-        ...state.players,
-        [id]: {
-          ...state.players[id],
-          dice: [...state.players[id].dice, ...state.players[id].usedDice].sort((a, b) => a - b),
-          usedDice: [],
-          hasMoved: false,
-        },
-      },
-      clones: { ...remainingClones },
-    });
+  resetHistory: () => {
+    console.log('history before reset:', get().history);
+    gameSocket.emit('game:client:resetHistory');
   },
 
-  // addHistory: (id, type, target, dice = 0, ability = "") => set((state) => {
-  //   const len = state.history.length;
-  //   const who = id.startsWith("clone_") ? id.replace("clone_", "") : id;
-  //   const exists = state.history.some((h) => h.who === who);
-  //   //    const ent = state.players[id] || state.enemies[id] || state.clones[id];
-  //
-  //   if (!exists && len >= 4)
-  //     throw new Error("History over 4 elements!");
-  //   console.log("history: ", state.history);
-  //   let lastAction = null;
-  //   const newHistory = [...state.history];
-  //   //getprev
-  //   for (let i = 0; i < len; ++i) {
-  //     if (who !== newHistory[i].who)
-  //       continue;
-  //     [lastAction] = newHistory.splice(i, 1);
-  //     break;
-  //   }
-  //   if (!lastAction) {
-  //     newHistory.push({
-  //       who: who,
-  //       moveto: type === "mov" ? target : null,
-  //       abilities: type === "ability" ? [{ name: ability, target: target, dice: dice, aftermov: false }] : [],
-  //     });
-  //     console.log("newHistory: ", newHistory);
-  //     return { history: newHistory };
-  //   }
-  //   const newAction = { ...lastAction };
-  //   if (type === "ability") {
-  //     const aftermov = Boolean(lastAction.moveto) && id !== who;
-  //     newAction.abilities = [...(lastAction.abilities || []), {
-  //       name: ability,
-  //       target: target,
-  //       dice: dice,
-  //       aftermov: aftermov
-  //     }];
-  //     if (lastAction.moveto && !aftermov) {
-  //       const { [`clone_${who}`]: _, ...remainingClones } = state.clones;
-  //       newAction.moveto = null;
-  //       newHistory.push(newAction);
-  //       console.log("newHistory from inside the clone deletion: ", newHistory);
-  //       return { clones: { ...remainingClones }, history: newHistory };
-  //     }
-  //   }
-  //   else if (type === "mov") {
-  //     newAction.moveto = target;
-  //     newAction.abilities = lastAction.abilities?.filter((ab) => ab.aftermov === false) || [];
-  //   }
-  //   newHistory.push(newAction);
-  //   console.log("newHistory: ", newHistory);
-  //   return { history: newHistory };
-  // }),
-
   addHistoryAbility: (target) => {
+    console.log('history before ability: ', get().history);
     gameSocket.emit('game:client:addHistoryAbility', target);
   },
 
   moveClone: (tileId) => {
+    console.log('history before move: ', get().history);
     gameSocket.emit('game:client:moveClone', tileId);
   },
 
@@ -366,48 +219,6 @@ export const useGame = create<gameState>()((set, get) => ({
     const ent = get().getSel();
     if (!ent) throw new Error('no ent id!');
     gameSocket.emit('game:client:showAbilityRange', ent.id, name);
-  },
-
-  takeAb: (id, type, ab, roll) => {
-    const state = get();
-    const target = type === 'enemy' ? { ...state.enemies[id] } : { ...state.players[id] };
-
-    target.hp = target.hp - (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);
-    if (target.hp < 0) target.hp = 0;
-    const hadStatus = Boolean(target.status);
-    if (!target.status && ab.effect) {
-      target.status = ab.effect[0];
-      if (target.status !== 'push' && !hadStatus) target.statusTurns = Number(ab.effect[1]);
-    }
-    return target;
-  },
-
-  executeAbility: (who, which, target) => {
-    const state = get();
-    if (!which || !who) return;
-    const ent = state.players[who] || state.enemies[who] || state.clones[who];
-    const ab = state.getAbility(which);
-    if (!ent) throw new Error('No entity found!');
-    const ability = state.history
-      .find((h) => h.who === who)
-      ?.abilities?.find((a) => a.name === which && a.target === target);
-    const dvalue = ability?.dice;
-    if (!dvalue) throw new Error('No dice value found when executing ability!');
-    const roll = Math.ceil(Math.random() * dvalue);
-    if (!ab.cond(roll)) return;
-    const targets = [target];
-    // if (ab.AoE)
-    //   targets.push(...state.getAoE(pos, ab.AoEtype, AoErange));
-    const changedPlayers: player[] = [];
-    const changedEnemies: enemy[] = [];
-    targets.forEach((id) => {
-      if (state.enemies[id]) changedEnemies.push(state.takeAb(id, 'enemy', ab, roll));
-      else if (state.players[id]) changedPlayers.push(state.takeAb(id, 'player', ab, roll));
-    });
-    set({
-      players: { ...state.players, ...Object.fromEntries(changedPlayers.map((p) => [p.id, p])) },
-      enemies: { ...state.enemies, ...Object.fromEntries(changedEnemies.map((e) => [e.id, e])) },
-    });
   },
 
   clearSelectedDice: () => {
@@ -425,6 +236,11 @@ export const useGame = create<gameState>()((set, get) => ({
     set({ selectables: {}, canSelect: true });
   },
 
+  handleRightClick: () => {
+    gameSocket.emit('game:client:rClick');
+  },
+
+
   initSocketListeners: () => {
     const handleJoin = (id: string) => {
       console.log('👤 Player joined with ID:', id);
@@ -432,16 +248,22 @@ export const useGame = create<gameState>()((set, get) => ({
     };
 
     const handleGlobalSync = (state: globalGameState) => {
-      console.log('📡 Received global sync with mapBounds:', state.mapBounds);
+      console.log('📡 Received global sync');
+      console.log('history after action: ', state.history);
+      console.log('activePlayers after action: ', state.activePlayers);
+      console.log('readyPLayers after action: ', state.readyPlayers);
+
       set({
         phase: state.phase,
         turn: state.turn,
-        tiles: state.tiles,
         enemies: state.enemies,
         players: state.players,
         clones: state.clones,
         history: state.history,
-        mapBounds: state.mapBounds,
+        tiles: state.tiles || get().tiles,
+        mapBounds: state.mapBounds || get().tiles,
+        readyPlayers: state.readyPlayers || get().readyPlayers,
+        activePlayers: state.activePlayers || get().activePlayers,
       });
     };
 
