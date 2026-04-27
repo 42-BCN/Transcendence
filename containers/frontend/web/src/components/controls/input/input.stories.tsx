@@ -151,24 +151,6 @@ export const Password: Story = {
   },
 };
 
-export const Invalid: Story = {
-  args: {
-    placeholder: 'Invalid value',
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    placeholder: 'Disabled input',
-  },
-};
-
-export const ReadOnly: Story = {
-  args: {
-    defaultValue: 'Read-only value',
-  },
-};
-
 export const Sizes: Story = {
   parameters: {
     docs: {
@@ -197,9 +179,6 @@ export const States: Story = {
         code: `<div className="grid w-full max-w-xs gap-4">
   <Input placeholder="Default input" />
   <Input defaultValue="Filled input" />
-  <Input isInvalid placeholder="Invalid input" />
-  <Input isDisabled placeholder="Disabled input" />
-  <Input isReadOnly defaultValue="Read-only input" />
 </div>`,
       },
     },
@@ -208,30 +187,6 @@ export const States: Story = {
     <div className="grid w-full max-w-xs gap-4">
       <Input placeholder="Default input" />
       <Input defaultValue="Filled input" />
-      <Input isInvalid placeholder="Invalid input" />
-      <Input isDisabled placeholder="Disabled input" />
-      <Input isReadOnly defaultValue="Read-only input" />
     </div>
   ),
-};
-
-export const Invalid: Story = {
-  args: {
-    isInvalid: true,
-    placeholder: 'Invalid value',
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    isDisabled: true,
-    placeholder: 'Disabled input',
-  },
-};
-
-export const ReadOnly: Story = {
-  args: {
-    isReadOnly: true,
-    defaultValue: 'Read-only value',
-  },
 };
