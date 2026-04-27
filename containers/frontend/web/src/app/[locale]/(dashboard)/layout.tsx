@@ -5,6 +5,7 @@ import { glassBackgroundStyles, glassBorderStyles, SplitScreenGrid } from '@comp
 import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/styles/cn';
 import { getCurrentUserIdOrNull } from '@/features/auth/me/get-current-user-id-or-null';
+import { SocialGuestView } from '@/features/social/social-variants';
 
 type SocialLayoutProps = {
   children: ReactNode;
@@ -33,7 +34,7 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
           {userId ? (
             <CurrentUserProvider user={userId}>{children}</CurrentUserProvider>
           ) : (
-            <p>guest user component</p>
+            <SocialGuestView />
           )}
         </aside>
       }

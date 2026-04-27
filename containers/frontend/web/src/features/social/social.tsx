@@ -11,7 +11,7 @@ import type { SocialInitialData } from './store/social-store.types';
 export async function Social() {
   const userId = await getCurrentUserIdOrNull();
 
-  if (!userId) return <p>Guest user component</p>; // its a fallback it should be necesary its handlead by layout
+  if (!userId) return null;
 
   const [friendsResult, pendingReceivedResult, pendingSentResult] = await Promise.all([
     getFriendsList(),
