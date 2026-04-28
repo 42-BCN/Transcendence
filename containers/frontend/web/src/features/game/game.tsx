@@ -18,7 +18,8 @@ function AbButtons() {
   const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
-  const abilityCD = useGame((state) => state.players[state.selectedEnt]?.abilitiesCD);
+  const abilityCD = useGame((state) => state.players[state.selectedEnt]?.abilitiesCD
+    || state.clones[state.selectedEnt]?.abilitiesCD);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
   const clearSelectables = useGame((state) => state.clearSelectables);
@@ -72,7 +73,6 @@ function DiceButtons() {
   const selectedDice = useGame((state) => state.selectedDice);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
-  const highlights = useGame((state) => state.highlights);
 
   return (
     <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
@@ -97,8 +97,8 @@ function DiceButtons() {
               }
             }}
             onPress={() => {
-              if (assignedCharacter === ent.id.replace('clone_', '')) {
-                canSelect ? selectDice(diceNum) : movDice(diceNum);
+              if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
+                (canSelect || !!ability) ? selectDice(diceNum) : movDice(diceNum);
               }
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -186,6 +186,7 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   const [isHovered, setHover] = useState(false);
   let color = 'orange';
   if (id.split(',')[1] === '0') color = 'green';
+  else if (id.split(',')[1] === '2') color = 'purple';
   else if (id.split(',')[1] === '3') color = 'slategray';
   if (isHighlighted && !selectedAb) color = 'hotpink';
   else if (isSelectable) color = 'red';
@@ -203,7 +204,8 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
         setHover(false);
       }}
       onClick={(event) => {
-        if (phase !== 'PLAN') return;
+        if (phase !== 'PLAN')
+          return;
         event.stopPropagation();
         moveClone(id);
       }}

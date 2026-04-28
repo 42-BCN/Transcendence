@@ -80,8 +80,15 @@ export async function nextPhase(sync: () => void) {
 
 export async function executionPhase(sync: () => void) {
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  for (const id in gameState.ghosts)
-    gameState.players[id] = { ...gameState.ghosts[id] };
+  for (const id in gameState.ghosts) {
+    gameState.players[id] = {
+      ...gameState.ghosts[id],
+      abilitiesCD: {
+        ...gameState.ghosts[id].abilitiesCD,
+        ...(gameState.clones[`clone_${id}`]?.abilitiesCD ?? {}),
+      },
+    };
+  }
   gameState.ghosts = {};
   gameState.clones = {};
   for (const action of gameState.history) {
@@ -252,10 +259,11 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
         const diceIdx = player.usedDice.indexOf(action.dice);
         if (diceIdx === -1)
           return (console.log("dice error in restructure history"));
-
         player.usedDice.splice(diceIdx, 1);
         player.dice.push(action.dice);
         player.dice.sort((a, b) => a - b);
+        if (action.abName)
+          delete player.abilitiesCD[action.abName];
       }
       else {
         const clone = gameState.clones[`clone_${who}`];
@@ -264,10 +272,11 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
         const diceIdx = clone.usedDice.indexOf(action.dice);
         if (diceIdx === -1)
           return (console.log("dice error in restructure history"));
-
         clone.usedDice.splice(diceIdx, 1);
         clone.dice.push(action.dice);
         clone.dice.sort((a, b) => a - b);
+        if (action.abName)
+          delete clone.abilitiesCD[action.abName];
       }
       break;
     }
@@ -391,6 +400,7 @@ export function moveClone(id: string, tileId: string, dice: number) {
       dice), 1) : [...source.dice],
     usedDice: dice > 0 ? [...source.usedDice, dice].sort(
       (a, b) => a - b) : [...source.usedDice],
+    abilitiesCD: { ...source.abilitiesCD },
     hasMoved: dice > 0 ? true : source.hasMoved,
     position: dest,
   };

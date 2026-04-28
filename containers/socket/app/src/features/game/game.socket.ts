@@ -36,6 +36,9 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       gameState.enemies = initstate.enemies;
       gameState.tiles = initstate.tiles;
       gameState.mapBounds = initstate.mapBounds;
+      gameState.clones = {};
+      gameState.ghosts = {};
+      gameState.history = [];
     }
     // WARN: DO NOT CHANGE, else will not render the map 
     nsp.emit('game:server:globalSync', gameState);
@@ -183,6 +186,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         if (!client.highlights[tileId] || !client.selectedEnt || !client.selectedDice)
           return;
         moveClone(role, tileId, client.selectedDice);
+        gameState.clients[role].selectedEnt = `clone_${role}`;
         setClear(role);
         socket.emit('game:server:sync', gameState.clients[role]);
         gsync();
