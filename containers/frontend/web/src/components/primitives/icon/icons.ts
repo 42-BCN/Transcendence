@@ -18,6 +18,7 @@ import {
   UserPlus,
   Check,
   Menu,
+  Search,
 } from 'lucide-react';
 
 export const icons = {
@@ -40,6 +41,7 @@ export const icons = {
   check: Check,
   chevronRight: ChevronRight,
   menu: Menu,
+  search: Search,
 };
 
 export type IconName = keyof typeof icons;

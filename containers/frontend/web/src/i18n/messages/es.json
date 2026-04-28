@@ -279,8 +279,8 @@
     },
     "social": {
       "title": "Social",
-      "searchPlaceholder": "Buscar entre tus amigos o añadir nuevos",
-      "searchLabel": "Buscar usuarios",
+      "searchPlaceholder": "Buscar usuarios",
+      "searchLabel": "Buscador",
       "friends": {
         "title": "Amigos",
         "online": "Amigos conectados",
@@ -295,14 +295,23 @@
         "online": "No hay amigos conectados",
         "offline": "No hay amigos desconectados",
         "request": "No tienes solicitudes pendientes",
-        "pending": "No has enviado solicitudes"
+        "pending": "No has enviado solicitudes",
+        "search": "No se han encontrado usuarios"
       },
       "actions": {
         "inviteToGame": "Invitar a partida",
         "chat": "Chat",
         "reject": "Rechazar",
         "accept": "Aceptar",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "addFriend": "Añadir amigo"
+      },
+      "guest": {
+        "title": "Conéctate con la comunidad",
+        "body": "Para encontrar amigos, ver quién está conectado y jugar, necesitas una cuenta.",
+        "login": "Iniciar sesión",
+        "noAccount": "¿No tienes cuenta?",
+        "signup": "Crear una"
       }
     }
   },
@@ -328,7 +337,8 @@
     "AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
     "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
-    "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
+    "AUTH_UNAUTHORIZED": "Debes iniciar sesión para ver este contenido.",
+    "AUTH_FORBIDDEN": "No tienes permiso para acceder a este recurso.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
     "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde.",

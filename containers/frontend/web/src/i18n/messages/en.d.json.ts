@@ -282,8 +282,8 @@ declare const messages: {
     },
     "social": {
       "title": "Social",
-      "searchPlaceholder": "Search among your friends or add new ones",
-      "searchLabel": "Search users",
+      "searchPlaceholder": "Search users",
+      "searchLabel": "Search",
       "friends": {
         "title": "Friends",
         "online": "Friends online",
@@ -298,14 +298,23 @@ declare const messages: {
         "online": "No friends online right now",
         "offline": "No friends offline",
         "request": "No pending friend requests",
-        "pending": "No sent requests pending"
+        "pending": "No sent requests pending",
+        "search": "No users found"
       },
       "actions": {
         "inviteToGame": "Invite to Game",
         "chat": "Chat",
         "reject": "Reject",
         "accept": "Accept",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "addFriend": "Add friend"
+      },
+      "guest": {
+        "title": "Connect with the community",
+        "body": "To find friends, see who's online and play games, you need an account.",
+        "login": "Login",
+        "noAccount": "Don't have an account?",
+        "signup": "Create one"
       }
     }
   },
@@ -331,7 +340,8 @@ declare const messages: {
     "AUTH_NO_PENDING_RECOVER": "No password reset request was found. Please start again.",
     "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
     "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
-    "AUTH_FORBIDDEN": "The verification link is invalid or expired.",
+    "AUTH_UNAUTHORIZED": "You must be logged in to view this content.",
+    "AUTH_FORBIDDEN": "You do not have permission to access this resource.",
     "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
     "VALIDATION_ERROR": "Validation error: please check the fields and try again.",
     "FETCH_FAILED": "API request failed. Try again later.",

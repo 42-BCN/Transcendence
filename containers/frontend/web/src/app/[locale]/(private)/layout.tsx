@@ -10,8 +10,8 @@ export default async function ProtectedLayout({ children }: { children: ReactNod
 
   if (!sid) redirect('/login');
 
-  const me = await protectedMeAction().catch(() => null);
-  if (!me) redirect('/login');
+  const me = await protectedMeAction();
+  if (!me.ok) redirect('/login');
 
   return <>{children}</>;
 }

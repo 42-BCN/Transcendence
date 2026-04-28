@@ -1,21 +1,48 @@
 'use client';
 
-import { forwardRef, type Ref } from 'react';
+import { forwardRef } from 'react';
 import type { InputProps as AriaInputProps } from 'react-aria-components';
 import { Input as AriaInput } from 'react-aria-components';
 
-import { inputStyles } from './input.styles';
+import { Icon } from '../../primitives/icon';
+import type { IconName } from '../../primitives/icon';
+import { inputStyles, inputWrapperStyles, inputIconStyles } from './input.styles';
 import type { InputSize as Size, InputVariant as Variant } from './input.styles';
 
 export type InputProps = Omit<AriaInputProps, 'className' | 'size' | 'style' | 'onKeyDown'> & {
   variant?: Variant;
   size?: Size;
-  ref?: Ref<HTMLInputElement>;
+  icon?: IconName;
+  iconPosition?: 'start' | 'end';
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { variant = 'default', size = 'md', ...props },
+  { variant = 'default', size = 'md', icon, iconPosition = 'start', ...props },
   ref,
 ) {
-  return <AriaInput {...props} ref={ref} className={() => inputStyles({ variant, size })} />;
+  if (!icon) {
+    return <AriaInput {...props} ref={ref} className={inputStyles({ variant, size })} />;
+  }
+
+  return (
+    <span className={inputWrapperStyles()}>
+      {iconPosition === 'start' ? (
+        <Icon name={icon} className={inputIconStyles({ position: 'start' })} aria-hidden />
+      ) : null}
+
+      <AriaInput
+        {...props}
+        ref={ref}
+        className={inputStyles({
+          variant,
+          size,
+          iconPosition,
+        })}
+      />
+
+      {iconPosition === 'end' ? (
+        <Icon name={icon} className={inputIconStyles({ position: 'end' })} aria-hidden />
+      ) : null}
+    </span>
+  );
 });

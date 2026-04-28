@@ -2,17 +2,16 @@
 
 import { cookies } from 'next/headers';
 import type { MeRes } from '@/contracts/api/auth/auth.contract';
-import { fetchServer } from '@/lib/http/fetcher.server';
+import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
 
 export async function protectedMeAction() {
-  try {
-    const cookie = (await cookies()).toString();
+  const cookie = (await cookies()).toString();
 
-    const { data } = await fetchServer<MeRes>('/protected/me', 'GET', undefined, {
+  const result = await withServerAction(async () => {
+    const res = await fetchServer<MeRes>('/protected/me', 'GET', undefined, {
       cookie,
     });
-    return data.ok;
-  } catch {
-    return false;
-  }
+    return res.data;
+  })();
+  return result;
 }
