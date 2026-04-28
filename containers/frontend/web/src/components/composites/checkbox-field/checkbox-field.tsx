@@ -6,18 +6,20 @@ import {
   FieldError,
 } from 'react-aria-components';
 import { useTranslations } from 'next-intl';
-import { InternalLink } from '@components/controls/link';
-import { checkboxFieldStyles } from './checkbox-field.styles';
-
 import type { ClassValue } from 'clsx';
+
 import { Checkbox } from '@components/controls/checkbox';
+import { InternalLink } from '@components/controls/link';
+import type { InternalLinkProps } from '@components/controls/link';
+
+import { checkboxFieldStyles } from './checkbox-field.styles';
 
 type I18nKey = string;
 
 export type CheckboxFieldProps = Omit<AriaCheckboxProps, 'className' | 'children'> & {
   labelKey: I18nKey;
   errorKey?: I18nKey;
-  linkHref?: string;
+  linkHref?: InternalLinkProps['href'];
   className?: ClassValue;
 };
 
@@ -40,6 +42,7 @@ export function CheckboxField({
             })
           : t(labelKey)}
       </Checkbox>
+
       {errorKey && <FieldError className={checkboxFieldStyles.error()}>{t(errorKey)}</FieldError>}
     </CheckboxGroup>
   );

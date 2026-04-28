@@ -1,0 +1,13 @@
+.sb-show-main,
+.sbdocs-preview {
+  background: var(--color-bg-primary) !important;
+  background-image:
+    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px) !important;
+  background-size: 30px 30px !important;
+  color: var(--color-text-primary) !important;
+}
+
+.sbdocs-preview {
+  border-color: var(--color-border-primary) !important;
+}

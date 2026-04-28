@@ -5,12 +5,9 @@ import { Button } from '@components/controls/button';
 
 import { TooltipTrigger } from '@components/composites/tooltip-trigger';
 import { Icon, type IconName } from '@components/primitives/icon';
-import type { InteractiveControlVariant } from '@components/controls/types';
+import type { InteractiveControlVariant } from '../../primitives/interactive-control/interactive-control.types';
 
-type IconButtonButtonProps = Pick<
-  ButtonProps,
-  'onPress' | 'isDisabled' | 'type' | 'id'
->;
+type IconButtonButtonProps = Pick<ButtonProps, 'onPress' | 'isDisabled' | 'type' | 'id'>;
 
 export type IconButtonProps = {
   label: string;

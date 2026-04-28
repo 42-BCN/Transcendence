@@ -1,17 +1,23 @@
 'use client';
 
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { Link as AriaLink } from 'react-aria-components';
-import { Link } from '@/i18n/navigation';
 
-import { buttonStyles, iconStyles } from '../button/button.styles';
-import type { ComponentProps, ComponentPropsWithoutRef, ReactNode } from 'react';
-import { LinkStyles } from './link.styles';
+import { Link } from '@/i18n/navigation';
 import type { InteractiveControlStyleProps } from '@components/primitives/interactive-control/interactive-control.types';
 
-export type ExternalLinkProps = InteractiveControlStyleProps & {
+import { buttonStyles, iconStyles } from '../button/button.styles';
+import { LinkStyles } from './link.styles';
+
+type LinkStyleProps = InteractiveControlStyleProps & {
   icon?: ReactNode;
   as?: 'link' | 'button';
-} & ComponentPropsWithoutRef<typeof AriaLink>;
+  children?: ReactNode;
+};
+
+type AriaLinkBaseProps = Omit<ComponentPropsWithoutRef<typeof AriaLink>, 'children' | 'className'>;
+
+export type ExternalLinkProps = LinkStyleProps & AriaLinkBaseProps;
 
 export function ExternalLink(args: ExternalLinkProps) {
   const {
@@ -32,13 +38,13 @@ export function ExternalLink(args: ExternalLinkProps) {
 
   return (
     <AriaLink
+      {...props}
       href={href}
       target={target}
       rel={computedRel}
       className={
         as === 'button' ? buttonStyles({ variant, size, w, className }) : LinkStyles(className)
       }
-      {...props}
     >
       {icon && <span className={iconStyles()}>{icon}</span>}
       {children}
@@ -46,10 +52,17 @@ export function ExternalLink(args: ExternalLinkProps) {
   );
 }
 
-export type InternalLinkProps = InteractiveControlStyleProps & {
-  as?: 'link' | 'button';
-  icon?: ReactNode;
-} & ComponentPropsWithoutRef<typeof AriaLink>;
+type InternalLinkBaseProps = Omit<
+  ComponentPropsWithoutRef<typeof Link>,
+  'children' | 'className' | 'href'
+>;
+
+type InternalHref = ComponentPropsWithoutRef<typeof Link>['href'];
+
+export type InternalLinkProps = LinkStyleProps &
+  InternalLinkBaseProps & {
+    href: InternalHref;
+  };
 
 export function InternalLink(args: InternalLinkProps) {
   const {
@@ -65,16 +78,15 @@ export function InternalLink(args: InternalLinkProps) {
   } = args;
 
   return (
-    <AriaLink
-      as={Link}
+    <Link
+      {...props}
       href={href}
       className={
         as === 'button' ? buttonStyles({ variant, size, w, className }) : LinkStyles(className)
       }
-      {...props}
     >
       {icon && <span className={iconStyles()}>{icon}</span>}
       {variant === 'cta' ? <span className="z-10">{children}</span> : children}
-    </AriaLink>
+    </Link>
   );
 }

@@ -1,7 +1,7 @@
 import type { IconName } from '@components';
 
 // features/navigation/navigation.config.ts
-type NavHref = '/' | '/robots' | '/ui' | '/login' | '/me';
+type NavHref = '/' | '/robots' | '/login' | '/me' | '/game';
 
 export type NavItem = {
   href: NavHref;
@@ -12,7 +12,6 @@ export type NavItem = {
 const baseNavItems: NavItem[] = [
   { href: '/', key: 'home', exact: true, icon: 'home' },
   { href: '/game', key: 'game', exact: false, icon: 'gamepad' },
-  { href: '/ui', key: 'ui', exact: false, icon: 'ui' },
 ];
 
 const publicNavItems: NavItem[] = [{ href: '/login', key: 'login', exact: false, icon: 'logIn' }];
