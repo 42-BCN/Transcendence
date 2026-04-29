@@ -60,6 +60,9 @@ function useUserSearch() {
     let ignore = false;
     const trimmedQuery = query.trim();
 
+    // Reset meta immediately to prevent stale load-more requests during debounce
+    setSearchMeta(initialSearchMeta());
+
     const runSearch = async () => {
       try {
         if (!trimmedQuery) {
@@ -135,6 +138,11 @@ export function SearchLoadMore() {
   const [isLoading, setIsLoading] = useState(false);
   const isLoadingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const queryRef = useRef(query);
+
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
 
   const loadMore = useCallback(async () => {
     if (isLoadingRef.current || !hasMore || !query.trim()) return;
@@ -147,8 +155,7 @@ export function SearchLoadMore() {
       const result = await searchUsers(query, meta.limit, nextOffset);
 
       // Prevent race condition: check if query has changed while the request was in-flight
-      const currentQuery = useSocialStore.getState().searchQuery;
-      if (currentQuery !== queryAtStart) return;
+      if (queryRef.current !== queryAtStart) return;
 
       if (result.ok) {
         appendSearchResults(
@@ -183,6 +190,7 @@ export function SearchLoadMore() {
 
     return () => {
       if (currentSentinel) observer.unobserve(currentSentinel);
+      observer.disconnect();
     };
   }, [loadMore, hasMore]);
 

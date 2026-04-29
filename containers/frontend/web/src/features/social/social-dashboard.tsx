@@ -135,14 +135,16 @@ function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
 }
 
 export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
+  const t = useTranslations('features.social');
+
   return (
     <SocialStoreProvider initialData={initialData}>
       <Stack className="h-full max-h-full overflow-hidden" gap="none">
         <SocialHeader />
         <ScrollArea>
-          <div className="px-1">
+          <section className="px-1" aria-label={t('title')}>
             <SocialContent errors={initialData.errors} />
-          </div>
+          </section>
         </ScrollArea>
       </Stack>
     </SocialStoreProvider>
