@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack --experimental-https --experimental-https-key /certs/localhost.key --experimental-https-cert /certs/localhost.crt --experimental-https-ca /certs/ca.pem",
     "build": "next build --turbopack",
-    "start": "next start",
+    "start": "node server.cjs",
     "lint": "eslint src scripts --cache",
     "lint:fix": "eslint src scripts --fix --cache",
     "typecheck": "tsc --noEmit",

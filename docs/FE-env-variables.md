@@ -20,9 +20,15 @@
 
 ## 2. Where Environment Variables Are Defined
 
-Frontend environment variables are defined in:
+Frontend environment variables are defined in the tracked example template and generated local env files:
 
-`./frontend/docker/.env.development`
+`./containers/frontend/docker/.env.development.example`
+
+`./containers/frontend/docker/.env.development`
+
+`./containers/frontend/docker/.env.demo`
+
+`./containers/frontend/docker/.env.production`
 
 ```sh
 NEXT_PUBLIC_APP_URL=https://localhost:8443
@@ -41,12 +47,12 @@ Secrets (database credentials, API keys, JWT secrets, etc.) must never exist in 
 
 ## 3. How Environment Variables Are Injected
 
-In `docker-compose.yml`:
+In `containers/docker-compose.yml`:
 
 ```yaml
 frontend:
   env_file:
-    - ./frontend/docker/.env.development
+    - ./frontend/docker/.env.${APP_ENV:-development}
 ```
 
 When Docker starts the `frontend` container, each line in the file is injected as an environment variable into the container process.
@@ -63,13 +69,15 @@ Environment variables must only be accessed through:
 File locations:
 
 ```
-/src/lib/env.public.ts
-/src/lib/env.server.ts
+/src/lib/config/env.public.ts
+/src/lib/config/env.server.ts
 ```
 
 Direct usage of `process.env` outside these modules is prohibited and enforced via ESLint.
 
 Missing variables throw at startup using required helpers (fail fast strategy).
+
+The HTTPS server entrypoint also reads `PORT`, `HOSTNAME`, `HTTPS_KEY_PATH`, and `HTTPS_CERT_PATH` from the container environment.
 
 ---
 

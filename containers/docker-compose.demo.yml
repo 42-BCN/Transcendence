@@ -1,0 +1,45 @@
+services:
+  socket:
+    build:
+      target: prod
+    command: npm run start
+    environment:
+      NODE_ENV: production
+      BACKEND_SESSION_IDENTITY_URL: https://backend:4000/auth/session/identity
+    volumes:
+      - ${CERT_DIR:-../certs}:/certs:ro
+      - ./contracts:/app/src/contracts:ro
+    restart: unless-stopped
+
+  frontend:
+    build:
+      target: prod
+    command: npm run start
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      HTTPS_KEY_PATH: /certs/localhost.key
+      HTTPS_CERT_PATH: /certs/localhost.crt
+    volumes:
+      - ${CERT_DIR:-../certs}:/certs:ro
+      - ./contracts:/app/src/contracts:ro
+    restart: unless-stopped
+
+  backend:
+    build:
+      target: prod
+    command: npm run start
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+      SOCKET_SERVICE_URL: https://socket:3100
+    volumes:
+      - ${CERT_DIR:-../certs}:/certs:ro
+      - ./contracts:/app/src/contracts:ro
+    restart: unless-stopped
+
+  nginx:
+    restart: unless-stopped
