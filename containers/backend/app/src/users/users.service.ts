@@ -7,6 +7,7 @@ import {
   selectUserDataByUsername,
   selectUserMeProfileData,
   searchUsersByUsername,
+  countSearchUsersByUsername,
 } from './users.repo';
 import { findFriendshipsByUserPairs } from '../friendships/friendships.repo';
 
@@ -42,16 +43,25 @@ export async function findUserMeProfileById(id: string): Promise<UserMeProfile> 
 export async function searchUsers(
   query: string,
   limit: number,
+  offset: number,
   currentUserId: string,
-): Promise<SearchUserResult[]> {
-  const users = await searchUsersByUsername(query, limit, currentUserId);
+): Promise<SearchUsersOk> {
+  const [users, total] = await Promise.all([
+    searchUsersByUsername(query, limit, offset, currentUserId),
+    countSearchUsersByUsername(query, currentUserId),
+  ]);
 
-  if (users.length === 0) return [];
+  if (users.length === 0) {
+    return {
+      users: [],
+      meta: { total, limit, offset, hasMore: false },
+    };
+  }
 
   const otherUserIds = users.map((u) => u.id);
   const friendshipMap = await findFriendshipsByUserPairs(currentUserId, otherUserIds);
 
-  return users.map((u) => {
+  const mappedUsers: SearchUserResult[] = users.map((u) => {
     const friendship = friendshipMap.get(u.id);
     return {
       id: u.id,
@@ -62,4 +72,14 @@ export async function searchUsers(
       friendshipId: friendship ? friendship.id : null,
     };
   });
+
+  return {
+    users: mappedUsers,
+    meta: {
+      total,
+      limit,
+      offset,
+      hasMore: offset + users.length < total,
+    },
+  };
 }

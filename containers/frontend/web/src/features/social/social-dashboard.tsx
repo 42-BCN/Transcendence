@@ -12,6 +12,7 @@ import {
   TabPanel,
   DisclosureGroup,
   DisclosureFull,
+  ScrollArea,
 } from '@/components';
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
@@ -136,10 +137,14 @@ function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
 export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
   return (
     <SocialStoreProvider initialData={initialData}>
-      <SocialHeader />
-      <main>
-        <SocialContent errors={initialData.errors} />
-      </main>
+      <Stack className="h-full max-h-full overflow-hidden" gap="none">
+        <SocialHeader />
+        <ScrollArea>
+          <div className="px-1">
+            <SocialContent errors={initialData.errors} />
+          </div>
+        </ScrollArea>
+      </Stack>
     </SocialStoreProvider>
   );
 }

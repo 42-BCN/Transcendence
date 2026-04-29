@@ -29,18 +29,28 @@ export interface GroupedSearchResults {
   none: SearchUserResult[];
 }
 
+export interface SearchMeta {
+  total: number;
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+}
+
 export interface SocialState {
   friends: FriendPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
   currentUserId: string | null;
   searchResults: GroupedSearchResults;
+  searchMeta: SearchMeta;
   searchQuery: string;
 
   setFriends: (friends: FriendPublic[]) => void;
   setPendingReceived: (requests: FriendshipPublic[]) => void;
   setPendingSent: (requests: FriendshipPublic[]) => void;
   setSearchResults: (results: GroupedSearchResults) => void;
+  setSearchMeta: (meta: SearchMeta) => void;
+  appendSearchResults: (results: GroupedSearchResults, meta: SearchMeta) => void;
   setSearchQuery: (query: string) => void;
   setCurrentUserId: (id: string | null) => void;
   removePendingById: (list: PendingListKey, id: string) => void;

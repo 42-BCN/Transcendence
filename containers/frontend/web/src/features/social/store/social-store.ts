@@ -8,6 +8,7 @@ import type {
   SocialState,
   PendingListKey,
   GroupedSearchResults,
+  SearchMeta,
 } from './social-store.types';
 
 export const emptyGroupedSearchResults = (): GroupedSearchResults => ({
@@ -18,12 +19,20 @@ export const emptyGroupedSearchResults = (): GroupedSearchResults => ({
   none: [],
 });
 
+export const initialSearchMeta = (): SearchMeta => ({
+  total: 0,
+  limit: 20,
+  offset: 0,
+  hasMore: false,
+});
+
 const createInitialState = (initialData: SocialInitialData) => ({
   friends: initialData.friends,
   pendingReceived: initialData.pendingReceived,
   pendingSent: initialData.pendingSent,
   currentUserId: initialData.currentUserId,
   searchResults: emptyGroupedSearchResults(),
+  searchMeta: initialSearchMeta(),
   searchQuery: '',
 });
 
@@ -124,6 +133,18 @@ export function createSocialStore(initialData: SocialInitialData) {
     setPendingReceived: (pendingReceived) => set({ pendingReceived }),
     setPendingSent: (pendingSent) => set({ pendingSent }),
     setSearchResults: (searchResults) => set({ searchResults }),
+    setSearchMeta: (searchMeta) => set({ searchMeta }),
+    appendSearchResults: (newResults, meta) =>
+      set((state) => ({
+        searchResults: {
+          online: [...state.searchResults.online, ...newResults.online],
+          offline: [...state.searchResults.offline, ...newResults.offline],
+          requests: [...state.searchResults.requests, ...newResults.requests],
+          pending: [...state.searchResults.pending, ...newResults.pending],
+          none: [...state.searchResults.none, ...newResults.none],
+        },
+        searchMeta: meta,
+      })),
     setSearchQuery: (searchQuery) => set({ searchQuery }),
     setCurrentUserId: (currentUserId) => set({ currentUserId }),
     removePendingById: (list, id) => set(handleRemovePending(list, id)),

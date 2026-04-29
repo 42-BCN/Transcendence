@@ -49,8 +49,8 @@ export async function searchUsersController(
   req: Request,
   res: Response<SearchUsersResponse, { query: SearchUsersQuery }>,
 ): Promise<void> {
-  const { q, limit } = res.locals.query;
+  const { q, limit, offset } = res.locals.query;
   const currentUserId = req.session.userId!;
-  const results = await searchUsers(q, limit, currentUserId);
-  res.status(200).json({ ok: true, data: { users: results } });
+  const results = await searchUsers(q, limit, offset, currentUserId);
+  res.status(200).json({ ok: true, data: results });
 }

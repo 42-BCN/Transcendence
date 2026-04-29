@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSocialStore } from '../store/social-store.provider';
 import { type GroupedSearchResults } from '../store/social-store.types';
-import { emptyGroupedSearchResults } from '../store/social-store';
+import { emptyGroupedSearchResults, initialSearchMeta } from '../store/social-store';
 
 import { searchUsers } from '../actions/users.actions';
 import { TextField } from '@components';
@@ -54,6 +54,7 @@ function useUserSearch() {
   const currentUserId = useSocialStore((state) => state.currentUserId);
   const friends = useSocialStore((state) => state.friends);
   const setSearchResults = useSocialStore((state) => state.setSearchResults);
+  const setSearchMeta = useSocialStore((state) => state.setSearchMeta);
 
   useEffect(() => {
     let ignore = false;
@@ -63,6 +64,7 @@ function useUserSearch() {
       try {
         if (!trimmedQuery) {
           setSearchResults(emptyGroupedSearchResults());
+          setSearchMeta(initialSearchMeta());
           return;
         }
 
@@ -70,17 +72,24 @@ function useUserSearch() {
 
         if (ignore) return;
 
-        setSearchResults(
-          result.ok
-            ? groupSearchResults({
-                users: result.data.users,
-                currentUserId,
-                friends,
-              })
-            : emptyGroupedSearchResults(),
-        );
+        if (result.ok) {
+          setSearchResults(
+            groupSearchResults({
+              users: result.data.users,
+              currentUserId,
+              friends,
+            }),
+          );
+          setSearchMeta(result.data.meta);
+        } else {
+          setSearchResults(emptyGroupedSearchResults());
+          setSearchMeta(initialSearchMeta());
+        }
       } catch {
-        if (!ignore) setSearchResults(emptyGroupedSearchResults());
+        if (!ignore) {
+          setSearchResults(emptyGroupedSearchResults());
+          setSearchMeta(initialSearchMeta());
+        }
       }
     };
 
@@ -92,7 +101,7 @@ function useUserSearch() {
       ignore = true;
       clearTimeout(timer);
     };
-  }, [query, currentUserId, friends, setSearchResults]);
+  }, [query, currentUserId, friends, setSearchResults, setSearchMeta]);
 }
 
 export function UserSearch() {
@@ -112,5 +121,70 @@ export function UserSearch() {
       value={query}
       onChange={setQuery}
     />
+  );
+}
+
+export function SearchLoadMore() {
+  const hasMore = useSocialStore((state) => state.searchMeta.hasMore);
+  const query = useSocialStore((state) => state.searchQuery);
+  const meta = useSocialStore((state) => state.searchMeta);
+  const currentUserId = useSocialStore((state) => state.currentUserId);
+  const friends = useSocialStore((state) => state.friends);
+  const appendSearchResults = useSocialStore((state) => state.appendSearchResults);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore || !query.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const nextOffset = meta.offset + meta.limit;
+      const result = await searchUsers(query, meta.limit, nextOffset);
+
+      if (result.ok) {
+        appendSearchResults(
+          groupSearchResults({
+            users: result.data.users,
+            currentUserId,
+            friends,
+          }),
+          result.data.meta,
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading, hasMore, query, meta, currentUserId, friends, appendSearchResults]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          void loadMore();
+        }
+      },
+      { rootMargin: '400px' },
+    );
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) observer.observe(currentSentinel);
+
+    return () => {
+      if (currentSentinel) observer.unobserve(currentSentinel);
+    };
+  }, [loadMore, hasMore]);
+
+  if (!hasMore) return null;
+
+  return (
+    <div ref={sentinelRef} className="h-10 w-full flex items-center justify-center py-4">
+      {isLoading && (
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      )}
+    </div>
   );
 }

@@ -16,6 +16,7 @@ import { OfflineButtons } from './offline-buttons';
 import { InviteActionButton } from './invite-action-button';
 import { AcceptActionButton } from './accept-action-button';
 import { RejectActionButton } from './reject-action-button';
+import { SearchLoadMore } from './user-search';
 
 export type SocialUserItem = FriendPublic | FriendshipPublic | SearchUserResult;
 
@@ -78,6 +79,7 @@ export function SearchResults() {
       <UsersList friends={searchResults.requests} type="request" feedback={false} />
       <UsersList friends={searchResults.pending} type="pending" feedback={false} />
       <UsersList friends={searchResults.none} type="search" feedback={false} />
+      <SearchLoadMore />
     </>
   );
 }
