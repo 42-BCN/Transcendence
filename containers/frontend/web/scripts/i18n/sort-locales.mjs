@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import util from 'node:util';
 
 const ROOT_ORDER = ['common', 'components', 'layouts', 'pages', 'features', 'validation', 'errors'];
