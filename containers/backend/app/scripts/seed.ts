@@ -216,6 +216,17 @@ async function seedFriendships(users: UserMap): Promise<void> {
   }
 }
 
+async function seedTestUsers(): Promise<void> {
+  for (let i = 1; i <= 30; i++) {
+    const username = `alex_test_${i}`;
+    await upsertLocalUser({
+      email: `${username}@test.local`,
+      username,
+      password: DEFAULT_PASSWORD,
+    });
+  }
+}
+
 export async function seed(): Promise<void> {
   console.log('Seeding Database');
 
@@ -232,6 +243,7 @@ export async function seed(): Promise<void> {
 
     const pokemonUsers = await seedPokemonUsers();
     await seedFriendships(pokemonUsers);
+    await seedTestUsers();
   } finally {
     await prisma.$disconnect();
   }

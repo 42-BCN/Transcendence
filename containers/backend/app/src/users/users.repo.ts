@@ -17,6 +17,8 @@ type UserSearchRow = {
   id: string;
   username: string;
   avatar: string | null;
+  friendshipStatus: 'pending' | 'accepted' | null;
+  senderId: string | null;
 };
 
 function mapUserRow(row: UserPublicRow): UserPublic {
@@ -98,13 +100,24 @@ export async function searchUsersByUsername(
   const sanitized = query.replace(/[%_\\]/g, '\\$&');
 
   const rows = await prisma.$queryRaw<UserSearchRow[]>`
-    SELECT id, username, avatar
-    FROM users
-    WHERE username ILIKE ${'%' + sanitized + '%'}
-      AND id != ${currentUserId}::uuid
-    ORDER BY
-      CASE WHEN username ILIKE ${sanitized} THEN 0 ELSE 1 END,
-      username ASC
+    SELECT 
+      u.id, 
+      u.username, 
+      u.avatar, 
+      f.status as "friendshipStatus", 
+      f.sender_id as "senderId"
+    FROM users u
+    LEFT JOIN friendships f ON (f.user_id_1 = ${currentUserId}::uuid AND f.user_id_2 = u.id) 
+                           OR (f.user_id_1 = u.id AND f.user_id_2 = ${currentUserId}::uuid)
+    WHERE u.username ILIKE ${'%' + sanitized + '%'}
+      AND u.id != ${currentUserId}::uuid
+    ORDER BY 
+      CASE 
+        WHEN f.status = 'accepted' THEN 1
+        WHEN f.status = 'pending' THEN 2
+        ELSE 3
+      END ASC,
+      u.username ASC
     LIMIT ${limit}
     OFFSET ${offset}
   `;
