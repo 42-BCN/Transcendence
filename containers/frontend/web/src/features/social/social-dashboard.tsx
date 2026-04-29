@@ -16,7 +16,7 @@ import {
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode, SocialInitialData } from './store/social-store.types';
-import { SocialStoreProvider, useSocialStore } from './store/social-store.provider';
+import { useSocialStore } from './store/social-store.provider';
 import { SearchResults } from './social-variants/users-list';
 
 function FriendsList({ error }: { error?: SocialErrorCode }) {
@@ -84,10 +84,11 @@ function SocialHeader() {
   );
 }
 
-function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
+function SocialContent() {
   const t = useTranslations('features.social');
   const searchQuery = useSocialStore((state) => state.searchQuery);
   const searchResults = useSocialStore((state) => state.searchResults);
+  const errors = useSocialStore((state) => state.errors ?? {});
 
   if (searchQuery.trim() !== '') {
     const isEmpty =
@@ -133,13 +134,11 @@ function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
   );
 }
 
-export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
+export function SocialDashboard() {
   return (
-    <SocialStoreProvider initialData={initialData}>
+    <>
       <SocialHeader />
-      <main>
-        <SocialContent errors={initialData.errors} />
-      </main>
-    </SocialStoreProvider>
+      <SocialContent />
+    </>
   );
 }

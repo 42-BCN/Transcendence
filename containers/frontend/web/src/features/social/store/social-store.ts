@@ -10,6 +10,12 @@ import type {
   GroupedSearchResults,
 } from './social-store.types';
 
+const defaultErrors = {
+  friends: undefined,
+  pendingReceived: undefined,
+  pendingSent: undefined,
+};
+
 export const emptyGroupedSearchResults = (): GroupedSearchResults => ({
   online: [],
   offline: [],
@@ -25,6 +31,7 @@ const createInitialState = (initialData: SocialInitialData) => ({
   currentUserId: initialData.currentUserId,
   searchResults: emptyGroupedSearchResults(),
   searchQuery: '',
+  errors: initialData.errors ?? defaultErrors,
 });
 
 const updateResults = (
