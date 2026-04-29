@@ -5,7 +5,7 @@ import {
   FriendshipPresenceCheckBodySchema,
   friendshipSocketEvents,
 } from '@contracts/sockets/friendships/friendships.schema';
-import { emitToUser, getUsersOnlineStatus } from '../features/friends.socket';
+import { emitToUser, getUsersOnlineStatus, subscribeUserToFriendStatus } from '../features/friends.socket';
 import { logEvents } from '../socket.logs';
 
 function respondBadRequest(res: Response, error: { flatten: () => unknown }): void {
@@ -52,6 +52,7 @@ export function handleInternalNotify(req: Request, res: Response): void {
       break;
     case friendshipSocketEvents.accepted:
       emitToUser(body.userId, body.event, body.payload);
+      subscribeUserToFriendStatus(body.userId, body.payload.friendUserId);
       break;
     case friendshipSocketEvents.rejected:
       emitToUser(body.userId, body.event, body.payload);
