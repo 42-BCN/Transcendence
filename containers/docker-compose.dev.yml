@@ -35,8 +35,8 @@ services:
     profiles:
       - storybook
     build:
-      context: ./frontend
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./frontend/docker/Dockerfile
       target: dev
     working_dir: /app
     command: npm run storybook -- --host 0.0.0.0
