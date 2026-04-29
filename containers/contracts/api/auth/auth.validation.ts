@@ -25,8 +25,9 @@ export function normalizeEmail(email: string): string {
 export const usernameSchema = z
   .string()
   .trim()
-  .min(1, { message: V.REQUIRED })
-  .max(254, { message: V.FIELD_TOO_LONG })
+  .min(4, { message: V.FIELD_TOO_SHORT })
+  .max(15, { message: V.FIELD_TOO_LONG })
+  .regex(/^[a-zA-Z0-9]+$/, { message: V.INVALID_FORMAT })
   .transform(normalizeUsernameValue);
 
 export const identifierSchema = z
