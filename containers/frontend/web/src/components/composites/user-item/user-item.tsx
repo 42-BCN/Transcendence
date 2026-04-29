@@ -3,8 +3,10 @@ import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { Avatar } from '@components/primitives/avatar';
 import { userItemStyles } from './user-item.styles';
+import { InternalLink } from '../../controls/link';
 
 export type UserItemProps = {
+  id: string;
   avatarUrl?: string | null;
   username: string;
   subtitle?: string;
@@ -12,15 +14,24 @@ export type UserItemProps = {
   className?: string;
 };
 
-export function UserItem({ avatarUrl, username, subtitle, children, className }: UserItemProps) {
+export function UserItem({
+  id,
+  avatarUrl,
+  username,
+  subtitle,
+  children,
+  className,
+}: UserItemProps) {
   return (
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} />
 
       <div className="flex-1 self-start">
-        <Text variant="body-sm" as="p" className="font-bold">
-          {username}
-        </Text>
+        <InternalLink href={`/other/${id}`} className="no-underline !text-inherit">
+          <Text variant="body-sm" as="p" className="font-bold">
+            {username}
+          </Text>
+        </InternalLink>
         {/* {subtitle && (
           <Text variant="caption" as="p" color="tertiary">
             {subtitle}

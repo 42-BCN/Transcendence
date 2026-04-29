@@ -55,14 +55,15 @@ export function UsersList({ friends, type, feedback = true }: UsersListProps) {
 
   return friends.map((item) => {
     const { id, username, avatar } = item;
+    const userId = 'userId' in item ? item.userId : id;
 
     return (
-      <UserItem username={username} avatarUrl={avatar ?? undefined} key={id}>
-        {type === 'request' && <RequestActions friendshipId={item.id} />}
+      <UserItem id={userId} username={username} avatarUrl={avatar ?? undefined} key={id}>
+        {type === 'request' && <RequestActions friendshipId={id} />}
         {type === 'pending' && <PendingActions friendshipId={id} />}
-        {type === 'online' && <OnlineButtons username={username} userId={id} />}
-        {type === 'offline' && <OfflineButtons userId={id} />}
-        {type === 'search' && <InviteActionButton userId={id} />}
+        {type === 'online' && <OnlineButtons username={username} userId={userId} />}
+        {type === 'offline' && <OfflineButtons userId={userId} />}
+        {type === 'search' && <InviteActionButton userId={userId} />}
       </UserItem>
     );
   });
