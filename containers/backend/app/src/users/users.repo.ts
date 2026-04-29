@@ -19,6 +19,7 @@ type UserSearchRow = {
   avatar: string | null;
   friendshipStatus: 'pending' | 'accepted' | null;
   senderId: string | null;
+  friendshipId: string | null;
 };
 
 function mapUserRow(row: UserPublicRow): UserPublic {
@@ -105,10 +106,11 @@ export async function searchUsersByUsername(
       u.username, 
       u.avatar, 
       f.status as "friendshipStatus", 
-      f.sender_id as "senderId"
+      f.sender_id as "senderId",
+      f.id as "friendshipId"
     FROM users u
-    LEFT JOIN friendships f ON (f.user_id_1 = ${currentUserId}::uuid AND f.user_id_2 = u.id) 
-                           OR (f.user_id_1 = u.id AND f.user_id_2 = ${currentUserId}::uuid)
+    LEFT JOIN friendships f ON f.user_id_1 = LEAST(${currentUserId}::uuid, u.id) 
+                           AND f.user_id_2 = GREATEST(${currentUserId}::uuid, u.id)
     WHERE u.username ILIKE ${'%' + sanitized + '%'}
       AND u.id != ${currentUserId}::uuid
     ORDER BY 

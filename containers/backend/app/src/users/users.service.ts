@@ -1,4 +1,4 @@
-import type { UserMeProfile, UserPublic, SearchUserResult } from '@contracts/users/users.contracts';
+import type { UserMeProfile, UserPublic, SearchUserResult, SearchUsersOk } from '@contracts/users/users.contracts';
 import { ApiError } from '@shared';
 
 import {
@@ -9,7 +9,6 @@ import {
   searchUsersByUsername,
   countSearchUsersByUsername,
 } from './users.repo';
-import { findFriendshipsByUserPairs } from '../friendships/friendships.repo';
 
 type getUsersProps = {
   limit: number;
@@ -58,20 +57,14 @@ export async function searchUsers(
     };
   }
 
-  const otherUserIds = users.map((u) => u.id);
-  const friendshipMap = await findFriendshipsByUserPairs(currentUserId, otherUserIds);
-
-  const mappedUsers: SearchUserResult[] = users.map((u) => {
-    const friendship = friendshipMap.get(u.id);
-    return {
-      id: u.id,
-      username: u.username,
-      avatar: u.avatar,
-      friendshipStatus: friendship ? friendship.status : 'none',
-      senderId: friendship ? friendship.senderId : null,
-      friendshipId: friendship ? friendship.id : null,
-    };
-  });
+  const mappedUsers: SearchUserResult[] = users.map((u) => ({
+    id: u.id,
+    username: u.username,
+    avatar: u.avatar,
+    friendshipStatus: u.friendshipStatus || 'none',
+    senderId: u.senderId,
+    friendshipId: u.friendshipId,
+  }));
 
   return {
     users: mappedUsers,

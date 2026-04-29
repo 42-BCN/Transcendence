@@ -133,15 +133,22 @@ export function SearchLoadMore() {
   const appendSearchResults = useSocialStore((state) => state.appendSearchResults);
 
   const [isLoading, setIsLoading] = useState(false);
+  const isLoadingRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const loadMore = useCallback(async () => {
-    if (isLoading || !hasMore || !query.trim()) return;
+    if (isLoadingRef.current || !hasMore || !query.trim()) return;
 
+    const queryAtStart = query;
+    isLoadingRef.current = true;
     setIsLoading(true);
     try {
       const nextOffset = meta.offset + meta.limit;
       const result = await searchUsers(query, meta.limit, nextOffset);
+
+      // Prevent race condition: check if query has changed while the request was in-flight
+      const currentQuery = useSocialStore.getState().searchQuery;
+      if (currentQuery !== queryAtStart) return;
 
       if (result.ok) {
         appendSearchResults(
@@ -154,9 +161,10 @@ export function SearchLoadMore() {
         );
       }
     } finally {
+      isLoadingRef.current = false;
       setIsLoading(false);
     }
-  }, [isLoading, hasMore, query, meta, currentUserId, friends, appendSearchResults]);
+  }, [hasMore, query, meta, currentUserId, friends, appendSearchResults]);
 
   useEffect(() => {
     if (!hasMore) return;

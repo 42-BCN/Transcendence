@@ -50,16 +50,12 @@ export const SearchUsersQuerySchema = z
       .max(100, { message: VALIDATION.FIELD_TOO_LONG }),
     limit: intFromQuery(VALIDATION.INVALID_FORMAT).optional(),
     offset: intFromQuery(VALIDATION.INVALID_FORMAT).optional(),
-    sortBy: z.enum(['username']).optional(),
-    order: z.enum(['asc', 'desc']).optional(),
   })
   .strict()
   .transform((q) => ({
     q: q.q,
     limit: q.limit ?? 20,
     offset: q.offset ?? 0,
-    sortBy: q.sortBy ?? 'username',
-    order: q.order ?? 'asc',
   }))
   .refine((q) => q.limit >= 1 && q.limit <= 20, {
     message: VALIDATION.OUT_OF_RANGE,
