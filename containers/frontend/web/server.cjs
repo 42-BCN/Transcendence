@@ -18,10 +18,16 @@ const httpsOptions = {
   cert: readFileSync(process.env.HTTPS_CERT_PATH || '/certs/localhost.crt'),
 };
 
-app.prepare().then(() => {
-  createServer(httpsOptions, (req, res) => {
-    handle(req, res);
-  }).listen(port, hostname, () => {
-    console.log(`Next.js HTTPS server running at https://${hostname}:${port}`);
+app
+  .prepare()
+  .then(() => {
+    createServer(httpsOptions, (req, res) => {
+      handle(req, res);
+    }).listen(port, hostname, () => {
+      console.log(`Next.js HTTPS server running at https://${hostname}:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Failed to prepare Next.js HTTPS server:', error);
+    process.exit(1);
   });
-});

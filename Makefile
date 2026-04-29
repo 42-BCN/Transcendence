@@ -260,4 +260,4 @@ storybook:
 	$(COMPOSE_DEV) --profile storybook up storybook
 
 storybook-build:
-	$(COMPOSE_DEV) run --rm frontend npm run build:storybook
+	$(COMPOSE_DEV) run --rm frontend npm run build-storybook

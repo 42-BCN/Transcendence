@@ -28,11 +28,17 @@ FROM base AS prod
 
 ENV NODE_ENV=production
 ENV API_BASE_URL=https://backend:4000
-ENV NEXT_PUBLIC_APP_URL=https://localhost:8443
-ENV NEXT_PUBLIC_API_BASE_URL=/api
-ENV NEXT_PUBLIC_SOCKET_URL=https://localhost:8443
-ENV NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
-RUN npm run build
+# Build-time arguments for NEXT_PUBLIC_* variables (inlined at build time, not configurable at runtime)
+ARG NEXT_PUBLIC_APP_URL=https://localhost:8443
+ARG NEXT_PUBLIC_API_BASE_URL=/api
+ARG NEXT_PUBLIC_SOCKET_URL=https://localhost:8443
+ARG NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
-CMD ["npm", "run", "start", "--", "--hostname", "0.0.0.0", "--port", "3000"]
+RUN NEXT_PUBLIC_APP_URL="$NEXT_PUBLIC_APP_URL" \
+    NEXT_PUBLIC_API_BASE_URL="$NEXT_PUBLIC_API_BASE_URL" \
+    NEXT_PUBLIC_SOCKET_URL="$NEXT_PUBLIC_SOCKET_URL" \
+    NEXT_PUBLIC_LOCALE_COOKIE_NAME="$NEXT_PUBLIC_LOCALE_COOKIE_NAME" \
+    npm run build
+
+CMD ["npm", "run", "start"]
