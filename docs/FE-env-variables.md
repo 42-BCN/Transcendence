@@ -36,7 +36,7 @@ NEXT_PUBLIC_API_BASE_URL=/api
 NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
 NODE_ENV=development
-API_BASE_URL=http://express:3000
+API_BASE_URL=https://express:3000
 ```
 
 Only non-secret values are allowed in the frontend container.
