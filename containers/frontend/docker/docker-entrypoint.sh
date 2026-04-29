@@ -1,23 +1,22 @@
 #!/bin/sh
+
 set -e
 
-echo "🚀 Starting Web Container..."
+echo "Starting Web Container..."
 
+if [ "$NODE_ENV" = "development" ]; then
+  if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
+    echo "Installing frontend dependencies..."
 
-if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
-  echo "📦 node_modules not found. Installing dependencies..."
-
-  if [ ! -f "package-lock.json" ]; then
-    echo "📝 No package-lock.json. Running npm install (bootstrap)..."
-    npm install
+    if [ ! -f "package-lock.json" ]; then
+      npm install
+    else
+      npm ci
+    fi
   else
-    echo "🔒 Using lockfile. Running npm ci..."
-    npm ci
+    echo "Dependencies already installed."
   fi
-
-else
-  echo "✅ Dependencies already installed."
 fi
 
-echo "▶️ Starting Next.js..."
+echo "Starting Next.js..."
 exec "$@"
