@@ -52,6 +52,12 @@ export type SearchUserResult = {
 
 export type SearchUsersOk = {
   users: SearchUserResult[];
+  meta: {
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+  };
 };
 
 export type SearchUsersResponse = ApiResponse<

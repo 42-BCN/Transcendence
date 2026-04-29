@@ -92,6 +92,7 @@ export async function selectUserMeProfileData(id: string): Promise<UserMeProfile
 export async function searchUsersByUsername(
   query: string,
   limit: number,
+  offset: number,
   currentUserId: string,
 ): Promise<UserSearchRow[]> {
   const sanitized = query.replace(/[%_\\]/g, '\\$&');
@@ -105,7 +106,24 @@ export async function searchUsersByUsername(
       CASE WHEN username ILIKE ${sanitized} THEN 0 ELSE 1 END,
       username ASC
     LIMIT ${limit}
+    OFFSET ${offset}
   `;
 
   return rows;
+}
+
+export async function countSearchUsersByUsername(
+  query: string,
+  currentUserId: string,
+): Promise<number> {
+  const sanitized = query.replace(/[%_\\]/g, '\\$&');
+
+  const result = await prisma.$queryRaw<{ count: bigint }[]>`
+    SELECT COUNT(*) as count
+    FROM users
+    WHERE username ILIKE ${'%' + sanitized + '%'}
+      AND id != ${currentUserId}::uuid
+  `;
+
+  return Number(result[0].count);
 }
