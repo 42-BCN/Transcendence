@@ -112,6 +112,7 @@ export async function searchUsersByUsername(
     WHERE u.username ILIKE ${'%' + sanitized + '%'}
       AND u.id != ${currentUserId}::uuid
     ORDER BY 
+      CASE WHEN u.username ILIKE ${sanitized} THEN 0 ELSE 1 END,
       CASE 
         WHEN f.status = 'accepted' THEN 1
         WHEN f.status = 'pending' THEN 2
