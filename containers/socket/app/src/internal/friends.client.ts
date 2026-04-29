@@ -1,3 +1,5 @@
+import { logEvents } from '../socket.logs';
+
 const BACKEND_URL = process.env.BACKEND_URL ?? 'https://backend:4000';
 
 export async function fetchAcceptedFriendIds(userId: string): Promise<string[]> {
@@ -15,7 +17,11 @@ export async function fetchAcceptedFriendIds(userId: string): Promise<string[]> 
     });
 
     if (!res.ok) {
-      console.warn('[friends.client] backend /internal/friends failed', res.status);
+      logEvents.warn({
+        event: 'fetch_accepted_friends_failed',
+        userId,
+        status: res.status,
+      });
       return [];
     }
 
@@ -26,7 +32,11 @@ export async function fetchAcceptedFriendIds(userId: string): Promise<string[]> 
 
     return body.data?.friendIds ?? [];
   } catch (error) {
-    console.error('[friends.client] error fetching friend ids', error);
+    logEvents.error({
+      event: 'fetch_accepted_friends_error',
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return [];
   }
 }

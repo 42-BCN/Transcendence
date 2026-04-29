@@ -53,7 +53,6 @@ export function handleInternalNotify(req: Request, res: Response): void {
     case friendshipSocketEvents.accepted:
       emitToUser(body.userId, body.event, body.payload);
       subscribeUserToFriendStatus(body.userId, body.payload.friendUserId);
-      subscribeUserToFriendStatus(body.payload.friendUserId, body.userId);
       break;
     case friendshipSocketEvents.rejected:
       emitToUser(body.userId, body.event, body.payload);
