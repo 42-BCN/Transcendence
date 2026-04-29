@@ -5,12 +5,12 @@ import { notFound } from 'next/navigation';
 
 interface OtherUserLayoutProps {
   children: ReactNode;
-  params: Promise<{ userId: string }>;
+  params: Promise<{ username: string }>;
 }
 
 export default async function OtherUserLayout({ children, params }: OtherUserLayoutProps) {
-  const { userId } = await params;
-  const data = await getPublicProfileAction(userId);
+  const { username } = await params;
+  const data = await getPublicProfileAction(username);
 
   if (!data?.ok) {
     return notFound();
@@ -20,10 +20,7 @@ export default async function OtherUserLayout({ children, params }: OtherUserLay
     <Stack className="p-5 pt-5 h-full" gap="md">
       <Stack direction="horizontal" gap="regular" align="center">
         <Avatar src={data.data.avatar} size="lg" />
-        <div>
-          <Text as="h2">{data.data.username}</Text>
-          {/* Aquí podríamos añadir el estado de amistad en el futuro */}
-        </div>
+        <Text as="h2">{data.data.username}</Text>
       </Stack>
       {children}
     </Stack>

@@ -27,16 +27,11 @@ export function UserItem({
       <Avatar src={avatarUrl} />
 
       <div className="flex-1 self-start">
-        <InternalLink href={`/other/${id}`} className="no-underline !text-inherit">
-          <Text variant="body-sm" as="p" className="font-bold">
+        <InternalLink href={`/other/${username}`} className="no-underline !text-inherit">
+          <Text variant="body-sm" className="font-bold">
             {username}
           </Text>
         </InternalLink>
-        {/* {subtitle && (
-          <Text variant="caption" as="p" color="tertiary">
-            {subtitle}
-          </Text>
-        )} */}
       </div>
 
       {children}

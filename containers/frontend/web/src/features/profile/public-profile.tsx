@@ -3,12 +3,12 @@ import { Text } from '@components';
 import { getPublicProfileAction } from './profile.action';
 
 interface PublicProfileProps {
-  userId: string;
+  username: string;
 }
 
-export async function PublicProfile({ userId }: PublicProfileProps) {
+export async function PublicProfile({ username }: PublicProfileProps) {
   const t = await getTranslations('features.profile');
-  const data = await getPublicProfileAction(userId);
+  const data = await getPublicProfileAction(username);
 
   if (!data?.ok) {
     return <div>{t('fail')}</div>;

@@ -1,11 +1,11 @@
 import { PublicProfile } from '@/features/profile/public-profile';
 
 interface OtherUserPageProps {
-  params: Promise<{ userId: string }>;
+  params: Promise<{ username: string }>;
 }
 
 export default async function OtherUserPage({ params }: OtherUserPageProps) {
-  const { userId } = await params;
+  const { username } = await params;
 
-  return <PublicProfile userId={userId} />;
+  return <PublicProfile username={username} />;
 }
