@@ -1,17 +1,31 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
 WORKDIR /app
-RUN apk add --no-cache bash tree coreutils
-COPY docker/.bashrc /root/.bashrc
-COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh	
 
-# Copy manifests for cache
-COPY app/package.json app/package-lock.json* ./
-RUN npm ci || npm install --legacy-peer-deps || true
+RUN apk add --no-cache bash tree coreutils curl
 
-# Copy app source into image (will be overridden by bind mount in dev)
-COPY app ./
+COPY socket/docker/.bashrc /root/.bashrc
+COPY socket/docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+COPY socket/app/package.json socket/app/package-lock.json* ./
+RUN npm ci
+
+COPY socket/app ./
+COPY contracts ./src/contracts
+
 EXPOSE 3100
+
 ENTRYPOINT ["docker-entrypoint.sh"]
+
+
+FROM base AS dev
+
 CMD ["npm", "run", "dev"]
+
+
+FROM base AS prod
+
+RUN npm run build
+
+CMD ["npm", "run", "start"]

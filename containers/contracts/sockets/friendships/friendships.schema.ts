@@ -6,6 +6,13 @@ export const friendshipSocketEvents = {
   rejected: 'friends:rejected',
 } as const;
 
+export const presenceSocketEvents = {
+  online: 'user:online',
+  away: 'user:away',
+  offline: 'user:offline',
+  active: 'user:active',
+} as const;
+
 export type FriendshipSocketEvent =
   (typeof friendshipSocketEvents)[keyof typeof friendshipSocketEvents];
 
@@ -51,8 +58,48 @@ export type FriendshipSocketPayloadByEvent = {
   >;
 };
 
+// ---------------------------------------------------------------------------
+// Presence schemas
+// ---------------------------------------------------------------------------
+
+export const PresenceOnlinePayloadSchema = z.strictObject({
+  userId: z.string().uuid(),
+  username: z.string().min(1),
+});
+
+export type PresenceOnlinePayload = z.infer<typeof PresenceOnlinePayloadSchema>;
+
+export const PresenceAwayPayloadSchema = z.strictObject({
+  userId: z.string().uuid(),
+});
+
+export type PresenceAwayPayload = z.infer<typeof PresenceAwayPayloadSchema>;
+
+export const PresenceOfflinePayloadSchema = z.strictObject({
+  userId: z.string().uuid(),
+});
+
+export type PresenceOfflinePayload = z.infer<typeof PresenceOfflinePayloadSchema>;
+
+// ---------------------------------------------------------------------------
+// Server -> Client events (friendship notifications + presence)
+// ---------------------------------------------------------------------------
+
 export type ServerToClientFriendshipEvents = {
   [K in FriendshipSocketEvent]: (payload: FriendshipSocketPayloadByEvent[K]) => void;
+} & {
+  [presenceSocketEvents.online]: (payload: PresenceOnlinePayload) => void;
+  [presenceSocketEvents.away]: (payload: PresenceAwayPayload) => void;
+  [presenceSocketEvents.offline]: (payload: PresenceOfflinePayload) => void;
+};
+
+// ---------------------------------------------------------------------------
+// Client -> Server events (presence signals)
+// ---------------------------------------------------------------------------
+
+export type ClientToServerFriendshipEvents = {
+  [presenceSocketEvents.away]: () => void;
+  [presenceSocketEvents.active]: () => void;
 };
 
 const FriendRequestNotifyBodySchema = z.strictObject({
@@ -86,3 +133,9 @@ export const FriendshipPresenceCheckBodySchema = z.strictObject({
 });
 
 export type FriendshipPresenceCheckBody = z.infer<typeof FriendshipPresenceCheckBodySchema>;
+
+export const FriendshipFriendsListBodySchema = z.strictObject({
+  userId: friendshipSocketUserIdSchema,
+});
+
+export type FriendshipFriendsListBody = z.infer<typeof FriendshipFriendsListBodySchema>;
