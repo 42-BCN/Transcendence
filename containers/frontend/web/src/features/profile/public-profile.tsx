@@ -15,5 +15,11 @@ export async function PublicProfile({ username }: PublicProfileProps) {
     return <div>{t('fail')}</div>;
   }
 
-  return <PublicProfileClient username={username} bio={data.data.bio} />;
+  return (
+    <PublicProfileClient
+      userId={data.data.id}
+      username={username}
+      bio={data.data.bio}
+    />
+  );
 }

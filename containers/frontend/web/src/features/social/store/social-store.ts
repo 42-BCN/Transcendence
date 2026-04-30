@@ -123,6 +123,17 @@ const handleAddPending =
     };
   };
 
+const handleRemoveFriend =
+  (id: string) =>
+  (state: SocialState): Partial<SocialState> => ({
+    friends: state.friends.filter((f) => f.id !== id),
+    searchResults: updateResults(
+      state.searchResults,
+      (item) => item.id === id || item.friendshipId === id,
+      (item) => ({ ...item, friendshipStatus: 'none', friendshipId: null, senderId: null }),
+    ),
+  });
+
 export function createSocialStore(initialData: SocialInitialData) {
   return createStore<SocialState>((set) => ({
     ...createInitialState(initialData),
@@ -133,6 +144,7 @@ export function createSocialStore(initialData: SocialInitialData) {
     setSearchResults: (searchResults) => set({ searchResults }),
     setSearchQuery: (searchQuery) => set({ searchQuery }),
     setCurrentUserId: (currentUserId) => set({ currentUserId }),
+    removeFriendById: (id) => set(handleRemoveFriend(id)),
     removePendingById: (list, id) => set(handleRemovePending(list, id)),
     acceptPendingById: (id) => set(handleAcceptPending(id)),
     addPendingRequest: (friendship, wasAutoAccepted) =>

@@ -43,6 +43,7 @@ export interface SocialState {
   setSearchResults: (results: GroupedSearchResults) => void;
   setSearchQuery: (query: string) => void;
   setCurrentUserId: (id: string | null) => void;
+  removeFriendById: (id: string) => void;
   removePendingById: (list: PendingListKey, id: string) => void;
   acceptPendingById: (id: string) => void;
   addPendingRequest: (friendship: FriendshipPublic, wasAutoAccepted?: boolean) => void;
