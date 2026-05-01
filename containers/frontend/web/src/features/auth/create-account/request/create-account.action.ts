@@ -5,7 +5,7 @@ import { getLocale } from 'next-intl/server';
 import { redirect } from '@/i18n/navigation';
 
 import type { SignupRes } from '@/contracts/api/auth/auth.contract';
-import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
+import { fetchServerAction } from '@/lib/http/fetcher.server';
 
 const SIGNUP_SUCCESS_COOKIE = 'signup_success';
 const PENDING_VERIFICATION_EMAIL_COOKIE = 'pending_verification_email';
@@ -15,19 +15,15 @@ export async function createAccountAction(_prevState: unknown, formData: FormDat
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
   const locale = await getLocale();
-  const result = await withServerAction(async () => {
-    const res = await fetchServer<SignupRes>(
-      '/auth/signup',
-      'POST',
-      {
-        email,
-        password,
-      },
-      { acceptLanguage: locale },
-    );
-
-    return res.data;
-  })();
+  const result = await fetchServerAction<SignupRes>(
+    '/auth/signup',
+    'POST',
+    {
+      email,
+      password,
+    },
+    { acceptLanguage: locale },
+  );
 
   if (!result.ok) return result;
 

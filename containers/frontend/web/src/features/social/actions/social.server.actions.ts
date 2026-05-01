@@ -1,8 +1,6 @@
 'use server';
 
-import { cookies } from 'next/headers';
-
-import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
+import { fetchServerAction } from '@/lib/http/fetcher.server';
 import type {
   GetFriendsListResponse,
   GetPendingRequestsResponse,
@@ -13,46 +11,19 @@ import type {
  * Fetches the current user's accepted friends list.
  */
 export async function getFriendsList() {
-  const cookie = (await cookies()).toString();
-  const result = await withServerAction(async () => {
-    const response = await fetchServer<GetFriendsListResponse>('/friends', 'GET', undefined, {
-      cookie,
-    });
-    return response.data;
-  })();
-  return result;
+  return fetchServerAction<GetFriendsListResponse>('/friends', 'GET');
 }
 
 /**
  * Fetches pending incoming friend requests.
  */
 export async function getPendingRequests() {
-  const cookie = (await cookies()).toString();
-  const result = await withServerAction(async () => {
-    const res = await fetchServer<GetPendingRequestsResponse>(
-      '/friends/requests/pending',
-      'GET',
-      undefined,
-      { cookie },
-    );
-    return res.data;
-  })();
-  return result;
+  return fetchServerAction<GetPendingRequestsResponse>('/friends/requests/pending', 'GET');
 }
 
 /**
  * Fetches friend requests sent by the current user.
  */
 export async function getSentRequests() {
-  const cookie = (await cookies()).toString();
-  const result = await withServerAction(async () => {
-    const res = await fetchServer<GetSentRequestsResponse>(
-      '/friends/requests/sent',
-      'GET',
-      undefined,
-      { cookie },
-    );
-    return res.data;
-  })();
-  return result;
+  return fetchServerAction<GetSentRequestsResponse>('/friends/requests/sent', 'GET');
 }

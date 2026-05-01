@@ -3,6 +3,7 @@ import type { HttpMethod } from './utils';
 import { envServer } from '../config/env.server';
 import { FALLBACK } from './fallback';
 import { parseJsonSafe } from './parse-json-safe';
+import { cookies } from 'next/headers';
 
 const API_BASE_URL = envServer.apiBaseUrl;
 
@@ -18,7 +19,7 @@ export function withServerAction<TArgs extends unknown[], TResult>(
       return await handler(...args);
     } catch (error) {
       console.error(error);
-      return FALLBACK as TResult;
+      return FALLBACK.data as TResult;
     }
   };
 }
@@ -51,4 +52,26 @@ export async function fetchServer<T>(
   }
 
   return { data: json as T, headers: res.headers, status: res.status };
+}
+
+type FetchServerActionOptions = {
+  acceptLanguage?: string;
+};
+
+export async function fetchServerAction<TResponse>(
+  endpoint: string,
+  method: HttpMethod,
+  data?: unknown,
+  opts?: FetchServerActionOptions,
+): Promise<TResponse> {
+  const cookie = (await cookies()).toString();
+
+  return withServerAction(async () => {
+    const response = await fetchServer<TResponse>(endpoint, method, data, {
+      cookie,
+      acceptLanguage: opts?.acceptLanguage,
+    });
+
+    return response.data;
+  })();
 }
