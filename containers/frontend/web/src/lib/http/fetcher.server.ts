@@ -19,7 +19,7 @@ export function withServerAction<TArgs extends unknown[], TResult>(
       return await handler(...args);
     } catch (error) {
       console.error(error);
-      return FALLBACK as TResult;
+      return FALLBACK.data as TResult;
     }
   };
 }
