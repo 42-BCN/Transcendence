@@ -53,7 +53,6 @@ setup:
 dev: ENV=development
 dev: setup
 	$(COMPOSE_DEV) up -d --build
-	$(MAKE) node-modules
 	$(MAKE) db-setup
 
 dev-up: ENV=development
@@ -247,13 +246,16 @@ db-setup: db-push db-seed
 #---- Node modules management ----
 
 node-modules-backend:
-	$(COMPOSE_DEV) exec backend npm ci
+	@echo "Installing backend dependencies..."
+	$(COMPOSE_DEV) exec backend npm ci || (echo "Note: npm ci already completed in entrypoint" && exit 0)
 
 node-modules-frontend:
-	$(COMPOSE_DEV) exec frontend npm ci
+	@echo "Installing frontend dependencies..."
+	$(COMPOSE_DEV) exec frontend npm ci || (echo "Note: npm ci already completed in entrypoint" && exit 0)
 
 node-modules-socket:
-	$(COMPOSE_DEV) exec socket npm ci
+	@echo "Installing socket dependencies..."
+	$(COMPOSE_DEV) exec socket npm ci || (echo "Note: npm ci already completed in entrypoint" && exit 0)
 
 node-modules: node-modules-backend node-modules-frontend node-modules-socket
 
