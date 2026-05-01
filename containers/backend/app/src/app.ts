@@ -11,6 +11,7 @@ import './auth/oauth/oauth.passport';
 import { authRouter } from './auth/auth.routes';
 import { friendsRouter } from './friendships/friendships.routes';
 import { handleInternalFriendsList } from './friendships/friendships.presence';
+import { authIpRateLimit } from './auth/auth.rate-limit';
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
@@ -59,7 +60,7 @@ app.get('/health', async (_req, res) => {
   }
 });
 app.use('/users', usersRouter);
-app.use('/auth', authRouter);
+app.use('/auth', authIpRateLimit, authRouter);
 app.use('/protected', protectedRouter);
 app.use('/friends', friendsRouter);
 

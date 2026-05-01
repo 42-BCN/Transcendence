@@ -10,3 +10,12 @@ export const recoveryRateLimit = createRateLimit({
     return typeof identifier === 'string' ? identifier : undefined;
   },
 });
+
+const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
+
+export const resetPasswordRateLimit = createRateLimit({
+  keyPrefix: AUTH_RATE_LIMIT_KEYS.resetPasswordToken,
+  max: 5,
+  windowMs: FIFTEEN_MINUTES_MS,
+  extractRaw: (req) => req.body?.token,
+});

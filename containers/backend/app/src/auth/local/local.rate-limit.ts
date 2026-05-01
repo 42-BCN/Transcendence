@@ -30,3 +30,17 @@ export const localLoginIpRateLimit = createRateLimit({
     return value.startsWith('::ffff:') ? value.slice(7) : value;
   },
 });
+
+export const guestSessionRateLimit = createRateLimit({
+  keyPrefix: AUTH_RATE_LIMIT_KEYS.guestSessionIp,
+  max: authSecurityConfig.rateLimit.guestSession.max,
+  windowMs: authSecurityConfig.rateLimit.guestSession.windowMs,
+  extractRaw: (req) => req.ip,
+});
+
+export const sessionIdentityRateLimit = createRateLimit({
+  keyPrefix: AUTH_RATE_LIMIT_KEYS.sessionIdentityIp,
+  max: authSecurityConfig.rateLimit.sessionFlow.max,
+  windowMs: authSecurityConfig.rateLimit.sessionFlow.windowMs,
+  extractRaw: (req) => req.ip,
+});

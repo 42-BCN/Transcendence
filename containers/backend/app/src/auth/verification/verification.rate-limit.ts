@@ -10,3 +10,10 @@ export const verificationResendEmailRateLimit = createRateLimit({
     return typeof email === 'string' ? email : undefined;
   },
 });
+
+export const verifyEmailRateLimit = createRateLimit({
+  keyPrefix: AUTH_RATE_LIMIT_KEYS.verifyEmailToken,
+  max: authSecurityConfig.rateLimit.tokenFlow.max,
+  windowMs: authSecurityConfig.rateLimit.tokenFlow.windowMs,
+  extractRaw: (req) => req.body?.token,
+});
