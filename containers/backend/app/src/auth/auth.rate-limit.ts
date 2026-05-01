@@ -6,6 +6,8 @@ import {
   type RateLimitOptions,
 } from '@shared/rate-limit';
 
+import { authSecurityConfig } from './security.config';
+
 type AuthRateLimitOptions = Omit<RateLimitOptions, 'onLimitExceeded'>;
 
 export const AUTH_RATE_LIMIT_KEYS = {
@@ -28,11 +30,12 @@ export function createRateLimit(options: AuthRateLimitOptions): RequestHandler {
   });
 }
 
-const ONE_MINUTE_MS = 60 * 1000;
-
 export const authIpRateLimit = createRateLimit({
   keyPrefix: AUTH_RATE_LIMIT_KEYS.authIp,
-  max: 30,
-  windowMs: ONE_MINUTE_MS,
-  extractRaw: (req) => req.ip,
+  max: authSecurityConfig.rateLimit.authIp.max,
+  windowMs: authSecurityConfig.rateLimit.authIp.windowMs,
+  extractRaw: (req) => {
+    const value = req.ip || req.socket.remoteAddress || 'unknown';
+    return value.startsWith('::ffff:') ? value.slice(7) : value;
+  },
 });

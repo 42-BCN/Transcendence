@@ -11,11 +11,12 @@ export const recoveryRateLimit = createRateLimit({
   },
 });
 
-const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
-
 export const resetPasswordRateLimit = createRateLimit({
   keyPrefix: AUTH_RATE_LIMIT_KEYS.resetPasswordToken,
-  max: 5,
-  windowMs: FIFTEEN_MINUTES_MS,
-  extractRaw: (req) => req.body?.token,
+  max: authSecurityConfig.rateLimit.tokenFlow.max,
+  windowMs: authSecurityConfig.rateLimit.tokenFlow.windowMs,
+  extractRaw: (req) => {
+    const token = req.body?.token;
+    return typeof token === 'string' ? token : undefined;
+  },
 });
