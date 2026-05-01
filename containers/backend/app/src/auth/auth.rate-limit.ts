@@ -1,4 +1,4 @@
-import type { RequestHandler } from 'express';
+import type { RequestHandler, Request } from 'express';
 
 import { ApiError } from '@shared';
 import {
@@ -9,6 +9,12 @@ import {
 import { authSecurityConfig } from './security.config';
 
 type AuthRateLimitOptions = Omit<RateLimitOptions, 'onLimitExceeded'>;
+
+export function extractRateLimitIp(req: Request): string {
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+
+  return ip.startsWith('::ffff:') ? ip.slice(7) : ip;
+}
 
 export const AUTH_RATE_LIMIT_KEYS = {
   authIp: 'rl:auth:ip',
@@ -34,8 +40,5 @@ export const authIpRateLimit = createRateLimit({
   keyPrefix: AUTH_RATE_LIMIT_KEYS.authIp,
   max: authSecurityConfig.rateLimit.authIp.max,
   windowMs: authSecurityConfig.rateLimit.authIp.windowMs,
-  extractRaw: (req) => {
-    const value = req.ip || req.socket.remoteAddress || 'unknown';
-    return value.startsWith('::ffff:') ? value.slice(7) : value;
-  },
+  extractRaw: extractRateLimitIp,
 });
