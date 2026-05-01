@@ -4,6 +4,9 @@ import type { pos, player, enemy, serverGameState, node, historyAction, abilityI
 
 const STATUS_TYPE = 0;
 const N_TURNS = 1;
+const OK = 0;
+const FALL = 1;
+const COLLISION = 2;
 
 export const gameState: serverGameState = {
   phase: 'PLAN',
@@ -200,15 +203,37 @@ export function addDisplaceHistory(cause: string, id: string, origin: string, po
   const [dx, dy, dz] = [Math.sign(pos.x - ox),
   Math.sign(pos.y - oy), Math.sign(pos.z - oz)];
   let x = pos.x, y = pos.y, z = pos.z;
+  let situation = OK;
+  let traveled = 0;
   for (let n = 1; n <= many; ++n) {
-    const nx = pos.x + n * dx;
-    const ny = pos.y + n * dy;
-    const nz = pos.z + n * dz;
-    if (!isOOB(nx, ny, nz) && !isBlockednc(id, nx, ny, nz) && hasFloor(nx, ny, nz))
-      [x, y, z] = [nx, ny, nz];
+    const nx = x + dx;
+    const nz = z + dz;
+
+    if (isOOB(nx, y, nz) || isBlockednc(id, nx, y, nz)) {
+      situation = COLLISION;
+      break;
+    }
+    else if (!hasFloor(nx, y, nz)) {
+      situation = FALL;
+      x = nx; z = nz;
+      traveled++;
+      break;
+    }
+
+    x = nx; z = nz;
+    traveled++;
   }
-  while (!hasFloor(x, y--, z));
-  moveClone(id, `${x},${y},${z}`, 0);
+  if (situation === FALL) {
+    let fallY = y - 1;
+    while (fallY > 0 && !hasFloor(x, fallY, z))
+      fallY--;
+    const fallDamage = (y - fallY);
+    // applyFallDamage(id, fallDamage);
+    y = fallY;
+  }
+  while (!hasFloor(x, --y, z));
+  // WARN: Move clone will cause some problems due to pathfinding
+  moveClone(id, `${x},${y},${z}`, 0, cause);
 }
 
 export function manageUndo(action: historyAction, deleted: Set<string>) {
@@ -298,8 +323,10 @@ export function takeAb(id: string, ab: abilityInfo, roll: number) {
   const hadStatus = Boolean(target.status);
   if (ab.effect && ab.effect[STATUS_TYPE] && !target.status) {
     target.status = ab.effect[STATUS_TYPE];
-    if (target.status !== 'push' && !hadStatus)
+    gameState.vfx.push(target.status);
+    if (target.status !== 'push' && !hadStatus) {
       target.statusTurns = Number(ab.effect[N_TURNS]);
+    }
   }
 }
 
@@ -360,9 +387,6 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
     const ent = gameState.players[id] || gameState.clones[id];
     ent.abilitiesCD[ability] = getAbility(ability)?.cd;
   }
-  // const deleted = new Set<string>()
-  // restructureHistory(who, deleted);
-  // gameState.history = gameState.history.filter((action) => !deleted.has(action.id));
   const actionNumber = gameState.history.reduce((count, action) => {
     return action.who === who ? count + 1 : count
   }, 1);
@@ -380,14 +404,14 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
   console.log("new history: ", gameState.history);
 }
 
-export function moveClone(id: string, tileId: string, dice: number) {
+export function moveClone(id: string, tileId: string, dice: number, cause: string | null = null) {
   const [x, y, z] = tileId.split(',').map(Number);
   const dest = { x, y: y + 1, z };
   const cloneId = `clone_${id}`;
   const source = gameState.players[id] || gameState.clones[`clone_${id}`];
   if (!source)
     return;
-  addHistory(id, "mov", tileId, dice);
+  addHistory(id, "mov", tileId, dice, null, cause);
   if (gameState.players[id]) {
     gameState.ghosts[id] = { ...gameState.players[id] };
     delete gameState.players[id];

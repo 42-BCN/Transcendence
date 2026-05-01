@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "next dev --turbopack --experimental-https --experimental-https-key /certs/localhost.key --experimental-https-cert /certs/localhost.crt --experimental-https-ca /certs/ca.pem",
     "build": "next build --turbopack",
-    "start": "next start",
+    "start": "node server.cjs",
     "lint": "eslint src scripts --cache",
     "lint:fix": "eslint src scripts --fix --cache",
     "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "clean": "rm -rf .next node_modules",
-    "component": "node scripts/create-component.mjs"
+    "component": "node scripts/create-component.mjs",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -33,12 +35,20 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^5.1.2",
     "@next/eslint-plugin-next": "^16.1.6",
+    "@storybook/addon-a11y": "^10.3.5",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/addon-onboarding": "^10.3.5",
+    "@storybook/addon-vitest": "^10.3.5",
+    "@storybook/nextjs-vite": "^10.3.5",
     "@types/node": "25.2.0",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
+    "@vitest/browser-playwright": "^4.1.5",
+    "@vitest/coverage-v8": "^4.1.5",
     "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
     "eslint": "^9.17.0",
@@ -46,12 +56,17 @@
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-storybook": "^10.3.5",
     "eslint-plugin-unicorn": "^56.0.0",
     "eslint-plugin-unused-imports": "^4.3.0",
+    "playwright": "^1.59.1",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
+    "storybook": "^10.3.5",
     "tailwindcss": "^3.4.17",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
   },
   "engines": {
     "node": ">=20.9.0"

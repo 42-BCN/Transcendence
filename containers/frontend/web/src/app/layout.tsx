@@ -1,19 +1,8 @@
 import type { ReactNode } from 'react';
-import { Montserrat, JetBrains_Mono } from 'next/font/google';
 import { getLocale } from 'next-intl/server';
+
+import { mono, primary } from './fonts';
 import './globals.css';
-
-const mono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-});
-
-export const primary = Montserrat({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-primary',
-  display: 'swap',
-});
 
 export const metadata = {
   title: 'untitled',

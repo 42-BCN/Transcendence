@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     env_file:
-      - ./database/docker/.env.development
+      - ./database/docker/.env.${APP_ENV:-development}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -26,43 +26,41 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+
   socket:
     build:
-      context: ./socket
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./socket/docker/Dockerfile
     working_dir: /app
     depends_on:
       backend:
         condition: service_healthy
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${NODE_ENV:-development}
       CERT_DIR: /certs
       NODE_EXTRA_CA_CERTS: /certs/ca.pem
       BACKEND_SESSION_IDENTITY_URL: https://backend:4000/auth/session/identity
-    volumes:
-      - ./socket/app:/app
-      - node_modules_socket:/app/node_modules
-      - ${CERT_DIR:-../certs}:/certs:ro
-      - ./contracts:/app/src/contracts
     networks:
       - edge
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./frontend/docker/Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://localhost:8443}
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/api}
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://localhost:8443}
+        NEXT_PUBLIC_LOCALE_COOKIE_NAME: ${NEXT_PUBLIC_LOCALE_COOKIE_NAME:-locale}
     working_dir: /app
     expose:
       - "3000"
     env_file:
-      - ./frontend/docker/.env.development
-    volumes:
-      - ./frontend/web:/app
-      - node_modules:/app/node_modules
-      - frontend_next_cache:/app/.next
-      - /app/dev
-      - ${CERT_DIR:-../certs}:/certs:ro
-      - ./contracts:/app/src/contracts:ro
+      - ./frontend/docker/.env.${APP_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      NODE_EXTRA_CA_CERTS: /certs/ca.pem
+      API_BASE_URL: https://backend:4000
     depends_on:
       backend:
         condition: service_healthy
@@ -84,8 +82,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./backend/docker/Dockerfile
     working_dir: /app
     expose:
       - "4000"
@@ -94,18 +92,16 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    env_file:
+      - ./backend/docker/.env.${APP_ENV:-development}
     environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       REDIS_URL: redis://redis:6379
       SOCKET_SERVICE_URL: https://socket:3100
       CERT_DIR: /certs
       NODE_EXTRA_CA_CERTS: /certs/ca.pem
-    env_file:
-      - ./backend/docker/.env.development
-    volumes:
-      - ./backend/app:/app
-      - node_modules_backend:/app/node_modules
-      - ${CERT_DIR:-../certs}:/certs:ro
-      - ./contracts:/app/src/contracts
     networks:
       - backend
       - edge
@@ -128,7 +124,7 @@ services:
     ports:
       - "8443:443"
     env_file:
-      - ./nginx/.env.development
+      - ./nginx/.env.${APP_ENV:-development}
     volumes:
       - ./nginx:/etc/nginx
       - ${CERT_DIR:-../certs}:/etc/nginx/certs:ro
@@ -147,12 +143,5 @@ networks:
   edge:
 
 volumes:
-  node_modules:
-  node_modules_backend:
-  node_modules_socket:
-  frontend_next_cache:
   postgres_data:
   redis_data:
-# - [ ] not using container-name for services to avoid conflicts when multiple projects are run on the same host
-# networks are not defined to use default bridge network
-

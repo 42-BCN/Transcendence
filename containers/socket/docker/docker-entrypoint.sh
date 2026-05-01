@@ -1,23 +1,22 @@
 #!/bin/sh
+
 set -e
 
-echo "🚀 Starting Socket Container..."
+echo "Starting Socket Container..."
 
+if [ "$NODE_ENV" = "development" ]; then
+  if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
+    echo "Installing socket dependencies..."
 
-if [ ! -d "node_modules" ] || [ -z "$(ls -A node_modules 2>/dev/null)" ]; then
-  echo "📦 node_modules not found. Installing dependencies..."
-
-  if [ ! -f "package-lock.json" ]; then
-    echo "📝 No package-lock.json. Running npm install (bootstrap)..."
-    npm install
+    if [ ! -f "package-lock.json" ]; then
+      npm install
+    else
+      npm ci
+    fi
   else
-    echo "🔒 Using lockfile. Running npm ci..."
-    npm ci
+    echo "Dependencies already installed."
   fi
-
-else
-  echo "✅ Dependencies already installed."
 fi
 
-echo "▶️ Starting Socket.io..."
+echo "Starting Socket.io..."
 exec "$@"

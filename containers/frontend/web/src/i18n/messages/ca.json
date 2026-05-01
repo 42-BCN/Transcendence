@@ -11,24 +11,24 @@
       "me": "El Meu Compte",
       "reset-password": "Restablir Contrasenya"
     },
+    "footer": {
+      "appName": "Transcendence",
+      "copyright": "© {year} {appName}. Tots els drets reservats",
+      "github": "GitHub",
+      "privacy": "Política de Privacitat",
+      "terms": "Termes de Servei"
+    },
     "localeSwitcher": {
       "ariaLabel": "Idioma",
+      "ca": "CA",
       "en": "EN",
-      "es": "ES",
-      "ca": "CA"
+      "es": "ES"
     },
     "submitButton": {
       "pendingLabel": "CHANGE_LATER"
     },
     "textAreaField": {
       "characterCount": "{current} de {max} caràcters"
-    },
-    "footer": {
-      "appName": "Transcendence",
-      "privacy": "Política de Privacitat",
-      "terms": "Termes de Servei",
-      "github": "GitHub",
-      "copyright": "© {year} {appName}. Tots els drets reservats"
     }
   },
   "layouts": {
@@ -39,457 +39,318 @@
   },
   "pages": {
     "home": {
-      "title": "Hola des de Next en Docker 👋",
-      "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen."
-    },
-    "notFound": {
-      "title": "Pàgina no trobada",
-      "description": "La pàgina que busques no existeix.",
-      "backToHome": "Torna a l'inici"
+      "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen.",
+      "title": "Hola des de Next en Docker 👋"
     },
     "me": {
-      "title": "El Meu Compte",
-      "subtitle": "Accedeix a les dades protegides del teu compte."
+      "subtitle": "Accedeix a les dades protegides del teu compte.",
+      "title": "El Meu Compte"
+    },
+    "notFound": {
+      "backToHome": "Torna a l'inici",
+      "description": "La pàgina que busques no existeix.",
+      "title": "Pàgina no trobada"
     },
     "privacy": {
-      "title": "Política de Privacitat",
-      "lastUpdated": "Última actualització: Abril 2026",
-      "intro": "A Transcendence, valorem la teva privacitat. Aquesta política descriu quines dades recopilem, com les fem servir, com les emmagatzemem i quins drets tens sobre la teva informació personal.",
+      "contact": {
+        "description": "Si tens alguna pregunta sobre aquesta política o desitges exercir els teus drets, si us plau, contacta amb l'equip de desenvolupament a través del nostre <link>repositori de GitHub</link>.",
+        "title": "Contacte"
+      },
       "dataCollected": {
-        "title": "Dades Recopilades",
         "description": "Quan fas servir la nostra plataforma, podem recopilar la següent informació:",
         "items": {
           "email": "Adreça de correu electrònic (utilitzada per al registre i l'autenticació)",
-          "username": "Nom d'usuari (escollit per tu per identificar-te al joc)",
+          "technical": "Dades tècniques (tipus de navegador, informació del dispositiu i adreça IP amb fins de seguretat)",
           "usage": "Dades d'ús (historial de partides, puntuacions i registres d'interacció)",
-          "technical": "Dades tècniques (tipus de navegador, informació del dispositiu i adreça IP amb fins de seguretat)"
-        }
+          "username": "Nom d'usuari (escollit per tu per identificar-te al joc)"
+        },
+        "title": "Dades Recopilades"
       },
       "dataUsage": {
-        "title": "Com Fem Servir les Teves Dades",
         "description": "Les dades que recopilem s'utilitzen exclusivament per als següents fins:",
         "items": {
           "account": "Gestió de comptes i autenticació",
+          "communication": "Enviar comunicacions necessàries relacionades amb el teu compte",
           "gameplay": "Proporcionar l'experiència de joc i funcions socials",
-          "improvement": "Millorar i optimitzar la plataforma",
-          "communication": "Enviar comunicacions necessàries relacionades amb el teu compte"
-        }
+          "improvement": "Millorar i optimitzar la plataforma"
+        },
+        "title": "Com Fem Servir les Teves Dades"
       },
-      "storage": {
-        "title": "Emmagatzematge i Seguretat de Dades",
-        "description": "Les teves dades s'emmagatzemen de forma segura als nostres servidors. Implementem mesures de seguretat estàndard de la indústria, incloent connexions xifrades (HTTPS), hash segur de contrasenyes i auditories de seguretat regulars. Conservem les teves dades només mentre el teu compte estigui actiu o segons sigui necessari per proporcionar-te els nostres serveis."
-      },
+      "intro": "A Transcendence, valorem la teva privacitat. Aquesta política descriu quines dades recopilem, com les fem servir, com les emmagatzemem i quins drets tens sobre la teva informació personal.",
+      "lastUpdated": "Última actualització: Abril 2026",
       "rights": {
-        "title": "Els Teus Drets",
         "description": "Com a usuari, tens els següents drets sobre les teves dades personals:",
         "items": {
           "access": "Dret a accedir a les teves dades personals",
-          "rectification": "Dret a corregir dades inexactes",
           "deletion": "Dret a sol·licitar l'eliminació de les teves dades",
-          "portability": "Dret a la portabilitat de dades"
-        }
-      },
-      "contact": {
-        "title": "Contacte",
-        "description": "Si tens alguna pregunta sobre aquesta política o desitges exercir els teus drets, si us plau, contacta amb l'equip de desenvolupament a través del nostre <link>repositori de GitHub</link>."
-      }
-    },
-    "ui": {
-      "index": {
-        "controlComponents": "Components de control",
-        "buttons": "Botons",
-        "input": "Entrada",
-        "sampleButtonText": "Hola",
-        "links": {
-          "chat": "Xat",
-          "glassCard": "Targeta de vidre",
-          "glassCardAnimated": "Targeta de vidre animada",
-          "glassCardAnimatedV2": "Targeta de vidre animada V2",
-          "glassCardAnimatedV3": "Targeta de vidre animada V3",
-          "messageBubble": "Bombolla de missatge",
-          "meter": "Mesurador",
-          "scrollArea": "Àrea de desplaçament",
-          "textArea": "Àrea de text",
-          "tabsDisclosure": "Pestanyes i Acordions",
-          "themeTest": "Prova del tema",
-          "typography": "Tipografia",
-          "social": "Social"
+          "portability": "Dret a la portabilitat de dades",
+          "rectification": "Dret a corregir dades inexactes"
         },
-        "viewerTitles": {
-          "buttonPrimitive": "Botó primitiu",
-          "ariaButton": "Botó Aria",
-          "uiButton": "Botó UI",
-          "inputPrimitive": "Input primitiu",
-          "ariaInput": "Input Aria",
-          "uiInput": "Input UI"
-        }
+        "title": "Els Teus Drets"
       },
-      "glassCard": {
-        "title": "Targeta de Glassmorphism",
-        "cardTitle": "Glassmorphism",
-        "description": "Un component de targeta glassmorphic que utilitza filtres de fons, vores transparents i ombres subtils per integrar-se amb fons texturitzats.",
-        "cta": "Començar"
+      "storage": {
+        "description": "Les teves dades s'emmagatzemen de forma segura als nostres servidors. Implementem mesures de seguretat estàndard de la indústria, incloent connexions xifrades (HTTPS), hash segur de contrasenyes i auditories de seguretat regulars. Conservem les teves dades només mentre el teu compte estigui actiu o segons sigui necessari per proporcionar-te els nostres serveis.",
+        "title": "Emmagatzematge i Seguretat de Dades"
       },
-      "glassCardAnimated": {
-        "title": "Provant la saturació",
-        "descriptionPrefix": "Aquesta targeta utilitza",
-        "highlight": "backdrop-saturate",
-        "descriptionSuffix": "Les esferes de llum guanyen més vida i color en passar darrere del vidre.",
-        "activate": "Activar"
-      },
-      "glassCardAnimatedV2": {
-        "title": "Reflex dinàmic",
-        "descriptionPrefix": "Aquí les esferes",
-        "highlight": "es mouen darrere del vidre",
-        "descriptionSuffix": "El color flueix i es refracta suaument en travessar les vores.",
-        "option1": "Opció 1",
-        "option2": "Opció 2",
-        "option3": "Opció 3"
-      },
-      "glassCardAnimatedV3": {
-        "title": "Esferes sòlides",
-        "descriptionPrefix": "Aquí les esferes són",
-        "highlight": "100% sòlides",
-        "descriptionMiddle": "Tota la distorsió ve exclusivament del vidre.",
-        "nestedPrefix": "Exemple d'un component glass imbricat:",
-        "activate": "Activar"
-      },
-      "textArea": {
-        "title": "Component d'àrea de text",
-        "ariaLabel": "Missatge"
-      },
-      "typography": {
-        "caption": "Text de peu utilitzat per a informació de suport o metadades.",
-        "bodyXs": "Text de cos extra petit útil per a interfícies denses amb espai limitat.",
-        "bodySm": "El text de cos petit sovint apareix en descripcions secundàries, pistes o contingut d'ajuda.",
-        "body": "Aquest paràgraf mostra l'estil de cos per defecte. És intencionadament més llarg per avaluar la llegibilitat, el ritme i la llargada de línia del sistema tipogràfic. Quan el text s'estén massa a la pantalla, llegir es fa més difícil, per això limitar la mesura millora la lectura.",
-        "bodyLg": "El text de cos gran funciona bé per a paràgrafs introductoris o descripcions destacades que necessiten més èmfasi sense convertir-se en un títol.",
-        "headingSm": "Estil de títol petit renderitzat com a paràgraf per a proves visuals.",
-        "headingMd": "Estil de títol mitjà renderitzat com a paràgraf per a inspecció.",
-        "headingLg": "Estil de títol gran renderitzat com a paràgraf.",
-        "headingXl": "Estil de títol extra gran renderitzat com a contingut de paràgraf.",
-        "code": "const message = \"Text d'estil codi renderitzat en un paràgraf.\";"
-      },
-      "messageBubble": {
-        "title": "Bombolla de missatge",
-        "userOne": "John Doe",
-        "userTwo": "Jane Doe",
-        "messageOne": "Hola! El meu nom és ...",
-        "messageTwo": "Hola! Això és una prova de previsualització de missatge"
-      },
-      "meter": {
-        "title": "Mesurador",
-        "label": "HP"
-      },
-      "themeTest": {
-        "title": "Pàgina de prova de tema",
-        "description": "Aquesta pàgina demostra la implementació del mode clar/fosc. Tots els colors utilitzen variables CSS sincronitzades amb Tailwind.",
-        "secondaryBackground": "Fons secundari",
-        "secondaryBackgroundDescription": "Aquesta targeta utilitza `bg-bg-secondary`. S'hauria de veure lleugerament diferent del fons principal en tots dos modes.",
-        "textVariants": "Variants de text",
-        "primaryText": "Text principal",
-        "secondaryText": "Text secundari",
-        "tertiaryText": "Text terciari",
-        "disabledText": "Text deshabilitat"
-      },
-      "tabsDisclosure": {
-        "title": "Components de Navegació",
-        "description": "Demostració tècnica de Tabs i Disclosure (Acordions).",
-        "tabs": {
-          "sectionsLabel": "Seccions socials",
-          "friends": "Amics",
-          "requests": "Sol·licituds"
-        },
-        "disclosure": {
-          "friendsOnline": "Amics connectats (12)",
-          "friendsOffline": "Amics desconnectats (30)",
-          "received": "Rebudes (5)",
-          "sent": "Enviades (10)",
-          "friendsListHint": "Llista d'amics simplificada...",
-          "receivedHint": "Sol·licituds entrants arribades recentment.",
-          "sentHint": "Sol·licituds que tu has enviat a altres usuaris.",
-          "statusOnline": "(Connectat)",
-          "statusOffline": "(Desconnectat)"
-        }
-      },
-      "scrollArea": {
-        "title": "Àrea de desplaçament",
-        "description": "Aquest component és un div que ocupa una alçada del 100% i crea una àrea de desplaçament.",
-        "example": "Exemple",
-        "itemLabel": "Element"
-      },
-      "social": {
-        "title": "Prova de Components Socials",
-        "description": "Provant primitius d'Avatar i compostos d'UserItem.",
-        "avatarsTitle": "1. Mides d'Avatar i Imatge per Defecte",
-        "avatarSizes": {
-          "sm": "Petit",
-          "md": "Mitjà",
-          "lg": "Gran",
-          "fallback": "Per Defecte"
-        },
-        "userItemsTitle": "2. Variants d'UserItem",
-        "socialListLabel": "Exemples de Llistes Socials",
-        "status": {
-          "online": "En línia",
-          "sent": "Enviat fa 2 dies"
-        },
-        "actions": {
-          "playGame": "Jugar",
-          "sendMessage": "Enviar Missatge",
-          "acceptRequest": "Acceptar Sol·licitud",
-          "rejectRequest": "Rebutjar Sol·licitud",
-          "addFriend": "Afegir Amic"
-        }
-      }
+      "title": "Política de Privacitat"
     },
     "terms": {
-      "title": "Termes de Servei",
-      "lastUpdated": "Última actualització: Abril 2026",
-      "intro": "Benvingut a Transcendence. L'ús d'aquesta plataforma està subjecte als següents Termes de Servei, que regeixen la relació entre tu i l'equip de desenvolupament.",
       "acceptance": {
-        "title": "Acceptació dels Termes",
-        "description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma."
-      },
-      "registration": {
-        "title": "Registre de Compte",
-        "description": "Ets responsable de mantenir la confidencialitat de les teves credencials i de totes les activitats que es produeixin sota el teu compte.",
-        "items": {
-          "security": "Ens has de notificar immediatament qualsevol ús no autoritzat del teu compte.",
-          "accuracy": "Acceptes proporcionar informació precisa i completa durant el registre."
-        }
+        "description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma.",
+        "title": "Acceptació dels Termes"
       },
       "conduct": {
-        "title": "Conducta de l'Usuari",
         "description": "Per mantenir un entorn just, respectuós i divertit, et compromets a no:",
         "items": {
           "cheating": "Utilitzar trampes, programari d'automatització (bots) o hacks per obtenir avantatge.",
-          "harassment": "Assetjar, abusar o participar en conductes que danyin la comunitat o altres jugadors.",
-          "disruption": "Intentar interrompre la integritat o seguretat dels nostres servidors."
-        }
-      },
-      "ip": {
-        "title": "Propietat Intel·lectual",
-        "description": "Tot el contingut, incloent el codi del joc, gràfics i marques registrades, és propietat de Transcendence. Atorguem una llicència limitada i no transferible per a ús personal i no comercial."
-      },
-      "disclaimer": {
-        "title": "Exempció de responsabilitat",
-        "description": "Transcendence és un projecte educatiu i comunitari. En conseqüència, el servei es proporciona tal com està i segons disponibilitat. No garantim que el servei sigui ininterromput, puntual, segur o lliure d'errors."
-      },
-      "termination": {
-        "title": "Cancel·lació",
-        "description": "Ens reservem el dret de suspendre o tancar el teu compte a la nostra discreció, sense previ avís, per conductes que considerem que violen aquests Termes o que resultin perjudicials per a altres usuaris o el projecte."
-      },
-      "law": {
-        "title": "Llei Aplicable",
-        "description": "Aquests Termes es regeixen i interpreten d'acord amb les lleis aplicables als serveis digitals dins de l'àmbit de jurisdicció d'aquest projecte."
+          "disruption": "Intentar interrompre la integritat o seguretat dels nostres servidors.",
+          "harassment": "Assetjar, abusar o participar en conductes que danyin la comunitat o altres jugadors."
+        },
+        "title": "Conducta de l'Usuari"
       },
       "contact": {
-        "title": "Contacte",
-        "description": "Si tens preguntes o desitges exercir qualsevol dret relacionat amb aquests Termes, si us plau, contacta amb l'equip obrint una incidència en el nostre <link>repositori de GitHub</link>."
-      }
+        "description": "Si tens preguntes o desitges exercir qualsevol dret relacionat amb aquests Termes, si us plau, contacta amb l'equip obrint una incidència en el nostre <link>repositori de GitHub</link>.",
+        "title": "Contacte"
+      },
+      "disclaimer": {
+        "description": "Transcendence és un projecte educatiu i comunitari. En conseqüència, el servei es proporciona tal com està i segons disponibilitat. No garantim que el servei sigui ininterromput, puntual, segur o lliure d'errors.",
+        "title": "Exempció de responsabilitat"
+      },
+      "intro": "Benvingut a Transcendence. L'ús d'aquesta plataforma està subjecte als següents Termes de Servei, que regeixen la relació entre tu i l'equip de desenvolupament.",
+      "ip": {
+        "description": "Tot el contingut, incloent el codi del joc, gràfics i marques registrades, és propietat de Transcendence. Atorguem una llicència limitada i no transferible per a ús personal i no comercial.",
+        "title": "Propietat Intel·lectual"
+      },
+      "lastUpdated": "Última actualització: Abril 2026",
+      "law": {
+        "description": "Aquests Termes es regeixen i interpreten d'acord amb les lleis aplicables als serveis digitals dins de l'àmbit de jurisdicció d'aquest projecte.",
+        "title": "Llei Aplicable"
+      },
+      "registration": {
+        "description": "Ets responsable de mantenir la confidencialitat de les teves credencials i de totes les activitats que es produeixin sota el teu compte.",
+        "items": {
+          "accuracy": "Acceptes proporcionar informació precisa i completa durant el registre.",
+          "security": "Ens has de notificar immediatament qualsevol ús no autoritzat del teu compte."
+        },
+        "title": "Registre de Compte"
+      },
+      "termination": {
+        "description": "Ens reservem el dret de suspendre o tancar el teu compte a la nostra discreció, sense previ avís, per conductes que considerem que violen aquests Termes o que resultin perjudicials per a altres usuaris o el projecte.",
+        "title": "Cancel·lació"
+      },
+      "title": "Termes de Servei"
     }
   },
   "features": {
     "auth": {
+      "actions": {
+        "continueWithGoogle": "Continuar amb Google",
+        "login": "Iniciar sessió",
+        "logoutAriaLabel": "Tancar sessió",
+        "resendEmail": "Tornar a enviar el correu",
+        "sendEmail": "Enviar correu electrònic",
+        "signup": "Crear compte"
+      },
+      "changePassword": {
+        "description": "Introdueix la teva contrasenya actual i tria'n una de nova.",
+        "submit": "Desa els canvis",
+        "success": "La contrasenya s'ha actualitzat correctament.",
+        "title": "Canvia la contrasenya"
+      },
       "fields": {
-        "identifier": {
-          "label": "Correu o nom d'usuari",
-          "placeholder": "nom@exemple.com o usuari",
-          "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar."
-        },
-        "email": {
-          "label": "Correu electrònic",
-          "placeholder": "nom@exemple.com"
-        },
-        "username": {
-          "label": "Nom d'usuari",
-          "placeholder": "el_teu_usuari"
-        },
-        "password": {
-          "label": "Contrasenya",
-          "placeholder": "Introdueix la teva contrasenya",
-          "description": "Mínim 8 caràcters."
+        "confirmPassword": {
+          "label": "Confirmar contrasenya",
+          "placeholder": "Torna a introduir la teva contrasenya"
         },
         "currentPassword": {
           "label": "Contrasenya actual",
           "placeholder": "Introdueix la teva contrasenya actual"
         },
-        "newPassword": {
-          "label": "Contrasenya nova",
-          "placeholder": "Introdueix la teva contrasenya nova",
-          "description": "Mínim 8 caràcters."
+        "email": {
+          "label": "Correu electrònic",
+          "placeholder": "nom@exemple.com"
         },
-        "confirmPassword": {
-          "label": "Confirmar contrasenya",
-          "placeholder": "Torna a introduir la teva contrasenya"
+        "identifier": {
+          "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar.",
+          "label": "Correu o nom d'usuari",
+          "placeholder": "nom@exemple.com o usuari"
+        },
+        "newPassword": {
+          "description": "Mínim 8 caràcters.",
+          "label": "Contrasenya nova",
+          "placeholder": "Introdueix la teva contrasenya nova"
+        },
+        "password": {
+          "description": "Mínim 8 caràcters.",
+          "label": "Contrasenya",
+          "placeholder": "Introdueix la teva contrasenya"
+        },
+        "username": {
+          "label": "Nom d'usuari",
+          "placeholder": "el_teu_usuari"
         }
       },
-      "actions": {
-        "login": "Iniciar sessió",
-        "signup": "Crear compte",
-        "continueWithGoogle": "Continuar amb Google",
-        "sendEmail": "Enviar correu electrònic",
-        "resendEmail": "Tornar a enviar el correu",
-        "logoutAriaLabel": "Tancar sessió"
-      },
       "login": {
-        "title": "Iniciar sessió",
-        "submit": "Iniciar sessió",
         "forgotPassword": "Has oblidat la contrasenya?",
+        "goToSignup": "Crear-ne un",
         "noAccount": "No tens compte?",
-        "goToSignup": "Crear-ne un"
-      },
-      "signup": {
-        "title": "Crear compte",
-        "privacy": {
-          "label": "He llegit i accepto la <link>Política de Privacitat</link>",
-          "error": "Has d'acceptar la Política de Privacitat per continuar."
-        },
-        "haveAccount": "Ja tens compte?",
-        "goToLogin": "Iniciar sessió"
-      },
-      "verification": {
-        "title": "Verifica el teu correu electrònic",
-        "sent": "T'hem enviat un correu per confirmar el teu compte.",
-        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
-        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
-        "verifying": "Verificant el teu correu...",
-        "verified": "Correu verificat. Redirigint al teu perfil...",
-        "missingToken": "Falta el token de verificació.",
-        "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
-        "resending": "Enviant...",
-        "isConfirmed": "Ja has confirmat?",
-        "backToLogin": "Iniciar sessió",
-        "recoverTitle": "Recuperar compte",
-        "resendTitle": "Torna a enviar el correu de verificació",
-        "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte."
-      },
-      "recover": {
-        "title": "Revisa el teu correu",
-        "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
-        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
-        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
-        "rememberedPassword": "Has recordat la teva contrasenya?",
-        "backToLogin": "Torna a iniciar sessió"
-      },
-      "reset": {
-        "title": "Restableix la contrasenya",
-        "description": "Introdueix la teva nova contrasenya.",
-        "submit": "Desa la contrasenya nova",
-        "success": "La contrasenya s'ha actualitzat correctament.",
-        "rememberedPassword": "Has recordat la contrasenya?",
-        "backToLogin": "Torna a iniciar sessió"
-      },
-      "changePassword": {
-        "title": "Canvia la contrasenya",
-        "description": "Introdueix la teva contrasenya actual i tria'n una de nova.",
-        "submit": "Desa els canvis",
-        "success": "La contrasenya s'ha actualitzat correctament."
+        "submit": "Iniciar sessió",
+        "title": "Iniciar sessió"
       },
       "messages": {
         "or": "O",
         "success": "Correu enviat. Espera per tornar-ho a intentar."
+      },
+      "recover": {
+        "backToLogin": "Torna a iniciar sessió",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
+        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "rememberedPassword": "Has recordat la teva contrasenya?",
+        "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
+        "title": "Revisa el teu correu"
+      },
+      "reset": {
+        "backToLogin": "Torna a iniciar sessió",
+        "description": "Introdueix la teva nova contrasenya.",
+        "rememberedPassword": "Has recordat la contrasenya?",
+        "submit": "Desa la contrasenya nova",
+        "success": "La contrasenya s'ha actualitzat correctament.",
+        "title": "Restableix la contrasenya"
+      },
+      "signup": {
+        "goToLogin": "Iniciar sessió",
+        "haveAccount": "Ja tens compte?",
+        "privacy": {
+          "error": "Has d'acceptar la Política de Privacitat per continuar.",
+          "label": "He llegit i accepto la <link>Política de Privacitat</link>"
+        },
+        "title": "Crear compte"
+      },
+      "verification": {
+        "backToLogin": "Iniciar sessió",
+        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
+        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
+        "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
+        "isConfirmed": "Ja has confirmat?",
+        "missingToken": "Falta el token de verificació.",
+        "recoverTitle": "Recuperar compte",
+        "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte.",
+        "resending": "Enviant...",
+        "resendTitle": "Torna a enviar el correu de verificació",
+        "sent": "T'hem enviat un correu per confirmar el teu compte.",
+        "title": "Verifica el teu correu electrònic",
+        "verified": "Correu verificat. Redirigint al teu perfil...",
+        "verifying": "Verificant el teu correu..."
       }
-    },
-    "navigation": {
-      "home": "Inici",
-      "createAccount": "Crear compte",
-      "login": "Iniciar sessió",
-      "menu": "Menú",
-      "mainAriaLabel": "Navegació principal",
-      "ui": "UI",
-      "game": "Joc",
-      "profile": "Perfil",
-      "logout": "Tancar sessió",
-      "settings": "Configuració"
     },
     "chat": {
+      "hideChat": "Amaga el xat",
       "messageAriaLabel": "Missatge",
-      "showChat": "Mostra el xat",
-      "hideChat": "Amaga el xat"
+      "showChat": "Mostra el xat"
     },
     "game": {
-      "resetPlan": "Reiniciar pla",
       "endTurn": "Acabar torn",
-      "healthLabel": "HP"
+      "healthLabel": "HP",
+      "resetPlan": "Reiniciar pla"
     },
-    "settings": {
-      "theme": "Tema",
-      "language": "Idioma",
-      "dark": "Fosc",
-      "light": "Clar"
+    "navigation": {
+      "createAccount": "Crear compte",
+      "game": "Joc",
+      "home": "Inici",
+      "login": "Iniciar sessió",
+      "logout": "Tancar sessió",
+      "mainAriaLabel": "Navegació principal",
+      "menu": "Menú",
+      "profile": "Perfil",
+      "settings": "Configuració",
+      "ui": "UI"
     },
     "profile": {
-      "fail": "No s'ha pogut carregar el teu perfil.",
-      "userId": "ID d'usuari",
-      "username": "Nom d'usuari",
       "bio": "Biografia",
-      "provider": "Proveïdor"
+      "fail": "No s'ha pogut carregar el teu perfil.",
+      "provider": "Proveïdor",
+      "userId": "ID d'usuari",
+      "username": "Nom d'usuari"
+    },
+    "settings": {
+      "dark": "Fosc",
+      "language": "Idioma",
+      "light": "Clar",
+      "theme": "Tema"
     },
     "social": {
-      "title": "Social",
-      "searchPlaceholder": "Cerca entre els teus amics o afegeix-ne de nous",
-      "searchLabel": "Cercar usuaris",
-      "friends": {
-        "title": "Amics",
-        "online": "Amics connectats",
-        "offline": "Amics desconnectats"
-      },
-      "requests": {
-        "title": "Sol·licituds",
-        "received": "Rebudes",
-        "sent": "Enviades"
+      "actions": {
+        "accept": "Acceptar",
+        "addFriend": "Afegir amic",
+        "cancel": "Cancel·lar",
+        "chat": "Chat",
+        "inviteToGame": "Convidar a partida",
+        "reject": "Rebutjar"
       },
       "emptyStates": {
-        "online": "No hi ha amics connectats",
         "offline": "No hi ha amics desconnectats",
+        "online": "No hi ha amics connectats",
+        "pending": "No has enviat sol·licituds",
         "request": "No tens sol·licituds pendents",
-        "pending": "No has enviat sol·licituds"
+        "search": "No s’han trobat usuaris"
       },
-      "actions": {
-        "inviteToGame": "Convidar a partida",
-        "chat": "Chat",
-        "reject": "Rebutjar",
-        "accept": "Acceptar",
-        "cancel": "Cancel·lar"
-      }
+      "friends": {
+        "offline": "Amics desconnectats",
+        "online": "Amics connectats",
+        "title": "Amics"
+      },
+      "guest": {
+        "body": "Per trobar amics, veure qui està connectat i jugar, necessites un compte.",
+        "login": "Iniciar sessió",
+        "noAccount": "No tens compte?",
+        "signup": "Crear-ne un",
+        "title": "Connecta amb la comunitat"
+      },
+      "requests": {
+        "received": "Rebudes",
+        "sent": "Enviades",
+        "title": "Sol·licituds"
+      },
+      "searchLabel": "Cercador",
+      "searchPlaceholder": "Cerca usuaris",
+      "title": "Social"
     }
   },
   "validation": {
-    "REQUIRED": "Aquest camp és obligatori.",
+    "FIELD_TOO_LONG": "Massa llarg.",
+    "FIELD_TOO_SHORT": "Massa curt.",
     "INVALID_EMAIL": "Introdueix un correu electrònic vàlid.",
-    "INVALID_USERNAME": "El nom d'usuari ha de tenir entre 3 i 30 caràcters i només pot contenir lletres, números, guions baixos (_) o guions (-).",
     "INVALID_EMAIL_OR_USERNAME": "Introdueix un correu electrònic o nom d'usuari vàlid.",
     "INVALID_FORMAT": "Format no vàlid.",
-    "USERNAME_TOO_SHORT": "El nom d'usuari ha de tenir almenys 3 caràcters.",
-    "USERNAME_TOO_LONG": "El nom d'usuari no pot superar els 30 caràcters.",
+    "INVALID_USERNAME": "El nom d'usuari ha de tenir entre 3 i 30 caràcters i només pot contenir lletres, números, guions baixos (_) o guions (-).",
     "INVALID_USERNAME_FORMAT": "El nom d'usuari només pot contenir lletres, números, guions baixos (_) i guions (-).",
-    "FIELD_TOO_SHORT": "Massa curt.",
-    "FIELD_TOO_LONG": "Massa llarg.",
+    "OUT_OF_RANGE": "Sol·licitud fora de rang",
     "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen.",
-    "OUT_OF_RANGE": "Sol·licitud fora de rang"
+    "REQUIRED": "Aquest camp és obligatori.",
+    "USERNAME_TOO_LONG": "El nom d'usuari no pot superar els 30 caràcters.",
+    "USERNAME_TOO_SHORT": "El nom d'usuari ha de tenir almenys 3 caràcters."
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
     "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
-    "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
-    "AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
+    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
-    "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
-    "AUTH_FORBIDDEN": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_FORBIDDEN": "No tens permís per accedir a aquest recurs.",
     "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
-    "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou.",
+    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
+    "AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
+    "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
+    "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
+    "AUTH_UNAUTHORIZED": "Has d'iniciar sessió per veure aquest contingut.",
     "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard.",
-    "UNAUTHORIZED_ACTION": "Acció no permesa.",
-    "FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
     "FRIENDSHIP_ALREADY_ACCEPTED": "Aquesta sol·licitud ja ha estat acceptada.",
-    "FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
-    "USER_NOT_FOUND": "Usuari no trobat.",
-    "INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "FRIENDSHIP_ALREADY_EXISTS": "Ja sou amics.",
+    "FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
     "FRIENDSHIP_SELF_REQUEST": "No et pots afegir a tu mateix.",
-    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat."
+    "INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+    "UNAUTHORIZED_ACTION": "Acció no permesa.",
+    "USER_NOT_FOUND": "Usuari no trobat.",
+    "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou."
   }
 }

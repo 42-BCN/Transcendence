@@ -1,8 +1,10 @@
+'use client';
+
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Text, IconButton } from '@components';
-import { useSocialStore } from '../store/use-social-store';
+import { useSocialStore } from '../store/social-store.provider';
 import { respondToRequest } from '../actions/friendships.actions';
 
 import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';

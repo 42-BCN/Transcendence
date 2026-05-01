@@ -2,12 +2,22 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@components": ["src/components/index.ts"],
-      "@components/*": ["src/components/*"],
-      "@/*": ["src/*"]
+      "@components": [
+        "src/components/index.ts"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@/*": [
+        "src/*"
+      ]
     },
     "target": "ES2024",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "strict": true,
     "noEmit": true,
     "incremental": true,
@@ -31,7 +41,12 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
+    ".next/dev/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

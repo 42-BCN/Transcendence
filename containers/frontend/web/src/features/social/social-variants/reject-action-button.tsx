@@ -1,8 +1,11 @@
+'use client';
+
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Text, IconButton } from '@components';
-import { PendingListKey, useSocialStore } from '../store/use-social-store';
+import { useSocialStore } from '../store/social-store.provider';
+import type { PendingListKey } from '../store/social-store.types';
 import { respondToRequest, deleteFriendship } from '../actions/friendships.actions';
 
 import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';

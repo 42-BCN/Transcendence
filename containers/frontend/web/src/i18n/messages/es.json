@@ -11,24 +11,24 @@
       "me": "Mi Cuenta",
       "reset-password": "Restablecer Contraseña"
     },
+    "footer": {
+      "appName": "Transcendence",
+      "copyright": "© {year} {appName}. Todos los derechos reservados",
+      "github": "GitHub",
+      "privacy": "Política de Privacidad",
+      "terms": "Términos de Servicio"
+    },
     "localeSwitcher": {
       "ariaLabel": "Idioma",
+      "ca": "CA",
       "en": "EN",
-      "es": "ES",
-      "ca": "CA"
-    },
-    "textAreaField": {
-      "characterCount": "{current} de {max} caracteres"
+      "es": "ES"
     },
     "submitButton": {
       "pendingLabel": "Enviando..."
     },
-    "footer": {
-      "appName": "Transcendence",
-      "privacy": "Política de Privacidad",
-      "terms": "Términos de Servicio",
-      "github": "GitHub",
-      "copyright": "© {year} {appName}. Todos los derechos reservados"
+    "textAreaField": {
+      "characterCount": "{current} de {max} caracteres"
     }
   },
   "layouts": {
@@ -39,456 +39,317 @@
   },
   "pages": {
     "home": {
-      "title": "Hola desde Next en Docker 👋",
-      "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan."
-    },
-    "notFound": {
-      "title": "Página no encontrada",
-      "description": "La página que buscas no existe.",
-      "backToHome": "Volver al inicio"
+      "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan.",
+      "title": "Hola desde Next en Docker 👋"
     },
     "me": {
-      "title": "Mi Cuenta",
-      "subtitle": "Accede a los datos protegidos de tu cuenta."
+      "subtitle": "Accede a los datos protegidos de tu cuenta.",
+      "title": "Mi Cuenta"
+    },
+    "notFound": {
+      "backToHome": "Volver al inicio",
+      "description": "La página que buscas no existe.",
+      "title": "Página no encontrada"
     },
     "privacy": {
-      "title": "Política de Privacidad",
-      "lastUpdated": "Última actualización: Abril 2026",
-      "intro": "En Transcendence, valoramos tu privacidad. Esta política describe qué datos recopilamos, cómo los usamos, cómo los almacenamos y qué derechos tienes sobre tu información personal.",
+      "contact": {
+        "description": "Si tienes alguna pregunta sobre esta política o deseas ejercer tus derechos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
+        "title": "Contacto"
+      },
       "dataCollected": {
-        "title": "Datos Recopilados",
         "description": "Cuando usas nuestra plataforma, podemos recopilar la siguiente información:",
         "items": {
           "email": "Dirección de correo electrónico (usada para el registro y la autenticación)",
-          "username": "Nombre de usuario (elegido por ti para identificarte en el juego)",
+          "technical": "Datos técnicos (tipo de navegador, información del dispositivo y dirección IP con fines de seguridad)",
           "usage": "Datos de uso (historial de partidas, puntuaciones y registros de interacción)",
-          "technical": "Datos técnicos (tipo de navegador, información del dispositivo y dirección IP con fines de seguridad)"
-        }
+          "username": "Nombre de usuario (elegido por ti para identificarte en el juego)"
+        },
+        "title": "Datos Recopilados"
       },
       "dataUsage": {
-        "title": "Cómo Usamos tus Datos",
         "description": "Los datos que recopilamos se utilizan exclusivamente para los siguientes fines:",
         "items": {
           "account": "Gestión de cuentas y autenticación",
+          "communication": "Enviar comunicaciones necesarias relacionadas con tu cuenta",
           "gameplay": "Proporcionar la experiencia de juego y funciones sociales",
-          "improvement": "Mejorar y optimizar la plataforma",
-          "communication": "Enviar comunicaciones necesarias relacionadas con tu cuenta"
-        }
+          "improvement": "Mejorar y optimizar la plataforma"
+        },
+        "title": "Cómo Usamos tus Datos"
       },
-      "storage": {
-        "title": "Almacenamiento y Seguridad de Datos",
-        "description": "Tus datos se almacenan de forma segura en nuestros servidores. Implementamos medidas de seguridad estándar de la industria, incluyendo conexiones cifradas (HTTPS), hash seguro de contraseñas y auditorías de seguridad regulares. Conservamos tus datos solo mientras tu cuenta esté activa o según sea necesario para proporcionarte nuestros servicios."
-      },
+      "intro": "En Transcendence, valoramos tu privacidad. Esta política describe qué datos recopilamos, cómo los usamos, cómo los almacenamos y qué derechos tienes sobre tu información personal.",
+      "lastUpdated": "Última actualización: Abril 2026",
       "rights": {
-        "title": "Tus Derechos",
         "description": "Como usuario, tienes los siguientes derechos sobre tus datos personales:",
         "items": {
           "access": "Derecho a acceder a tus datos personales",
-          "rectification": "Derecho a corregir datos inexactos",
           "deletion": "Derecho a solicitar la eliminación de tus datos",
-          "portability": "Derecho a la portabilidad de datos"
-        }
-      },
-      "contact": {
-        "title": "Contacto",
-        "description": "Si tienes alguna pregunta sobre esta política o deseas ejercer tus derechos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>."
-      }
-    },
-    "ui": {
-      "index": {
-        "controlComponents": "Componentes de control",
-        "buttons": "Botones",
-        "input": "Entrada",
-        "sampleButtonText": "Hola",
-        "links": {
-          "chat": "Chat",
-          "glassCard": "Tarjeta de vidrio",
-          "glassCardAnimated": "Tarjeta de vidrio animada",
-          "glassCardAnimatedV2": "Tarjeta de vidrio animada V2",
-          "glassCardAnimatedV3": "Tarjeta de vidrio animada V3",
-          "messageBubble": "Burbuja de mensaje",
-          "meter": "Medidor",
-          "scrollArea": "Área de desplazamiento",
-          "textArea": "Área de texto",
-          "tabsDisclosure": "Pestañas y Acordeones",
-          "themeTest": "Prueba de tema",
-          "typography": "Tipografía",
-          "social": "Social"
+          "portability": "Derecho a la portabilidad de datos",
+          "rectification": "Derecho a corregir datos inexactos"
         },
-        "viewerTitles": {
-          "buttonPrimitive": "Botón primitivo",
-          "ariaButton": "Botón Aria",
-          "uiButton": "Botón UI",
-          "inputPrimitive": "Input primitivo",
-          "ariaInput": "Input Aria",
-          "uiInput": "Input UI"
-        }
+        "title": "Tus Derechos"
       },
-      "glassCard": {
-        "title": "Tarjeta de Glassmorphism",
-        "cardTitle": "Glassmorphism",
-        "description": "Un componente de tarjeta glassmorphic que usa filtros de fondo, bordes transparentes y sombras sutiles para integrarse con fondos texturizados.",
-        "cta": "Empezar"
+      "storage": {
+        "description": "Tus datos se almacenan de forma segura en nuestros servidores. Implementamos medidas de seguridad estándar de la industria, incluyendo conexiones cifradas (HTTPS), hash seguro de contraseñas y auditorías de seguridad regulares. Conservamos tus datos solo mientras tu cuenta esté activa o según sea necesario para proporcionarte nuestros servicios.",
+        "title": "Almacenamiento y Seguridad de Datos"
       },
-      "glassCardAnimated": {
-        "title": "Probando la saturación",
-        "descriptionPrefix": "Esta tarjeta utiliza",
-        "highlight": "backdrop-saturate",
-        "descriptionSuffix": "Las esferas de luz cobran más vida y color al pasar detrás del cristal.",
-        "activate": "Activar"
-      },
-      "glassCardAnimatedV2": {
-        "title": "Reflejo dinámico",
-        "descriptionPrefix": "Aquí las esferas",
-        "highlight": "se mueven detrás del cristal",
-        "descriptionSuffix": "El color fluye y se refracta suavemente al cruzar los bordes.",
-        "option1": "Opción 1",
-        "option2": "Opción 2",
-        "option3": "Opción 3"
-      },
-      "glassCardAnimatedV3": {
-        "title": "Esferas sólidas",
-        "descriptionPrefix": "Aquí las esferas son",
-        "highlight": "100% sólidas",
-        "descriptionMiddle": "Toda la distorsión viene exclusivamente del cristal.",
-        "nestedPrefix": "Ejemplo de un componente glass anidado:",
-        "activate": "Activar"
-      },
-      "textArea": {
-        "title": "Componente de área de texto",
-        "ariaLabel": "Mensaje"
-      },
-      "typography": {
-        "caption": "Texto de pie usado para información de apoyo o metadatos.",
-        "bodyXs": "Texto de cuerpo extra pequeño útil para interfaces densas con espacio limitado.",
-        "bodySm": "El texto de cuerpo pequeño suele aparecer en descripciones secundarias, pistas o contenido de ayuda.",
-        "body": "Este párrafo demuestra el estilo de cuerpo predeterminado. Es intencionalmente más largo para evaluar la legibilidad, el ritmo y el largo de línea del sistema tipográfico. Cuando el texto se extiende demasiado en pantalla, leer se vuelve más difícil, por eso limitar la medida mejora la lectura.",
-        "bodyLg": "El texto de cuerpo grande funciona bien para párrafos introductorios o descripciones destacadas que necesitan más énfasis sin convertirse en título.",
-        "headingSm": "Estilo de título pequeño renderizado como párrafo para pruebas visuales.",
-        "headingMd": "Estilo de título mediano renderizado como párrafo para inspección.",
-        "headingLg": "Estilo de título grande renderizado como párrafo.",
-        "headingXl": "Estilo de título extra grande renderizado como contenido de párrafo.",
-        "code": "const message = \"Texto estilo código renderizado en un párrafo.\";"
-      },
-      "messageBubble": {
-        "title": "Burbuja de mensaje",
-        "userOne": "John Doe",
-        "userTwo": "Jane Doe",
-        "messageOne": "¡Hola! Mi nombre es ...",
-        "messageTwo": "¡Hola! Esta es una prueba de vista previa de mensaje"
-      },
-      "meter": {
-        "title": "Medidor",
-        "label": "HP"
-      },
-      "themeTest": {
-        "title": "Página de prueba de tema",
-        "description": "Esta página demuestra la implementación de modo claro/oscuro. Todos los colores usan variables CSS sincronizadas con Tailwind.",
-        "secondaryBackground": "Fondo secundario",
-        "secondaryBackgroundDescription": "Esta tarjeta usa `bg-bg-secondary`. Debe verse ligeramente diferente del fondo principal en ambos modos.",
-        "textVariants": "Variantes de texto",
-        "primaryText": "Texto primario",
-        "secondaryText": "Texto secundario",
-        "tertiaryText": "Texto terciario",
-        "disabledText": "Texto deshabilitado"
-      },
-      "tabsDisclosure": {
-        "title": "Componentes de Navegación",
-        "description": "Demostración técnica de Tabs y Disclosure (Acordeones).",
-        "tabs": {
-          "sectionsLabel": "Secciones sociales",
-          "friends": "Amigos",
-          "requests": "Solicitudes"
-        },
-        "disclosure": {
-          "friendsOnline": "Amigos conectados (12)",
-          "friendsOffline": "Amigos desconectados (30)",
-          "received": "Recibidas (5)",
-          "sent": "Enviadas (10)",
-          "friendsListHint": "Lista de amigos simplificada...",
-          "receivedHint": "Solicitudes entrantes llegadas recientemente.",
-          "sentHint": "Solicitudes que tú has enviado a otros usuarios.",
-          "statusOnline": "(Conectado)",
-          "statusOffline": "(Desconectado)"
-        }
-      },
-      "scrollArea": {
-        "title": "Área desplazable",
-        "description": "Este componente es un div que ocupa una altura del 100% y crea un área desplazable.",
-        "example": "Ejemplo",
-        "itemLabel": "Elemento"
-      },
-      "social": {
-        "title": "Prueba de Componentes Sociales",
-        "description": "Probando primitivos de Avatar y compuestos de UserItem.",
-        "avatarsTitle": "1. Tamaños de Avatar e Imagen por Defecto",
-        "avatarSizes": {
-          "sm": "Pequeño",
-          "md": "Mediano",
-          "lg": "Grande",
-          "fallback": "Por Defecto"
-        },
-        "userItemsTitle": "2. Variantes de UserItem",
-        "socialListLabel": "Ejemplos de Listas Sociales",
-        "status": {
-          "online": "En línea",
-          "sent": "Enviado hace 2 días"
-        },
-        "actions": {
-          "playGame": "Jugar",
-          "sendMessage": "Enviar Mensaje",
-          "acceptRequest": "Aceptar Solicitud",
-          "rejectRequest": "Rechazar Solicitud",
-          "addFriend": "Añadir Amigo"
-        }
-      }
+      "title": "Política de Privacidad"
     },
     "terms": {
-      "title": "Términos de Servicio",
-      "lastUpdated": "Última actualización: Abril 2026",
-      "intro": "Bienvenido a Transcendence. El uso de esta plataforma está sujeto a los siguientes Términos de Servicio, que rigen la relación entre tú y el equipo de desarrollo.",
       "acceptance": {
-        "title": "Aceptación de los Términos",
-        "description": "Al crear una cuenta o utilizar nuestros servicios, aceptas estas condiciones en su totalidad. Si no estás de acuerdo con alguna parte de estos Términos, debes abstenerte de utilizar la plataforma."
-      },
-      "registration": {
-        "title": "Registro de Cuenta",
-        "description": "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades que ocurran bajo tu cuenta.",
-        "items": {
-          "security": "Debes notificarnos inmediatamente cualquier uso no autorizado de tu cuenta.",
-          "accuracy": "Aceptas proporcionar información precisa y completa durante el registro."
-        }
+        "description": "Al crear una cuenta o utilizar nuestros servicios, aceptas estas condiciones en su totalidad. Si no estás de acuerdo con alguna parte de estos Términos, debes abstenerte de utilizar la plataforma.",
+        "title": "Aceptación de los Términos"
       },
       "conduct": {
-        "title": "Conducta del Usuario",
         "description": "Para mantener un entorno justo, respetuoso y divertido, te comprometes a no:",
         "items": {
           "cheating": "Utilizar trampas, software de automatización (bots) o hacks para obtener ventaja.",
-          "harassment": "Acosar, abusar o participar en conductas que dañen a la comunidad o a otros jugadores.",
-          "disruption": "Intentar interrumpir la integridad o seguridad de nuestros servidores."
-        }
-      },
-      "ip": {
-        "title": "Propiedad Intelectual",
-        "description": "Todo el contenido, incluyendo el código del juego, gráficos y marcas registradas, es propiedad de Transcendence. Otorgamos una licencia limitada y no transferible para uso personal y no comercial."
-      },
-      "disclaimer": {
-        "title": "Exención de responsabilidad",
-        "description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona tal cual y según disponibilidad. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores."
-      },
-      "termination": {
-        "title": "Cancelación",
-        "description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto."
-      },
-      "law": {
-        "title": "Ley Aplicable",
-        "description": "Estos Términos se rigen e interpretan de acuerdo con las leyes aplicables a los servicios digitales dentro del ámbito de jurisdicción de este proyecto."
+          "disruption": "Intentar interrumpir la integridad o seguridad de nuestros servidores.",
+          "harassment": "Acosar, abusar o participar en conductas que dañen a la comunidad o a otros jugadores."
+        },
+        "title": "Conducta del Usuario"
       },
       "contact": {
-        "title": "Contacto",
-        "description": "Si tienes preguntas o deseas ejercer cualquier derecho relacionado con estos Términos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>."
-      }
+        "description": "Si tienes preguntas o deseas ejercer cualquier derecho relacionado con estos Términos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
+        "title": "Contacto"
+      },
+      "disclaimer": {
+        "description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona tal cual y según disponibilidad. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores.",
+        "title": "Exención de responsabilidad"
+      },
+      "intro": "Bienvenido a Transcendence. El uso de esta plataforma está sujeto a los siguientes Términos de Servicio, que rigen la relación entre tú y el equipo de desarrollo.",
+      "ip": {
+        "description": "Todo el contenido, incluyendo el código del juego, gráficos y marcas registradas, es propiedad de Transcendence. Otorgamos una licencia limitada y no transferible para uso personal y no comercial.",
+        "title": "Propiedad Intelectual"
+      },
+      "lastUpdated": "Última actualización: Abril 2026",
+      "law": {
+        "description": "Estos Términos se rigen e interpretan de acuerdo con las leyes aplicables a los servicios digitales dentro del ámbito de jurisdicción de este proyecto.",
+        "title": "Ley Aplicable"
+      },
+      "registration": {
+        "description": "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades que ocurran bajo tu cuenta.",
+        "items": {
+          "accuracy": "Aceptas proporcionar información precisa y completa durante el registro.",
+          "security": "Debes notificarnos inmediatamente cualquier uso no autorizado de tu cuenta."
+        },
+        "title": "Registro de Cuenta"
+      },
+      "termination": {
+        "description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto.",
+        "title": "Cancelación"
+      },
+      "title": "Términos de Servicio"
     }
   },
   "features": {
     "auth": {
+      "actions": {
+        "continueWithGoogle": "Continuar con Google",
+        "login": "Iniciar sesión",
+        "logoutAriaLabel": "Cerrar sesión",
+        "resendEmail": "Reenviar correo",
+        "sendEmail": "Enviar correo electrónico",
+        "signup": "Crear cuenta"
+      },
+      "changePassword": {
+        "description": "Introduce tu contraseña actual y elige una nueva.",
+        "submit": "Guardar cambios",
+        "success": "La contraseña se actualizó correctamente.",
+        "title": "Cambiar contraseña"
+      },
       "fields": {
-        "identifier": {
-          "label": "Correo o nombre de usuario",
-          "placeholder": "nombre@ejemplo.com o usuario",
-          "description": "Usa el correo o el nombre de usuario con el que te registraste."
-        },
-        "email": {
-          "label": "Correo electrónico",
-          "placeholder": "nombre@ejemplo.com"
-        },
-        "username": {
-          "label": "Nombre de usuario",
-          "placeholder": "tu_usuario"
-        },
-        "password": {
-          "label": "Contraseña",
-          "placeholder": "Introduce tu contraseña",
-          "description": "Mínimo 8 caracteres."
+        "confirmPassword": {
+          "label": "Confirmar contraseña",
+          "placeholder": "Vuelve a introducir tu contraseña"
         },
         "currentPassword": {
           "label": "Contraseña actual",
           "placeholder": "Introduce tu contraseña actual"
         },
-        "newPassword": {
-          "label": "Nueva contraseña",
-          "placeholder": "Introduce tu nueva contraseña",
-          "description": "Mínimo 8 caracteres."
+        "email": {
+          "label": "Correo electrónico",
+          "placeholder": "nombre@ejemplo.com"
         },
-        "confirmPassword": {
-          "label": "Confirmar contraseña",
-          "placeholder": "Vuelve a introducir tu contraseña"
+        "identifier": {
+          "description": "Usa el correo o el nombre de usuario con el que te registraste.",
+          "label": "Correo o nombre de usuario",
+          "placeholder": "nombre@ejemplo.com o usuario"
+        },
+        "newPassword": {
+          "description": "Mínimo 8 caracteres.",
+          "label": "Nueva contraseña",
+          "placeholder": "Introduce tu nueva contraseña"
+        },
+        "password": {
+          "description": "Mínimo 8 caracteres.",
+          "label": "Contraseña",
+          "placeholder": "Introduce tu contraseña"
+        },
+        "username": {
+          "label": "Nombre de usuario",
+          "placeholder": "tu_usuario"
         }
       },
-      "actions": {
-        "login": "Iniciar sesión",
-        "signup": "Crear cuenta",
-        "continueWithGoogle": "Continuar con Google",
-        "sendEmail": "Enviar correo electrónico",
-        "resendEmail": "Reenviar correo",
-        "logoutAriaLabel": "Cerrar sesión"
-      },
       "login": {
-        "title": "Iniciar sesión",
-        "submit": "Iniciar sesión",
         "forgotPassword": "¿Has olvidado la contraseña?",
+        "goToSignup": "Crear una",
         "noAccount": "¿No tienes cuenta?",
-        "goToSignup": "Crear una"
-      },
-      "signup": {
-        "title": "Crear cuenta",
-        "privacy": {
-          "label": "He leído y acepto la <link>Política de Privacidad</link>",
-          "error": "Debes aceptar la Política de Privacidad para continuar."
-        },
-        "haveAccount": "¿Ya tienes cuenta?",
-        "goToLogin": "Iniciar sesión"
-      },
-      "verification": {
-        "title": "Verifica tu correo electrónico",
-        "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
-        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
-        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
-        "verifying": "Verificando tu correo...",
-        "verified": "Correo verificado. Redirigiendo a tu perfil...",
-        "missingToken": "Falta el token de verificación.",
-        "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
-        "resending": "Enviando...",
-        "isConfirmed": "¿Ya confirmaste?",
-        "backToLogin": "Iniciar sesión",
-        "recoverTitle": "Recuperar cuenta",
-        "resendTitle": "Reenviar correo de verificación",
-        "resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta."
-      },
-      "recover": {
-        "title": "Revisa tu correo",
-        "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
-        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
-        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
-        "rememberedPassword": "¿Has recordado tu contraseña?",
-        "backToLogin": "Volver al inicio de sesión"
-      },
-      "changePassword": {
-        "title": "Cambiar contraseña",
-        "description": "Introduce tu contraseña actual y elige una nueva.",
-        "submit": "Guardar cambios",
-        "success": "La contraseña se actualizó correctamente."
-      },
-      "reset": {
-        "title": "Restablecer contraseña",
-        "description": "Introduce tu nueva contraseña.",
-        "submit": "Guardar nueva contraseña",
-        "success": "La contraseña se actualizó correctamente.",
-        "backToLogin": "Volver a iniciar sesión"
+        "submit": "Iniciar sesión",
+        "title": "Iniciar sesión"
       },
       "messages": {
         "or": "O",
         "success": "Correo enviado. Espera para volver a intentarlo."
+      },
+      "recover": {
+        "backToLogin": "Volver al inicio de sesión",
+        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
+        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
+        "rememberedPassword": "¿Has recordado tu contraseña?",
+        "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
+        "title": "Revisa tu correo"
+      },
+      "reset": {
+        "backToLogin": "Volver a iniciar sesión",
+        "description": "Introduce tu nueva contraseña.",
+        "submit": "Guardar nueva contraseña",
+        "success": "La contraseña se actualizó correctamente.",
+        "title": "Restablecer contraseña"
+      },
+      "signup": {
+        "goToLogin": "Iniciar sesión",
+        "haveAccount": "¿Ya tienes cuenta?",
+        "privacy": {
+          "error": "Debes aceptar la Política de Privacidad para continuar.",
+          "label": "He leído y acepto la <link>Política de Privacidad</link>"
+        },
+        "title": "Crear cuenta"
+      },
+      "verification": {
+        "backToLogin": "Iniciar sesión",
+        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
+        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
+        "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
+        "isConfirmed": "¿Ya confirmaste?",
+        "missingToken": "Falta el token de verificación.",
+        "recoverTitle": "Recuperar cuenta",
+        "resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta.",
+        "resending": "Enviando...",
+        "resendTitle": "Reenviar correo de verificación",
+        "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
+        "title": "Verifica tu correo electrónico",
+        "verified": "Correo verificado. Redirigiendo a tu perfil...",
+        "verifying": "Verificando tu correo..."
       }
-    },
-    "navigation": {
-      "home": "Inicio",
-      "createAccount": "Crear cuenta",
-      "login": "Iniciar sesión",
-      "menu": "Menú",
-      "mainAriaLabel": "Navegación principal",
-      "ui": "UI",
-      "game": "Juego",
-      "profile": "Perfil",
-      "logout": "Cerrar sesión",
-      "settings": "Configuración"
     },
     "chat": {
+      "hideChat": "Ocultar chat",
       "messageAriaLabel": "Mensaje",
-      "showChat": "Mostrar chat",
-      "hideChat": "Ocultar chat"
+      "showChat": "Mostrar chat"
     },
     "game": {
-      "resetPlan": "Reiniciar plan",
       "endTurn": "Terminar turno",
-      "healthLabel": "HP"
+      "healthLabel": "HP",
+      "resetPlan": "Reiniciar plan"
     },
-    "settings": {
-      "theme": "Tema",
-      "language": "Idioma",
-      "dark": "Oscuro",
-      "light": "Claro"
+    "navigation": {
+      "createAccount": "Crear cuenta",
+      "game": "Juego",
+      "home": "Inicio",
+      "login": "Iniciar sesión",
+      "logout": "Cerrar sesión",
+      "mainAriaLabel": "Navegación principal",
+      "menu": "Menú",
+      "profile": "Perfil",
+      "settings": "Configuración",
+      "ui": "UI"
     },
     "profile": {
-      "fail": "No se pudo cargar tu perfil.",
-      "userId": "ID de usuario",
-      "username": "Nombre de usuario",
       "bio": "Biografía",
-      "provider": "Proveedor"
+      "fail": "No se pudo cargar tu perfil.",
+      "provider": "Proveedor",
+      "userId": "ID de usuario",
+      "username": "Nombre de usuario"
+    },
+    "settings": {
+      "dark": "Oscuro",
+      "language": "Idioma",
+      "light": "Claro",
+      "theme": "Tema"
     },
     "social": {
-      "title": "Social",
-      "searchPlaceholder": "Buscar entre tus amigos o añadir nuevos",
-      "searchLabel": "Buscar usuarios",
-      "friends": {
-        "title": "Amigos",
-        "online": "Amigos conectados",
-        "offline": "Amigos desconectados"
-      },
-      "requests": {
-        "title": "Solicitudes",
-        "received": "Recibidas",
-        "sent": "Enviadas"
+      "actions": {
+        "accept": "Aceptar",
+        "addFriend": "Añadir amigo",
+        "cancel": "Cancelar",
+        "chat": "Chat",
+        "inviteToGame": "Invitar a partida",
+        "reject": "Rechazar"
       },
       "emptyStates": {
-        "online": "No hay amigos conectados",
         "offline": "No hay amigos desconectados",
+        "online": "No hay amigos conectados",
+        "pending": "No has enviado solicitudes",
         "request": "No tienes solicitudes pendientes",
-        "pending": "No has enviado solicitudes"
+        "search": "No se han encontrado usuarios"
       },
-      "actions": {
-        "inviteToGame": "Invitar a partida",
-        "chat": "Chat",
-        "reject": "Rechazar",
-        "accept": "Aceptar",
-        "cancel": "Cancelar"
-      }
+      "friends": {
+        "offline": "Amigos desconectados",
+        "online": "Amigos conectados",
+        "title": "Amigos"
+      },
+      "guest": {
+        "body": "Para encontrar amigos, ver quién está conectado y jugar, necesitas una cuenta.",
+        "login": "Iniciar sesión",
+        "noAccount": "¿No tienes cuenta?",
+        "signup": "Crear una",
+        "title": "Conéctate con la comunidad"
+      },
+      "requests": {
+        "received": "Recibidas",
+        "sent": "Enviadas",
+        "title": "Solicitudes"
+      },
+      "searchLabel": "Buscador",
+      "searchPlaceholder": "Buscar usuarios",
+      "title": "Social"
     }
   },
   "validation": {
-    "REQUIRED": "Este campo es obligatorio.",
+    "FIELD_TOO_LONG": "Demasiado largo.",
+    "FIELD_TOO_SHORT": "Demasiado corto.",
     "INVALID_EMAIL": "Introduce un correo electrónico válido.",
-    "INVALID_USERNAME": "El nombre de usuario debe tener entre 3 y 30 caracteres y solo puede contener letras, números, guiones bajos (_) o guiones (-).",
     "INVALID_EMAIL_OR_USERNAME": "Introduce un correo electrónico o nombre de usuario válido.",
     "INVALID_FORMAT": "Formato no válido.",
-    "USERNAME_TOO_SHORT": "El nombre de usuario debe tener al menos 3 caracteres.",
-    "USERNAME_TOO_LONG": "El nombre de usuario no puede superar los 30 caracteres.",
+    "INVALID_USERNAME": "El nombre de usuario debe tener entre 3 y 30 caracteres y solo puede contener letras, números, guiones bajos (_) o guiones (-).",
     "INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
-    "FIELD_TOO_SHORT": "Demasiado corto.",
-    "FIELD_TOO_LONG": "Demasiado largo.",
+    "OUT_OF_RANGE": "Solicitud fuera de rango.",
     "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden.",
-    "OUT_OF_RANGE": "Solicitud fuera de rango."
+    "REQUIRED": "Este campo es obligatorio.",
+    "USERNAME_TOO_LONG": "El nombre de usuario no puede superar los 30 caracteres.",
+    "USERNAME_TOO_SHORT": "El nombre de usuario debe tener al menos 3 caracteres."
   },
   "errors": {
-    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
     "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
-    "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
-    "AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
+    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
     "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
-    "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
-    "AUTH_FORBIDDEN": "El enlace de verificación no es válido o ha caducado.",
+    "AUTH_FORBIDDEN": "No tienes permiso para acceder a este recurso.",
     "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
-    "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo.",
+    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
+    "AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
+    "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
+    "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
+    "AUTH_UNAUTHORIZED": "Debes iniciar sesión para ver este contenido.",
     "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde.",
-    "UNAUTHORIZED_ACTION": "Acción no permitida.",
-    "FRIENDSHIP_REQUEST_NOT_FOUND": "La solicitud no existe o ya no está disponible.",
     "FRIENDSHIP_ALREADY_ACCEPTED": "Esta solicitud ya ha sido aceptada.",
-    "FRIENDSHIP_NOT_FOUND": "No se ha encontrado la amistad.",
-    "USER_NOT_FOUND": "Usuario no encontrado.",
-    "INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "FRIENDSHIP_ALREADY_EXISTS": "Ya sois amigos.",
+    "FRIENDSHIP_NOT_FOUND": "No se ha encontrado la amistad.",
+    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad.",
+    "FRIENDSHIP_REQUEST_NOT_FOUND": "La solicitud no existe o ya no está disponible.",
     "FRIENDSHIP_SELF_REQUEST": "No puedes añadirte a ti mismo.",
-    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad."
+    "INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+    "UNAUTHORIZED_ACTION": "Acción no permitida.",
+    "USER_NOT_FOUND": "Usuario no encontrado.",
+    "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo."
   }
 }

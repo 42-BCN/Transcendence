@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook';
+
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import nextPlugin from '@next/eslint-plugin-next';
@@ -175,15 +178,7 @@ export default [
     rules: {
       ...sharedRules.rules,
     },
-  },
-  {
-    // Env variables guardrails
-    files: ['src/lib/env.public.ts', 'src/lib/env.server.ts'],
-    rules: {
-      'no-restricted-properties': 'off',
-    },
-  },
-  // Allow process.env access ONLY in env modules,
+  }, // Allow process.env access ONLY in env modules,
   // but still ban process.env.FOO (member access) specifically
   {
     files: ['src/lib/config/env.public.ts', 'src/lib/config/env.server.ts'],
@@ -192,7 +187,6 @@ export default [
       'no-restricted-syntax': 'off',
     },
   },
-
   {
     files: ['src/features/game/**/*.{ts,tsx}'],
     rules: {
@@ -201,4 +195,5 @@ export default [
       '@typescript-eslint/no-unused-expressions': 'off',
     },
   },
+  ...storybook.configs['flat/recommended'],
 ];
