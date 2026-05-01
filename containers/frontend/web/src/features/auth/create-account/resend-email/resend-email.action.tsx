@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { getLocale } from 'next-intl/server';
 
-import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
+import { fetchServerAction } from '@/lib/http/fetcher.server';
 import type { ApiResponse } from '@/contracts/api/http';
 import type { ResendVerificationRes } from '@/contracts/api/auth/auth.contract';
 
@@ -14,24 +14,23 @@ export async function resendVerificationAction(
   formData?: FormData,
 ): Promise<ApiResponse<unknown>> {
   const locale = await getLocale();
-  const result = await withServerAction(async () => {
-    const cookieStore = await cookies();
-    const cookie = cookieStore.toString();
-    const formEmail = String(formData?.get('email') ?? '').trim();
-    const pendingEmail = formEmail || cookieStore.get(PENDING_VERIFICATION_EMAIL_COOKIE)?.value;
-    if (!pendingEmail) {
-      return { ok: true, data: null } as const;
-    }
+  const cookieStore = await cookies();
+  const formEmail = String(formData?.get('email') ?? '').trim();
+  const pendingEmail = formEmail || cookieStore.get(PENDING_VERIFICATION_EMAIL_COOKIE)?.value;
+  if (!pendingEmail) {
+    return { ok: true, data: null } as const;
+  }
 
-    const res = await fetchServer<ResendVerificationRes>(
-      '/auth/resend-verification',
-      'POST',
-      { email: pendingEmail },
-      { cookie, acceptLanguage: locale },
-    );
-
-    return res.data;
-  })();
+  const result = await fetchServerAction<ResendVerificationRes>(
+    '/auth/resend-verification',
+    'POST',
+    {
+      email: pendingEmail,
+    },
+    {
+      acceptLanguage: locale,
+    },
+  );
 
   return result;
 }
