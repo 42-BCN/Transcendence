@@ -31,6 +31,12 @@ services:
       - ${CERT_DIR:-../certs}:/certs:ro
       - ./contracts:/app/src/contracts
 
+  nginx:
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
   storybook:
     profiles:
       - storybook
