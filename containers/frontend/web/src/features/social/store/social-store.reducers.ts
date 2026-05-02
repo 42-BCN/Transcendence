@@ -64,6 +64,31 @@ function removePendingByUserId(requests: FriendshipPublic[], userId: string): Fr
   return requests.filter((item) => item.userId !== userId);
 }
 
+function moveSearchResultPresence(
+  results: GroupedSearchResults,
+  userId: string,
+  isOnline: boolean,
+): GroupedSearchResults {
+  const fromKey = isOnline ? 'offline' : 'online';
+  const toKey = isOnline ? 'online' : 'offline';
+
+  const item = results[fromKey].find((result) => result.id === userId);
+
+  if (!item) return results;
+
+  return {
+    ...results,
+    [fromKey]: results[fromKey].filter((result) => result.id !== userId),
+    [toKey]: addUniqueSearchResult(results[toKey], item),
+  };
+}
+
+function addUniqueSearchResult<T extends { id: string }>(items: T[], item: T): T[] {
+  if (items.some((current) => current.id === item.id)) return items;
+
+  return [...items, item];
+}
+
 function setFriendOnlineStatusReducer(
   userId: string,
   isOnline: boolean,
@@ -72,11 +97,7 @@ function setFriendOnlineStatusReducer(
     friends: state.friends.map((friend) =>
       friend.id === userId ? { ...friend, isOnline } : friend,
     ),
-    searchResults: updateResults(
-      state.searchResults,
-      (item) => item.id === userId,
-      (item) => ({ ...item, isOnline }),
-    ),
+    searchResults: moveSearchResultPresence(state.searchResults, userId, isOnline),
   });
 }
 
@@ -110,6 +131,16 @@ function receiveFriendRequestReducer(
   };
 }
 
+function findSearchResultByUserId(results: GroupedSearchResults, userId: string) {
+  return [
+    ...results.online,
+    ...results.offline,
+    ...results.requests,
+    ...results.pending,
+    ...results.none,
+  ].find((item) => item.id === userId);
+}
+
 function receiveFriendAcceptedReducer(
   payload: FriendAcceptedNotificationPayload,
 ): (state: SocialState) => Partial<SocialState> {
@@ -122,19 +153,15 @@ function receiveFriendAcceptedReducer(
       (request) => request.userId === payload.friendUserId,
     );
 
-    const existingSearchUser = [
-      ...state.searchResults.online,
-      ...state.searchResults.offline,
-      ...state.searchResults.requests,
-      ...state.searchResults.pending,
-      ...state.searchResults.none,
-    ].find((item) => item.id === payload.friendUserId);
+    const existingFriend = state.friends.find((friend) => friend.id === payload.friendUserId);
+
+    const existingSearchUser = findSearchResultByUserId(state.searchResults, payload.friendUserId);
 
     const newFriend: FriendPublic = {
       id: payload.friendUserId,
       username: payload.friendUsername,
       avatar: pendingSent?.avatar ?? pendingReceived?.avatar ?? existingSearchUser?.avatar ?? null,
-      isOnline: true,
+      isOnline: existingFriend?.isOnline ?? false,
     };
 
     return {
@@ -147,9 +174,13 @@ function receiveFriendAcceptedReducer(
         (item) => ({
           ...item,
           friendshipStatus: 'accepted',
-          friendshipId: null,
+          friendshipId:
+            pendingSent?.id ??
+            pendingReceived?.id ??
+            item.friendshipId ??
+            existingSearchUser?.friendshipId ??
+            null,
           senderId: null,
-          isOnline: true,
         }),
       ),
     };
