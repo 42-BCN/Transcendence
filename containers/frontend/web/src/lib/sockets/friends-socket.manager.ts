@@ -12,6 +12,7 @@ import {
   type PresenceOfflinePayload,
   type PresenceOnlinePayload,
 } from '@/contracts/sockets/friendships/friendships.schema';
+
 import { friendsSocket } from './friends-socket.client';
 
 type SocialSocketManagerProps = {
@@ -32,8 +33,13 @@ export const SocialSocketManager = ({
   onFriendRejected,
 }: SocialSocketManagerProps) => {
   useEffect(() => {
+    const emitCurrentPresence = () => {
+      friendsSocket.emit(document.hidden ? presenceSocketEvents.away : presenceSocketEvents.active);
+    };
+
     const handleConnect = () => {
       console.log('Connected to friends socket server', friendsSocket.id);
+      emitCurrentPresence();
     };
 
     const handleDisconnect = () => {
@@ -62,10 +68,6 @@ export const SocialSocketManager = ({
 
     const handleFriendRejected = (payload: FriendRejectedNotificationPayload) => {
       onFriendRejected(payload);
-    };
-
-    const handleVisibilityChange = () => {
-      friendsSocket.emit(document.hidden ? presenceSocketEvents.away : presenceSocketEvents.active);
     };
 
     const reservedListeners = [
@@ -97,7 +99,7 @@ export const SocialSocketManager = ({
       friendsSocket.on(event, handler);
     });
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', emitCurrentPresence);
 
     friendsSocket.connect();
 
@@ -114,7 +116,7 @@ export const SocialSocketManager = ({
         friendsSocket.off(event, handler);
       });
 
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener('visibilitychange', emitCurrentPresence);
 
       friendsSocket.disconnect();
     };
