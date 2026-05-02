@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { VALIDATION, type ValidationCode } from '../../api/http/validation';
-
 export type pos = {
   x: number,
   y: number,
