@@ -1,33 +1,31 @@
 import { create } from 'zustand';
-import type { parse_entity, pos, tile } from './maps';
 import { gameSocket, ensureChatSessionIdentity } from '@/lib/sockets/socket';
 
-export type globalGameState = {
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
-  turn: number;
-  players: Record<string, player>;
-  clones: Record<string, player>;
-  enemies: Record<string, enemy>;
-  tiles: Record<string, boolean>;
-  history: historyAction[];
-  mapBounds: mapInfo;
-  vfx: vfx[];
-  readyPlayers: string[];
-  activePlayers: string[];
-};
+export type pos = {
+  x: number,
+  y: number,
+  z: number
+}
 
-export type localGameState = {
-  highlights: Record<string, boolean>;
-  selectables: Record<string, boolean>;
-  canSelect: boolean;
-  selectedAb: string | null;
-  selectedEnt: string | null;
-  selectedDice: number | null;
-};
+export type mapInfo = {
+  width: number;
+  height: number;
+  depth: number;
+}
 
-type gamePhase = 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
+export type tile = {
+  id: string,
+  type: string,
+  position: pos
+}
 
-type player = parse_entity & {
+export type parse_entity = {
+  id: string,
+  type: string,
+  position: pos
+}
+
+export type player = parse_entity & {
   hp: number;
   maxHp: number;
   armor: number;
@@ -39,33 +37,32 @@ type player = parse_entity & {
   dice: number[];
   usedDice: number[];
   hasMoved: boolean;
+  isDead: boolean;
 };
 
-type vfx = {
-  id: string;
-  type: string;
-  amount: string | number | null;
+export type enemy = player;
+
+export type entity = player | enemy;
+
+export type node = {
+  id: string,
+  pos: pos,
+  g: number,
+  f: number
 }
 
-type enemy = player;
-
-type entity = player | enemy;
-
-type mapInfo = {
-  width: number;
-  height: number;
-  depth: number;
-};
-
 export type historyAction = {
+  id: string;
   who: string;
   type: string;
   target: string;
   dice: number;
   aftermov: boolean;
+  abName: string | null;
+  dependsOn: string | null;
 }
 
-type abilityInfo = {
+export type abilityInfo = {
   name: string;
   type: string;
   cond: (x: number) => boolean;
@@ -76,16 +73,43 @@ type abilityInfo = {
   AoE?: string;
   AoErange?: number;
   effect?: string[];
-};
+}
+
+export type vfx = {
+  id: string;
+  type: string;
+  amount: string | number | null;
+}
+
+export type globalGameState = {
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
+  turn: number,
+  players: Record<string, entity>;
+  ghosts: Record<string, entity>;
+  clones: Record<string, entity>;
+  enemies: Record<string, entity>;
+  tiles: Record<string, boolean>;
+  history: historyAction[];
+  vfx: vfx[];
+  mapBounds: mapInfo,
+}
+
+export type localGameState = {
+  highlights: Record<string, boolean>;
+  selectables: Record<string, boolean>;
+  canSelect: boolean;
+  selectedAb: string | null;
+  selectedEnt: string | null;
+  selectedDice: number | null;
+}
 
 type gameState = {
-  turn: number;
-  phase: gamePhase;
 
-  rollQuantity: number;
   assignedCharacter: string;
 
   //global state
+  turn: number;
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
   players: Record<string, entity>;
   enemies: Record<string, entity>;
   clones: Record<string, entity>;
@@ -105,13 +129,8 @@ type gameState = {
   affected: Record<string, boolean>;
   selectedDice: number | null;
 
-  nextPhase: () => Promise<void>;
-  executionPhase: () => Promise<void>;
-  enemyPhase: () => Promise<void>;
-  endTurn: () => void;
+  nextPhase: () => void;
 
-  setRollQuantity: (quantity: number) => void;
-  rollDice: (quantity: number) => void;
   initSocketListeners: () => void;
   cleanupSocketListeners: () => void;
 
@@ -119,45 +138,24 @@ type gameState = {
   getSel: () => entity | undefined;
   movDice: (mov: number) => void;
   selectDice: (dice: number) => void;
-  addHistory: (who: string, type: string, target: string, dice?: number, ability?: string) => void;
-  resetHistory: (id: string) => void;
-  addHistoryAbility: (target: string) => void;
-  moveTo: (entId: string, tileId: string) => Promise<void>;
   moveClone: (tileId: string) => void;
-  init: (entities: parse_entity[], tiles: tile[], mapInfo: mapInfo) => void;
-  checkEnt: (x: number, y: number, z: number) => entity | undefined;
   selectAbility: (name: string) => void;
+  showMoveRange: (mov: string) => void;
   showAbRange: (name: string) => void;
-  getAbility: (name: string) => abilityInfo;
-  executeAbility: (who: string, which: string, target: string) => void;
   clearHighlights: () => void;
   clearSelectables: () => void;
-  takeAb: (id: string, type: string, ab: abilityInfo, roll: number) => player | enemy;
 };
 
-const clean = {
-  canSelect: true,
-  typeEnt: null,
-  selectedAb: null,
-  selectedDice: null,
-  selectedEnt: null,
-  highlights: {},
-  selectables: {},
-  affected: {},
-} as const;
-
 export const useGame = create<gameState>()((set, get) => ({
-  turn: 1,
-  phase: 'PLAN',
 
-  rollQuantity: 0,
   assignedCharacter: 'spectator',
 
+  turn: 1,
+  phase: 'PLAN',
   canSelect: true,
   typeEnt: null,
   selectedAb: null,
   selectedEnt: null,
-  chosenPlayer: null,
   selectedDice: null,
 
   players: {},
@@ -168,17 +166,17 @@ export const useGame = create<gameState>()((set, get) => ({
   selectables: {},
   affected: {},
   history: [],
+  readyPlayers: [],
+  activePlayers: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
 
-  nextPhase: async () => {
+  nextPhase: () => {
     gameSocket.emit('game:client:toggleEndTurn');
     gameSocket.emit('game:client:nextPhase');
   },
 
   selectEntity: (id) => {
-    const state = get();
     gameSocket.emit('game:client:selectEntity', id);
-    let ent = state.players[id] || state.enemies[id] || state.clones[id];
     console.log('ent id: ', id);
   },
 
@@ -269,7 +267,7 @@ export const useGame = create<gameState>()((set, get) => ({
         clones: state.clones,
         history: state.history,
         tiles: state.tiles || get().tiles,
-        mapBounds: state.mapBounds || get().tiles,
+        mapBounds: state.mapBounds || get().mapBounds,
         readyPlayers: state.readyPlayers || get().readyPlayers,
         activePlayers: state.activePlayers || get().activePlayers,
       });
@@ -289,11 +287,6 @@ export const useGame = create<gameState>()((set, get) => ({
       });
     };
 
-    const handleUpdateRolls = (quantity: number) => {
-      console.log('🎲 Received rolls update:', quantity);
-      set({ rollQuantity: quantity });
-    };
-
     const handleHighlights = (highlights: Record<string, boolean>) => {
       console.log('✨ Received highlights');
       set({ highlights: highlights });
@@ -308,16 +301,8 @@ export const useGame = create<gameState>()((set, get) => ({
       console.log('✅ Connected to game socket server');
     });
 
-    gameSocket.on('disconnect', (reason) => {
-      console.log('❌ Disconnected from game socket:', reason);
-    });
-
-    gameSocket.on('connect_error', (error) => {
-      console.error('🔴 Game socket connection error:', error);
-    });
-
-    gameSocket.on('error', (error) => {
-      console.error('🔴 Game socket error:', error);
+    gameSocket.on('disconnect', () => {
+      console.log('❌ Disconnected from game socket:');
     });
 
     gameSocket.on('game:server:join', handleJoin);
@@ -351,5 +336,4 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:displayAbilityRange');
     gameSocket.disconnect();
   },
-
 }));

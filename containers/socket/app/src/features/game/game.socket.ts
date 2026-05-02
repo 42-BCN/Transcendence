@@ -58,7 +58,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         socket.emit('game:server:sync', gameState.clients[role]);
 
       socket.on('game:client:showMoveRange', (diceValue: number) => {
-        if (!gameState.clients[role] || !role)
+        if (!gameState.clients[role] || !role || !gameState.clients[role].selectedEnt)
           return;
         if (gameState.clients[role].selectedEnt.startsWith('clone_')
           && gameState.clones[`clone_${role}`].hasMoved === true)
@@ -202,6 +202,8 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           return (console.log("couldn't add ability to history!"));
         addHistory(entid, "ability", target, seldice, gameState.clients[role].selectedAb);
         const source = gameState.players[entid] || gameState.clones[entid];
+        if (!source)
+          return (console.log("couldn't find a valid source in addAbilityHistory!"));
         if (source.type === "player") {
           setClear(role);
           gameState.players[entid] = {

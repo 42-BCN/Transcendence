@@ -3,8 +3,6 @@
 import { useRef, useEffect, useMemo, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { MapControls, OrthographicCamera } from '@react-three/drei';
-import type { pos, parse_entity, tile } from './maps';
-import { testMap, parseMap } from './maps';
 import { useGame } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
@@ -18,8 +16,10 @@ function AbButtons() {
   const ent = useGame((state) => state.getSel());
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
-  const abilityCD = useGame((state) => state.players[state.selectedEnt]?.abilitiesCD
-    || state.clones[state.selectedEnt]?.abilitiesCD);
+  const abilityCD = useGame((state) => {
+    ent && ent.id ? state.players[ent.id].abilitiesCD
+      || state.clones[ent.id]?.abilitiesCD : null
+  });
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
   const clearSelectables = useGame((state) => state.clearSelectables);
@@ -423,7 +423,7 @@ export function Game() {
   const selectedDice = useGame((state) => state.selectedDice);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
-  const handleRightClick = useGame((state) => state.handleRightClick);
+  // const handleRightClick = useGame((state) => state.handleRightClick);
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);

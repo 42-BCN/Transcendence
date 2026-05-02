@@ -385,6 +385,8 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
   }
   if (type === 'ability') {
     const ent = gameState.players[id] || gameState.clones[id];
+    if (!ent)
+      return console.log('no ent in addHistory!');
     ent.abilitiesCD[ability] = getAbility(ability)?.cd;
   }
   const actionNumber = gameState.history.reduce((count, action) => {
@@ -700,7 +702,7 @@ function getAoE(who: string, tileid: string, type: string, range: number) {
 }
 
 export function paint(who: string, pos: pos, type: string, range: number, self: boolean) {
-  if (!gameState.clients[who].selectedEnt)
+  if (gameState.clients[who] && !gameState.clients[who].selectedEnt)
     return {};
   let valid: Record<string, boolean>;
   switch (type) {
