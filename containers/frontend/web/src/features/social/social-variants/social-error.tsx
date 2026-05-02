@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { Stack } from '@/components/primitives/stack';
 import { Text } from '@/components/primitives/text';
-import type { SocialErrorCode } from '../social-dashboard';
+import type { SocialErrorCode } from '../store/social-store.types';
 
 interface SocialErrorProps {
   error: SocialErrorCode;
