@@ -131,6 +131,7 @@ curl -sk https://localhost:8443/api/friends/detailed \
 
 **`containers/docker-compose.yml`**:
 - `REDIS_URL` variable in the backend service for sessions
+- `SOCKET_CORS_ORIGINS` variable in the socket service for Socket.IO CORS allowlisting
 
 **`containers/nginx/nginx.conf`**:
 - Proxy fixed using `rewrite` instead of trailing slash

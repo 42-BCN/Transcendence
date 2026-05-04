@@ -44,10 +44,17 @@ if (!process.env.SOCKET_INTERNAL_SECRET) {
   });
 }
 
-const io = new Server(httpServer, {
-  cors: { origin: '*' },
-});
+const allowedOrigins = (process.env.SOCKET_CORS_ORIGINS ?? '')
+  .split(',')
+  .map((origin: string) => origin.trim())
+  .filter(Boolean);
 
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+});
 registerSockets(io);
 
 app.post('/internal/notify', handleInternalNotify);

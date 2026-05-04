@@ -9,6 +9,10 @@ Use [setup-env.sh](./setup-env.sh) to generate the local `.env.<env>` files used
 - `containers/frontend/docker/.env.<env>`
 - `containers/database/docker/.env.<env>`
 
+## Socket service runtime env
+
+The socket service reads `SOCKET_CORS_ORIGINS` at runtime from Docker Compose. The default local value is `https://localhost:8443`, and you can override it by exporting `SOCKET_CORS_ORIGINS` before running the stack.
+
 ## Template files
 
 Tracked example templates live next to the generated files as `*.example` files. Update those templates when a new variable is added so the local setup stays reproducible without committing secrets.
