@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSocialStore } from '../store/social-store.provider';
 import { type GroupedSearchResults } from '../store/social-store.types';
-import { emptyGroupedSearchResults } from '../store/social-store';
+import { emptyGroupedSearchResults } from '../store/social-store.reducers';
 
 import { searchUsers } from '../actions/users.actions';
 import { TextField } from '@components';
@@ -22,7 +22,7 @@ export function groupSearchResults(args: {
   const { users, currentUserId, friends } = args;
   const grouped = emptyGroupedSearchResults();
   const onlineFriendIds = new Set(
-    friends.filter((friend) => friend.isOnline).map((friend) => friend.id),
+    friends.filter((friend) => friend.presence !== 'offline').map((friend) => friend.id),
   );
 
   for (const user of users) {

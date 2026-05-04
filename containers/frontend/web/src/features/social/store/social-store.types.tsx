@@ -4,6 +4,11 @@ import type {
 } from '@/contracts/api/friendships/friendships.contracts';
 import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';
 import type { SearchUserResult } from '@/contracts/api/users/users.contracts';
+import type {
+  FriendAcceptedNotificationPayload,
+  FriendRejectedNotificationPayload,
+  FriendRequestNotificationPayload,
+} from '@/contracts/sockets/friendships/friendships.schema';
 
 export type PendingListKey = 'pendingReceived' | 'pendingSent';
 
@@ -46,4 +51,10 @@ export interface SocialState {
   removePendingById: (list: PendingListKey, id: string) => void;
   acceptPendingById: (id: string) => void;
   addPendingRequest: (friendship: FriendshipPublic, wasAutoAccepted?: boolean) => void;
+
+  /** Preferred: set precise presence */
+  setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') => void;
+  receiveFriendRequest: (payload: FriendRequestNotificationPayload) => void;
+  receiveFriendAccepted: (payload: FriendAcceptedNotificationPayload) => void;
+  receiveFriendRejected: (payload: FriendRejectedNotificationPayload) => void;
 }

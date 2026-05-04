@@ -32,6 +32,8 @@ services:
       context: .
       dockerfile: ./socket/docker/Dockerfile
     working_dir: /app
+    env_file:
+      - ./socket/docker/.env.${APP_ENV:-development}
     depends_on:
       backend:
         condition: service_healthy
@@ -39,6 +41,7 @@ services:
       NODE_ENV: ${NODE_ENV:-development}
       CERT_DIR: /certs
       NODE_EXTRA_CA_CERTS: /certs/ca.pem
+      SOCKET_CORS_ORIGINS: ${SOCKET_CORS_ORIGINS:-https://localhost:8443}
       BACKEND_SESSION_IDENTITY_URL: https://backend:4000/auth/session/identity
     networks:
       - edge

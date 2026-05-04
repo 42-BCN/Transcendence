@@ -131,6 +131,7 @@ curl -sk https://localhost:8443/api/friends/detailed \
 
 **`containers/docker-compose.yml`**:
 - `REDIS_URL` variable in the backend service for sessions
+- `SOCKET_CORS_ORIGINS` variable in the socket service for Socket.IO CORS allowlisting
 
 **`containers/nginx/nginx.conf`**:
 - Proxy fixed using `rewrite` instead of trailing slash
@@ -179,7 +180,7 @@ If there are module errors, run `npm ci` again.
 All endpoints are under the single prefix `/api/friends`.
 
 ### `GET /api/friends`
-List accepted friends (simple UI format: id, username, avatar, isOnline).
+List accepted friends (simple UI format: id, username, avatar, presence).
 
 **Response**: `{ "ok": true, "data": { "friends": [...] } }`
 
@@ -445,7 +446,7 @@ Si hay errores de módulos, hacer `npm ci` de nuevo.
 Todos los endpoints están bajo el prefijo único `/api/friends`.
 
 ### `GET /api/friends`
-Lista de amigos aceptados (formato UI simple: id, username, avatar, isOnline).
+Lista de amigos aceptados (formato UI simple: id, username, avatar, presence).
 
 **Response**: `{ "ok": true, "data": { "friends": [...] } }`
 

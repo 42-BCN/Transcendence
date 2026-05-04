@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 
 import { handleInternalNotify, handlePresenceCheck } from './internal/notify.routes';
 import { registerSockets } from './sockets/socket.register';
+import { logEvents } from './socket.logs';
 
 const app = express();
 app.use(express.json());
@@ -35,10 +36,25 @@ function createAppServer() {
 
 const httpServer = createAppServer();
 
-const io = new Server(httpServer, {
-  cors: { origin: '*' },
-});
+if (!process.env.SOCKET_INTERNAL_SECRET) {
+  logEvents.warn({
+    event: 'internal_secret_not_configured',
+    message:
+      'SOCKET_INTERNAL_SECRET is not set; internal notify routes will accept requests without authentication.',
+  });
+}
 
+const allowedOrigins = (process.env.SOCKET_CORS_ORIGINS ?? '')
+  .split(',')
+  .map((origin: string) => origin.trim())
+  .filter(Boolean);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: allowedOrigins,
+    credentials: true,
+  },
+});
 registerSockets(io);
 
 app.post('/internal/notify', handleInternalNotify);

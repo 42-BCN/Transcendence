@@ -1155,7 +1155,7 @@ components:
           format: date-time
     FriendPublic:
       type: object
-      required: [id, username, avatar, isOnline]
+      required: [id, username, avatar, presence]
       properties:
         id:
           type: string
@@ -1164,8 +1164,9 @@ components:
           type: string
         avatar:
           nullable: true
-        isOnline:
-          type: boolean
+        presence:
+          type: string
+          enum: [online, away, offline]
     FriendshipsListResponse:
       type: object
       required: [ok, data]

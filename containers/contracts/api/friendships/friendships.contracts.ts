@@ -17,7 +17,7 @@ export type FriendPublic = {
   id: string;
   username: string;
   avatar: string | null;
-  isOnline: boolean;
+  presence: 'online' | 'away' | 'offline';
 };
 
 export type GetFriendsListOk = { friends: FriendPublic[] };

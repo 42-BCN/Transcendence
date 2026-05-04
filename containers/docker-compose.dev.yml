@@ -3,6 +3,8 @@ services:
     build:
       target: dev
     command: npm run dev
+    environment:
+      SOCKET_CORS_ORIGINS: ${SOCKET_CORS_ORIGINS:-https://localhost:8443}
     volumes:
       - ./socket/app:/app
       - node_modules_socket:/app/node_modules
