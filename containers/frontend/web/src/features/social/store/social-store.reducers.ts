@@ -15,6 +15,7 @@ type SetState = (
 ) => void;
 
 type SearchResultItem = GroupedSearchResults[keyof GroupedSearchResults][number];
+type SearchResultBucket = keyof GroupedSearchResults;
 
 export const emptyGroupedSearchResults = (): GroupedSearchResults => ({
   online: [],
@@ -35,6 +36,59 @@ function updateResults(
     requests: results.requests.map((item) => (predicate(item) ? update(item) : item)),
     pending: results.pending.map((item) => (predicate(item) ? update(item) : item)),
     none: results.none.map((item) => (predicate(item) ? update(item) : item)),
+  };
+}
+
+function removeSearchResultByUserId(
+  results: GroupedSearchResults,
+  userId: string,
+): GroupedSearchResults {
+  return {
+    online: results.online.filter((item) => item.id !== userId),
+    offline: results.offline.filter((item) => item.id !== userId),
+    requests: results.requests.filter((item) => item.id !== userId),
+    pending: results.pending.filter((item) => item.id !== userId),
+    none: results.none.filter((item) => item.id !== userId),
+  };
+}
+
+function getSearchResultBucket(item: SearchResultItem, state: SocialState): SearchResultBucket {
+  if (item.friendshipStatus === 'accepted') {
+    const isOnline = state.friends.some((friend) => friend.id === item.id && friend.isOnline);
+
+    return isOnline ? 'online' : 'offline';
+  }
+
+  if (item.friendshipStatus === 'pending') {
+    return item.senderId === state.currentUserId ? 'pending' : 'requests';
+  }
+
+  return 'none';
+}
+
+function replaceSearchResultByUserId(
+  results: GroupedSearchResults,
+  userId: string,
+  updater: (item: SearchResultItem) => SearchResultItem,
+  state: SocialState,
+): GroupedSearchResults {
+  const currentItem = [
+    ...results.online,
+    ...results.offline,
+    ...results.requests,
+    ...results.pending,
+    ...results.none,
+  ].find((item) => item.id === userId);
+
+  if (!currentItem) return results;
+
+  const updatedItem = updater(currentItem);
+  const bucket = getSearchResultBucket(updatedItem, state);
+  const withoutUser = removeSearchResultByUserId(results, userId);
+
+  return {
+    ...withoutUser,
+    [bucket]: addUniqueSearchResult(withoutUser[bucket], updatedItem),
   };
 }
 
@@ -117,15 +171,16 @@ function receiveFriendRequestReducer(
 
     return {
       pendingReceived: addUniquePending(state.pendingReceived, request),
-      searchResults: updateResults(
+      searchResults: replaceSearchResultByUserId(
         state.searchResults,
-        (item) => item.id === payload.senderId,
+        payload.senderId,
         (item) => ({
           ...item,
           friendshipStatus: 'pending',
           friendshipId: payload.friendshipId,
           senderId: payload.senderId,
         }),
+        state,
       ),
     };
   };
@@ -168,9 +223,9 @@ function receiveFriendAcceptedReducer(
       pendingSent: removePendingByUserId(state.pendingSent, payload.friendUserId),
       pendingReceived: removePendingByUserId(state.pendingReceived, payload.friendUserId),
       friends: addUniqueFriend(state.friends, newFriend),
-      searchResults: updateResults(
+      searchResults: replaceSearchResultByUserId(
         state.searchResults,
-        (item) => item.id === payload.friendUserId,
+        payload.friendUserId,
         (item) => ({
           ...item,
           friendshipStatus: 'accepted',
@@ -182,6 +237,7 @@ function receiveFriendAcceptedReducer(
             null,
           senderId: null,
         }),
+        state,
       ),
     };
   };
@@ -193,15 +249,16 @@ function receiveFriendRejectedReducer(
   return (state) => ({
     pendingSent: removePendingByFriendshipId(state.pendingSent, payload.friendshipId),
     pendingReceived: removePendingByFriendshipId(state.pendingReceived, payload.friendshipId),
-    searchResults: updateResults(
+    searchResults: replaceSearchResultByUserId(
       state.searchResults,
-      (item) => item.friendshipId === payload.friendshipId,
+      payload.rejectedByUserId,
       (item) => ({
         ...item,
         friendshipStatus: 'none',
         friendshipId: null,
         senderId: null,
       }),
+      state,
     ),
   });
 }
@@ -212,15 +269,16 @@ function removePendingByIdReducer(
 ): (state: SocialState) => Partial<SocialState> {
   return (state) => ({
     [list]: state[list].filter((item) => item.id !== id),
-    searchResults: updateResults(
+    searchResults: replaceSearchResultByUserId(
       state.searchResults,
-      (item) => item.friendshipId === id,
+      state[list].find((item) => item.id === id)?.userId ?? id,
       (item) => ({
         ...item,
         friendshipStatus: 'none',
         friendshipId: null,
         senderId: null,
       }),
+      state,
     ),
   });
 }
@@ -245,22 +303,6 @@ function createFriendFromSearchItem(
   };
 }
 
-function markSearchFriendshipAccepted(
-  results: GroupedSearchResults,
-  friendshipId: string,
-): GroupedSearchResults {
-  return updateResults(
-    results,
-    (item) => item.friendshipId === friendshipId,
-    (item) => ({
-      ...item,
-      friendshipStatus: 'accepted',
-      friendshipId,
-      senderId: null,
-    }),
-  );
-}
-
 function resolveAcceptedFriend(
   request: FriendshipPublic | undefined,
   searchItem: GroupedSearchResults['requests'][number] | undefined,
@@ -276,13 +318,24 @@ function acceptPendingByIdReducer(id: string): (state: SocialState) => Partial<S
     const request = state.pendingReceived.find((item) => item.id === id);
     const searchItem = state.searchResults.requests.find((item) => item.friendshipId === id);
     const newFriend = resolveAcceptedFriend(request, searchItem);
+    const acceptedUserId = request?.userId ?? searchItem?.id;
 
-    if (!newFriend) return {};
+    if (!newFriend || !acceptedUserId) return {};
 
     return {
       pendingReceived: removePendingByFriendshipId(state.pendingReceived, id),
       friends: addUniqueFriend(state.friends, newFriend),
-      searchResults: markSearchFriendshipAccepted(state.searchResults, id),
+      searchResults: replaceSearchResultByUserId(
+        state.searchResults,
+        acceptedUserId,
+        (item) => ({
+          ...item,
+          friendshipStatus: 'accepted',
+          friendshipId: id,
+          senderId: null,
+        }),
+        state,
+      ),
     };
   };
 }
@@ -302,30 +355,32 @@ function addPendingRequestReducer(
 
       return {
         friends: addUniqueFriend(state.friends, newFriend),
-        searchResults: updateResults(
+        searchResults: replaceSearchResultByUserId(
           state.searchResults,
-          (item) => item.id === friendship.userId,
+          friendship.userId,
           (item) => ({
             ...item,
             friendshipStatus: 'accepted',
             friendshipId: friendship.id,
             senderId: null,
           }),
+          state,
         ),
       };
     }
 
     return {
       pendingSent: addUniquePending(state.pendingSent, friendship),
-      searchResults: updateResults(
+      searchResults: replaceSearchResultByUserId(
         state.searchResults,
-        (item) => item.id === friendship.userId,
+        friendship.userId,
         (item) => ({
           ...item,
           friendshipStatus: 'pending',
           friendshipId: friendship.id,
           senderId: state.currentUserId,
         }),
+        state,
       ),
     };
   };
