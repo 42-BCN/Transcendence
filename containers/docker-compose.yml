@@ -32,6 +32,8 @@ services:
       context: .
       dockerfile: ./socket/docker/Dockerfile
     working_dir: /app
+    env_file:
+      - ./socket/docker/.env.${APP_ENV:-development}
     depends_on:
       backend:
         condition: service_healthy
