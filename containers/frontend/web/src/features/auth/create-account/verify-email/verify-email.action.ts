@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import type { VerifyEmailRes } from '@/contracts/api/auth/auth.contract';
 import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
 import { VerifyEmailReqSchema } from '@/contracts/api/auth/auth.validation';
@@ -16,7 +17,10 @@ export const verifyEmailAction = withServerAction(
       token: parsedToken.data.token,
     });
 
-    if (data.ok) await forwardAuthCookies(headers);
+    if (data.ok) {
+      await forwardAuthCookies(headers);
+      revalidatePath('[locale]', 'layout');
+    }
 
     return data;
   },

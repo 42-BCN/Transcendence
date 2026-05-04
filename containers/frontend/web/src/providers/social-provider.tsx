@@ -1,14 +1,15 @@
 'use client';
 
-import { createContext, useContext, useRef, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useRef } from 'react';
 import { useStore } from 'zustand';
 
-import { createSocialStore, type SocialStore } from './social-store';
-import type { SocialInitialData, SocialState } from './social-store.types';
+import { createSocialStore, type SocialStore } from '@/features/social/store/social-store';
+import type { SocialInitialData, SocialState } from '@/features/social/store/social-store.types';
 
 const SocialStoreContext = createContext<SocialStore | null>(null);
 
-export function SocialStoreProvider({
+export function SocialProvider({
   children,
   initialData,
 }: {
@@ -30,7 +31,7 @@ export function useSocialStore<T>(selector: (state: SocialState) => T): T {
   const store = useContext(SocialStoreContext);
 
   if (!store) {
-    throw new Error('useSocialStore must be used inside SocialStoreProvider');
+    throw new Error('useSocialStore must be used inside SocialProvider');
   }
 
   return useStore(store, selector);

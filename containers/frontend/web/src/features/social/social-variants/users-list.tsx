@@ -10,7 +10,7 @@ import type {
 } from '@/contracts/api/friendships/friendships.contracts';
 import type { SearchUserResult } from '@/contracts/api/users/users.contracts';
 
-import { useSocialStore } from '../store/social-store.provider';
+import { useSocialStore } from '@/providers/social-provider';
 import { OnlineButtons } from './online-buttons';
 import { OfflineButtons } from './offline-buttons';
 import { InviteActionButton } from './invite-action-button';

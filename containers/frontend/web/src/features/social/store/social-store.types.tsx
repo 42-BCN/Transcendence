@@ -41,6 +41,11 @@ export interface SocialState {
   currentUserId: string | null;
   searchResults: GroupedSearchResults;
   searchQuery: string;
+  errors: {
+    friends?: SocialErrorCode;
+    pendingReceived?: SocialErrorCode;
+    pendingSent?: SocialErrorCode;
+  };
 
   setFriends: (friends: FriendPublic[]) => void;
   setPendingReceived: (requests: FriendshipPublic[]) => void;

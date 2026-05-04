@@ -1,6 +1,7 @@
 'use server';
 
 import { getLocale } from 'next-intl/server';
+import { revalidatePath } from 'next/cache';
 import { redirect } from '@/i18n/navigation';
 import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
 import { forwardAuthCookies } from '@/lib/http/auth-cookies.server';
@@ -24,5 +25,7 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
   if (!result.ok) return result;
 
   const locale = await getLocale();
+
+  revalidatePath('[locale]', 'layout');
   redirect({ href: '/', locale });
 }

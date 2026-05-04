@@ -15,8 +15,8 @@ import {
 } from '@/components';
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
-import type { SocialErrorCode, SocialInitialData } from './store/social-store.types';
-import { SocialStoreProvider, useSocialStore } from './store/social-store.provider';
+import type { SocialErrorCode } from './store/social-store.types';
+import { useSocialStore } from '@/providers/social-provider';
 import { SearchResults } from './social-variants/users-list';
 import { SocialSocketBridge } from './store/social-store.bridge';
 
@@ -47,10 +47,11 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
   );
 }
 
-function RequestsList({ errors }: { errors: SocialInitialData['errors'] }) {
+function RequestsList() {
   const t = useTranslations('features.social.requests');
   const pendingReceived = useSocialStore((s) => s.pendingReceived);
   const pendingSent = useSocialStore((s) => s.pendingSent);
+  const errors = useSocialStore((s) => s.errors);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
@@ -85,10 +86,11 @@ function SocialHeader() {
   );
 }
 
-function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
+function SocialContent() {
   const t = useTranslations('features.social');
   const searchQuery = useSocialStore((state) => state.searchQuery);
   const searchResults = useSocialStore((state) => state.searchResults);
+  const errors = useSocialStore((state) => state.errors);
 
   if (searchQuery.trim() !== '') {
     const isEmpty =
@@ -123,25 +125,20 @@ function SocialContent({ errors }: { errors: SocialInitialData['errors'] }) {
       </TabPanel>
 
       <TabPanel id="requests" className="outline-none">
-        <RequestsList
-          errors={{
-            pendingReceived: errors.pendingReceived,
-            pendingSent: errors.pendingSent,
-          }}
-        />
+        <RequestsList />
       </TabPanel>
     </Tabs>
   );
 }
 
-export function SocialDashboard({ initialData }: { initialData: SocialInitialData }) {
+export function SocialDashboard() {
   return (
-    <SocialStoreProvider initialData={initialData}>
+    <>
       <SocialSocketBridge />
       <SocialHeader />
       <main>
-        <SocialContent errors={initialData.errors} />
+        <SocialContent />
       </main>
-    </SocialStoreProvider>
+    </>
   );
 }

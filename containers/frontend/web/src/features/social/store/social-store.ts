@@ -13,6 +13,7 @@ const createInitialState = (initialData: SocialInitialData) => ({
   currentUserId: initialData.currentUserId,
   searchResults: emptyGroupedSearchResults(),
   searchQuery: '',
+  errors: initialData.errors,
 });
 
 export function createSocialStore(initialData: SocialInitialData) {
