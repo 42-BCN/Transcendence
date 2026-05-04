@@ -228,6 +228,7 @@ export async function seed(): Promise<void> {
     await insertSpecificUser('mfontser');
     await insertSpecificUser('joanavar');
     await insertSpecificUser('cmanica');
+    await insertSpecificUser('tatahere');
     await insertLockoutTestUser();
 
     const pokemonUsers = await seedPokemonUsers();
@@ -242,6 +243,7 @@ export async function seed(): Promise<void> {
       'mfontser@fakemail.com',
       'joanavar@fakemail.com',
       'cmanica@fakemail.com',
+      'tatahere@fakemail.com',
     ],
     lockoutUser: {
       email: LOCKOUT_TEST_EMAIL,

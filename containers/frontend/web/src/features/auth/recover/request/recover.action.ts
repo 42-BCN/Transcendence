@@ -5,7 +5,7 @@ import { getLocale } from 'next-intl/server';
 
 import { redirect } from '@/i18n/navigation';
 import { type RecoverRes } from '@/contracts/api/auth/auth.contract';
-import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
+import { fetchServerAction } from '@/lib/http/fetcher.server';
 
 const RECOVER_IDENTIFIER_COOKIE = 'recover_identifier';
 const TEN_MINUTES_S = 60 * 10;
@@ -13,18 +13,14 @@ const TEN_MINUTES_S = 60 * 10;
 export async function recoverAction(_prevState: unknown, formData: FormData) {
   const identifier = String(formData.get('identifier') ?? '');
   const locale = await getLocale();
-  const result = await withServerAction(async () => {
-    const res = await fetchServer<RecoverRes>(
-      '/auth/recover',
-      'POST',
-      { identifier },
-      {
-        acceptLanguage: locale,
-      },
-    );
-
-    return res.data;
-  })();
+  const result = await fetchServerAction<RecoverRes>(
+    '/auth/recover',
+    'POST',
+    { identifier },
+    {
+      acceptLanguage: locale,
+    },
+  );
 
   if (!result.ok) return result;
 
