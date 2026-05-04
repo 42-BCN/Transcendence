@@ -15,3 +15,9 @@ export const friendsSocket: Socket<ServerToClientFriendshipEvents, ClientToServe
     transports: ['websocket'],
     withCredentials: true,
   });
+
+export function disconnectFriendsSocket() {
+  if (friendsSocket.connected) {
+    friendsSocket.disconnect();
+  }
+}
