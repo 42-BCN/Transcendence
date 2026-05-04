@@ -17,7 +17,6 @@ export type FriendPublic = {
   id: string;
   username: string;
   avatar: string | null;
-  /** Presence state: 'online' | 'away' | 'offline' */
   presence: 'online' | 'away' | 'offline';
 };
 
