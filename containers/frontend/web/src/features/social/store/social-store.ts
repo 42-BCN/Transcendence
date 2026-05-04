@@ -3,7 +3,7 @@ import { createStore } from 'zustand/vanilla';
 import { createSocialActions, emptyGroupedSearchResults } from './social-store.reducers';
 import type { SocialInitialData, SocialState } from './social-store.types';
 
-const createInitialState = (initialData: SocialInitialData) => ({
+export const createInitialState = (initialData: SocialInitialData) => ({
   friends: initialData.friends.map((f) => ({
     ...f,
     presence: (f as any).presence ?? 'offline',
