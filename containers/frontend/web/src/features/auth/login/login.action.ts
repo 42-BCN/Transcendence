@@ -26,6 +26,6 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
 
   const locale = await getLocale();
 
-  revalidatePath('[locale]', 'layout');
+  revalidatePath(`/${locale}`, 'layout');
   redirect({ href: '/', locale });
 }

@@ -6,6 +6,7 @@ import { fetchServer, withServerAction } from '@/lib/http/fetcher.server';
 import { VerifyEmailReqSchema } from '@/contracts/api/auth/auth.validation';
 import { getValidationErrorResult } from '@/lib/http/errors';
 import { forwardAuthCookies } from '@/lib/http/auth-cookies.server';
+import { getLocale } from 'next-intl/server';
 
 export const verifyEmailAction = withServerAction(
   async (token: string): Promise<VerifyEmailRes> => {
@@ -18,8 +19,10 @@ export const verifyEmailAction = withServerAction(
     });
 
     if (data.ok) {
+      const locale = await getLocale();
+
       await forwardAuthCookies(headers);
-      revalidatePath('[locale]', 'layout');
+      revalidatePath(`/${locale}`, 'layout');
     }
 
     return data;
