@@ -22,7 +22,7 @@ export function groupSearchResults(args: {
   const { users, currentUserId, friends } = args;
   const grouped = emptyGroupedSearchResults();
   const onlineFriendIds = new Set(
-    friends.filter((friend) => friend.isOnline).map((friend) => friend.id),
+    friends.filter((friend) => friend.presence !== 'offline').map((friend) => friend.id),
   );
 
   for (const user of users) {

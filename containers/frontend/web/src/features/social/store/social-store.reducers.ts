@@ -40,7 +40,8 @@ function removeSearchResultByUserId(
 
 function getSearchResultBucket(item: SearchResultItem, state: SocialState): SearchResultBucket {
   if (item.friendshipStatus === 'accepted') {
-    const isOnline = state.friends.some((friend) => friend.id === item.id && friend.isOnline);
+    const friend = state.friends.find((f) => f.id === item.id);
+    const isOnline = friend ? friend.presence !== 'offline' : false;
 
     return isOnline ? 'online' : 'offline';
   }
@@ -107,10 +108,10 @@ function removePendingByUserId(requests: FriendshipPublic[], userId: string): Fr
 function moveSearchResultPresence(
   results: GroupedSearchResults,
   userId: string,
-  isOnline: boolean,
+  presence: 'online' | 'away' | 'offline',
 ): GroupedSearchResults {
-  const fromKey = isOnline ? 'offline' : 'online';
-  const toKey = isOnline ? 'online' : 'offline';
+  const toKey = presence === 'offline' ? 'offline' : 'online';
+  const fromKey = toKey === 'online' ? 'offline' : 'online';
 
   const item = results[fromKey].find((result) => result.id === userId);
 
@@ -129,15 +130,15 @@ function addUniqueSearchResult<T extends { id: string }>(items: T[], item: T): T
   return [...items, item];
 }
 
-function setFriendOnlineStatusReducer(
+function setFriendPresenceReducer(
   userId: string,
-  isOnline: boolean,
+  presence: 'online' | 'away' | 'offline',
 ): (state: SocialState) => Partial<SocialState> {
   return (state) => ({
     friends: state.friends.map((friend) =>
-      friend.id === userId ? { ...friend, isOnline } : friend,
+      friend.id === userId ? { ...friend, presence } : friend,
     ),
-    searchResults: moveSearchResultPresence(state.searchResults, userId, isOnline),
+    searchResults: moveSearchResultPresence(state.searchResults, userId, presence),
   });
 }
 
@@ -202,7 +203,7 @@ function receiveFriendAcceptedReducer(
       id: payload.friendUserId,
       username: payload.friendUsername,
       avatar: pendingSent?.avatar ?? pendingReceived?.avatar ?? existingSearchUser?.avatar ?? null,
-      isOnline: existingFriend?.isOnline ?? false,
+      presence: existingFriend?.presence ?? 'offline',
     };
 
     return {
@@ -274,7 +275,7 @@ function createFriendFromPendingRequest(request: FriendshipPublic): FriendPublic
     id: request.userId,
     username: request.username,
     avatar: request.avatar,
-    isOnline: false,
+    presence: 'offline',
   };
 }
 
@@ -285,7 +286,7 @@ function createFriendFromSearchItem(
     id: searchItem.id,
     username: searchItem.username,
     avatar: searchItem.avatar,
-    isOnline: false,
+    presence: 'offline',
   };
 }
 
@@ -336,7 +337,7 @@ function addPendingRequestReducer(
         id: friendship.userId,
         username: friendship.username,
         avatar: friendship.avatar,
-        isOnline: false,
+        presence: 'offline',
       };
 
       return {
@@ -386,8 +387,8 @@ export function createSocialActions(set: SetState) {
 
     setCurrentUserId: (currentUserId: string | null) => set({ currentUserId }),
 
-    setFriendOnlineStatus: (userId: string, isOnline: boolean) =>
-      set(setFriendOnlineStatusReducer(userId, isOnline)),
+    setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') =>
+      set(setFriendPresenceReducer(userId, presence)),
 
     receiveFriendRequest: (payload: FriendRequestNotificationPayload) =>
       set(receiveFriendRequestReducer(payload)),

@@ -4,7 +4,10 @@ import { createSocialActions, emptyGroupedSearchResults } from './social-store.r
 import type { SocialInitialData, SocialState } from './social-store.types';
 
 const createInitialState = (initialData: SocialInitialData) => ({
-  friends: initialData.friends,
+  friends: initialData.friends.map((f) => ({
+    ...f,
+    presence: (f as any).presence ?? 'offline',
+  })),
   pendingReceived: initialData.pendingReceived,
   pendingSent: initialData.pendingSent,
   currentUserId: initialData.currentUserId,

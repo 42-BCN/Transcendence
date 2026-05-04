@@ -180,7 +180,7 @@ If there are module errors, run `npm ci` again.
 All endpoints are under the single prefix `/api/friends`.
 
 ### `GET /api/friends`
-List accepted friends (simple UI format: id, username, avatar, isOnline).
+List accepted friends (simple UI format: id, username, avatar, presence).
 
 **Response**: `{ "ok": true, "data": { "friends": [...] } }`
 
@@ -446,7 +446,7 @@ Si hay errores de módulos, hacer `npm ci` de nuevo.
 Todos los endpoints están bajo el prefijo único `/api/friends`.
 
 ### `GET /api/friends`
-Lista de amigos aceptados (formato UI simple: id, username, avatar, isOnline).
+Lista de amigos aceptados (formato UI simple: id, username, avatar, presence).
 
 **Response**: `{ "ok": true, "data": { "friends": [...] } }`
 

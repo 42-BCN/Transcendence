@@ -52,7 +52,8 @@ export interface SocialState {
   acceptPendingById: (id: string) => void;
   addPendingRequest: (friendship: FriendshipPublic, wasAutoAccepted?: boolean) => void;
 
-  setFriendOnlineStatus: (userId: string, isOnline: boolean) => void;
+  /** Preferred: set precise presence */
+  setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') => void;
   receiveFriendRequest: (payload: FriendRequestNotificationPayload) => void;
   receiveFriendAccepted: (payload: FriendAcceptedNotificationPayload) => void;
   receiveFriendRejected: (payload: FriendRejectedNotificationPayload) => void;

@@ -23,8 +23,8 @@ import { SocialSocketBridge } from './store/social-store.bridge';
 function FriendsList({ error }: { error?: SocialErrorCode }) {
   const t = useTranslations('features.social.friends');
   const friends = useSocialStore((s) => s.friends);
-  const onlineFriends = friends.filter((f) => f.isOnline);
-  const offlineFriends = friends.filter((f) => !f.isOnline);
+  const onlineFriends = friends.filter((f) => f.presence !== 'offline');
+  const offlineFriends = friends.filter((f) => f.presence === 'offline');
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>

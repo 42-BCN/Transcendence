@@ -121,7 +121,7 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
     id: f.id,
     username: f.username,
     avatar: f.avatar,
-    isOnline: onlineStatus[f.id] ?? false,
+    presence: onlineStatus[f.id] ? 'online' : 'offline',
   }));
 }
 
