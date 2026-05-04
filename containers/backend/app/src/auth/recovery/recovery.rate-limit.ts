@@ -10,3 +10,13 @@ export const recoveryRateLimit = createRateLimit({
     return typeof identifier === 'string' ? identifier : undefined;
   },
 });
+
+export const resetPasswordRateLimit = createRateLimit({
+  keyPrefix: AUTH_RATE_LIMIT_KEYS.resetPasswordToken,
+  max: authSecurityConfig.rateLimit.tokenFlow.max,
+  windowMs: authSecurityConfig.rateLimit.tokenFlow.windowMs,
+  extractRaw: (req) => {
+    const token = req.body?.token;
+    return typeof token === 'string' ? token : undefined;
+  },
+});
