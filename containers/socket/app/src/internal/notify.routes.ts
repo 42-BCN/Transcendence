@@ -26,7 +26,11 @@ function respondBadRequest(res: Response, error: ZodFlattenableError): void {
 function validateInternalSecret(req: Request, res: Response, event: string): boolean {
   const secret = process.env.SOCKET_INTERNAL_SECRET;
 
-  if (!secret) return true;
+  if (!secret) {
+    logEvents.error({ event: 'internal_secret_missing' });
+    res.status(503).json({ ok: false });
+    return false;
+  }
 
   const header = req.headers['x-internal-secret'];
 

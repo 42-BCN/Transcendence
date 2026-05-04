@@ -8,9 +8,13 @@ const SOCKET_SERVICE_URL = process.env.SOCKET_SERVICE_URL ?? 'https://socket:310
 
 export function handleInternalFriendsList(req: Request, res: Response): void {
   const secret = process.env.SOCKET_INTERNAL_SECRET;
+
   if (!secret) {
-    console.warn('[internal/friends] SOCKET_INTERNAL_SECRET is not set — endpoint is unprotected');
+    logEvents.error({ event: 'internal_secret_missing' });
+    res.status(503).json({ ok: false });
+    return false;
   }
+
   if (secret && req.headers['x-internal-secret'] !== secret) {
     res.status(401).json({ ok: false });
     return;
