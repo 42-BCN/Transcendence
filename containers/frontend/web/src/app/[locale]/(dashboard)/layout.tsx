@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
 
 import {
-  getFriendsList,
+  getDetailedFriendships,
   getPendingRequests,
   getSentRequests,
 } from '@/features/social/actions/social.server.actions';
@@ -25,13 +25,13 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
 
   if (userId) {
     const [friendsResult, pendingReceivedResult, pendingSentResult] = await Promise.all([
-      getFriendsList(),
+      getDetailedFriendships(),
       getPendingRequests(),
       getSentRequests(),
     ]);
 
     initialData = {
-      friends: friendsResult.ok ? friendsResult.data.friends : [],
+      friends: friendsResult.ok ? friendsResult.data.friendships : [],
       pendingReceived: pendingReceivedResult.ok ? pendingReceivedResult.data.requests : [],
       pendingSent: pendingSentResult.ok ? pendingSentResult.data.requests : [],
       currentUserId: userId,

@@ -10,7 +10,7 @@ export type PendingListKey = 'pendingReceived' | 'pendingSent';
 export type SocialErrorCode = FriendshipsErrorName | 'FETCH_FAILED';
 
 export interface SocialInitialData {
-  friends: FriendPublic[];
+  friends: FriendshipPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
   currentUserId: string | null;
@@ -30,14 +30,14 @@ export interface GroupedSearchResults {
 }
 
 export interface SocialState {
-  friends: FriendPublic[];
+  friends: FriendshipPublic[];
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
   currentUserId: string | null;
   searchResults: GroupedSearchResults;
   searchQuery: string;
 
-  setFriends: (friends: FriendPublic[]) => void;
+  setFriends: (friends: FriendshipPublic[]) => void;
   setPendingReceived: (requests: FriendshipPublic[]) => void;
   setPendingSent: (requests: FriendshipPublic[]) => void;
   setSearchResults: (results: GroupedSearchResults) => void;

@@ -23,7 +23,7 @@ export function PublicProfileClient({ userId, username, bio }: PublicProfileClie
   const pendingSent = useSocialStore((s) => s.pendingSent);
 
   // Relationship logic
-  const friend = friends.find((f) => f.id === userId);
+  const friend = friends.find((f) => f.userId === userId);
   const requestReceived = pendingReceived.find((r) => r.userId === userId);
   const requestSent = pendingSent.find((r) => r.userId === userId);
 

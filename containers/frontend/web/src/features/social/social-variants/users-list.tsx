@@ -54,13 +54,14 @@ export function UsersList({ friends, type, feedback = true }: UsersListProps) {
   }
 
   return friends.map((item) => {
-    const { id, username, avatar } = item;
-    const userId = 'userId' in item ? item.userId : id;
+    const { username, avatar } = item;
+    const userId = 'userId' in item ? item.userId : item.id;
+    const friendshipId = ('friendshipId' in item ? item.friendshipId : item.id) ?? '';
 
     return (
-      <UserItem id={userId} username={username} avatarUrl={avatar ?? undefined} key={id}>
-        {type === 'request' && <RequestActions friendshipId={id} />}
-        {type === 'pending' && <PendingActions friendshipId={id} />}
+      <UserItem id={userId} username={username} avatarUrl={avatar ?? undefined} key={userId}>
+        {type === 'request' && <RequestActions friendshipId={friendshipId} />}
+        {type === 'pending' && <PendingActions friendshipId={friendshipId} />}
         {type === 'online' && <OnlineButtons username={username} userId={userId} />}
         {type === 'offline' && <OfflineButtons userId={userId} />}
         {type === 'search' && <InviteActionButton userId={userId} />}

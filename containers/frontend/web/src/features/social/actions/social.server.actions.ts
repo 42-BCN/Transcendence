@@ -2,17 +2,10 @@
 
 import { fetchServerAction } from '@/lib/http/fetcher.server';
 import type {
-  GetFriendsListResponse,
+  GetFriendshipsResponse,
   GetPendingRequestsResponse,
   GetSentRequestsResponse,
 } from '@/contracts/api/friendships/friendships.contracts';
-
-/**
- * Fetches the current user's accepted friends list.
- */
-export async function getFriendsList() {
-  return fetchServerAction<GetFriendsListResponse>('/friends', 'GET');
-}
 
 /**
  * Fetches pending incoming friend requests.
@@ -26,4 +19,11 @@ export async function getPendingRequests() {
  */
 export async function getSentRequests() {
   return fetchServerAction<GetSentRequestsResponse>('/friends/requests/sent', 'GET');
+}
+
+/**
+ * Fetches the current user's detailed friendships (includes IDs and status).
+ */
+export async function getDetailedFriendships() {
+  return fetchServerAction<GetFriendshipsResponse>('/friends/detailed', 'GET');
 }

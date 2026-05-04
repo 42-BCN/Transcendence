@@ -69,11 +69,14 @@ const handleAcceptPending =
 
     const userData = request ?? searchItem;
 
-    const newFriend: FriendPublic = {
-      id: request ? request.userId : userData.id,
+    const newFriend: FriendshipPublic = {
+      id: request ? request.id : userData.friendshipId!,
+      userId: request ? request.userId : userData.id,
       username: userData.username,
       avatar: userData.avatar,
-      isOnline: false,
+      status: 'accepted',
+      isSender: request ? request.isSender : userData.senderId === state.currentUserId,
+      createdAt: request ? request.createdAt : new Date().toISOString(),
     };
 
     return {
@@ -91,11 +94,9 @@ const handleAddPending =
   (friendship: FriendshipPublic, wasAutoAccepted?: boolean) =>
   (state: SocialState): Partial<SocialState> => {
     if (wasAutoAccepted || friendship.status === 'accepted') {
-      const newFriend: FriendPublic = {
-        id: friendship.userId,
-        username: friendship.username,
-        avatar: friendship.avatar,
-        isOnline: false,
+      const newFriend: FriendshipPublic = {
+        ...friendship,
+        status: 'accepted',
       };
 
       return {
