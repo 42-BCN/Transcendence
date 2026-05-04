@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
-import { useSocialStore } from '../store/social-store.provider';
+import { useSocialStore } from '@/providers/social-provider';
 import { IconButton, Text } from '@components';
 import { sendFriendRequest } from '../actions/friendships.actions';
 import type { FriendshipsErrorName } from '@/contracts/api/friendships/friendships.errors';

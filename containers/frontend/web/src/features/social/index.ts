@@ -1,1 +1,1 @@
-export { Social } from './social';
+export { SocialDashboard } from './social-dashboard';

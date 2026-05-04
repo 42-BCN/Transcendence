@@ -6,6 +6,8 @@ import { HtmlLangSync } from '@/i18n/html-lang-sync';
 import { envPublic } from '@/lib/config/env.public';
 import { Providers } from '@/app/providers';
 import { NavigationServer } from '@/features/navigation';
+import { SocialProvider } from '@/providers/social-provider';
+import { initializeSocialData } from '@/providers/social-initializer';
 
 export async function generateMetadata({
   params,
@@ -41,15 +43,18 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }): Promise<ReactNode> {
   const { locale } = await params;
+  const socialInitialData = await initializeSocialData();
 
   return (
     <NextIntlClientProvider locale={locale}>
       <Providers locale={locale}>
-        <HtmlLangSync />
+        <SocialProvider initialData={socialInitialData}>
+          <HtmlLangSync />
 
-        <NavigationServer locale={locale} />
+          <NavigationServer locale={locale} />
 
-        {children}
+          {children}
+        </SocialProvider>
       </Providers>
     </NextIntlClientProvider>
   );
