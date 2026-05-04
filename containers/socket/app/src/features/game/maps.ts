@@ -1,4 +1,7 @@
+import type { tile, parse_entity } from './types'
+
 export const testMap = `
+
 wwwwwwwwww
 wwwwwwwwww
 wwwwwwwwww
@@ -19,7 +22,7 @@ oooowwoooo
 ooooooooow
 woooooooow
 wwooooooww
-wwwapmswww,
+wwwapmlwww,
 
 wwwwwwwwww
 wwoowwooww
@@ -54,100 +57,109 @@ ooowwwwoow
 oooowwoooo
 woooowooow
 owooowoooo
-ooooawoooo
+oplmawoooo
 `
 
 export const emptyMap = ``
 
-export type pos = {
-  x: number,
-  y: number,
-  z: number
-}
-
-export type tile = {
-  id: string,
-  type: string,
-  position: pos
-}
-
-export type parse_entity = {
-  id: string,
-  type: string,
-  position: pos
-}
-
-
-type info = {
-  width: number; //x
-  height: number; //y
-  depth: number; //z
-  planum: number;
-  enenum: number;
-  entities: parse_entity[];
-  tiles: tile[];
-}
-
 export const parseMap = (map: string) => {
-  const info: info = {
-    width: 0, height: 0, depth: 0, planum: 1,
-    enenum: 1, entities: [], tiles: []
-  };
+  let width = 0;
+  let height = 0;
+  let depth = 0;
+  let enenum = 1;
+  let entities: parse_entity[] = [];
+  let tiles: tile[] = [];
   const levels = map.trim().split(',');
-  info.height = levels.length;
+  height = levels.length;
   levels.forEach((level: string, y: number) => {
     const rows = level.trim().split('\n')
-    info.depth = rows.length
+    depth = rows.length
     rows.forEach((row: string, z: number) => {
       const chars = row.trim().split('')
-      info.width = chars.length;
+      width = chars.length;
       chars.forEach((char, x) => {
         const position = { x, y, z };
         switch (char) {
           case 'w':
-            info.tiles.push({
+            tiles.push({
               id: `${x},${y},${z}`,
               type: 'wall',
               position
             })
             break
           case 'a':
-            ++info.planum;
-            info.entities.push({
+            entities.push({
               id: 'assassin',
               type: 'assassin',
               position
             });
             break;
           case 'p':
-            ++info.planum;
-            info.entities.push({
+            entities.push({
               id: 'paladin',
               type: 'paladin',
               position
             });
             break;
           case 'm':
-            ++info.planum;
-            info.entities.push({
+            entities.push({
               id: 'mage',
               type: 'mage',
               position
             });
             break;
-          case 's':
-            ++info.planum;
-            info.entities.push({
-              id: `player_${info.planum}`,
-              type: 'scientist',
+          case 'l':
+            entities.push({
+              id: `alchemist`,
+              type: 'alchemist',
               position
             });
             break;
-          case 'e':
-            ++info.enenum;
-            info.entities.push({
-              id: `enemy_${info.enenum}`,
-              type: 'enemy',
+          case 'c':
+            ++enenum;
+            entities.push({
+              id: `crawler_${enenum}`,
+              type: 'crawler',
+              position
+            });
+            break;
+          case 'd':
+            ++enenum;
+            entities.push({
+              id: `drone_${enenum}`,
+              type: 'drone',
+              position
+            });
+            break;
+          case 's':
+            ++enenum;
+            entities.push({
+              id: `spawner${enenum}`,
+              type: 'spawner',
+              position
+            });
+            break;
+          case 't':
+            ++enenum;
+            entities.push({
+              id: `mortar${enenum}`,
+              type: 'mortar',
+              position
+            });
+            break;
+          case 'j':
+            ++enenum;
+            entities.push({
+              id: `jaeger`,
+              type: 'jaeger',
+              position
+            });
+            break;
+          case 'n':
+            ++enenum;
+            entities.push({
+              id: `centurion`,
+              type: 'centurion',
               position
             });
             break;
@@ -155,5 +167,5 @@ export const parseMap = (map: string) => {
       })
     })
   })
-  return { info }
+  return { tiles, entities, width, height, depth }
 };
