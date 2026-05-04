@@ -19,7 +19,7 @@ export const authSecurityConfig = {
       windowMs: MINUTE,
     },
     loginIdentifier: {
-      max: 8,
+      max: 20,
       windowMs: 10 * MINUTE,
     },
     emailFlow: {
