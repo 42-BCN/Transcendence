@@ -288,10 +288,21 @@ export function emitToUser(
   });
 }
 
-export function getUsersOnlineStatus(userIds: string[]): Record<string, boolean> {
-  const status: Record<string, boolean> = {};
+export type FriendPresence = 'online' | 'away' | 'offline';
+
+export function getUsersPresence(userIds: string[]): Record<string, FriendPresence> {
+  const status: Record<string, FriendPresence> = {};
+
   for (const id of userIds) {
-    status[id] = (onlineCounts.get(id) ?? 0) > 0;
+    const connectionCount = onlineCounts.get(id) ?? 0;
+
+    if (connectionCount === 0) {
+      status[id] = 'offline';
+      continue;
+    }
+
+    status[id] = userStates.get(id) ?? 'online';
   }
+
   return status;
 }

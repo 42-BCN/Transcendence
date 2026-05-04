@@ -7,7 +7,7 @@ import {
 } from '@contracts/sockets/friendships/friendships.schema';
 import {
   emitToUser,
-  getUsersOnlineStatus,
+  getUsersPresence,
   subscribeUserToFriendStatus,
 } from '../features/friends.socket';
 import { logEvents } from '../socket.logs';
@@ -104,7 +104,10 @@ export function handlePresenceCheck(req: Request, res: Response): void {
     userCount: userIds.length,
   });
 
-  const status = getUsersOnlineStatus(userIds);
+  const presence = getUsersPresence(userIds);
 
-  res.json({ ok: true, data: { status } });
+  res.json({
+    ok: true,
+    data: { presence },
+  });
 }
