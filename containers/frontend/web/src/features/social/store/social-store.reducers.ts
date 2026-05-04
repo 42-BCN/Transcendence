@@ -25,20 +25,6 @@ export const emptyGroupedSearchResults = (): GroupedSearchResults => ({
   none: [],
 });
 
-function updateResults(
-  results: GroupedSearchResults,
-  predicate: (item: SearchResultItem) => boolean,
-  update: (item: SearchResultItem) => SearchResultItem,
-): GroupedSearchResults {
-  return {
-    online: results.online.map((item) => (predicate(item) ? update(item) : item)),
-    offline: results.offline.map((item) => (predicate(item) ? update(item) : item)),
-    requests: results.requests.map((item) => (predicate(item) ? update(item) : item)),
-    pending: results.pending.map((item) => (predicate(item) ? update(item) : item)),
-    none: results.none.map((item) => (predicate(item) ? update(item) : item)),
-  };
-}
-
 function removeSearchResultByUserId(
   results: GroupedSearchResults,
   userId: string,
