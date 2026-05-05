@@ -282,7 +282,8 @@ default="$HOST"
 printf "%s [%s]: " "$key" "$default"
 read -r input
 
-if [[ -n "$input" ]]; then
+if [ -n "${input+1}" ] ; then
+	echo "updating the HOST"
 	HOST="$input"
 fi
 
