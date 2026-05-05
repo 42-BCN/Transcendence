@@ -36,8 +36,8 @@ export async function ensureChatSessionIdentity(): Promise<void> {
   }
 }
 
-const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
-const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
+const robotsSocketUrl = envPublic.socketUrl != 'https://localhost:8443' ? new URL('/robots', envPublic.socketUrl).toString() :'/robots';
+const chatSocketUrl = envPublic.socketUrl != 'https://localhost:8443' ? new URL('/chat', envPublic.socketUrl).toString() :'/chat';
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
