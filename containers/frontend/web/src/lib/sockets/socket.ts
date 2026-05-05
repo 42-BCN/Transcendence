@@ -6,6 +6,11 @@ import type {
   ClientToServerChatEvents,
 } from '@/contracts/sockets/chat/chat.schema';
 
+import type {
+  ServerToClientGameEvents,
+  ClientToServerGameEvents,
+} from '@/contracts/sockets/game/game.schema';
+
 export type Robot = {
   id: string;
   position: [number, number, number];
@@ -38,6 +43,46 @@ export async function ensureChatSessionIdentity(): Promise<void> {
 
 const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
 const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
+const gameSocketUrl = new URL('/game', envPublic.socketUrl).toString();
+
+export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
+  gameSocketUrl,
+  {
+    autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
+  },
+);
+
+// Immediate error logging
+gameSocket.on('error', (error) => {
+  console.error('🔴 [gameSocket] error event:', error);
+});
+
+gameSocket.on('connect_error', (error) => {
+  console.error('🔴 [gameSocket] connect_error:', error);
+  if (error instanceof Error) {
+    console.error('  Error message:', error.message);
+    console.error('  Error stack:', error.stack);
+  }
+});
+
+console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
+
+// Global error handlers
+gameSocket.on('error', (error) => {
+  console.error('🔴 gameSocket error:', error);
+});
+
+gameSocket.on('connect_error', (error) => {
+  console.error('🔴 gameSocket connect_error:', error);
+});
+
+console.log('📋 gameSocket configured for URL:', gameSocketUrl);
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
