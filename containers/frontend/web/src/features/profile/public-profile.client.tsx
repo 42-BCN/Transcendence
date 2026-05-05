@@ -12,7 +12,7 @@ interface PublicProfileClientProps {
 
 export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
   const t = useTranslations('features.profile');
-  const { friends, pendingReceived, pendingSent, removeFriendById, removePendingById, addPendingRequest } = useSocialStore((s) => s);
+  const { friends, pendingReceived, pendingSent, removeFriendById, removePendingById, addPendingRequest, acceptPendingById } = useSocialStore((s) => s);
 
   const friend = friends.find((f) => f.id === userId);
   const requestReceived = pendingReceived.find((r) => r.userId === userId);
