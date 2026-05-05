@@ -34,7 +34,13 @@ export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
       { label: t('cancel_request'), onClick: () => deleteFriendship(requestSent.id).then(() => removePendingById('pendingSent', requestSent.id)), className: deleteStyle }
     ];
     return [
-      { label: t('add_friend'), onClick: () => sendFriendRequest(userId).then((res: any) => res.ok && addPendingRequest(res.data.friendship)), variant: 'cta' }
+      { 
+        label: t('add_friend'), 
+        onClick: () => sendFriendRequest(userId).then((res) => {
+          if (res.ok) addPendingRequest(res.data.friendship, res.data.wasAutoAccepted);
+        }), 
+        variant: 'cta' 
+      }
     ];
   };
 
