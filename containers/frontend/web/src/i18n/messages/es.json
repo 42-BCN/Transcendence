@@ -265,9 +265,15 @@
       "ui": "UI"
     },
     "profile": {
+      "accept": "Aceptar solicitud",
+      "add_friend": "Añadir amigo",
       "bio": "Biografía",
+      "cancel_request": "Cancelar solicitud",
       "fail": "No se pudo cargar tu perfil.",
+      "message": "Enviar mensaje",
       "provider": "Proveedor",
+      "reject": "Rechazar solicitud",
+      "unfriend": "Eliminar amigo",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"
     },

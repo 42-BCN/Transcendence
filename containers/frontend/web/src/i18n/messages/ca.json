@@ -266,9 +266,15 @@
       "ui": "UI"
     },
     "profile": {
+      "accept": "Acceptar sol·licitud",
+      "add_friend": "Afegir amic",
       "bio": "Biografia",
+      "cancel_request": "Cancel·lar sol·licitud",
       "fail": "No s'ha pogut carregar el teu perfil.",
+      "message": "Enviar missatge",
       "provider": "Proveïdor",
+      "reject": "Rebutjar sol·licitud",
+      "unfriend": "Eliminar amic",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
     },
