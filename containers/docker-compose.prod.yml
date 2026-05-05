@@ -4,6 +4,7 @@ services:
       target: prod
     environment:
       NODE_ENV: production
+      SOCKET_CORS_ORIGINS: ${SOCKET_CORS_ORIGINS:-https://localhost:8443}
       BACKEND_SESSION_IDENTITY_URL: https://backend:4000/auth/session/identity
     volumes:
       - ${CERT_DIR:-../certs}:/certs:ro

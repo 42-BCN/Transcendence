@@ -60,6 +60,7 @@ secrets/
 */**/node_modules/
 .pnp/
 .pnp.js
+.eslintcache
 
 # ------------------------------
 # Next.js build output
