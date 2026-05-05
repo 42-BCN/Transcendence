@@ -5,7 +5,7 @@ import { FALLBACK } from './fallback';
 import { parseJsonSafe } from './parse-json-safe';
 import { cookies } from 'next/headers';
 
-const API_BASE_URL = envServer.apiBaseUrl;
+const API_BASE_URL = envServer.apiBaseUrl != 'https://localhost:8443' ? envServer.apiBaseUrl: '';
 
 function cookieHeaders(cookie?: string): Record<string, string> {
   return cookie ? { Cookie: cookie } : {};
