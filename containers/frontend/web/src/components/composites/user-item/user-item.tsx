@@ -6,7 +6,6 @@ import { userItemStyles } from './user-item.styles';
 import { InternalLink } from '../../controls/link';
 
 export type UserItemProps = {
-  id: string;
   avatarUrl?: string | null;
   username: string;
   subtitle?: string;
@@ -14,14 +13,7 @@ export type UserItemProps = {
   className?: string;
 };
 
-export function UserItem({
-  id,
-  avatarUrl,
-  username,
-  subtitle,
-  children,
-  className,
-}: UserItemProps) {
+export function UserItem({ avatarUrl, username, subtitle, children, className }: UserItemProps) {
   return (
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} />
