@@ -269,12 +269,15 @@ if [ "$APP_ENV" != "development" ]; then
   frontend_node_env="production"
 fi
 
-# TODO: check how this works in the other cluster.
-if ip a | grep "10.11" > /dev/null ; then
-	HOST=$(ip a | grep "10.11." | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
+# TODO: check how it works on other machines.
+if ip a > /dev/null ; then
+	HOST=$(ip a | sed '9q;d' | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
+elif ifconfig en0 > /dev/null ; then
+	HOST=$(ifconfig en0 | sed '5q;d' | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
 else
 	HOST='localhost'
 fi
+
 
 key='host computer'
 default="$HOST"
