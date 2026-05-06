@@ -24,14 +24,14 @@ export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
 
     if (friend) return [
       { label: t('message'), onClick: () => {}, variant: 'cta' },
-      { label: t('unfriend'), onClick: () => deleteFriendship(friend.id).then(() => removeFriendById(friend.id)), className: deleteStyle }
+      { label: t('unfriend'), onClick: () => deleteFriendship(friend.id).then((res) => res.ok && removeFriendById(friend.id)), className: deleteStyle }
     ];
     if (requestReceived) return [
-      { label: t('accept'), onClick: () => respondToRequest(requestReceived.id, 'accept').then(() => acceptPendingById(requestReceived.id)), variant: 'cta' },
-      { label: t('reject'), onClick: () => respondToRequest(requestReceived.id, 'reject').then(() => removePendingById('pendingReceived', requestReceived.id)), className: deleteStyle }
+      { label: t('accept'), onClick: () => respondToRequest(requestReceived.id, 'accept').then((res) => res.ok && acceptPendingById(requestReceived.id)), variant: 'cta' },
+      { label: t('reject'), onClick: () => respondToRequest(requestReceived.id, 'reject').then((res) => res.ok && removePendingById('pendingReceived', requestReceived.id)), className: deleteStyle }
     ];
     if (requestSent) return [
-      { label: t('cancel_request'), onClick: () => deleteFriendship(requestSent.id).then(() => removePendingById('pendingSent', requestSent.id)), className: deleteStyle }
+      { label: t('cancel_request'), onClick: () => deleteFriendship(requestSent.id).then((res) => res.ok && removePendingById('pendingSent', requestSent.id)), className: deleteStyle }
     ];
     return [
       { 
