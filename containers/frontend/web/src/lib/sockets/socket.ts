@@ -46,9 +46,10 @@ export async function ensureChatSessionIdentity(): Promise<void> {
   return sessionPromise;
 }
 
-const robotsSocketUrl = envPublic.socketUrl != 'https://localhost:8443' ? new URL('/robots', envPublic.socketUrl).toString() :'/robots';
-const chatSocketUrl = envPublic.socketUrl != 'https://localhost:8443' ? new URL('/chat', envPublic.socketUrl).toString() :'/chat';
-const gameSocketUrl = envPublic.socketUrl != 'https://localhost:8443' ? new URL('/game', envPublic.socketUrl).toString() :'/game';
+# TODO next doesn't like this change it after to something that next prefers.
+const robotsSocketUrl = window.location.host + '/robots';
+const chatSocketUrl = window.location.host + '/chat';
+const gameSocketUrl = window.location.host + '/game';
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
   gameSocketUrl,
