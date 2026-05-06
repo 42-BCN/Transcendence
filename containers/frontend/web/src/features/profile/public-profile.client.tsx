@@ -10,6 +10,13 @@ interface PublicProfileClientProps {
   bio: string | null;
 }
 
+interface ProfileAction {
+  label: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary' | 'cta' | 'danger';
+  className?: string;
+}
+
 export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
   const t = useTranslations('features.profile');
   const { friends, pendingReceived, pendingSent, removeFriendById, removePendingById, addPendingRequest, acceptPendingById } = useSocialStore((s) => s);
@@ -19,7 +26,7 @@ export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
   const requestSent = pendingSent.find((r) => r.userId === userId);
 
   // Mapeo de acciones según el estatus
-  const getActionsConfig = () => {
+  const getActionsConfig = (): ProfileAction[] => {
     const deleteStyle = 'border-slate-500 text-slate-500';
 
     if (friend) return [
@@ -57,7 +64,7 @@ export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
         {getActionsConfig().map((action, i) => (
           <Button 
             key={i} 
-            variant={action.variant as any} 
+            variant={action.variant} 
             onPress={action.onClick} 
             className={`w-full ${action.className || ''}`}
           >
