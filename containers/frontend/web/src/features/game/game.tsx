@@ -432,10 +432,9 @@ export function Game() {
   const initRef = useRef(false);
 
   useEffect(() => {
-    if (!initRef.current) {
-      initRef.current = true;
-      initSocketListeners();
-    }
+    // if (!initRef.current) {
+    //   initRef.current = true;
+    initSocketListeners();
 
     return () => {
       cleanupSocketListeners();
