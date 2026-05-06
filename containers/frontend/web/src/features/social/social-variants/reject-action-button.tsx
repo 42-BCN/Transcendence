@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Text, IconButton } from '@components';
-import { useSocialStore } from '../store/social-store.provider';
+import { useSocialStore } from '@/providers/social-provider';
 import type { PendingListKey } from '../store/social-store.types';
 import { respondToRequest, deleteFriendship } from '../actions/friendships.actions';
 

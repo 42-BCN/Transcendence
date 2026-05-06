@@ -1,7 +1,7 @@
 'use client';
 
 import { SocialSocketManager } from '@/lib/sockets/friends-socket.manager';
-import { useSocialStore } from './social-store.provider';
+import { useSocialStore } from '@/providers/social-provider';
 
 export function SocialSocketBridge() {
   const setFriendPresence = useSocialStore((state) => state.setFriendPresence);

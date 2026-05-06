@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useSocialStore } from '../store/social-store.provider';
+import { useSocialStore } from '@/providers/social-provider';
 import { type GroupedSearchResults } from '../store/social-store.types';
 import { emptyGroupedSearchResults } from '../store/social-store.reducers';
 
