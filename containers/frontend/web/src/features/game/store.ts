@@ -246,8 +246,18 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.emit('game:client:rClick');
   },
 
-
   initSocketListeners: () => {
+    // if (gameSocket.connected)
+    //   return;
+
+    gameSocket.off('connect');
+    gameSocket.off('disconnect');
+    gameSocket.off('game:server:join');
+    gameSocket.off('game:server:globalSync');
+    gameSocket.off('game:server:sync');
+    gameSocket.off('game:server:displayMoveRange');
+    gameSocket.off('game:server:displayAbilityRange');
+
     const handleJoin = (id: string) => {
       console.log('👤 Player joined with ID:', id);
       set({ assignedCharacter: id });
@@ -297,6 +307,7 @@ export const useGame = create<gameState>()((set, get) => ({
       set({ selectables: selectables });
     };
 
+
     gameSocket.on('connect', () => {
       console.log('✅ Connected to game socket server');
     });
@@ -312,15 +323,7 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.on('game:server:displayAbilityRange', handleSelectables);
 
     ensureChatSessionIdentity()
-      .then(() => {
-        console.log('✅ Session established, connecting to game socket...');
-      })
-      .catch((err) => {
-        console.error('❌ Session failed, attempting to connect anyway:', err);
-      })
-      .finally(() => {
-        gameSocket.connect();
-      });
+      .finally(() => gameSocket.connect());
   },
 
   cleanupSocketListeners: () => {
@@ -334,6 +337,6 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:sync');
     gameSocket.off('game:server:displayMoveRange');
     gameSocket.off('game:server:displayAbilityRange');
-    gameSocket.disconnect();
+    // gameSocket.disconnect();
   },
 }));
