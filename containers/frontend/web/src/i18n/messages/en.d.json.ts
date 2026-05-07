@@ -269,9 +269,10 @@ declare const messages: {
     },
     "profile": {
       "accept": "Accept Request",
-      "add_friend": "Add Friend",
+      "addFriend": "Add Friend",
       "bio": "Bio",
-      "cancel_request": "Cancel Request",
+      "cancelRequest": "Cancel Request",
+      "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
       "message": "Send Message",
       "provider": "Provider",

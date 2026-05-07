@@ -19,37 +19,81 @@ interface ProfileAction {
 
 export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
   const t = useTranslations('features.profile');
-  const { friends, pendingReceived, pendingSent, removeFriendById, removePendingById, addPendingRequest, acceptPendingById } = useSocialStore((s) => s);
+  const {
+    friends,
+    pendingReceived,
+    pendingSent,
+    removeFriendById,
+    removePendingById,
+    addPendingRequest,
+    acceptPendingById,
+  } = useSocialStore((s) => s);
 
-  const friend = friends.find((f) => f.id === userId);
-  const requestReceived = pendingReceived.find((r) => r.userId === userId);
-  const requestSent = pendingSent.find((r) => r.userId === userId);
+  const friend = friends.find((item) => item.id === userId);
+  const requestReceived = pendingReceived.find((item) => item.userId === userId);
+  const requestSent = pendingSent.find((item) => item.userId === userId);
 
-  // Mapeo de acciones según el estatus
+  const deleteStyle = 'border-slate-500 text-slate-500';
+
   const getActionsConfig = (): ProfileAction[] => {
-    const deleteStyle = 'border-slate-500 text-slate-500';
+    if (friend)
+      return [
+        { label: t('message'), onClick: () => {}, variant: 'cta' },
+        {
+          label: t('unfriend'),
+          onClick: () =>
+            deleteFriendship(friend.id).then((result) => result.ok && removeFriendById(friend.id)),
+          className: deleteStyle,
+        },
+      ];
 
-    if (friend) return [
-      { label: t('message'), onClick: () => {}, variant: 'cta' },
-      { label: t('unfriend'), onClick: () => deleteFriendship(friend.id).then((res) => res.ok && removeFriendById(friend.id)), className: deleteStyle }
-    ];
-    if (requestReceived) return [
-      { label: t('accept'), onClick: () => respondToRequest(requestReceived.id, 'accept').then((res) => res.ok && acceptPendingById(requestReceived.id)), variant: 'cta' },
-      { label: t('reject'), onClick: () => respondToRequest(requestReceived.id, 'reject').then((res) => res.ok && removePendingById('pendingReceived', requestReceived.id)), className: deleteStyle }
-    ];
-    if (requestSent) return [
-      { label: t('cancel_request'), onClick: () => deleteFriendship(requestSent.id).then((res) => res.ok && removePendingById('pendingSent', requestSent.id)), className: deleteStyle }
-    ];
+    if (requestReceived)
+      return [
+        {
+          label: t('accept'),
+          onClick: () =>
+            respondToRequest(requestReceived.id, 'accept').then(
+              (result) => result.ok && acceptPendingById(requestReceived.id),
+            ),
+          variant: 'cta',
+        },
+        {
+          label: t('reject'),
+          onClick: () =>
+            respondToRequest(requestReceived.id, 'reject').then(
+              (result) => result.ok && removePendingById('pendingReceived', requestReceived.id),
+            ),
+          className: deleteStyle,
+        },
+      ];
+
+    if (requestSent)
+      return [
+        {
+          label: t('cancelRequest'),
+          onClick: () =>
+            deleteFriendship(requestSent.id).then(
+              (result) => result.ok && removePendingById('pendingSent', requestSent.id),
+            ),
+          className: deleteStyle,
+        },
+      ];
+
     return [
-      { 
-        label: t('add_friend'), 
-        onClick: () => sendFriendRequest(userId).then((res) => {
-          if (res.ok) addPendingRequest(res.data.friendship, res.data.wasAutoAccepted);
-        }), 
-        variant: 'cta' 
-      }
+      {
+        label: t('addFriend'),
+        onClick: () =>
+          sendFriendRequest(userId).then((result) => {
+            if (result.ok) {
+              addPendingRequest(result.data.friendship, result.data.wasAutoAccepted);
+            }
+          }),
+        variant: 'cta',
+      },
     ];
   };
+
+  const actions = getActionsConfig();
 
   return (
     <Stack className="h-full" gap="md">
@@ -57,15 +101,15 @@ export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
         <Text as="h3" variant="body-xs" className="text-text-secondary">
           {t('bio')}
         </Text>
-        <Text variant="body-sm">{bio || 'no-bio'}</Text>
+        <Text variant="body-sm">{bio || t('emptyBio')}</Text>
       </div>
 
       <Stack gap="sm">
-        {getActionsConfig().map((action, i) => (
-          <Button 
-            key={i} 
-            variant={action.variant} 
-            onPress={action.onClick} 
+        {actions.map((action) => (
+          <Button
+            key={action.label}
+            variant={action.variant}
+            onPress={action.onClick}
             className={`w-full ${action.className || ''}`}
           >
             {action.label}

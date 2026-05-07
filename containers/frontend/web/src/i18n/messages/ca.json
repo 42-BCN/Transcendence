@@ -267,9 +267,10 @@
     },
     "profile": {
       "accept": "Acceptar sol·licitud",
-      "add_friend": "Afegir amic",
+      "addFriend": "Afegir amic",
       "bio": "Biografia",
-      "cancel_request": "Cancel·lar sol·licitud",
+      "cancelRequest": "Cancel·lar sol·licitud",
+      "emptyBio": "Sense biografia",
       "fail": "No s'ha pogut carregar el teu perfil.",
       "message": "Enviar missatge",
       "provider": "Proveïdor",

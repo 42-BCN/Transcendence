@@ -266,9 +266,10 @@
     },
     "profile": {
       "accept": "Aceptar solicitud",
-      "add_friend": "Añadir amigo",
+      "addFriend": "Añadir amigo",
       "bio": "Biografía",
-      "cancel_request": "Cancelar solicitud",
+      "cancelRequest": "Cancelar solicitud",
+      "emptyBio": "Sin biografía",
       "fail": "No se pudo cargar tu perfil.",
       "message": "Enviar mensaje",
       "provider": "Proveedor",
