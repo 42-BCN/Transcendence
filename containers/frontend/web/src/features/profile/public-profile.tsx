@@ -10,10 +10,7 @@ interface PublicProfileProps {
 }
 
 export async function PublicProfile({ username }: PublicProfileProps) {
-  const [tProfile, tBreadcrumb] = await Promise.all([
-    getTranslations('features.profile'),
-    getTranslations('components.breadcrumb'),
-  ]);
+  const tBreadcrumb = await getTranslations('components.breadcrumb');
   const data = await getPublicProfileAction(username);
 
   if (!data?.ok) {
