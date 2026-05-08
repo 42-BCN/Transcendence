@@ -268,9 +268,16 @@ declare const messages: {
       "ui": "UI"
     },
     "profile": {
+      "accept": "Accept Request",
+      "addFriend": "Add Friend",
       "bio": "Bio",
+      "cancelRequest": "Cancel Request",
+      "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
+      "message": "Send Message",
       "provider": "Provider",
+      "reject": "Reject Request",
+      "unfriend": "Remove Friend",
       "userId": "User ID",
       "username": "Username"
     },
@@ -283,11 +290,12 @@ declare const messages: {
     "social": {
       "actions": {
         "accept": "Accept",
-        "addFriend": "Add friend",
+      "addFriend": "Add friend",
         "cancel": "Cancel",
         "chat": "Chat",
         "inviteToGame": "Invite to Game",
-        "reject": "Reject"
+        "reject": "Reject",
+        "unfriend": "Remove Friend"
       },
       "emptyStates": {
         "offline": "No friends offline",
