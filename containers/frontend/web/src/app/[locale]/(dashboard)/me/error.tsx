@@ -20,7 +20,7 @@ export default function PrivateError({ error }: ErrorProps) {
     <Stack align="center" className="min-h-[60vh] text-center" justify="center" gap="sm">
       <MessageBlock
         title={tGlobalError('title')}
-        messages={[error.message || tGlobalError('unexpectedMessage')]}
+        messages={[tGlobalError('unexpectedMessage')]}
       />
       <InternalLink href="/">{tNotFound('backToHome')}</InternalLink>
     </Stack>
