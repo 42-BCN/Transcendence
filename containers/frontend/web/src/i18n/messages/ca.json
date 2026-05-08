@@ -288,11 +288,12 @@
     "social": {
       "actions": {
         "accept": "Acceptar",
-        "addFriend": "Afegir amic",
+      "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
         "chat": "Chat",
         "inviteToGame": "Convidar a partida",
-        "reject": "Rebutjar"
+        "reject": "Rebutjar",
+        "unfriend": "Eliminar amic"
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",

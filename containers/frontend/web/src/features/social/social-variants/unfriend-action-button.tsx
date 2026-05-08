@@ -15,6 +15,7 @@ interface UnfriendActionButtonProps {
 }
 
 export function UnfriendActionButton({ friendshipId }: UnfriendActionButtonProps) {
+  const tActions = useTranslations('features.social.actions');
   const tErrors = useTranslations('errors');
   const removeFriendById = useSocialStore((s) => s.removeFriendById);
   const [error, setError] = useState<
@@ -37,7 +38,7 @@ export function UnfriendActionButton({ friendshipId }: UnfriendActionButtonProps
   return (
     <>
       <IconButton
-        label="Eliminar amigo"
+        label={tActions('unfriend')}
         icon="trash"
         variant="secondary"
         className="text-danger border-danger"

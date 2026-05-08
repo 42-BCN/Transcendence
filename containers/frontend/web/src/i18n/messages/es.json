@@ -287,11 +287,12 @@
     "social": {
       "actions": {
         "accept": "Aceptar",
-        "addFriend": "Añadir amigo",
+      "addFriend": "Añadir amigo",
         "cancel": "Cancelar",
         "chat": "Chat",
         "inviteToGame": "Invitar a partida",
-        "reject": "Rechazar"
+        "reject": "Rechazar",
+        "unfriend": "Eliminar amigo"
       },
       "emptyStates": {
         "offline": "No hay amigos desconectados",

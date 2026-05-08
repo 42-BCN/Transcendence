@@ -290,11 +290,12 @@ declare const messages: {
     "social": {
       "actions": {
         "accept": "Accept",
-        "addFriend": "Add friend",
+      "addFriend": "Add friend",
         "cancel": "Cancel",
         "chat": "Chat",
         "inviteToGame": "Invite to Game",
-        "reject": "Reject"
+        "reject": "Reject",
+        "unfriend": "Remove Friend"
       },
       "emptyStates": {
         "offline": "No friends offline",
