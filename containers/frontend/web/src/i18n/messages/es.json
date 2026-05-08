@@ -2,7 +2,8 @@
   "common": {
     "globalError": {
       "title": "Algo salió mal",
-      "tryAgain": "Inténtalo de nuevo"
+      "tryAgain": "Inténtalo de nuevo",
+      "unexpectedMessage": "Ha ocurrido un error inesperado"
     }
   },
   "components": {
@@ -266,7 +267,12 @@
     },
     "profile": {
       "bio": "Biografía",
+      "changePassword": "Cambiar contraseña",
+      "deleteAccount": "Eliminar cuenta",
+      "editProfile": "Editar perfil",
+      "emptyBio": "No hay biografía disponible",
       "fail": "No se pudo cargar tu perfil.",
+      "noEmailAvailable": "No hay email disponible",
       "provider": "Proveedor",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"

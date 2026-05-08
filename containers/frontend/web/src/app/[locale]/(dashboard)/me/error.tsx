@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { InternalLink, MessageBlock, Stack } from '@components';
 
 interface ErrorProps {
@@ -8,6 +9,9 @@ interface ErrorProps {
 }
 
 export default function PrivateError({ error }: ErrorProps) {
+  const tGlobalError = useTranslations('common.globalError');
+  const tNotFound = useTranslations('pages.notFound');
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -15,10 +19,10 @@ export default function PrivateError({ error }: ErrorProps) {
   return (
     <Stack align="center" className="min-h-[60vh] text-center" justify="center" gap="sm">
       <MessageBlock
-        title="Something went wrong"
-        messages={[error.message || 'An unexpected error occurred']}
+        title={tGlobalError('title')}
+        messages={[error.message || tGlobalError('unexpectedMessage')]}
       />
-      <InternalLink href="/">Back to Home</InternalLink>
+      <InternalLink href="/">{tNotFound('backToHome')}</InternalLink>
     </Stack>
   );
 }
