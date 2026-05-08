@@ -19,15 +19,13 @@ interface ProfileAction {
 
 export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
   const t = useTranslations('features.profile');
-  const {
-    friends,
-    pendingReceived,
-    pendingSent,
-    removeFriendById,
-    removePendingById,
-    addPendingRequest,
-    acceptPendingById,
-  } = useSocialStore((s) => s);
+  const friends = useSocialStore((s) => s.friends);
+  const pendingReceived = useSocialStore((s) => s.pendingReceived);
+  const pendingSent = useSocialStore((s) => s.pendingSent);
+  const removeFriendById = useSocialStore((s) => s.removeFriendById);
+  const removePendingById = useSocialStore((s) => s.removePendingById);
+  const addPendingRequest = useSocialStore((s) => s.addPendingRequest);
+  const acceptPendingById = useSocialStore((s) => s.acceptPendingById);
 
   const friend = friends.find((item) => item.id === userId);
   const requestReceived = pendingReceived.find((item) => item.userId === userId);
