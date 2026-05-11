@@ -55,6 +55,7 @@ export function registerFriendsSocket(
       usernames.set(currentUserId, username);
 
       void socket.join(`user:${currentUserId}`);
+      void socket.join(`status:${currentUserId}`);
 
       logEvents.info({
         event: 'friends_socket_connected',
@@ -62,16 +63,7 @@ export function registerFriendsSocket(
         socketId: socket.id,
       });
 
-      void setupPresenceForSocket(socket, currentUserId, username, wasOffline).catch(
-        (error: unknown) => {
-          logEvents.error({
-            event: 'setup_presence_for_socket_failed',
-            userId: currentUserId,
-            socketId: socket.id,
-            error,
-          });
-        },
-      );
+      setupPresenceForSocket(socket, currentUserId, username, wasOffline);
 
       socket.on(presenceSocketEvents.away, () => {
         userStates.set(currentUserId, 'away');
