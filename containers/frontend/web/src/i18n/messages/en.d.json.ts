@@ -287,10 +287,8 @@ declare const messages: {
         "addFriend": "Add friend",
         "cancel": "Cancel",
         "cancelRequest": "Cancel Request",
-        "chat": "Chat",
         "inviteToGame": "Invite to Game",
         "message": "Message",
-        "game": "Invite to Game",
         "reject": "Reject",
         "unfriend": "Remove Friend"
       },

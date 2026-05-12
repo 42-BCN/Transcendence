@@ -27,7 +27,9 @@ export function SocialUserActions({ type, userId }: SocialUserActionsProps) {
         />
       )}
 
-      {type === 'online' && <IconButton label={t('game')} icon="gamepad" variant="primary" />}
+      {type === 'online' && (
+        <IconButton label={t('inviteToGame')} icon="gamepad" variant="primary" />
+      )}
 
       {(type === 'request' || type === 'pending' || type === 'search') && (
         <SocialFriendshipActions userId={userId} />
