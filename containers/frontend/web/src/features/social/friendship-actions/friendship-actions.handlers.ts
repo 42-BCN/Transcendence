@@ -28,7 +28,7 @@ async function runAction({
   const result = await action();
 
   if (!result.ok) {
-    setError({ code: result.error?.code ?? 'UNKNOWN_ERROR' });
+    setError({ code: result.error?.code ?? 'FETCH_FAILED' });
     return;
   }
 
@@ -98,7 +98,7 @@ function handleAddFriend(args: FriendshipActionHandlersArgs) {
     const result = await sendFriendRequest(args.userId);
 
     if (!result.ok) {
-      args.setError({ code: result.error?.code ?? 'UNKNOWN_ERROR' });
+      args.setError({ code: result.error?.code ?? 'FETCH_FAILED' });
       return;
     }
 

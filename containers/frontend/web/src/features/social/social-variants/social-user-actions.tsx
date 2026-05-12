@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-import { InternalLink, Icon, IconButton } from '@components';
+import { DynamicInternalLink, Icon, IconButton } from '@components';
 
 import { SocialFriendshipActions } from './social-friendship-actions';
 import type { UsersListType } from './users-list';
@@ -19,9 +19,9 @@ export function SocialUserActions({ type, userId }: SocialUserActionsProps) {
   return (
     <>
       {(type === 'online' || type === 'offline') && (
-        <InternalLink
+        <DynamicInternalLink
           as="icon"
-          href={messageHref as any}
+          href={messageHref}
           label={t('message')}
           icon={<Icon name="messages" />}
         />

@@ -1,8 +1,8 @@
 'use client';
 
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
-import Link from 'next/link';
 
+import { Link } from '@/i18n/navigation';
 import type { InteractiveControlStyleProps } from '@components/primitives/interactive-control/interactive-control.types';
 import { buttonStyles, iconStyles } from '../button/button.styles';
 import { LinkStyles } from './link.styles';
