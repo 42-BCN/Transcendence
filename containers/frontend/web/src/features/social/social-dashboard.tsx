@@ -4,6 +4,7 @@
 import { useTranslations } from 'next-intl';
 
 import {
+  ScrollArea,
   Stack,
   Text,
   Tabs,
@@ -133,12 +134,14 @@ function SocialContent() {
 
 export function SocialDashboard() {
   return (
-    <>
+    <Stack className="h-full min-h-0" gap="none">
       <SocialSocketBridge />
       <SocialHeader />
-      <main>
-        <SocialContent />
+      <main className="flex flex-1 min-h-0">
+        <ScrollArea>
+          <SocialContent />
+        </ScrollArea>
       </main>
-    </>
+    </Stack>
   );
 }
