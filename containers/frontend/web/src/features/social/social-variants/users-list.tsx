@@ -14,12 +14,11 @@ import { useSocialStore } from '@/providers/social-provider';
 import { SocialUserActions } from './social-user-actions';
 
 export type SocialUserItem = FriendPublic | FriendshipPublic | SearchUserResult;
-type SearchActionItem = SearchUserResult & { id: string };
 
 export type UsersListType = 'request' | 'pending' | 'online' | 'offline' | 'search';
 
 interface UsersListProps {
-  friends: SocialUserItem[] | SearchActionItem[];
+  friends: SocialUserItem[];
   type: UsersListType;
   feedback?: boolean;
 }
@@ -57,21 +56,13 @@ export function UsersList({ friends, type, feedback = true }: UsersListProps) {
 
 export function SearchResults() {
   const searchResults = useSocialStore((state) => state.searchResults);
-  const requestItems = searchResults.requests.map((item) => ({
-    ...item,
-    id: item.friendshipId ?? item.id,
-  }));
-  const pendingItems = searchResults.pending.map((item) => ({
-    ...item,
-    id: item.friendshipId ?? item.id,
-  }));
 
   return (
     <>
       <UsersList friends={searchResults.online} type="online" feedback={false} />
       <UsersList friends={searchResults.offline} type="offline" feedback={false} />
-      <UsersList friends={requestItems} type="request" feedback={false} />
-      <UsersList friends={pendingItems} type="pending" feedback={false} />
+      <UsersList friends={searchResults.requests} type="request" feedback={false} />
+      <UsersList friends={searchResults.pending} type="pending" feedback={false} />
       <UsersList friends={searchResults.none} type="search" feedback={false} />
     </>
   );
