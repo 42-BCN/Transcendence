@@ -32,7 +32,7 @@ function getLinkClassName({
   className?: string;
 }) {
   if (as === 'button') return buttonStyles({ variant, size, w, className });
-  if (as === 'icon') return iconStyles();
+  if (as === 'icon') return buttonStyles({ variant, size: 'icon', w: 'auto', className });
 
   return LinkStyles(className);
 }
