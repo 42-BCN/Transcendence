@@ -131,11 +131,43 @@ function RequestsList() {
 }
 
 function SearchResults() {
+  const t = useTranslations('features.social.requests');
+  const locale = useLocale();
+  const now = useRelativeNow();
   const searchResults = useSocialStore((state) => state.searchResults);
+  const pendingReceived = useSocialStore((state) => state.pendingReceived);
+  const pendingSent = useSocialStore((state) => state.pendingSent);
+  const nowLabel = t('now');
   const onlineItems = searchResults.online.map(mapSearchResultToListItem);
   const offlineItems = searchResults.offline.map(mapSearchResultToListItem);
-  const requestItems = searchResults.requests.map(mapSearchResultToListItem);
-  const pendingItems = searchResults.pending.map(mapSearchResultToListItem);
+  const requestItems = searchResults.requests.map((result) => {
+    const request = pendingReceived.find((item) => item.userId === result.id);
+    const subtitle =
+      request && now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined;
+
+    return mapSearchResultToListItem(result, subtitle);
+  });
+  const pendingItems = searchResults.pending.map((result) => {
+    const request = pendingSent.find((item) => item.userId === result.id);
+    const subtitle =
+      request && now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined;
+
+    return mapSearchResultToListItem(result, subtitle);
+  });
   const noneItems = searchResults.none.map(mapSearchResultToListItem);
 
   return (

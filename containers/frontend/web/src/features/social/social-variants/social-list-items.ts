@@ -69,11 +69,15 @@ export function mapFriendshipToListItem(
   };
 }
 
-export function mapSearchResultToListItem(result: SearchUserResult): SocialListItem {
+export function mapSearchResultToListItem(
+  result: SearchUserResult,
+  subtitle?: string,
+): SocialListItem {
   return {
     id: result.id,
     userId: result.id,
     username: result.username,
     avatar: result.avatar,
+    subtitle,
   };
 }
