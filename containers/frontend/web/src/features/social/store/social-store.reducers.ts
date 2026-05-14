@@ -82,7 +82,7 @@ function replaceSearchResultByUserId(
 function addUniqueFriend(friends: FriendPublic[], friend: FriendPublic): FriendPublic[] {
   if (friends.some((item) => item.id === friend.id)) return friends;
 
-  return [...friends, friend];
+  return [friend, ...friends];
 }
 
 function addUniquePending(
@@ -91,7 +91,7 @@ function addUniquePending(
 ): FriendshipPublic[] {
   if (requests.some((item) => item.id === friendship.id)) return requests;
 
-  return [...requests, friendship];
+  return [friendship, ...requests];
 }
 
 function removePendingByFriendshipId(
