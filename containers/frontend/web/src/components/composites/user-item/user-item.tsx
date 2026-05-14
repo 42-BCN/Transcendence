@@ -25,11 +25,11 @@ export function UserItem({ avatarUrl, username, subtitle, children, className }:
         >
           {username}
         </InternalLink>
-        {/* {subtitle && (
+        {subtitle && (
           <Text variant="caption" as="p" color="tertiary">
             {subtitle}
           </Text>
-        )} */}
+        )}
       </div>
 
       {children}

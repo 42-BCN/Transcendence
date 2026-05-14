@@ -315,6 +315,7 @@
         "title": "Conéctate con la comunidad"
       },
       "requests": {
+        "now": "ahora",
         "received": "Recibidas",
         "sent": "Enviadas",
         "title": "Solicitudes"

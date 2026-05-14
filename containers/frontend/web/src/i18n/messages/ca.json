@@ -316,6 +316,7 @@
         "title": "Connecta amb la comunitat"
       },
       "requests": {
+        "now": "ara",
         "received": "Rebudes",
         "sent": "Enviades",
         "title": "Sol·licituds"

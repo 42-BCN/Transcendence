@@ -1,0 +1,11 @@
+# Ignore node_modules and temporary files from all subdirectories
+**/node_modules
+**/dist
+**/.next
+**/.eslintcache
+**/*.tsbuildinfo
+
+# Ignore local configuration files
+**/.vscode
+**/.git
+**/.gitignore

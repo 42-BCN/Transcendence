@@ -1,7 +1,8 @@
 /* eslint-disable local/no-literal-ui-strings */
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 
 import {
   ScrollArea,
@@ -18,14 +19,39 @@ import {
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode } from './store/social-store.types';
 import { useSocialStore } from '@/providers/social-provider';
-import { SearchResults } from './social-variants/users-list';
 import { SocialSocketBridge } from './store/social-store.bridge';
+import {
+  formatRequestAge,
+  mapFriendshipToListItem,
+  mapFriendToListItem,
+  mapSearchResultToListItem,
+} from './social-variants/social-list-items';
+
+const MINUTE_IN_MS = 60_000;
+
+function useRelativeNow() {
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+
+    const intervalId = window.setInterval(() => {
+      setNow(Date.now());
+    }, MINUTE_IN_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  return now;
+}
 
 function FriendsList({ error }: { error?: SocialErrorCode }) {
   const t = useTranslations('features.social.friends');
   const friends = useSocialStore((s) => s.friends);
   const onlineFriends = friends.filter((f) => f.presence !== 'offline');
   const offlineFriends = friends.filter((f) => f.presence === 'offline');
+  const onlineItems = onlineFriends.map(mapFriendToListItem);
+  const offlineItems = offlineFriends.map(mapFriendToListItem);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
@@ -33,7 +59,7 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
         {error ? (
           <SocialError error={error} />
         ) : (
-          <UsersList friends={onlineFriends} type="online" />
+          <UsersList items={onlineItems} type="online" />
         )}
       </DisclosureFull>
 
@@ -41,7 +67,7 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
         {error ? (
           <SocialError error={error} />
         ) : (
-          <UsersList friends={offlineFriends} type="offline" />
+          <UsersList items={offlineItems} type="offline" />
         )}
       </DisclosureFull>
     </DisclosureGroup>
@@ -50,9 +76,38 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
 
 function RequestsList() {
   const t = useTranslations('features.social.requests');
+  const locale = useLocale();
+  const now = useRelativeNow();
   const pendingReceived = useSocialStore((s) => s.pendingReceived);
   const pendingSent = useSocialStore((s) => s.pendingSent);
   const errors = useSocialStore((s) => s.errors);
+  const nowLabel = t('now');
+  const pendingReceivedItems = pendingReceived.map((request) =>
+    mapFriendshipToListItem(
+      request,
+      now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined,
+    ),
+  );
+  const pendingSentItems = pendingSent.map((request) =>
+    mapFriendshipToListItem(
+      request,
+      now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined,
+    ),
+  );
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
@@ -60,7 +115,7 @@ function RequestsList() {
         {errors.pendingReceived ? (
           <SocialError error={errors.pendingReceived} />
         ) : (
-          <UsersList friends={pendingReceived} type="request" />
+          <UsersList items={pendingReceivedItems} type="request" />
         )}
       </DisclosureFull>
 
@@ -68,10 +123,29 @@ function RequestsList() {
         {errors.pendingSent ? (
           <SocialError error={errors.pendingSent} />
         ) : (
-          <UsersList friends={pendingSent} type="pending" />
+          <UsersList items={pendingSentItems} type="pending" />
         )}
       </DisclosureFull>
     </DisclosureGroup>
+  );
+}
+
+function SearchResults() {
+  const searchResults = useSocialStore((state) => state.searchResults);
+  const onlineItems = searchResults.online.map(mapSearchResultToListItem);
+  const offlineItems = searchResults.offline.map(mapSearchResultToListItem);
+  const requestItems = searchResults.requests.map(mapSearchResultToListItem);
+  const pendingItems = searchResults.pending.map(mapSearchResultToListItem);
+  const noneItems = searchResults.none.map(mapSearchResultToListItem);
+
+  return (
+    <>
+      <UsersList items={onlineItems} type="online" feedback={false} />
+      <UsersList items={offlineItems} type="offline" feedback={false} />
+      <UsersList items={requestItems} type="request" feedback={false} />
+      <UsersList items={pendingItems} type="pending" feedback={false} />
+      <UsersList items={noneItems} type="search" feedback={false} />
+    </>
   );
 }
 

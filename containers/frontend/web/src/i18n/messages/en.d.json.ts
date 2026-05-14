@@ -312,6 +312,7 @@ declare const messages: {
         "title": "Connect with the community"
       },
       "requests": {
+        "now": "now",
         "received": "Received",
         "sent": "Sent",
         "title": "Requests"
