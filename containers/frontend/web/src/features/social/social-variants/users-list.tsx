@@ -20,7 +20,7 @@ export function UsersList({ items, type, feedback = true }: UsersListProps) {
   const shouldShowFeedback = items.length === 0 && feedback;
 
   return (
-    <>
+    <Stack gap="none" className="w-full">
       {shouldShowFeedback && (
         <Stack align="center" justify="center" className="px-3 py-3 text-center">
           <Text variant="caption" color="tertiary">
@@ -38,6 +38,6 @@ export function UsersList({ items, type, feedback = true }: UsersListProps) {
           </UserItem>
         );
       })}
-    </>
+    </Stack>
   );
 }

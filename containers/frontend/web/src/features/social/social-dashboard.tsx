@@ -56,19 +56,11 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
-        {error ? (
-          <SocialError error={error} />
-        ) : (
-          <UsersList items={onlineItems} type="online" />
-        )}
+        {error ? <SocialError error={error} /> : <UsersList items={onlineItems} type="online" />}
       </DisclosureFull>
 
       <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
-        {error ? (
-          <SocialError error={error} />
-        ) : (
-          <UsersList items={offlineItems} type="offline" />
-        )}
+        {error ? <SocialError error={error} /> : <UsersList items={offlineItems} type="offline" />}
       </DisclosureFull>
     </DisclosureGroup>
   );
@@ -138,8 +130,8 @@ function SearchResults() {
   const pendingReceived = useSocialStore((state) => state.pendingReceived);
   const pendingSent = useSocialStore((state) => state.pendingSent);
   const nowLabel = t('now');
-  const onlineItems = searchResults.online.map(mapSearchResultToListItem);
-  const offlineItems = searchResults.offline.map(mapSearchResultToListItem);
+  const onlineItems = searchResults.online.map((result) => mapSearchResultToListItem(result));
+  const offlineItems = searchResults.offline.map((result) => mapSearchResultToListItem(result));
   const requestItems = searchResults.requests.map((result) => {
     const request = pendingReceived.find((item) => item.userId === result.id);
     const subtitle =
@@ -168,16 +160,16 @@ function SearchResults() {
 
     return mapSearchResultToListItem(result, subtitle);
   });
-  const noneItems = searchResults.none.map(mapSearchResultToListItem);
+  const noneItems = searchResults.none.map((result) => mapSearchResultToListItem(result));
 
   return (
-    <>
+    <Stack gap="none" className="w-full py-2 pb-4">
       <UsersList items={onlineItems} type="online" feedback={false} />
       <UsersList items={offlineItems} type="offline" feedback={false} />
       <UsersList items={requestItems} type="request" feedback={false} />
       <UsersList items={pendingItems} type="pending" feedback={false} />
       <UsersList items={noneItems} type="search" feedback={false} />
-    </>
+    </Stack>
   );
 }
 
@@ -209,31 +201,39 @@ function SocialContent() {
 
     if (isEmpty) {
       return (
-        <Stack align="center" justify="center" className="px-3 py-3 text-center">
-          <Text variant="caption" color="tertiary">
-            {t('emptyStates.search')}
-          </Text>
-        </Stack>
+        <ScrollArea>
+          <Stack align="center" justify="center" className="px-3 py-3 text-center">
+            <Text variant="caption" color="tertiary">
+              {t('emptyStates.search')}
+            </Text>
+          </Stack>
+        </ScrollArea>
       );
     }
 
-    return <SearchResults />;
+    return (
+      <ScrollArea>
+        <SearchResults />
+      </ScrollArea>
+    );
   }
 
   return (
-    <Tabs defaultSelectedKey="friends">
+    <Tabs defaultSelectedKey="friends" className="flex flex-1 min-h-0 flex-col">
       <TabList className="px-3">
         <Tab id="friends">{t('friends.title')}</Tab>
         <Tab id="requests">{t('requests.title')}</Tab>
       </TabList>
 
-      <TabPanel id="friends" className="outline-none">
-        <FriendsList error={errors.friends} />
-      </TabPanel>
+      <ScrollArea>
+        <TabPanel id="friends" className="outline-none">
+          <FriendsList error={errors.friends} />
+        </TabPanel>
 
-      <TabPanel id="requests" className="outline-none">
-        <RequestsList />
-      </TabPanel>
+        <TabPanel id="requests" className="outline-none">
+          <RequestsList />
+        </TabPanel>
+      </ScrollArea>
     </Tabs>
   );
 }
@@ -244,9 +244,7 @@ export function SocialDashboard() {
       <SocialSocketBridge />
       <SocialHeader />
       <main className="flex flex-1 min-h-0">
-        <ScrollArea>
-          <SocialContent />
-        </ScrollArea>
+        <SocialContent />
       </main>
     </Stack>
   );
