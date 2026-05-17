@@ -110,11 +110,51 @@ export async function enemyPhase(sync: () => void) {
   console.log('Enemy turn');
   sync();
   await sleep(1000);
-  // TODO: check if can attack the closest player
-
-  // TODO: pathfinding including the range of the moves
-
-  // TODO: move Selection
+  for (const enemy of Object.values(gameState.enemies)) {
+    if (enemy.isDead) continue;
+    let closestDistance = Infinity;
+    let path = [];
+    let targetId = null;
+    for (const player of Object.values(gameState.players)) {
+      if (player.isDead) continue;
+      // INFO: check if can attack the closest player
+      const newPath = Astar(enemy.position, player.position);
+      if (newPath === undefined)
+        continue;
+      const newDist = newPath.length - 1; //remove the player position
+      if (newDist < closestDistance) {
+        closestDistance = newDist;
+        path = newPath;
+        targetId = player.id;
+      }
+    }
+    if (closestDistance === Infinity || !targetId || path.length === 0)
+      continue;
+    const reaches = Math.max(...enemy.dice) >= closestDistance ? true : false;
+    let reach = Math.max(...enemy.dice);
+    if (reaches) {
+      for (let i = enemy.dice.length - 1; i >= 0; --i) {
+        if (enemy.dice[i] >= closestDistance)
+          reach = enemy.dice[i];
+      }
+    }
+    enemy.dice.splice(enemy.dice.indexOf(reach), 1);
+    enemy.usedDice.push(reach);
+    path.pop(); // don't step over the player
+    const steps = Math.min(path.length - 1, reach);
+    for (let i = 1; i <= steps; ++i) {
+      await sleep(300);
+      const [sx, sy, sz] = path[i].split(',').map(Number);
+      const stepPos = { x: sx, y: sy, z: sz };
+      gameState.enemies[enemy.id].position = stepPos;
+      sync();
+    }
+    if (reaches) {
+      // INFO: move Selection
+      const idx = Math.floor(Math.random() * enemy.abilities.length);
+      executeAbility(enemy.id, enemy.abilities[idx], targetId, Math.max(...enemy.dice))
+    }
+  }
 }
 
 export async function endTurn(sync: () => void) {
@@ -235,6 +275,7 @@ export function addDisplaceHistory(cause: string, id: string, origin: string, po
   // WARN: Move clone will cause some problems due to pathfinding
   moveClone(id, `${x},${y},${z}`, 0, cause);
 }
+
 
 export function manageUndo(action: historyAction, deleted: Set<string>) {
   const who = action.who;
@@ -899,6 +940,117 @@ export function getAbility(name: string) {
         self: false,
       }
     case "Oxidation":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+
+    case "Swoop":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Claw":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Spawn Drone":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Spawn Crawler":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Shoot":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Reload":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Charge":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Atomic Bomb":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Push":
+      return {
+        name: name,
+        type: "circle",
+        effect: ["oxidation", "2"],
+        cond: (x: number) => x > 2,
+        range: 2,
+        dmg: 0,
+        cd: 0,
+        self: false,
+      }
+    case "Railgun":
       return {
         name: name,
         type: "circle",

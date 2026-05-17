@@ -36,17 +36,22 @@ export async function ensureChatSessionIdentity(): Promise<void> {
     method: 'POST',
     credentials: 'include',
     headers: { Accept: 'application/json' },
-  }).then((response) => {
-    if (!response.ok) {
+  })
+    .then((response) => {
+      if (!response.ok) {
+        sessionPromise = null;
+        throw new Error(`Failed to initialize chat session identity (${response.status})`);
+      }
+    })
+    .catch((error) => {
       sessionPromise = null;
-      throw new Error(`Failed to initialize chat session identity (${response.status})`);
-    }
-  });
+      throw error;
+    });
 
   return sessionPromise;
 }
 
-# TODO next doesn't like this change it after to something that next prefers.
+// TODO next doesn't like this change it after to something that next prefers.
 const robotsSocketUrl = window.location.host + '/robots';
 const chatSocketUrl = window.location.host + '/chat';
 const gameSocketUrl = window.location.host + '/game';
