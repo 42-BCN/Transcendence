@@ -25,25 +25,36 @@ type ClientToServerRobotsEvents = {
   moveTo: (target: [number, number, number]) => void;
 };
 
+let sessionPromise: Promise<void> | null = null;
+
 export async function ensureChatSessionIdentity(): Promise<void> {
+  if (sessionPromise) return sessionPromise;
+
   const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/guest/session`;
 
-  const response = await fetch(endpoint, {
+  sessionPromise = fetch(endpoint, {
     method: 'POST',
     credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-    },
-  });
+    headers: { Accept: 'application/json' },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        sessionPromise = null;
+        throw new Error(`Failed to initialize chat session identity (${response.status})`);
+      }
+    })
+    .catch((error) => {
+      sessionPromise = null;
+      throw error;
+    });
 
-  if (!response.ok) {
-    throw new Error(`Failed to initialize chat session identity (${response.status})`);
-  }
+  return sessionPromise;
 }
 
-const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
-const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
-const gameSocketUrl = new URL('/game', envPublic.socketUrl).toString();
+// TODO next doesn't like this change it after to something that next prefers.
+const robotsSocketUrl = window.location.origin + '/robots';
+const chatSocketUrl = window.location.origin + '/chat';
+const gameSocketUrl = window.location.origin + '/game';
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
   gameSocketUrl,
