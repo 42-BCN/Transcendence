@@ -269,13 +269,20 @@ if [ "$APP_ENV" != "development" ]; then
   frontend_node_env="production"
 fi
 
-# TODO: check how it works on other machines.
-if ip a > /dev/null ; then
-	HOST=$(ip a | sed '9q;d' | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
-elif ifconfig en0 > /dev/null ; then
-	HOST=$(ifconfig en0 | sed '5q;d' | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
-else
-	HOST='localhost'
+HOST='localhost'
+
+if command -v ip > /dev/null 2>&1; then
+  detected_host=$(ip -4 route get 1.1.1.1 2> /dev/null | xargs | cut -d ' ' -f 7)
+  if [ -n "$detected_host" ]; then
+    HOST="$detected_host"
+  fi
+fi
+
+if [ "$HOST" = 'localhost' ] && command -v ifconfig > /dev/null 2>&1; then
+  detected_host=$(ifconfig en0 | sed '5q;d' | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
+  if [ -n "$detected_host" ]; then
+    HOST="$detected_host"
+  fi
 fi
 
 
