@@ -272,14 +272,14 @@ fi
 HOST='localhost'
 
 if command -v ip > /dev/null 2>&1; then
-  detected_host=$(ip -4 route get 1.1.1.1 2> /dev/null | awk '{for (i = 1; i <= NF; i++) if ($i == "src") { print $(i + 1); exit }}')
+  detected_host=$(ip -4 route get 1.1.1.1 2> /dev/null | xargs | cut -d ' ' -f 7)
   if [ -n "$detected_host" ]; then
     HOST="$detected_host"
   fi
 fi
 
-if [ "$HOST" = 'localhost' ] && command -v hostname > /dev/null 2>&1; then
-  detected_host=$(hostname -I 2> /dev/null | awk '{print $1}')
+if [ "$HOST" = 'localhost' ] && command -v ifconfig > /dev/null 2>&1; then
+  detected_host=$(ifconfig en0 | sed '5q;d' | xargs | cut -d ' ' -f 2 | cut -d '/' -f 1)
   if [ -n "$detected_host" ]; then
     HOST="$detected_host"
   fi

@@ -52,9 +52,9 @@ export async function ensureChatSessionIdentity(): Promise<void> {
 }
 
 // TODO next doesn't like this change it after to something that next prefers.
-const robotsSocketUrl = window.location.host + '/robots';
-const chatSocketUrl = window.location.host + '/chat';
-const gameSocketUrl = window.location.host + '/game';
+const robotsSocketUrl = window.location.origin + '/robots';
+const chatSocketUrl = window.location.origin + '/chat';
+const gameSocketUrl = window.location.origin + '/game';
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
   gameSocketUrl,
