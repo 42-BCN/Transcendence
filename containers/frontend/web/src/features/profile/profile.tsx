@@ -14,7 +14,7 @@ export async function Profile() {
         <Text as="h3" variant="body-xs" className="text-text-secondary ">
           {t('bio')}
         </Text>
-        <Text variant="body-sm">{data.data.bio || 'no-bio'}</Text>
+        <Text variant="body-sm">{data.data.bio || t('emptyBio')}</Text>
       </div>
       <InternalLink as="button" variant="cta" href="/me/edit">
         Edit profile

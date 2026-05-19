@@ -3,6 +3,7 @@ import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { Avatar } from '@components/primitives/avatar';
 import { userItemStyles } from './user-item.styles';
+import { InternalLink } from '../../controls/link';
 
 export type UserItemProps = {
   avatarUrl?: string | null;
@@ -18,9 +19,12 @@ export function UserItem({ avatarUrl, username, subtitle, children, className }:
       <Avatar src={avatarUrl} />
 
       <div className="flex-1 self-start">
-        <Text variant="body-sm" as="p" className="font-bold">
+        <InternalLink
+          href={`/other/${username}`}
+          className="no-underline !text-inherit font-body-sm font-bold"
+        >
           {username}
-        </Text>
+        </InternalLink>
         {/* {subtitle && (
           <Text variant="caption" as="p" color="tertiary">
             {subtitle}

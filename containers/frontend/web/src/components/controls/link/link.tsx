@@ -11,11 +11,31 @@ import { LinkStyles } from './link.styles';
 
 type LinkStyleProps = InteractiveControlStyleProps & {
   icon?: ReactNode;
-  as?: 'link' | 'button';
+  as?: 'link' | 'button' | 'icon';
   children?: ReactNode;
+  label?: string;
 };
 
 type AriaLinkBaseProps = Omit<ComponentPropsWithoutRef<typeof AriaLink>, 'children' | 'className'>;
+
+function getLinkClassName({
+  as,
+  variant,
+  size,
+  w,
+  className,
+}: {
+  as: 'link' | 'button' | 'icon';
+  variant: InteractiveControlStyleProps['variant'];
+  size: InteractiveControlStyleProps['size'];
+  w: InteractiveControlStyleProps['w'];
+  className?: string;
+}) {
+  if (as === 'button') return buttonStyles({ variant, size, w, className });
+  if (as === 'icon') return iconStyles();
+
+  return LinkStyles(className);
+}
 
 export type ExternalLinkProps = LinkStyleProps & AriaLinkBaseProps;
 
@@ -31,6 +51,7 @@ export function ExternalLink(args: ExternalLinkProps) {
     target = '_blank',
     rel,
     as = 'button',
+    label,
     ...props
   } = args;
 
@@ -42,12 +63,11 @@ export function ExternalLink(args: ExternalLinkProps) {
       href={href}
       target={target}
       rel={computedRel}
-      className={
-        as === 'button' ? buttonStyles({ variant, size, w, className }) : LinkStyles(className)
-      }
+      aria-label={label}
+      className={getLinkClassName({ as, variant, size, w, className })}
     >
-      {icon && <span className={iconStyles()}>{icon}</span>}
-      {children}
+      {icon && <span className={as === 'icon' ? undefined : iconStyles()}>{icon}</span>}
+      {as !== 'icon' && children}
     </AriaLink>
   );
 }
@@ -74,6 +94,7 @@ export function InternalLink(args: InternalLinkProps) {
     className,
     as = 'link',
     icon,
+    label,
     ...props
   } = args;
 
@@ -81,12 +102,11 @@ export function InternalLink(args: InternalLinkProps) {
     <Link
       {...props}
       href={href}
-      className={
-        as === 'button' ? buttonStyles({ variant, size, w, className }) : LinkStyles(className)
-      }
+      aria-label={label}
+      className={getLinkClassName({ as, variant, size, w, className })}
     >
-      {icon && <span className={iconStyles()}>{icon}</span>}
-      {variant === 'cta' ? <span className="z-10">{children}</span> : children}
+      {icon && <span className={as === 'icon' ? undefined : iconStyles()}>{icon}</span>}
+      {as !== 'icon' && (variant === 'cta' ? <span className="z-10">{children}</span> : children)}
     </Link>
   );
 }

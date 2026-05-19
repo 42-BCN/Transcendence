@@ -269,6 +269,7 @@ declare const messages: {
     },
     "profile": {
       "bio": "Bio",
+      "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
       "provider": "Provider",
       "userId": "User ID",
@@ -285,9 +286,11 @@ declare const messages: {
         "accept": "Accept",
         "addFriend": "Add friend",
         "cancel": "Cancel",
-        "chat": "Chat",
+        "cancelRequest": "Cancel Request",
         "inviteToGame": "Invite to Game",
-        "reject": "Reject"
+        "message": "Message",
+        "reject": "Reject",
+        "unfriend": "Remove Friend"
       },
       "emptyStates": {
         "offline": "No friends offline",

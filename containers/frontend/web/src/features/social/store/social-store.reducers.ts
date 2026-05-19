@@ -373,6 +373,23 @@ function addPendingRequestReducer(
   };
 }
 
+function removeFriendByIdReducer(id: string): (state: SocialState) => Partial<SocialState> {
+  return (state) => ({
+    friends: state.friends.filter((item) => item.id !== id),
+    searchResults: replaceSearchResultByUserId(
+      state.searchResults,
+      id,
+      (item) => ({
+        ...item,
+        friendshipStatus: 'none',
+        friendshipId: null,
+        senderId: null,
+      }),
+      state,
+    ),
+  });
+}
+
 export function createSocialActions(set: SetState) {
   return {
     setFriends: (friends: FriendPublic[]) => set({ friends }),
@@ -401,6 +418,7 @@ export function createSocialActions(set: SetState) {
 
     removePendingById: (list: PendingListKey, id: string) =>
       set(removePendingByIdReducer(list, id)),
+    removeFriendById: (id: string) => set(removeFriendByIdReducer(id)),
 
     acceptPendingById: (id: string) => set(acceptPendingByIdReducer(id)),
 

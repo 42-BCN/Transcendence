@@ -266,9 +266,16 @@
       "ui": "UI"
     },
     "profile": {
+      "accept": "Acceptar sol·licitud",
+      "addFriend": "Afegir amic",
       "bio": "Biografia",
+      "cancelRequest": "Cancel·lar sol·licitud",
+      "emptyBio": "Sense biografia",
       "fail": "No s'ha pogut carregar el teu perfil.",
+      "message": "Enviar missatge",
       "provider": "Proveïdor",
+      "reject": "Rebutjar sol·licitud",
+      "unfriend": "Eliminar amic",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
     },
@@ -283,9 +290,11 @@
         "accept": "Acceptar",
         "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
-        "chat": "Chat",
+        "cancelRequest": "Cancel·lar sol·licitud",
         "inviteToGame": "Convidar a partida",
-        "reject": "Rebutjar"
+        "message": "Missatge",
+        "reject": "Rebutjar",
+        "unfriend": "Eliminar amic"
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",
