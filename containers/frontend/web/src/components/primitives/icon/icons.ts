@@ -19,6 +19,7 @@ import {
   Check,
   Menu,
   Search,
+  Trash2,
 } from 'lucide-react';
 
 export const icons = {
@@ -42,6 +43,7 @@ export const icons = {
   chevronRight: ChevronRight,
   menu: Menu,
   search: Search,
+  trash: Trash2,
 };
 
 export type IconName = keyof typeof icons;

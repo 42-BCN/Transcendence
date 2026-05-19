@@ -81,6 +81,11 @@ export const routing = defineRouting({
       es: '/juego',
       ca: '/joc',
     },
+    '/other/[username]': {
+      en: '/other/[username]',
+      es: '/otro/[username]',
+      ca: '/altre/[username]',
+    },
   },
   localeCookie,
 });
