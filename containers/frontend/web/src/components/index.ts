@@ -3,8 +3,10 @@ export { Checkbox, type CheckboxProps } from './controls/checkbox';
 export {
   ExternalLink,
   InternalLink,
+  DynamicInternalLink,
   type ExternalLinkProps,
   type InternalLinkProps,
+  type DynamicInternalLinkProps,
 } from './controls/link';
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
