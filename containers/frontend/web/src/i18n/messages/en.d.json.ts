@@ -5,7 +5,8 @@ declare const messages: {
   "common": {
     "globalError": {
       "title": "Something went wrong",
-      "tryAgain": "Try again"
+      "tryAgain": "Try again",
+      "unexpectedMessage": "An unexpected error occurred"
     }
   },
   "components": {
@@ -269,7 +270,12 @@ declare const messages: {
     },
     "profile": {
       "bio": "Bio",
+      "changePassword": "Change password",
+      "deleteAccount": "Delete account",
+      "editProfile": "Edit profile",
+      "emptyBio": "No bio available",
       "fail": "Could not load your profile.",
+      "noEmailAvailable": "No email available",
       "provider": "Provider",
       "userId": "User ID",
       "username": "Username"

@@ -2,7 +2,8 @@
   "common": {
     "globalError": {
       "title": "Alguna cosa ha anat malament",
-      "tryAgain": "Torna-ho a provar"
+      "tryAgain": "Torna-ho a provar",
+      "unexpectedMessage": "S'ha produït un error inesperat"
     }
   },
   "components": {
@@ -267,7 +268,12 @@
     },
     "profile": {
       "bio": "Biografia",
+      "changePassword": "Canviar contrasenya",
+      "deleteAccount": "Eliminar compte",
+      "editProfile": "Editar perfil",
+      "emptyBio": "No hi ha biografia disponible",
       "fail": "No s'ha pogut carregar el teu perfil.",
+      "noEmailAvailable": "No hi ha correu electrònic disponible",
       "provider": "Proveïdor",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
