@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { Avatar } from '@components/primitives/avatar';
+import { cn } from '@/lib/styles/cn';
 import { userItemStyles } from './user-item.styles';
 import { InternalLink } from '../../controls/link';
 
@@ -9,6 +10,7 @@ export type UserItemProps = {
   avatarUrl?: string | null;
   username: string;
   subtitle?: string;
+  subtitleClassName?: string;
   children?: ReactNode;
   className?: string;
   href?: string;
@@ -18,6 +20,7 @@ export function UserItem({
   avatarUrl,
   username,
   subtitle,
+  subtitleClassName,
   children,
   className,
   href,
@@ -38,7 +41,7 @@ export function UserItem({
           </InternalLink>
         )}
         {subtitle && (
-          <Text variant="caption" as="p" color="tertiary">
+          <Text variant="caption" as="p" color="tertiary" className={cn(subtitleClassName)}>
             {subtitle}
           </Text>
         )}

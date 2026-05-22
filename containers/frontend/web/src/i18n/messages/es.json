@@ -250,6 +250,10 @@
     "directMessages": {
       "emptyState": "Todavía no hay conversaciones",
       "listTitle": "Mensajes",
+      "openList": "Abrir lista de mensajes",
+      "closeList": "Cerrar lista de mensajes",
+      "selectionTitle": "Selecciona una conversación",
+      "selectionBody": "Elige un amigo de la lista para abrir tus mensajes.",
       "accessTitle": "Mensajes directos",
       "accessBody": {
         "authenticated": "Esta conversación solo está disponible entre amigos aceptados.",

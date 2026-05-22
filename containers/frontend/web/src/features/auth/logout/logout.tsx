@@ -1,17 +1,27 @@
 'use client';
 
 import { Button, Icon } from '@components';
+import { navLinkStyles } from '@components/controls/nav-link/nav-link.styles';
 import { logoutAction } from './logout.action';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
+import { Button as AriaButton } from 'react-aria-components';
 
 type LogoutProps = {
   onPress?: () => void;
   label?: string;
   isExpanded?: boolean;
+  presentation?: 'default' | 'navigation';
 };
 
-export function Logout({ onPress, label, isExpanded = false }: LogoutProps) {
+const navigationIconWrapperClassName = 'relative flex size-5 shrink-0 items-center justify-center';
+
+export function Logout({
+  onPress,
+  label,
+  isExpanded = false,
+  presentation = 'default',
+}: LogoutProps) {
   const router = useRouter();
   const t = useTranslations('features.auth.actions');
   const logoutHandler = async () => {
@@ -30,6 +40,24 @@ export function Logout({ onPress, label, isExpanded = false }: LogoutProps) {
   const className = isExpanded
     ? 'w-full h-6 min-h-6 justify-start py-0 ps-2 pe-0'
     : 'size-6 p-0 justify-center';
+
+  if (presentation === 'navigation') {
+    return (
+      <AriaButton
+        onPress={logoutHandler}
+        className={navLinkStyles({
+          w: isExpanded ? 'full' : 'auto',
+          className,
+        })}
+        aria-label={visibleLabel}
+      >
+        <div className={navigationIconWrapperClassName}>
+          <Icon name="logOut" size={20} />
+        </div>
+        {isExpanded ? <span className="whitespace-nowrap pe-3 leading-none">{visibleLabel}</span> : null}
+      </AriaButton>
+    );
+  }
 
   return (
     <Button

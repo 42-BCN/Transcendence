@@ -5,6 +5,7 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import type { InteractiveControlStyleProps } from '@components/primitives/interactive-control/interactive-control.types';
 import { buttonStyles, iconStyles } from '../button/button.styles';
+import { TooltipTrigger } from '../../composites/tooltip-trigger';
 import { LinkStyles } from './link.styles';
 
 type DynamicInternalLinkStyleProps = InteractiveControlStyleProps & {
@@ -12,6 +13,8 @@ type DynamicInternalLinkStyleProps = InteractiveControlStyleProps & {
   as?: 'link' | 'button' | 'icon';
   children?: ReactNode;
   label?: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right';
+  offset?: number;
 };
 
 type LinkBaseProps = Omit<ComponentPropsWithoutRef<typeof Link>, 'children' | 'className' | 'href'>;
@@ -55,10 +58,12 @@ export function DynamicInternalLink(args: DynamicInternalLinkProps) {
     as = 'link',
     icon,
     label,
+    placement = 'top',
+    offset,
     ...props
   } = args;
 
-  return (
+  const content = (
     <Link
       {...props}
       href={href}
@@ -69,4 +74,14 @@ export function DynamicInternalLink(args: DynamicInternalLinkProps) {
       {as !== 'icon' && children}
     </Link>
   );
+
+  if (as === 'icon' && label) {
+    return (
+      <TooltipTrigger label={label} placement={placement} offset={offset}>
+        {content}
+      </TooltipTrigger>
+    );
+  }
+
+  return content;
 }
