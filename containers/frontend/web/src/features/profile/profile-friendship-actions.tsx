@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
-import { Button, DynamicInternalLink, Stack, Text } from '@components';
+import { Button, CountBadge, DynamicInternalLink, Stack, Text } from '@components';
 
 import type { FriendshipAction } from '@/features/social/friendship-actions/friendship-actions.types';
 import type { FriendshipActionKey } from '@/features/social/friendship-actions/friendship-actions.types';
@@ -42,9 +42,12 @@ export function ProfileFriendshipActions({ actions }: ProfileFriendshipActionsPr
               as="button"
               href={action.href}
               variant={variant}
-              className={className}
+              className={`${className ?? ''} relative`}
             >
-              {action.label}
+              <span className="inline-flex items-center gap-2">
+                <span>{action.label}</span>
+                <CountBadge count={action.badgeCount} />
+              </span>
             </DynamicInternalLink>
           );
         }

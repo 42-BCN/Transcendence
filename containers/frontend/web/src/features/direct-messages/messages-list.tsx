@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Stack, Text, ScrollArea, UserItem } from '@components';
+import { CountBadge, Stack, Text, ScrollArea, UserItem } from '@components';
 import type { FriendPublic } from '@/contracts/api/friendships/friendships.contracts';
 
 type MessagesListProps = {
@@ -40,7 +40,9 @@ export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
                       ? t('presence.away')
                       : t('presence.offline')
                 }
-              />
+              >
+                <CountBadge count={friend.unreadMessageCount} />
+              </UserItem>
             ))
           )}
         </Stack>

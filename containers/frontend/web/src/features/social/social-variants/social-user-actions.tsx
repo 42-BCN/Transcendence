@@ -2,7 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 
-import { DynamicInternalLink, Icon, IconButton } from '@components';
+import { CountBadge, DynamicInternalLink, Icon, IconButton } from '@components';
+import { useSocialStore } from '@/providers/social-provider';
 
 import { SocialFriendshipActions } from './social-friendship-actions';
 import type { UsersListType } from './users-list';
@@ -15,6 +16,9 @@ interface SocialUserActionsProps {
 
 export function SocialUserActions({ type, userId, username }: SocialUserActionsProps) {
   const t = useTranslations('features.social.actions');
+  const unreadMessageCount = useSocialStore(
+    (state) => state.friends.find((friend) => friend.id === userId)?.unreadMessageCount ?? 0,
+  );
   const messageHref = `/messages/${username}` as const;
 
   return (
@@ -24,7 +28,12 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
           as="icon"
           href={messageHref}
           label={t('message')}
-          icon={<Icon name="messages" />}
+          icon={
+            <span className="relative inline-flex">
+              <Icon name="messages" />
+              <CountBadge count={unreadMessageCount} placement="overlay" className="-end-1.5" />
+            </span>
+          }
         />
       )}
 

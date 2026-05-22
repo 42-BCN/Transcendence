@@ -6,6 +6,7 @@ export const directMessageSocketEvents = {
   send: 'dm:send',
   message: 'dm:message',
   history: 'dm:history',
+  read: 'dm:read',
   error: 'dm:error',
 } as const;
 
@@ -44,7 +45,15 @@ const DirectMessageBaseSchema = z.strictObject({
   createdAt: z.number(),
   senderId: z.string().uuid(),
   username: z.string().min(1),
+  readAt: z.number().nullable(),
 });
+
+export const DirectMessageReadSchema = z.strictObject({
+  friendUserId: z.string().uuid(),
+  unreadCount: z.number().int().nonnegative(),
+});
+
+export type DirectMessageRead = z.infer<typeof DirectMessageReadSchema>;
 
 export const DirectMessageSchema = DirectMessageBaseSchema.extend({
   type: z.literal('user'),
@@ -69,10 +78,12 @@ export type DirectMessageError = z.infer<typeof DirectMessageErrorSchema>;
 
 export type ClientToServerDirectMessageEvents = {
   [directMessageSocketEvents.send]: (payload: DirectMessageSend) => void;
+  [directMessageSocketEvents.read]: () => void;
 };
 
 export type ServerToClientDirectMessageEvents = {
   [directMessageSocketEvents.message]: (payload: DirectMessage) => void;
   [directMessageSocketEvents.history]: (payload: DirectMessageHistory) => void;
+  [directMessageSocketEvents.read]: (payload: DirectMessageRead) => void;
   [directMessageSocketEvents.error]: (payload: DirectMessageError) => void;
 };

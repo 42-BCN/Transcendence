@@ -13,6 +13,7 @@ import { friendsRouter } from './friendships/friendships.routes';
 import { handleInternalFriendsList } from './friendships/friendships.presence';
 import {
   handleInternalDirectMessageHistory,
+  handleInternalDirectMessageRead,
   handleInternalDirectMessageSend,
 } from './direct-messages/direct-messages.internal';
 import { authIpRateLimit } from './auth/auth.rate-limit';
@@ -75,6 +76,7 @@ app.use('/friends', friendsRouter);
 
 app.post('/internal/friends', handleInternalFriendsList);
 app.post('/internal/direct-messages/history', handleInternalDirectMessageHistory);
+app.post('/internal/direct-messages/read', handleInternalDirectMessageRead);
 app.post('/internal/direct-messages/send', handleInternalDirectMessageSend);
 
 app.use(errorMiddleware);

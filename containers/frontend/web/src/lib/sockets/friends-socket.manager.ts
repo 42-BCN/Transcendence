@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 
 import {
+  directMessageUnreadSocketEvents,
+  type DirectMessageUnreadUpdatedPayload,
   friendshipSocketEvents,
   presenceSocketEvents,
   type FriendAcceptedNotificationPayload,
@@ -22,6 +24,7 @@ type SocialSocketManagerProps = {
   onFriendRequest: (payload: FriendRequestNotificationPayload) => void;
   onFriendAccepted: (payload: FriendAcceptedNotificationPayload) => void;
   onFriendRejected: (payload: FriendRejectedNotificationPayload) => void;
+  onUnreadUpdated: (payload: DirectMessageUnreadUpdatedPayload) => void;
 };
 
 export const SocialSocketManager = ({
@@ -31,6 +34,7 @@ export const SocialSocketManager = ({
   onFriendRequest,
   onFriendAccepted,
   onFriendRejected,
+  onUnreadUpdated,
 }: SocialSocketManagerProps) => {
   useEffect(() => {
     const emitCurrentPresence = () => {
@@ -74,6 +78,10 @@ export const SocialSocketManager = ({
       onFriendRejected(payload);
     };
 
+    const handleUnreadUpdated = (payload: DirectMessageUnreadUpdatedPayload) => {
+      onUnreadUpdated(payload);
+    };
+
     const reservedListeners = [
       ['connect', handleConnect],
       ['connect_error', handleConnectError],
@@ -90,6 +98,7 @@ export const SocialSocketManager = ({
       [friendshipSocketEvents.request, handleFriendRequest],
       [friendshipSocketEvents.accepted, handleFriendAccepted],
       [friendshipSocketEvents.rejected, handleFriendRejected],
+      [directMessageUnreadSocketEvents.updated, handleUnreadUpdated],
     ] as const;
 
     reservedListeners.forEach(([event, handler]) => {
@@ -132,6 +141,7 @@ export const SocialSocketManager = ({
     onFriendRequest,
     onFriendAccepted,
     onFriendRejected,
+    onUnreadUpdated,
   ]);
 
   return null;

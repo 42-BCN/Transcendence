@@ -8,6 +8,7 @@ import {
   type DirectMessage,
   type DirectMessageError,
   type DirectMessageHistory,
+  type DirectMessageRead,
 } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 
 import { directMessagesSocket } from './direct-messages-socket.client';
@@ -16,6 +17,7 @@ type DirectMessagesSocketManagerProps = {
   friendUserId: string;
   onDirectMessage: (message: DirectMessage) => void;
   onDirectHistory: (history: DirectMessageHistory) => void;
+  onDirectRead: (payload: DirectMessageRead) => void;
   onDirectError: (error: DirectMessageError) => void;
 };
 
@@ -23,6 +25,7 @@ export function DirectMessagesSocketManager({
   friendUserId,
   onDirectMessage,
   onDirectHistory,
+  onDirectRead,
   onDirectError,
 }: DirectMessagesSocketManagerProps) {
   useEffect(() => {
@@ -48,6 +51,11 @@ export function DirectMessagesSocketManager({
       onDirectHistory(history);
     };
 
+    const handleRead = (payload: DirectMessageRead) => {
+      console.log('👀 Received read state:', payload);
+      onDirectRead(payload);
+    };
+
     const handleError = (error: DirectMessageError) => {
       console.error('⚠️ Direct message error:', error);
       onDirectError(error);
@@ -62,6 +70,7 @@ export function DirectMessagesSocketManager({
     const messageListeners = [
       [directMessageSocketEvents.message, handleMessage],
       [directMessageSocketEvents.history, handleHistory],
+      [directMessageSocketEvents.read, handleRead],
       [directMessageSocketEvents.error, handleError],
     ] as const;
 
@@ -87,7 +96,7 @@ export function DirectMessagesSocketManager({
       messageListeners.forEach(([event, handler]) => directMessagesSocket.off(event, handler));
       directMessagesSocket.disconnect();
     };
-  }, [friendUserId, onDirectMessage, onDirectHistory, onDirectError]);
+  }, [friendUserId, onDirectMessage, onDirectHistory, onDirectRead, onDirectError]);
 
   return null;
 }

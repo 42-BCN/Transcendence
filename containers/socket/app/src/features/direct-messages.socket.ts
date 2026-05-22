@@ -6,12 +6,19 @@ import {
   DirectMessageSendSchema,
   directMessageFriendUserIdSchema,
   directMessageSocketEvents,
+  type DirectMessageRead,
   type ClientToServerDirectMessageEvents,
   type DirectMessageError,
   type ServerToClientDirectMessageEvents,
 } from '@contracts/sockets/direct-messages/direct-messages.schema';
+import { directMessageUnreadSocketEvents } from '@contracts/sockets/friendships/friendships.schema';
 
-import { fetchDirectMessageHistory, sendDirectMessage } from '../internal/direct-messages.client';
+import { emitToUser } from '../features/friends.socket';
+import {
+  fetchDirectMessageHistory,
+  markDirectMessagesRead,
+  sendDirectMessage,
+} from '../internal/direct-messages.client';
 import { fetchAcceptedFriendIds } from '../internal/friends.client';
 
 function sortedPair(userId1: string, userId2: string): [string, string] {
@@ -29,11 +36,34 @@ function errorMessage(): DirectMessageError {
     createdAt: Date.now(),
     senderId: randomUUID(),
     username: 'system',
+    readAt: null,
     type: 'error',
     content: {
       text: 'INVALID_DIRECT_MESSAGE',
     },
   };
+}
+
+async function emitReadState(
+  socket: Socket<ClientToServerDirectMessageEvents, ServerToClientDirectMessageEvents>,
+  currentUserId: string,
+  friendUserId: string,
+): Promise<void> {
+  const unreadCount = await markDirectMessagesRead({ currentUserId, friendUserId });
+
+  if (typeof unreadCount !== 'number') return;
+
+  emitToUser(currentUserId, directMessageUnreadSocketEvents.updated, {
+    otherUserId: friendUserId,
+    unreadMessageCount: unreadCount,
+  });
+
+  const payload: DirectMessageRead = {
+    friendUserId,
+    unreadCount,
+  };
+
+  socket.emit(directMessageSocketEvents.read, payload);
 }
 
 export function registerDirectMessagesSocket(
@@ -88,10 +118,19 @@ export function registerDirectMessagesSocket(
           return;
         }
 
+        emitToUser(friendUserIdResult.data, directMessageUnreadSocketEvents.updated, {
+          otherUserId: currentUserId,
+          unreadMessageCount: saved.unreadCount,
+        });
+
         nsp.to(roomId).emit(directMessageSocketEvents.message, {
-          ...saved,
+          ...saved.message,
           clientMessageId: parsed.data.clientMessageId,
         });
+      });
+
+      socket.on(directMessageSocketEvents.read, async () => {
+        await emitReadState(socket, currentUserId, friendUserIdResult.data);
       });
 
       const historyRows = await fetchDirectMessageHistory({
@@ -100,6 +139,7 @@ export function registerDirectMessagesSocket(
       });
 
       socket.emit(directMessageSocketEvents.history, historyRows);
+      await emitReadState(socket, currentUserId, friendUserIdResult.data);
     },
   );
 }

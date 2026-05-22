@@ -126,7 +126,7 @@ export async function autoAcceptMutualRequest(
 
 export async function listFriendsForUser(
   userId: string,
-): Promise<{ id: string; username: string; avatar: string | null }[]> {
+): Promise<{ id: string; username: string; avatar: string | null; friendshipId: string }[]> {
   const friendships = await prisma.friendship.findMany({
     where: {
       OR: [{ userId1: userId }, { userId2: userId }],
@@ -147,6 +147,7 @@ export async function listFriendsForUser(
       id: friend.id,
       username: friend.username,
       avatar: friend.avatar,
+      friendshipId: f.id,
     };
   });
 }

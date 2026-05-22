@@ -1,13 +1,16 @@
 import type { Namespace, Socket } from 'socket.io';
 
 import {
+  DirectMessageUnreadUpdatedPayloadSchema,
   FriendAcceptedNotificationPayloadSchema,
   FriendRejectedNotificationPayloadSchema,
   FriendRequestNotificationPayloadSchema,
+  directMessageUnreadSocketEvents,
   friendshipSocketEvents,
   friendshipSocketUserIdSchema,
   presenceSocketEvents,
   type ClientToServerFriendshipEvents,
+  type DirectMessageUnreadUpdatedPayload,
   type FriendshipSocketEvent,
   type FriendshipSocketPayloadByEvent,
   type ServerToClientFriendshipEvents,
@@ -204,8 +207,15 @@ export function emitToUser(
 ): void;
 export function emitToUser(
   userId: string,
-  event: FriendshipSocketEvent,
-  payload: FriendshipSocketPayloadByEvent[FriendshipSocketEvent],
+  event: typeof directMessageUnreadSocketEvents.updated,
+  payload: DirectMessageUnreadUpdatedPayload,
+): void;
+export function emitToUser(
+  userId: string,
+  event: FriendshipSocketEvent | typeof directMessageUnreadSocketEvents.updated,
+  payload:
+    | FriendshipSocketPayloadByEvent[FriendshipSocketEvent]
+    | DirectMessageUnreadUpdatedPayload,
 ): void {
   const parsedUserId = friendshipSocketUserIdSchema.safeParse(userId);
 
@@ -277,6 +287,26 @@ export function emitToUser(
       friendsNsp
         ?.to(`user:${parsedUserId.data}`)
         .emit(friendshipSocketEvents.rejected, parsedPayload.data);
+      break;
+    }
+
+    case directMessageUnreadSocketEvents.updated: {
+      const parsedPayload = DirectMessageUnreadUpdatedPayloadSchema.safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(directMessageUnreadSocketEvents.updated, parsedPayload.data);
       break;
     }
   }

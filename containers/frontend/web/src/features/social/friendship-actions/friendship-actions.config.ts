@@ -11,6 +11,7 @@ export function createFriendshipActions({
   t,
   handlers,
   error,
+  unreadMessageCount,
 }: CreateFriendshipActionsArgs): FriendshipAction[] {
   const actionsByStatus: Record<FriendshipStatus, FriendshipAction[]> = {
     friend: [
@@ -19,6 +20,7 @@ export function createFriendshipActions({
         type: 'link',
         label: t('message'),
         href: `/messages/${username ?? userId}`,
+        badgeCount: unreadMessageCount,
       },
       {
         key: 'deleteFriend',

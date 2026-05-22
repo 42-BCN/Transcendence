@@ -43,6 +43,7 @@ export type FriendshipAction =
       type: 'link';
       label: string;
       href: string;
+      badgeCount?: number;
     }
   | {
       key: FriendshipActionKey;
@@ -59,4 +60,5 @@ export interface CreateFriendshipActionsArgs {
   t: (key: string) => string;
   handlers: FriendshipActionHandlers;
   error?: FriendshipActionError;
+  unreadMessageCount?: number;
 }

@@ -57,6 +57,7 @@ export interface SocialState {
   removeFriendById: (id: string) => void;
   acceptPendingById: (id: string) => void;
   addPendingRequest: (friendship: FriendshipPublic, wasAutoAccepted?: boolean) => void;
+  setFriendUnreadMessageCount: (userId: string, count: number) => void;
 
   /** Preferred: set precise presence */
   setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') => void;
