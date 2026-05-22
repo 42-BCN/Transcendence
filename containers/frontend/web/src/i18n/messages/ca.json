@@ -248,6 +248,21 @@
       "messageAriaLabel": "Missatge",
       "showChat": "Mostra el xat"
     },
+    "directMessages": {
+      "emptyState": "Encara no hi ha converses",
+      "listTitle": "Missatges",
+      "accessTitle": "Missatges directes",
+      "accessBody": {
+        "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
+        "unauthenticated": "Has d'iniciar sessió per obrir un xat privat."
+      },
+      "backToHome": "Torna a l'inici",
+      "presence": {
+        "online": "● En línia",
+        "away": "● Absent",
+        "offline": "Desconnectat"
+      }
+    },
     "game": {
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
@@ -257,6 +272,7 @@
       "createAccount": "Crear compte",
       "game": "Joc",
       "home": "Inici",
+      "messages": "Missatges",
       "login": "Iniciar sessió",
       "logout": "Tancar sessió",
       "mainAriaLabel": "Navegació principal",
@@ -266,9 +282,16 @@
       "ui": "UI"
     },
     "profile": {
+      "accept": "Acceptar sol·licitud",
+      "addFriend": "Afegir amic",
       "bio": "Biografia",
+      "cancelRequest": "Cancel·lar sol·licitud",
+      "emptyBio": "Sense biografia",
       "fail": "No s'ha pogut carregar el teu perfil.",
+      "message": "Enviar missatge",
       "provider": "Proveïdor",
+      "reject": "Rebutjar sol·licitud",
+      "unfriend": "Eliminar amic",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
     },
@@ -283,9 +306,11 @@
         "accept": "Acceptar",
         "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
-        "chat": "Chat",
+        "cancelRequest": "Cancel·lar sol·licitud",
         "inviteToGame": "Convidar a partida",
-        "reject": "Rebutjar"
+        "message": "Missatge",
+        "reject": "Rebutjar",
+        "unfriend": "Eliminar amic"
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",
@@ -307,6 +332,7 @@
         "title": "Connecta amb la comunitat"
       },
       "requests": {
+        "now": "ara",
         "received": "Rebudes",
         "sent": "Enviades",
         "title": "Sol·licituds"

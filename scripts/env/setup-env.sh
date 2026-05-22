@@ -190,6 +190,12 @@ if [ -z "$current_session_secret" ]; then
   set_env_var "$BACKEND_ENV" "SESSION_SECRET" "$SESSION_SECRET"
 fi
 
+current_public_api_key="$(get_env_value "$BACKEND_ENV" "PUBLIC_API_KEY")"
+if [ -z "$current_public_api_key" ]; then
+  PUBLIC_API_KEY=$(openssl rand -hex 32)
+  set_env_var "$BACKEND_ENV" "PUBLIC_API_KEY" "$PUBLIC_API_KEY"
+fi
+
 set_env_var "$BACKEND_ENV" "SESSION_TTL" "604800000"
 
 current_socket_secret="$(get_env_value "$BACKEND_ENV" "SOCKET_INTERNAL_SECRET")"
@@ -312,6 +318,8 @@ NEXT_PUBLIC_SOCKET_URL=https://${HOST}:8443
 NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
 EOF
+
+set_env_var "$SOCKET_ENV" "SOCKET_CORS_ORIGINS" "https://${HOST}:8443"
 
 echo "✅ Frontend env vars generated"
 

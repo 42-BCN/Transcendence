@@ -7,6 +7,7 @@ servers:
   - url: /
 tags:
   - name: Health
+  - name: Public API
   - name: Auth
   - name: Protected
   - name: Users
@@ -30,6 +31,262 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthErrorResponse'
+
+  /public-api/health:
+    get:
+      tags: [Public API]
+      summary: Public API health check
+      description: Validates the shared API key, then checks Redis and Postgres connectivity.
+      operationId: getPublicApiHealth
+      security:
+        - publicApiKey: []
+      responses:
+        '200':
+          description: Public API dependencies are healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicApiHealthResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Redis, Postgres, or API key configuration is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /public-api/users:
+    get:
+      tags: [Public API]
+      summary: List public users through the API-key-protected public API
+      description: Read-only user listing protected by `x-api-key`.
+      operationId: getPublicApiUsers
+      security:
+        - publicApiKey: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          required: false
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+          required: false
+      responses:
+        '200':
+          description: Paginated user list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /public-api/users/count:
+    get:
+      tags: [Public API]
+      summary: Count public users
+      operationId: getPublicApiUsersCount
+      security:
+        - publicApiKey: []
+      responses:
+        '200':
+          description: Total users count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUsersCountResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /public-api/users/search:
+    get:
+      tags: [Public API]
+      summary: Search users by username through the public API
+      description: Case-insensitive search protected by `x-api-key`. Rate limited per API key and client IP.
+      operationId: getPublicApiUsersSearch
+      security:
+        - publicApiKey: []
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 20
+      responses:
+        '200':
+          description: Matching public users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicUsersSearchResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /public-api/users/{userId}:
+    get:
+      tags: [Public API]
+      summary: Get a public user by id through the API-key-protected public API
+      operationId: getPublicApiUserById
+      security:
+        - publicApiKey: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Public user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /public-api/users/username/{username}:
+    get:
+      tags: [Public API]
+      summary: Get a public user by username through the API-key-protected public API
+      operationId: getPublicApiUserByUsername
+      security:
+        - publicApiKey: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Public user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /auth/signup:
     post:
@@ -827,6 +1084,11 @@ components:
       type: apiKey
       in: cookie
       name: sid
+    publicApiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Shared API key configured in the backend as `PUBLIC_API_KEY`.
   schemas:
     ApiError:
       type: object
@@ -883,6 +1145,23 @@ components:
         ok:
           type: boolean
           enum: [false]
+    PublicApiHealthResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [database, redis]
+          properties:
+            database:
+              type: string
+              enum: [up]
+            redis:
+              type: string
+              enum: [up]
     NullResponse:
       type: object
       required: [ok, data]
@@ -1089,6 +1368,44 @@ components:
                 limit:
                   type: integer
                 offset:
+                  type: integer
+                count:
+                  type: integer
+    PublicUsersCountResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [totalUsers]
+          properties:
+            totalUsers:
+              type: integer
+    PublicUsersSearchResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [users, meta]
+          properties:
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserPublic'
+            meta:
+              type: object
+              required: [q, limit, count]
+              properties:
+                q:
+                  type: string
+                limit:
                   type: integer
                 count:
                   type: integer

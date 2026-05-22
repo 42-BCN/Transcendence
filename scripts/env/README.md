@@ -16,6 +16,8 @@ The socket service reads `SOCKET_CORS_ORIGINS` at runtime from Docker Compose. T
 
 `setup-env.sh` generates a dedicated `containers/socket/docker/.env.<env>` file. Only shared variables are synchronized between services: currently `SOCKET_INTERNAL_SECRET` is generated once and written to both backend and socket env files.
 
+For backend secrets, `setup-env.sh` also generates secure random values when missing. This now includes both `SESSION_SECRET` and `PUBLIC_API_KEY`.
+
 ## Template files
 
 Tracked example templates live next to the generated files as `*.example` files. Update those templates when a new variable is added so the local setup stays reproducible without committing secrets.

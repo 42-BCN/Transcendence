@@ -250,6 +250,21 @@ declare const messages: {
       "messageAriaLabel": "Message",
       "showChat": "Show Chat"
     },
+    "directMessages": {
+      "emptyState": "No conversations yet",
+      "listTitle": "Messages",
+      "accessTitle": "Direct messages",
+      "accessBody": {
+        "authenticated": "This conversation is only available between accepted friends.",
+        "unauthenticated": "You need to be signed in to open a private chat."
+      },
+      "backToHome": "Back to home",
+      "presence": {
+        "online": "● Online",
+        "away": "● Away",
+        "offline": "Offline"
+      }
+    },
     "game": {
       "endTurn": "End turn",
       "healthLabel": "HP",
@@ -259,6 +274,7 @@ declare const messages: {
       "createAccount": "Create account",
       "game": "Game",
       "home": "Home",
+      "messages": "Messages",
       "login": "Log in",
       "logout": "Logout",
       "mainAriaLabel": "Main navigation",
@@ -269,6 +285,7 @@ declare const messages: {
     },
     "profile": {
       "bio": "Bio",
+      "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
       "provider": "Provider",
       "userId": "User ID",
@@ -285,9 +302,11 @@ declare const messages: {
         "accept": "Accept",
         "addFriend": "Add friend",
         "cancel": "Cancel",
-        "chat": "Chat",
+        "cancelRequest": "Cancel Request",
         "inviteToGame": "Invite to Game",
-        "reject": "Reject"
+        "message": "Message",
+        "reject": "Reject",
+        "unfriend": "Remove Friend"
       },
       "emptyStates": {
         "offline": "No friends offline",
@@ -309,6 +328,7 @@ declare const messages: {
         "title": "Connect with the community"
       },
       "requests": {
+        "now": "now",
         "received": "Received",
         "sent": "Sent",
         "title": "Requests"

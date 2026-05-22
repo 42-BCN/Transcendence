@@ -247,6 +247,21 @@
       "messageAriaLabel": "Mensaje",
       "showChat": "Mostrar chat"
     },
+    "directMessages": {
+      "emptyState": "Todavía no hay conversaciones",
+      "listTitle": "Mensajes",
+      "accessTitle": "Mensajes directos",
+      "accessBody": {
+        "authenticated": "Esta conversación solo está disponible entre amigos aceptados.",
+        "unauthenticated": "Necesitas iniciar sesión para abrir un chat privado."
+      },
+      "backToHome": "Volver al inicio",
+      "presence": {
+        "online": "● En línea",
+        "away": "● Ausente",
+        "offline": "Desconectado"
+      }
+    },
     "game": {
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
@@ -256,6 +271,7 @@
       "createAccount": "Crear cuenta",
       "game": "Juego",
       "home": "Inicio",
+      "messages": "Mensajes",
       "login": "Iniciar sesión",
       "logout": "Cerrar sesión",
       "mainAriaLabel": "Navegación principal",
@@ -265,9 +281,16 @@
       "ui": "UI"
     },
     "profile": {
+      "accept": "Aceptar solicitud",
+      "addFriend": "Añadir amigo",
       "bio": "Biografía",
+      "cancelRequest": "Cancelar solicitud",
+      "emptyBio": "Sin biografía",
       "fail": "No se pudo cargar tu perfil.",
+      "message": "Enviar mensaje",
       "provider": "Proveedor",
+      "reject": "Rechazar solicitud",
+      "unfriend": "Eliminar amigo",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"
     },
@@ -282,9 +305,11 @@
         "accept": "Aceptar",
         "addFriend": "Añadir amigo",
         "cancel": "Cancelar",
-        "chat": "Chat",
+        "cancelRequest": "Cancelar solicitud",
         "inviteToGame": "Invitar a partida",
-        "reject": "Rechazar"
+        "message": "Mensaje",
+        "reject": "Rechazar",
+        "unfriend": "Eliminar amigo"
       },
       "emptyStates": {
         "offline": "No hay amigos desconectados",
@@ -306,6 +331,7 @@
         "title": "Conéctate con la comunidad"
       },
       "requests": {
+        "now": "ahora",
         "received": "Recibidas",
         "sent": "Enviadas",
         "title": "Solicitudes"

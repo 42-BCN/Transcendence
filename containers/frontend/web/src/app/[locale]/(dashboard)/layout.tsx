@@ -28,7 +28,7 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
           className={cn(
             glassBackgroundStyles({ intensity: 'medium', blur: 'sm' }),
             glassBorderStyles(),
-            'h-full w-full overflow-hidden rounded-s-md border-r-0',
+            'h-full w-full overflow-hidden rounded-s-md border-r-0 pointer-events-auto',
           )}
         >
           {userId ? (

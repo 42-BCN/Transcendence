@@ -33,7 +33,7 @@ ALL_ENV_FILES = \
 	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps \
 	up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
-	db-reset db-seed db-push db-setup \
+	db-reset db-seed db-push db-setup prisma-generate \
 	clean-env clean-all-env \
 	ps restart shell-frontend shell-api shell-db shell-socket setup stop \
 	node-modules node-modules-backend node-modules-frontend node-modules-socket \
@@ -233,6 +233,9 @@ shell-socket:
 
 db-push:
 	$(COMPOSE_DEV) exec backend npm run prisma:db:push:dev
+
+prisma-generate:
+	$(COMPOSE_DEV) run --rm backend npm run prisma:generate
 
 db-seed:
 	$(COMPOSE_DEV) exec backend npm run db:seed:dev

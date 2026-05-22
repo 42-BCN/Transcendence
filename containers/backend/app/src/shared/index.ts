@@ -3,6 +3,7 @@ export { validateBody, validateQuery, validateParams } from './validation.middle
 export { ApiError, sendError, errorMiddleware, errorStatus } from './errors.middleware';
 
 export { requireAuth } from './auth.middleware';
+export { requireApiKey, readApiKey } from './api-key.middleware';
 
 export { pool } from './db.pool';
 
