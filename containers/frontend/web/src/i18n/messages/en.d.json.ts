@@ -253,6 +253,8 @@ declare const messages: {
     "directMessages": {
       "emptyState": "No conversations yet",
       "listTitle": "Messages",
+      "openList": "Open messages list",
+      "closeList": "Close messages list",
       "selectionTitle": "Select a conversation",
       "selectionBody": "Choose a friend from the list to open your messages.",
       "accessTitle": "Direct messages",

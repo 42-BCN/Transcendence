@@ -1,8 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 
-import { CountBadge, DynamicInternalLink, Icon, IconButton } from '@components';
+import { Button, CountBadge, Icon, IconButton, TooltipTrigger } from '@components';
 import { useSocialStore } from '@/providers/social-provider';
 
 import { SocialFriendshipActions } from './social-friendship-actions';
@@ -16,6 +17,7 @@ interface SocialUserActionsProps {
 
 export function SocialUserActions({ type, userId, username }: SocialUserActionsProps) {
   const t = useTranslations('features.social.actions');
+  const router = useRouter();
   const unreadMessageCount = useSocialStore(
     (state) => state.friends.find((friend) => friend.id === userId)?.unreadMessageCount ?? 0,
   );
@@ -24,17 +26,21 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
   return (
     <>
       {(type === 'online' || type === 'offline') && (
-        <DynamicInternalLink
-          as="icon"
-          href={messageHref}
-          label={t('message')}
-          icon={
-            <span className="relative inline-flex">
-              <Icon name="messages" />
-              <CountBadge count={unreadMessageCount} placement="overlay" className="-end-1.5" />
-            </span>
-          }
-        />
+        <TooltipTrigger label={t('message')} placement="top">
+          <Button
+            variant="secondary"
+            size="icon"
+            w="auto"
+            aria-label={t('message')}
+            onPress={() => router.push(messageHref)}
+            icon={
+              <span className="relative flex h-5 w-5 items-center justify-center">
+                <Icon name="messages" />
+                <CountBadge count={unreadMessageCount} placement="overlay" />
+              </span>
+            }
+          />
+        </TooltipTrigger>
       )}
 
       {type === 'online' && (

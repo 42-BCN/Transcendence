@@ -10,6 +10,12 @@ type MessagesListProps = {
   selectedUsername?: string;
 };
 
+const presenceSubtitleClassName = {
+  away: 'text-orange-500',
+  online: 'text-green-700',
+  offline: 'text-gray-500',
+} as const;
+
 export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
   const t = useTranslations('features.directMessages');
 
@@ -32,6 +38,7 @@ export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
                 className={messagesListStyles.item(selectedUsername === friend.username)}
                 username={friend.username}
                 avatarUrl={friend.avatar}
+                subtitleClassName={presenceSubtitleClassName[friend.presence]}
                 subtitle={
                   friend.presence === 'online'
                     ? t('presence.online')
