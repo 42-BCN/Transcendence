@@ -2,6 +2,8 @@ export const BASE_URL = process.env.BASE_URL ?? 'https://localhost:8443/api/';
 
 export const TEST_EMAIL = process.env.AUTH_TEST_EMAIL ?? 'capapes@fakemail.com';
 export const TEST_PASSWORD = process.env.AUTH_TEST_PASSWORD ?? 'Password123!';
+export const DELETE_TEST_EMAIL = process.env.AUTH_DELETE_TEST_EMAIL ?? 'mfontser@fakemail.com';
+export const DELETE_TEST_PASSWORD = process.env.AUTH_DELETE_TEST_PASSWORD ?? 'Password123!';
 
 export const LOCKOUT_EMAIL = process.env.AUTH_LOCKOUT_EMAIL ?? 'lockout.test@fakemail.com';
 export const LOCKOUT_PASSWORD = process.env.AUTH_LOCKOUT_PASSWORD ?? 'LockoutTest123!';

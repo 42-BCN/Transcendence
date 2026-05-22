@@ -7,6 +7,7 @@
   },
   "components": {
     "breadcrumb": {
+      "edit": "Edit profile",
       "home": "Home",
       "me": "My Account",
       "reset-password": "Reset Password"
@@ -285,7 +286,23 @@
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Change password",
+        "deleteAccount": "Delete account",
+        "editProfile": "Edit profile"
+      },
       "bio": "Bio",
+      "delete": {
+        "body": "This action permanently deletes your account, removes your profile, and signs you out. This cannot be undone.",
+        "cancel": "Cancel",
+        "description": "This permanently deletes your account and signs you out.",
+        "title": "Delete account?"
+      },
+      "edit": {
+        "placeholder": "Tell other players a little about yourself",
+        "submit": "Save changes",
+        "title": "Edit profile"
+      },
       "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
       "provider": "Provider",
