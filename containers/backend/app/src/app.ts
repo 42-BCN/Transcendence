@@ -16,6 +16,7 @@ import {
   handleInternalDirectMessageSend,
 } from './direct-messages/direct-messages.internal';
 import { authIpRateLimit } from './auth/auth.rate-limit';
+import { publicApiRouter } from './public-api/public-api.routes';
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
@@ -63,6 +64,7 @@ app.get('/health', async (_req, res) => {
     res.status(500).json({ ok: false });
   }
 });
+app.use('/public-api', publicApiRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authIpRateLimit, authRouter);
 app.use('/protected', protectedRouter);

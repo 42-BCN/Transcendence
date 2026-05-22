@@ -15,12 +15,19 @@ export async function request<T>(
   if (cookies) headers.set('Cookie', cookies);
 
   const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  const url = `${BASE_URL}${normalizedPath}`;
 
-  const res = await fetch(`${BASE_URL}${normalizedPath}`, {
-    ...init,
-    headers,
-    redirect: 'manual',
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...init,
+      headers,
+      redirect: 'manual',
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`fetch failed for ${url}: ${message}`);
+  }
 
   storeCookies(res);
 
