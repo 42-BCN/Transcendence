@@ -1,29 +1,22 @@
 import type { Namespace, Socket } from 'socket.io';
-import { z } from 'zod';
 
 import {
+  DirectMessageUnreadUpdatedPayloadSchema,
   FriendAcceptedNotificationPayloadSchema,
   FriendRejectedNotificationPayloadSchema,
   FriendRequestNotificationPayloadSchema,
+  directMessageUnreadSocketEvents,
   friendshipSocketEvents,
   friendshipSocketUserIdSchema,
   presenceSocketEvents,
   type ClientToServerFriendshipEvents,
+  type DirectMessageUnreadUpdatedPayload,
   type FriendshipSocketEvent,
   type FriendshipSocketPayloadByEvent,
   type ServerToClientFriendshipEvents,
 } from '@contracts/sockets/friendships/friendships.schema';
 import { logEvents } from '../socket.logs';
 import { fetchAcceptedFriendIds } from '../internal/friends.client';
-
-export const directMessageUnreadUpdatedSocketEvent = 'dm:unread-updated' as const;
-
-const DirectMessageUnreadUpdatedPayloadSchema = z.strictObject({
-  otherUserId: z.string().uuid(),
-  unreadMessageCount: z.number().int().nonnegative(),
-});
-
-type DirectMessageUnreadUpdatedPayload = z.infer<typeof DirectMessageUnreadUpdatedPayloadSchema>;
 
 let friendsNsp: Namespace<ClientToServerFriendshipEvents, ServerToClientFriendshipEvents> | null =
   null;
@@ -214,12 +207,12 @@ export function emitToUser(
 ): void;
 export function emitToUser(
   userId: string,
-  event: typeof directMessageUnreadUpdatedSocketEvent,
+  event: typeof directMessageUnreadSocketEvents.updated,
   payload: DirectMessageUnreadUpdatedPayload,
 ): void;
 export function emitToUser(
   userId: string,
-  event: FriendshipSocketEvent | typeof directMessageUnreadUpdatedSocketEvent,
+  event: FriendshipSocketEvent | typeof directMessageUnreadSocketEvents.updated,
   payload:
     | FriendshipSocketPayloadByEvent[FriendshipSocketEvent]
     | DirectMessageUnreadUpdatedPayload,
@@ -297,7 +290,7 @@ export function emitToUser(
       break;
     }
 
-    case directMessageUnreadUpdatedSocketEvent: {
+    case directMessageUnreadSocketEvents.updated: {
       const parsedPayload = DirectMessageUnreadUpdatedPayloadSchema.safeParse(payload);
 
       if (!parsedPayload.success) {
@@ -313,7 +306,7 @@ export function emitToUser(
 
       friendsNsp
         ?.to(`user:${parsedUserId.data}`)
-        .emit(directMessageUnreadUpdatedSocketEvent, parsedPayload.data);
+        .emit(directMessageUnreadSocketEvents.updated, parsedPayload.data);
       break;
     }
   }

@@ -105,10 +105,9 @@ export type PresenceOfflinePayload = z.infer<typeof PresenceOfflinePayloadSchema
 // Server -> Client events (friendship notifications + presence)
 // ---------------------------------------------------------------------------
 
-type FriendshipEventHandlers = Record<
-  FriendshipSocketEvent,
-  (payload: FriendshipSocketPayloadByEvent[FriendshipSocketEvent]) => void
->;
+type FriendshipEventHandlers = {
+  [K in FriendshipSocketEvent]: (payload: FriendshipSocketPayloadByEvent[K]) => void;
+};
 
 type DirectMessageUnreadEventHandlers = Record<
   DirectMessageUnreadSocketEvent,

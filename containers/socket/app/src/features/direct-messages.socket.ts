@@ -11,8 +11,9 @@ import {
   type DirectMessageError,
   type ServerToClientDirectMessageEvents,
 } from '@contracts/sockets/direct-messages/direct-messages.schema';
+import { directMessageUnreadSocketEvents } from '@contracts/sockets/friendships/friendships.schema';
 
-import { directMessageUnreadUpdatedSocketEvent, emitToUser } from '../features/friends.socket';
+import { emitToUser } from '../features/friends.socket';
 import {
   fetchDirectMessageHistory,
   markDirectMessagesRead,
@@ -35,6 +36,7 @@ function errorMessage(): DirectMessageError {
     createdAt: Date.now(),
     senderId: randomUUID(),
     username: 'system',
+    readAt: null,
     type: 'error',
     content: {
       text: 'INVALID_DIRECT_MESSAGE',
@@ -51,7 +53,7 @@ async function emitReadState(
 
   if (typeof unreadCount !== 'number') return;
 
-  emitToUser(currentUserId, directMessageUnreadUpdatedSocketEvent, {
+  emitToUser(currentUserId, directMessageUnreadSocketEvents.updated, {
     otherUserId: friendUserId,
     unreadMessageCount: unreadCount,
   });
@@ -116,7 +118,7 @@ export function registerDirectMessagesSocket(
           return;
         }
 
-        emitToUser(friendUserIdResult.data, directMessageUnreadUpdatedSocketEvent, {
+        emitToUser(friendUserIdResult.data, directMessageUnreadSocketEvents.updated, {
           otherUserId: currentUserId,
           unreadMessageCount: saved.unreadCount,
         });
