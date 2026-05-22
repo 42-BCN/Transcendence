@@ -23,6 +23,9 @@ import { publicApiRouter } from './public-api/public-api.routes';
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) throw new Error('SESSION_SECRET is required');
 
+const publicApiKey = process.env.PUBLIC_API_KEY?.trim();
+if (!publicApiKey) throw new Error('PUBLIC_API_KEY is required');
+
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
 

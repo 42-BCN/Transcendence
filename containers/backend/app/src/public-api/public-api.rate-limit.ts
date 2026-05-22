@@ -2,6 +2,7 @@ import type { Request } from 'express';
 
 import { ApiError, readApiKey } from '@shared';
 import { createRateLimit } from '@shared/rate-limit';
+import { extractRateLimitIp } from '../auth/auth.rate-limit';
 
 const PUBLIC_API_RATE_LIMIT_KEYS = {
   requests: 'rl:public-api:requests',
@@ -12,10 +13,7 @@ function getPublicApiClientFingerprint(req: Request): string | undefined {
   const apiKey = readApiKey(req);
   if (!apiKey) return undefined;
 
-  const ip = req.ip || req.socket.remoteAddress || 'unknown';
-  const normalizedIp = ip.startsWith('::ffff:') ? ip.slice(7) : ip;
-
-  return `${apiKey}:${normalizedIp}`;
+  return `${apiKey}:${extractRateLimitIp(req)}`;
 }
 
 function readPositiveNumber(raw: string | undefined, fallback: number): number {

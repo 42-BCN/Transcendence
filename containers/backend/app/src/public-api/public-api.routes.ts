@@ -1,6 +1,10 @@
 import { Router } from 'express';
 
-import { GetUserByIdParamSchema, GetUsersQuerySchema, SearchUsersQuerySchema } from '@contracts/users/users.validation';
+import {
+  GetUserByIdParamSchema,
+  GetUsersQuerySchema,
+  SearchUsersQuerySchema,
+} from '@contracts/users/users.validation';
 import { requireApiKey, validateParams, validateQuery } from '@shared';
 
 import { getUserById, getUserByUsername, getUsersController } from '../users/users.controllers';
@@ -13,7 +17,7 @@ import { publicApiRateLimit, publicApiSearchRateLimit } from './public-api.rate-
 
 export const publicApiRouter = Router();
 
-publicApiRouter.use(requireApiKey, publicApiRateLimit);
+publicApiRouter.use(publicApiRateLimit, requireApiKey);
 
 publicApiRouter.get('/health', getPublicApiHealthController);
 publicApiRouter.get('/users', validateQuery(GetUsersQuerySchema), getUsersController);

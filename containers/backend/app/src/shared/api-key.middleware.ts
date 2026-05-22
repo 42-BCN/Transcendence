@@ -13,10 +13,9 @@ export function readApiKey(req: Request): string | undefined {
 }
 
 function matchesApiKey(providedApiKey: string, expectedApiKey: string): boolean {
+  if (providedApiKey.length !== expectedApiKey.length) return false;
   const providedBuffer = Buffer.from(providedApiKey);
   const expectedBuffer = Buffer.from(expectedApiKey);
-
-  if (providedBuffer.length !== expectedBuffer.length) return false;
 
   return timingSafeEqual(providedBuffer, expectedBuffer);
 }

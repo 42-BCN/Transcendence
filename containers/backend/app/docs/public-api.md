@@ -10,7 +10,7 @@ Send the API key in the `x-api-key` header:
 x-api-key: <PUBLIC_API_KEY>
 ```
 
-If `PUBLIC_API_KEY` is not configured, the public API fails closed and returns `500`.
+If `PUBLIC_API_KEY` is missing, the backend now fails fast during startup instead of booting with a broken public API.
 
 ## Rate limiting
 
