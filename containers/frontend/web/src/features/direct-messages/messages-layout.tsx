@@ -46,7 +46,7 @@ export function MessagesLayout({ friends, selectedUsername, children }: Messages
         <IconButton
           onPress={() => setIsListVisible((visible) => !visible)}
           icon={isListVisible ? 'close' : 'messages'}
-          label={t('listTitle')}
+          label={isListVisible ? t('closeList') : t('openList')}
           className={messagesLayoutStyles.toggleButton}
         />
       )}
@@ -55,7 +55,7 @@ export function MessagesLayout({ friends, selectedUsername, children }: Messages
         {resolvedFriends.length > 0 && (
           <button
             type="button"
-            aria-label={t('listTitle')}
+            aria-label={t('closeList')}
             className={messagesLayoutStyles.backdrop(isListVisible)}
             onClick={() => setIsListVisible(false)}
           />
