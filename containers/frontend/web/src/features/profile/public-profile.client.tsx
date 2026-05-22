@@ -10,12 +10,13 @@ import { useFriendshipActions } from '../social/friendship-actions/use-friendshi
 
 interface PublicProfileClientProps {
   userId: string;
+  username: string;
   bio: string | null;
 }
 
-export function PublicProfileClient({ userId, bio }: PublicProfileClientProps) {
+export function PublicProfileClient({ userId, username, bio }: PublicProfileClientProps) {
   const t = useTranslations('features.profile');
-  const actions = useFriendshipActions(userId);
+  const actions = useFriendshipActions({ userId, username });
 
   return (
     <Stack className={profileStyles.container} gap="md">

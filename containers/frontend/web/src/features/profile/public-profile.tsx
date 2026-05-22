@@ -29,7 +29,11 @@ export async function PublicProfile({ username }: PublicProfileProps) {
         <Avatar src={data.data.avatar} size="lg" />
         <Text as="h2">{data.data.username}</Text>
       </Stack>
-      <PublicProfileClient userId={data.data.id} bio={data.data.bio} />
+      <PublicProfileClient
+        userId={data.data.id}
+        username={data.data.username}
+        bio={data.data.bio}
+      />
     </Stack>
   );
 }

@@ -20,6 +20,7 @@ const classNameByAction: Partial<Record<FriendshipActionKey, string>> = {
 
 interface SocialFriendshipActionsProps {
   userId: string;
+  username: string;
 }
 
 type ButtonAction = Extract<FriendshipAction, { type: 'button' }>;
@@ -28,9 +29,9 @@ function isButtonAction(action: FriendshipAction): action is ButtonAction {
   return action.type === 'button';
 }
 
-export function SocialFriendshipActions({ userId }: SocialFriendshipActionsProps) {
+export function SocialFriendshipActions({ userId, username }: SocialFriendshipActionsProps) {
   const tErrors = useTranslations('errors');
-  const actions = useFriendshipActions(userId).filter(isButtonAction);
+  const actions = useFriendshipActions({ userId, username }).filter(isButtonAction);
 
   return (
     <>

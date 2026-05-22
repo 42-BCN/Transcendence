@@ -6,6 +6,7 @@ import type {
 
 export function createFriendshipActions({
   userId,
+  username,
   status,
   t,
   handlers,
@@ -17,7 +18,7 @@ export function createFriendshipActions({
         key: 'message',
         type: 'link',
         label: t('message'),
-        href: `/messages/${userId}`,
+        href: `/messages/${username ?? userId}`,
       },
       {
         key: 'deleteFriend',

@@ -54,6 +54,7 @@ export type FriendshipAction =
 
 export interface CreateFriendshipActionsArgs {
   userId: string;
+  username?: string;
   status: FriendshipStatus;
   t: (key: string) => string;
   handlers: FriendshipActionHandlers;
