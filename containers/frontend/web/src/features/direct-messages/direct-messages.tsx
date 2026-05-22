@@ -19,6 +19,7 @@ import type {
   DirectMessageHistory,
   DirectMessageSend,
 } from '@/contracts/sockets/direct-messages/direct-messages.schema';
+import { directMessageSocketEvents } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
 import { ChatHeader } from '@/features/chat/chat.header';
 import { ChatMain } from '@/features/chat/chat.main';
@@ -234,7 +235,7 @@ export function DirectMessagesFeature({
         }),
       ]),
     );
-    directMessagesSocket.emit('dm:send', payload);
+    directMessagesSocket.emit(directMessageSocketEvents.send, payload);
     setValue('');
   }, [currentUserId, currentUsername, setMessages, setValue, value]);
 

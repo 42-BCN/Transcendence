@@ -88,8 +88,8 @@ export const routing = defineRouting({
     },
     '/messages/[userId]': {
       en: '/messages/[userId]',
-      es: '/messages/[userId]',
-      ca: '/messages/[userId]',
+      es: '/mensajes/[userId]',
+      ca: '/missatges/[userId]',
     },
     '/other/[username]': {
       en: '/other/[username]',
