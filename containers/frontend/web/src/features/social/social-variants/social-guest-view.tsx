@@ -7,7 +7,7 @@ export function SocialGuestView() {
   const t = useTranslations('features.social.guest');
 
   return (
-    <Stack gap="md" className="h-full p-5 pt-11" align="center">
+    <Stack gap="md" className="h-full p-5 pt-11 pointer-events-auto" align="center">
       <Text as="h1" variant="heading-md" className="font-bold">
         {t('title')}
       </Text>
