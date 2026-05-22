@@ -28,10 +28,16 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     });
   }
 
+  function vfx(effect) {
+    nsp.emit('game:server:vfx', effect);
+  }
+
   nsp.on('connection', (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
     if (playerIds.length === 4) {
       console.log('init state happens');
       const initstate = initState();
+      gameState.turn = 0;
+      gameState.doom = 0;
       gameState.players = initstate.players;
       gameState.enemies = initstate.enemies;
       gameState.tiles = initstate.tiles;
@@ -132,6 +138,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           gameState.clients[role].selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
           gameState.clients[role].canSelect = false;
           // WARN: not enough time :( 
+          // INFO: liar above, just lazy
 
           // if (ab.AoE)
           //   gameState.clients[role].selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
@@ -241,25 +248,22 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         gsync();
       });
 
-      socket.on('game:client:nextPhase', async () => {
-        if (!gameState.clients[role] || !role)
-          return;
-        console.log('readyPlayers before nextphase', readyPlayers);
-        if (readyPlayers.length === 4 - playerIds.length) {
-          console.log('readyPlayers in nextphase', readyPlayers);
-          readyPlayers.length = 0;
-          await nextPhase(gsync);
-          for (const id in gameState.clients) {
-            setClear(id);
-            nsp.emit('game:server:sync', gameState.clients[id]);
+      socket.on('game:client:nextPhase',
+        async () => {
+          if (!gameState.clients[role] || !role)
+            return;
+          console.log('readyPlayers before nextphase', readyPlayers);
+          if (readyPlayers.length === 4 - playerIds.length) {
+            console.log('readyPlayers in nextphase', readyPlayers);
+            readyPlayers.length = 0;
+            await nextPhase(gsync, vfx);
+            for (const id in gameState.clients) {
+              setClear(id);
+              nsp.emit('game:server:sync', gameState.clients[id]);
+            }
           }
-        }
-      });
-
-      socket.on('game:client:rClick', () => {
-        setClear(role);
-        socket.emit('game:server:sync', gameState.clients[role]);
-      });
+        },
+      );
 
       socket.on('game:client:resetHistory', () => {
         resetHistory(role);

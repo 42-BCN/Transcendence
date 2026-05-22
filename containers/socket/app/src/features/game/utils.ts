@@ -1,6 +1,6 @@
 import TinyQueue from 'tinyqueue';
 import { testMap, parseMap } from './maps';
-import type { pos, player, enemy, serverGameState, node, historyAction, abilityInfo } from './types';
+import type { vfx, pos, player, enemy, serverGameState, node, historyAction, abilityInfo } from './types';
 
 const STATUS_TYPE = 0;
 const N_TURNS = 1;
@@ -18,7 +18,6 @@ export const gameState: serverGameState = {
   tiles: {},
   clients: {},
   history: [],
-  vfx: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
 };
 
@@ -57,22 +56,20 @@ export function phaseClean() {
   }
 }
 
-export async function nextPhase(sync: () => void) {
+export async function nextPhase(sync: () => void, vfx: (effect) => void) {
   if (gameState.phase !== 'PLAN')
     return console.log('nextPhase tried to execute with phase', gameState.phase);
   phaseClean();
   gameState.phase = 'EXEC';
   sync();
   try {
-    await executionPhase(sync);
-    phaseClean();
-    gameState.phase = 'ENEMY';
-    await enemyPhase(sync);
-    phaseClean();
-    gameState.phase = 'END';
-    await endTurn(sync);
-    for (const id in gameState.clients)
-      setClear(id);
+    await executionPhase(sync, vfx);
+    incrementDoom(vfx);
+    if (gameState.phase === 'LOSE') {
+      return;
+    }
+    await enemyPhase(sync, vfx);
+    await endTurn(sync, vfx);
   } catch (err) {
     console.error('Turn resolution failed:', err);
     gameState.phase = 'PLAN';
@@ -81,7 +78,7 @@ export async function nextPhase(sync: () => void) {
   }
 }
 
-export async function executionPhase(sync: () => void) {
+export async function executionPhase(sync: () => void, vfx: (effect) => void) {
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   for (const id in gameState.ghosts) {
     gameState.players[id] = {
@@ -100,12 +97,39 @@ export async function executionPhase(sync: () => void) {
       sync();
       await sleep(400);
     }
-    else if (action.type === "mov")
+    if (Object.values(gameState.enemies).some(e => e.id === 'generator' && e.isDead)) {
+      gameState.phase = 'WIN';
+      return;
+    }
+    else if (action.type === 'mov')
       await moveTo(action.who, action.target, sync);
+  }
+  phaseClean();
+}
+
+export function incrementDoom(vfx: (effect) => void) {
+  for (const enemy of Object.values(gameState.enemies)) {
+    const doom: vfx = { vfxid: `doom_${Date.now()}`, eid: enemy.id, type: 'doom', amount: null };
+    if (enemy.isDead)
+      doom.amount = 0;
+    else if (enemy.id === 'crawler' || enemy.id === 'drone')
+      doom.amount = 1;
+    else if (enemy.id === 'jaeger' || enemy.id === 'centurion')
+      doom.amount = 3;
+    else if (enemy.id === 'generator')
+      doom.amount = 5;
+    doom.amount = gameState.doom + doom.amount > 100 ? 100 - gameState.doom : doom.amount;
+    vfx(doom);
+    gameState.doom = gameState.doom + doom.amount;
+    if (gameState.doom === 100) {
+      gameState.phase = 'LOSE';
+      return;
+    }
   }
 }
 
-export async function enemyPhase(sync: () => void) {
+export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
+  gameState.phase = 'ENEMY';
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   console.log('Enemy turn');
   sync();
@@ -113,7 +137,7 @@ export async function enemyPhase(sync: () => void) {
   for (const enemy of Object.values(gameState.enemies)) {
     if (enemy.isDead) continue;
     let closestDistance = Infinity;
-    let path = [];
+    let path: string[] = [];
     let targetId = null;
     for (const player of Object.values(gameState.players)) {
       if (player.isDead) continue;
@@ -155,9 +179,11 @@ export async function enemyPhase(sync: () => void) {
       executeAbility(enemy.id, enemy.abilities[idx], targetId, Math.max(...enemy.dice))
     }
   }
+  phaseClean();
 }
 
-export async function endTurn(sync: () => void) {
+export async function endTurn(sync: () => void, vfx: (effect) => void) {
+  gameState.phase = 'END';
   sync();
   const entities = { ...gameState.players, ...gameState.enemies }
   Object.keys(entities).forEach((id) => {
@@ -182,6 +208,8 @@ export async function endTurn(sync: () => void) {
   gameState.history = [];
   gameState.clones = {};
   sync();
+  for (const id in gameState.clients)
+    setClear(id);
 }
 
 export function updateCooldowns(id: string) {
@@ -349,22 +377,27 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
   }
 }
 
-export function takeAb(id: string, ab: abilityInfo, roll: number) {
+export function takeAb(id: string, ab: abilityInfo, roll: number, vfx: (effect) => void) {
   const target = gameState.enemies[id] || gameState.players[id];
   if (!target)
     return console.log('target not found in takeAb');
   // TODO: send signal with the damage dealt to make a html of how much it was done
-  target.hp -= (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);
+  const eff: vfx = { vfxid: `damage_${Date.now()}`, eid: id, type: 'damage', amount: null };
+  let dmg = (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);
+  target.hp -= dmg;
   if (target.hp <= 0) {
+    dmg += target.hp;
     target.hp = 0;
     target.usedDice = [...target.dice, ...target.usedDice];
     target.dice = [];
     target.isDead = true;
   }
+  eff.amount = dmg;
+  vfx(eff);
   const hadStatus = Boolean(target.status);
   if (ab.effect && ab.effect[STATUS_TYPE] && !target.status) {
     target.status = ab.effect[STATUS_TYPE];
-    gameState.vfx.push(target.status);
+    vfx({ vfxid: `status_${Date.now()}`, eid: id, type: target.status, amount: null });
     if (target.status !== 'push' && !hadStatus) {
       target.statusTurns = Number(ab.effect[N_TURNS]);
     }
@@ -563,6 +596,13 @@ export function initState() {
           ...base(), ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 1,
           abilities: ["Push", "Railgun"],
           dice: [6, 6, 10],
+        }
+        break;
+      case "generator":
+        enemEnt[entity.id] = {
+          ...base(), ...entity, type: "enemy", hp: 1, maxHp: 50, armor: 0,
+          abilities: [],
+          dice: [],
         }
         break;
     }

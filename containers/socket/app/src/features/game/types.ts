@@ -73,14 +73,16 @@ export type abilityInfo = {
 }
 
 export type vfx = {
-  id: string;
+  vfxid: string;
+  eid: string;
   type: string;
-  amount: string | number | null;
+  amount: number | null;
 }
 
 export type serverGameState = {
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE',
   turn: number,
+  doom: number,
   players: Record<string, entity>;
   ghosts: Record<string, entity>;
   clones: Record<string, entity>;
@@ -88,7 +90,6 @@ export type serverGameState = {
   tiles: Record<string, boolean>;
   clients: Record<string, clientGameState>
   history: historyAction[];
-  vfx: vfx[];
   mapBounds: mapInfo,
 }
 

@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { MapControls, OrthographicCamera } from '@react-three/drei';
+import { Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
@@ -11,6 +11,38 @@ import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 
 const s = 0.975;
+
+function FloatingVfx({ entityId }: { entityId: string }) {
+  const entries = useGame((s) =>
+    Object.values(s.pendingVfx).filter((v) => v.targetId === entityId)
+  );
+
+  if (entries.length === 0) return null;
+
+  return (
+    <>
+      {entries.map((v) => (
+        <Html key={v.id} position={[0, 1.2, 0]} center style={{ pointerEvents: 'none' }}>
+          <span style={{
+            display: 'block',
+            animation: 'floatUp 1.4s ease-out forwards',
+            fontWeight: 'bold',
+            fontSize: 18,
+            whiteSpace: 'nowrap',
+            textShadow: '0 0 4px #000',
+            color:
+              v.type === 'damage' ? '#ff4444' :
+                v.type === 'heal' ? '#44ff88' :
+                  v.type === 'doom' ? '#ff8800' :
+                    '#ffcc00',
+          }}>
+            {v.label}
+          </span>
+        </Html>
+      ))}
+    </>
+  );
+}
 
 function AbButtons() {
   const ent = useGame((state) => state.getSel());
@@ -407,6 +439,24 @@ function Scene() {
   );
 }
 
+function DoomCounter() {
+  const percent = useGame((state) => state.doom);
+  return (
+    <div className="z-10 absolute left-32 bottom-8">
+      {percent ?? "ERROR"}
+    </div>
+  )
+}
+
+function VfxDisplay() {
+  const vfx = useGame((state) => state.vfx);
+  return (
+    <div className="z-10 absolute left-32 bottom-8">
+      {percent ?? "ERROR"}
+    </div>
+  )
+}
+
 function name(phase: string) {
   switch (phase) {
     case 'PLAN':
@@ -415,25 +465,73 @@ function name(phase: string) {
       return 'EXECUTION PHASE';
     case 'ENEMY':
       return 'ENEMY PHASE';
-    default:
+    case 'END':
       return 'END PHASE';
+    case 'WIN':
+      return 'WIN PHASE';
+    case 'LOSE':
+      return 'LOSE PHASE';
+    default:
+      return 'ERROR';
+  }
+}
+
+function GamePhase() {
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
+  const phase = useGame((state) => state.phase);
+  return (
+    <div className="absolute top-4 left-32 transform z-20 bg-black text-white px-4 py-2 rounded">
+      {name(phase)}
+      {assignedCharacter}
+    </div>
+  )
+}
+
+function HandlePhaseScreen() {
+  const phase = useGame((state) => state.phase);
+  switch (phase) {
+    case 'WIN':
+      return (
+        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+          <div className="text-center">
+            <h2>YOU WIN!</h2>
+          </div>
+        </div>
+      )
+    case 'LOSE':
+      return (
+        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+          <div className="text-center">
+            <h2>YOU LOSE!</h2>
+          </div>
+        </div>
+      )
+    default:
+      return (
+        <>
+          <GamePhase />
+          <HUD />
+          <Reset />
+          <DoomCounter />
+          <EndPlan />
+          <Canvas
+          >
+            <Scene />
+          </Canvas>
+        </>
+      )
   }
 }
 
 export function Game() {
-  const phase = useGame((state) => state.phase);
-  const assignedCharacter = useGame((state) => state.assignedCharacter);
-  const selectedDice = useGame((state) => state.selectedDice);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
-  // const handleRightClick = useGame((state) => state.handleRightClick);
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
 
   useEffect(() => {
-    // if (!initRef.current) {
-    //   initRef.current = true;
     initSocketListeners();
 
     return () => {
@@ -461,22 +559,5 @@ export function Game() {
         <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
       </div>
     </div>
-  ) : (
-    <>
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
-        {name(phase)}
-        {assignedCharacter}
-      </div>
-      {selectedDice && phase === 'PLAN' && (
-        <Text className="absolute z-10 top-[10%] left-[10%] flex gap-4">{`d${selectedDice}`}</Text>
-      )}
-      <HUD />
-      <Reset />
-      <EndPlan />
-      <Canvas
-      >
-        <Scene />
-      </Canvas>
-    </>
-  );
+  ) : <HandlePhaseScreen />
 }

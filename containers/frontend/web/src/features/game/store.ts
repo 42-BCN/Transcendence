@@ -76,22 +76,25 @@ export type abilityInfo = {
 }
 
 export type vfx = {
-  id: string;
+  vfxid: string;
+  eid: string;
   type: string;
-  amount: string | number | null;
+  amount: number | null;
+  label: string;
 }
 
 export type globalGameState = {
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
-  turn: number,
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE';
+  turn: number;
+  doom: number;
   players: Record<string, entity>;
   ghosts: Record<string, entity>;
   clones: Record<string, entity>;
   enemies: Record<string, entity>;
   tiles: Record<string, boolean>;
   history: historyAction[];
-  vfx: vfx[];
-  mapBounds: mapInfo,
+  vfx: Record<string, vfx>;
+  mapBounds: mapInfo;
 }
 
 export type localGameState = {
@@ -103,31 +106,13 @@ export type localGameState = {
   selectedDice: number | null;
 }
 
-type gameState = {
-
-  assignedCharacter: string;
-
-  //global state
-  turn: number;
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
-  players: Record<string, entity>;
-  enemies: Record<string, entity>;
-  clones: Record<string, entity>;
-  tiles: Record<string, boolean>;
-  history: historyAction[];
-  mapBounds: mapInfo;
-  readyPlayers: string[];
-  activePlayers: string[];
+type gameState = globalGameState & localGameState & {
 
   //local state
+  assignedCharacter: string;
   typeEnt: string | null;
-  canSelect: boolean;
-  selectedAb: string | null;
-  selectedEnt: string | null;
-  highlights: Record<string, boolean>;
-  selectables: Record<string, boolean>;
   affected: Record<string, boolean>;
-  selectedDice: number | null;
+  vfx: Record<string, vfx>;
 
   nextPhase: () => void;
 
@@ -165,6 +150,7 @@ export const useGame = create<gameState>()((set, get) => ({
   highlights: {},
   selectables: {},
   affected: {},
+  vfx: {},
   history: [],
   readyPlayers: [],
   activePlayers: [],
@@ -242,10 +228,6 @@ export const useGame = create<gameState>()((set, get) => ({
     set({ selectables: {}, canSelect: true });
   },
 
-  handleRightClick: () => {
-    gameSocket.emit('game:client:rClick');
-  },
-
   initSocketListeners: () => {
     // if (gameSocket.connected)
     //   return;
@@ -272,6 +254,7 @@ export const useGame = create<gameState>()((set, get) => ({
       set({
         phase: state.phase,
         turn: state.turn,
+        doom: state.doom,
         enemies: state.enemies,
         players: state.players,
         clones: state.clones,
@@ -282,6 +265,37 @@ export const useGame = create<gameState>()((set, get) => ({
         activePlayers: state.activePlayers || get().activePlayers,
       });
     };
+
+    const handleVfx = (effect: vfx) => {
+      if (!effect)
+        return;
+      const label =
+        effect.type === 'damage' ? `-${effect.amount}` :
+          effect.type === 'doom' ? `☠ +${effect.amount}` :
+            effect.type === 'shield' ? `+${effect.amount}` :
+              effect.type;
+
+      set((s) => ({
+        vfx: {
+          ...s.pendingVfx,
+          [effect.vfxid]: {
+            id: effect.vfxid,
+            eid: effect.eid,
+            type: effect.type,
+            amount: effect.amount,
+            label
+          },
+        },
+      }));
+      setTimeout(() => {
+        set((s) => {
+          const next = { ...s.pendingVfx };
+          delete next[effect.vfxid];
+          return { pendingVfx: next };
+        });
+      }, 1400);
+
+    }
 
     const handleSync = (state: localGameState) => {
       if (!state)
@@ -297,17 +311,6 @@ export const useGame = create<gameState>()((set, get) => ({
       });
     };
 
-    const handleHighlights = (highlights: Record<string, boolean>) => {
-      console.log('✨ Received highlights');
-      set({ highlights: highlights });
-    };
-
-    const handleSelectables = (selectables: Record<string, boolean>) => {
-      console.log('🎯 Received selectables');
-      set({ selectables: selectables });
-    };
-
-
     gameSocket.on('connect', () => {
       console.log('✅ Connected to game socket server');
     });
@@ -319,8 +322,7 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.on('game:server:join', handleJoin);
     gameSocket.on('game:server:globalSync', handleGlobalSync);
     gameSocket.on('game:server:sync', handleSync);
-    gameSocket.on('game:server:displayMoveRange', handleHighlights);
-    gameSocket.on('game:server:displayAbilityRange', handleSelectables);
+    gameSocket.on('game:server:vfx', handleVfx);
 
     ensureChatSessionIdentity()
       .finally(() => gameSocket.connect());
@@ -335,8 +337,6 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:init');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:displayMoveRange');
-    gameSocket.off('game:server:displayAbilityRange');
-    // gameSocket.disconnect();
+    gameSocket.disconnect();
   },
 }));
