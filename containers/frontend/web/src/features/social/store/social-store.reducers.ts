@@ -142,6 +142,17 @@ function setFriendPresenceReducer(
   });
 }
 
+function setFriendUnreadMessageCountReducer(
+  userId: string,
+  count: number,
+): (state: SocialState) => Partial<SocialState> {
+  return (state) => ({
+    friends: state.friends.map((friend) =>
+      friend.id === userId ? { ...friend, unreadMessageCount: count } : friend,
+    ),
+  });
+}
+
 function receiveFriendRequestReducer(
   payload: FriendRequestNotificationPayload,
 ): (state: SocialState) => Partial<SocialState> {
@@ -406,6 +417,9 @@ export function createSocialActions(set: SetState) {
 
     setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') =>
       set(setFriendPresenceReducer(userId, presence)),
+
+    setFriendUnreadMessageCount: (userId: string, count: number) =>
+      set(setFriendUnreadMessageCountReducer(userId, count)),
 
     receiveFriendRequest: (payload: FriendRequestNotificationPayload) =>
       set(receiveFriendRequestReducer(payload)),

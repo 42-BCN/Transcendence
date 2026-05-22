@@ -6,6 +6,10 @@ export const friendshipSocketEvents = {
   rejected: 'friends:rejected',
 } as const;
 
+export const directMessageUnreadSocketEvents = {
+  updated: 'dm:unread-updated',
+} as const;
+
 export const presenceSocketEvents = {
   online: 'user:online',
   away: 'user:away',
@@ -15,6 +19,9 @@ export const presenceSocketEvents = {
 
 export type FriendshipSocketEvent =
   (typeof friendshipSocketEvents)[keyof typeof friendshipSocketEvents];
+
+export type DirectMessageUnreadSocketEvent =
+  (typeof directMessageUnreadSocketEvents)[keyof typeof directMessageUnreadSocketEvents];
 
 export const friendshipSocketUserIdSchema = z.string().uuid();
 
@@ -46,11 +53,24 @@ export type FriendRejectedNotificationPayload = z.infer<
   typeof FriendRejectedNotificationPayloadSchema
 >;
 
+export const DirectMessageUnreadUpdatedPayloadSchema = z.strictObject({
+  otherUserId: z.string().uuid(),
+  unreadMessageCount: z.number().int().nonnegative(),
+});
+
+export type DirectMessageUnreadUpdatedPayload = z.infer<
+  typeof DirectMessageUnreadUpdatedPayloadSchema
+>;
+
 export const friendshipSocketPayloadSchemas = {
   [friendshipSocketEvents.request]: FriendRequestNotificationPayloadSchema,
   [friendshipSocketEvents.accepted]: FriendAcceptedNotificationPayloadSchema,
   [friendshipSocketEvents.rejected]: FriendRejectedNotificationPayloadSchema,
 } as const satisfies Record<FriendshipSocketEvent, z.ZodTypeAny>;
+
+export const directMessageUnreadSocketPayloadSchemas = {
+  [directMessageUnreadSocketEvents.updated]: DirectMessageUnreadUpdatedPayloadSchema,
+} as const satisfies Record<DirectMessageUnreadSocketEvent, z.ZodTypeAny>;
 
 export type FriendshipSocketPayloadByEvent = {
   [K in keyof typeof friendshipSocketPayloadSchemas]: z.infer<
@@ -85,21 +105,33 @@ export type PresenceOfflinePayload = z.infer<typeof PresenceOfflinePayloadSchema
 // Server -> Client events (friendship notifications + presence)
 // ---------------------------------------------------------------------------
 
-export type ServerToClientFriendshipEvents = {
-  [K in FriendshipSocketEvent]: (payload: FriendshipSocketPayloadByEvent[K]) => void;
-} & {
-  [presenceSocketEvents.online]: (payload: PresenceOnlinePayload) => void;
-  [presenceSocketEvents.away]: (payload: PresenceAwayPayload) => void;
-  [presenceSocketEvents.offline]: (payload: PresenceOfflinePayload) => void;
+type FriendshipEventHandlers = Record<
+  FriendshipSocketEvent,
+  (payload: FriendshipSocketPayloadByEvent[FriendshipSocketEvent]) => void
+>;
+
+type DirectMessageUnreadEventHandlers = Record<
+  DirectMessageUnreadSocketEvent,
+  (payload: DirectMessageUnreadUpdatedPayload) => void
+>;
+
+type PresenceEventHandlers = {
+  'user:online': (payload: PresenceOnlinePayload) => void;
+  'user:away': (payload: PresenceAwayPayload) => void;
+  'user:offline': (payload: PresenceOfflinePayload) => void;
 };
+
+export type ServerToClientFriendshipEvents = FriendshipEventHandlers &
+  DirectMessageUnreadEventHandlers &
+  PresenceEventHandlers;
 
 // ---------------------------------------------------------------------------
 // Client -> Server events (presence signals)
 // ---------------------------------------------------------------------------
 
 export type ClientToServerFriendshipEvents = {
-  [presenceSocketEvents.away]: () => void;
-  [presenceSocketEvents.active]: () => void;
+  'user:away': () => void;
+  'user:active': () => void;
 };
 
 const FriendRequestNotifyBodySchema = z.strictObject({

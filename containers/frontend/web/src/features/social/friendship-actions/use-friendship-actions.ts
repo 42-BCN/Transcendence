@@ -52,5 +52,6 @@ export function useFriendshipActions({
     error,
     handlers,
     status: getFriendshipStatus({ friend, requestReceived, requestSent }),
+    unreadMessageCount: friend?.unreadMessageCount,
   });
 }

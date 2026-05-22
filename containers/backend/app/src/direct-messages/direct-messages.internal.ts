@@ -1,12 +1,17 @@
 import type { Request, Response } from 'express';
-
+import type { DirectMessage, DirectMessageRead } from '@contracts/sockets/direct-messages/direct-messages.schema';
 import {
   DirectMessageSendBodySchema,
   DirectMessageThreadBodySchema,
 } from '@contracts/sockets/direct-messages/direct-messages.schema';
 
 import { findFriendshipByPair } from '../friendships/friendships.repo';
-import { createDirectMessage, listDirectMessagesForFriendship } from './direct-messages.repo';
+import {
+  countUnreadDirectMessagesForFriendship,
+  createDirectMessage,
+  listDirectMessagesForFriendship,
+  markDirectMessagesAsRead,
+} from './direct-messages.repo';
 
 function ensureInternalSecret(req: Request, res: Response): boolean {
   const secret = process.env.SOCKET_INTERNAL_SECRET;
@@ -42,18 +47,20 @@ export function handleInternalDirectMessageHistory(req: Request, res: Response):
       }
 
       const rows = await listDirectMessagesForFriendship(friendship.id);
+      const messages: DirectMessage[] = rows.map((row) => ({
+        id: row.id,
+        createdAt: row.createdAt.getTime(),
+        senderId: row.senderId,
+        username: row.sender.username,
+        readAt: row.readAt?.getTime() ?? null,
+        type: 'user',
+        content: { text: row.body },
+      }));
 
       res.json({
         ok: true,
         data: {
-          messages: rows.map((row) => ({
-            id: row.id,
-            createdAt: row.createdAt.getTime(),
-            senderId: row.senderId,
-            username: row.sender.username,
-            type: 'user' as const,
-            content: { text: row.body },
-          })),
+          messages,
         },
       });
     })
@@ -85,23 +92,67 @@ export function handleInternalDirectMessageSend(req: Request, res: Response): vo
         senderId: parsed.data.currentUserId,
         body: parsed.data.text,
       });
+      const unreadCount = await countUnreadDirectMessagesForFriendship({
+        friendshipId: friendship.id,
+        userId: parsed.data.friendUserId,
+      });
+      const message: DirectMessage = {
+        id: saved.id,
+        createdAt: saved.createdAt.getTime(),
+        senderId: saved.senderId,
+        username: saved.sender.username,
+        readAt: saved.readAt?.getTime() ?? null,
+        type: 'user',
+        content: { text: saved.body },
+      };
 
       res.json({
         ok: true,
         data: {
-          message: {
-            id: saved.id,
-            createdAt: saved.createdAt.getTime(),
-            senderId: saved.senderId,
-            username: saved.sender.username,
-            type: 'user' as const,
-            content: { text: saved.body },
-          },
+          message,
+          unreadCount,
         },
       });
     })
     .catch((error: unknown) => {
       console.error('[direct-messages] failed to save message', error);
+      res.status(500).json({ ok: false });
+    });
+}
+
+export function handleInternalDirectMessageRead(req: Request, res: Response): void {
+  if (!ensureInternalSecret(req, res)) return;
+
+  const parsed = DirectMessageThreadBodySchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    res.status(400).json({ ok: false, errors: parsed.error.flatten() });
+    return;
+  }
+
+  findFriendshipByPair(parsed.data.currentUserId, parsed.data.friendUserId)
+    .then(async (friendship) => {
+      if (!friendship || friendship.status !== 'accepted') {
+        res.status(403).json({ ok: false });
+        return;
+      }
+
+      const unreadCount = await markDirectMessagesAsRead({
+        friendshipId: friendship.id,
+        userId: parsed.data.currentUserId,
+      });
+      const data: DirectMessageRead = {
+        friendUserId: parsed.data.friendUserId,
+        unreadCount,
+      };
+
+      res.json({
+        ok: true,
+        data,
+      });
+    })
+    .catch((error: unknown) => {
+      console.error('[direct-messages] failed to mark thread as read', error);
       res.status(500).json({ ok: false });
     });
 }

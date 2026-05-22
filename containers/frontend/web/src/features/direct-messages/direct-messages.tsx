@@ -17,6 +17,7 @@ import type {
   DirectMessage,
   DirectMessageError,
   DirectMessageHistory,
+  DirectMessageRead,
   DirectMessageSend,
 } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 import { directMessageSocketEvents } from '@/contracts/sockets/direct-messages/direct-messages.schema';
@@ -26,6 +27,7 @@ import { ChatMain } from '@/features/chat/chat.main';
 import { chatStyles } from '@/features/chat/chat.styles';
 import { directMessagesSocket } from '@/lib/sockets/direct-messages-socket.client';
 import { DirectMessagesSocketManager } from '@/lib/sockets/direct-messages-socket.manager';
+import { useSocialStore } from '@/providers/social-provider';
 
 type DirectMessageContextValue = {
   messages: DirectChatHistory;
@@ -39,6 +41,7 @@ const DirectMessageContext = createContext<DirectMessageContextValue | null>(nul
 type DirectChatMessage = ChatMessageUnion & {
   clientMessageId?: string;
   senderId?: string;
+  readAt?: number | null;
 };
 
 type DirectChatHistory = DirectChatMessage[];
@@ -71,6 +74,7 @@ function optimisticDirectMessage(args: {
     username: args.currentUsername,
     type: 'me',
     clientMessageId: args.clientMessageId,
+    readAt: null,
     content: {
       text: args.text,
     },
@@ -160,9 +164,10 @@ function useDirectMessageState(currentUserId: string) {
 
 function DirectMessagesContent({
   friendUsername,
+  initialUnreadMessageId,
 }: {
   friendUsername: string;
-  currentUsername: string;
+  initialUnreadMessageId: string | null;
 }) {
   const t = useTranslations('features.chat');
   const context = useContext(DirectMessageContext);
@@ -176,7 +181,7 @@ function DirectMessagesContent({
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
       <ChatHeader room={friendUsername} participants={[]} />
-      <ChatMain messages={messages} />
+      <ChatMain messages={messages} initialUnreadMessageId={initialUnreadMessageId} />
       <Form
         onSubmit={(event: FormEvent<HTMLFormElement>) => {
           event.preventDefault();
@@ -208,6 +213,7 @@ export function DirectMessagesFeature({
   currentUserId,
   currentUsername,
 }: DirectMessagesFeatureProps) {
+  const setFriendUnreadMessageCount = useSocialStore((state) => state.setFriendUnreadMessageCount);
   const {
     messages,
     value,
@@ -217,6 +223,48 @@ export function DirectMessagesFeature({
     handleDirectHistory,
     handleDirectError,
   } = useDirectMessageState(currentUserId);
+
+  const initialUnreadMessageId = useMemo(
+    () =>
+      messages.find((message) => message.senderId !== currentUserId && message.readAt === null)
+        ?.id ?? null,
+    [currentUserId, messages],
+  );
+
+  const handleDirectRead = useCallback(
+    (payload: DirectMessageRead) => {
+      setFriendUnreadMessageCount(friendUserId, payload.unreadCount);
+    },
+    [friendUserId, setFriendUnreadMessageCount],
+  );
+
+  const requestRead = useCallback(() => {
+    directMessagesSocket.emit(directMessageSocketEvents.read);
+  }, []);
+
+  const handleHistory = useCallback(
+    (history: DirectMessageHistory) => {
+      handleDirectHistory(history);
+
+      if (
+        history.some((message) => message.senderId !== currentUserId && message.readAt === null)
+      ) {
+        requestRead();
+      }
+    },
+    [currentUserId, handleDirectHistory, requestRead],
+  );
+
+  const handleMessage = useCallback(
+    (message: DirectMessage) => {
+      handleDirectMessage(message);
+
+      if (message.senderId !== currentUserId && message.readAt === null) {
+        requestRead();
+      }
+    },
+    [currentUserId, handleDirectMessage, requestRead],
+  );
 
   const sendMessage = useCallback(() => {
     const text = value.trim();
@@ -248,11 +296,15 @@ export function DirectMessagesFeature({
     <DirectMessageContext.Provider value={contextValue}>
       <DirectMessagesSocketManager
         friendUserId={friendUserId}
-        onDirectMessage={handleDirectMessage}
-        onDirectHistory={handleDirectHistory}
+        onDirectMessage={handleMessage}
+        onDirectHistory={handleHistory}
+        onDirectRead={handleDirectRead}
         onDirectError={handleDirectError}
       />
-      <DirectMessagesContent friendUsername={friendUsername} currentUsername={currentUsername} />
+      <DirectMessagesContent
+        friendUsername={friendUsername}
+        initialUnreadMessageId={initialUnreadMessageId}
+      />
     </DirectMessageContext.Provider>
   );
 }

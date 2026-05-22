@@ -70,6 +70,7 @@ model DirectMessage {
   friendshipId String     @map("friendship_id") @db.Uuid
   senderId     String     @map("sender_id") @db.Uuid
   body         String     @db.VarChar(300)
+  readAt       DateTime?  @map("read_at") @db.Timestamptz(6)
   createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
 
   friendship Friendship @relation(fields: [friendshipId], references: [id], onDelete: Cascade)

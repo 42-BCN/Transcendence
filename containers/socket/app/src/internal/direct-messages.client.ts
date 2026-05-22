@@ -5,10 +5,14 @@ import type {
   DirectMessageHistory,
 } from '@contracts/sockets/direct-messages/direct-messages.schema';
 
-const BACKEND_URL = process.env.BACKEND_URL ?? 'https://backend:4000';
+const processEnv = globalThis as typeof globalThis & {
+  process?: { env?: Record<string, string | undefined> };
+};
+
+const BACKEND_URL = processEnv.process?.env?.BACKEND_URL ?? 'https://backend:4000';
 
 function getHeaders(): Record<string, string> {
-  const secret = process.env.SOCKET_INTERNAL_SECRET;
+  const secret = processEnv.process?.env?.SOCKET_INTERNAL_SECRET;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -60,7 +64,7 @@ export async function sendDirectMessage(args: {
   currentUserId: string;
   friendUserId: string;
   text: string;
-}): Promise<DirectMessage | null> {
+}): Promise<{ message: DirectMessage; unreadCount: number } | null> {
   try {
     const res = await fetch(`${BACKEND_URL}/internal/direct-messages/send`, {
       method: 'POST',
@@ -80,13 +84,56 @@ export async function sendDirectMessage(args: {
 
     const body = (await res.json()) as {
       ok: boolean;
-      data?: { message: DirectMessage };
+      data?: { message: DirectMessage; unreadCount: number };
     };
 
-    return body.data?.message ?? null;
+    if (!body.data?.message) return null;
+
+    return {
+      message: body.data.message,
+      unreadCount: body.data.unreadCount ?? 0,
+    };
   } catch (error) {
     logEvents.error({
       event: 'send_direct_message_error',
+      currentUserId: args.currentUserId,
+      friendUserId: args.friendUserId,
+      error,
+    });
+    return null;
+  }
+}
+
+export async function markDirectMessagesRead(args: {
+  currentUserId: string;
+  friendUserId: string;
+}): Promise<number | null> {
+  try {
+    const res = await fetch(`${BACKEND_URL}/internal/direct-messages/read`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(args),
+    });
+
+    if (!res.ok) {
+      logEvents.warn({
+        event: 'mark_direct_messages_read_failed',
+        status: res.status,
+        currentUserId: args.currentUserId,
+        friendUserId: args.friendUserId,
+      });
+      return null;
+    }
+
+    const body = (await res.json()) as {
+      ok: boolean;
+      data?: { unreadCount: number };
+    };
+
+    return body.data?.unreadCount ?? 0;
+  } catch (error) {
+    logEvents.error({
+      event: 'mark_direct_messages_read_error',
       currentUserId: args.currentUserId,
       friendUserId: args.friendUserId,
       error,

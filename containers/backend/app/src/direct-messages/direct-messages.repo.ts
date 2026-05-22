@@ -4,6 +4,7 @@ export type DirectMessageRow = {
   id: string;
   senderId: string;
   body: string;
+  readAt: Date | null;
   createdAt: Date;
   sender: {
     username: string;
@@ -20,6 +21,7 @@ export async function listDirectMessagesForFriendship(
       id: true,
       senderId: true,
       body: true,
+      readAt: true,
       createdAt: true,
       sender: {
         select: {
@@ -45,6 +47,7 @@ export async function createDirectMessage(args: {
       id: true,
       senderId: true,
       body: true,
+      readAt: true,
       createdAt: true,
       sender: {
         select: {
@@ -53,4 +56,35 @@ export async function createDirectMessage(args: {
       },
     },
   });
+}
+
+export async function countUnreadDirectMessagesForFriendship(args: {
+  friendshipId: string;
+  userId: string;
+}): Promise<number> {
+  return prisma.directMessage.count({
+    where: {
+      friendshipId: args.friendshipId,
+      senderId: { not: args.userId },
+      readAt: null,
+    },
+  });
+}
+
+export async function markDirectMessagesAsRead(args: {
+  friendshipId: string;
+  userId: string;
+}): Promise<number> {
+  await prisma.directMessage.updateMany({
+    where: {
+      friendshipId: args.friendshipId,
+      senderId: { not: args.userId },
+      readAt: null,
+    },
+    data: {
+      readAt: new Date(),
+    },
+  });
+
+  return countUnreadDirectMessagesForFriendship(args);
 }

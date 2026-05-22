@@ -7,6 +7,7 @@ export const createInitialState = (initialData: SocialInitialData) => ({
   friends: initialData.friends.map((f) => ({
     ...f,
     presence: (f as any).presence ?? 'offline',
+    unreadMessageCount: f.unreadMessageCount ?? 0,
   })),
   pendingReceived: initialData.pendingReceived,
   pendingSent: initialData.pendingSent,

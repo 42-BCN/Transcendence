@@ -1,4 +1,5 @@
 import type { Namespace, Socket } from 'socket.io';
+import { z } from 'zod';
 
 import {
   FriendAcceptedNotificationPayloadSchema,
@@ -14,6 +15,15 @@ import {
 } from '@contracts/sockets/friendships/friendships.schema';
 import { logEvents } from '../socket.logs';
 import { fetchAcceptedFriendIds } from '../internal/friends.client';
+
+export const directMessageUnreadUpdatedSocketEvent = 'dm:unread-updated' as const;
+
+const DirectMessageUnreadUpdatedPayloadSchema = z.strictObject({
+  otherUserId: z.string().uuid(),
+  unreadMessageCount: z.number().int().nonnegative(),
+});
+
+type DirectMessageUnreadUpdatedPayload = z.infer<typeof DirectMessageUnreadUpdatedPayloadSchema>;
 
 let friendsNsp: Namespace<ClientToServerFriendshipEvents, ServerToClientFriendshipEvents> | null =
   null;
@@ -204,8 +214,15 @@ export function emitToUser(
 ): void;
 export function emitToUser(
   userId: string,
-  event: FriendshipSocketEvent,
-  payload: FriendshipSocketPayloadByEvent[FriendshipSocketEvent],
+  event: typeof directMessageUnreadUpdatedSocketEvent,
+  payload: DirectMessageUnreadUpdatedPayload,
+): void;
+export function emitToUser(
+  userId: string,
+  event: FriendshipSocketEvent | typeof directMessageUnreadUpdatedSocketEvent,
+  payload:
+    | FriendshipSocketPayloadByEvent[FriendshipSocketEvent]
+    | DirectMessageUnreadUpdatedPayload,
 ): void {
   const parsedUserId = friendshipSocketUserIdSchema.safeParse(userId);
 
@@ -277,6 +294,26 @@ export function emitToUser(
       friendsNsp
         ?.to(`user:${parsedUserId.data}`)
         .emit(friendshipSocketEvents.rejected, parsedPayload.data);
+      break;
+    }
+
+    case directMessageUnreadUpdatedSocketEvent: {
+      const parsedPayload = DirectMessageUnreadUpdatedPayloadSchema.safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(directMessageUnreadUpdatedSocketEvent, parsedPayload.data);
       break;
     }
   }
