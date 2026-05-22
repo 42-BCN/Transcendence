@@ -7,7 +7,12 @@ import type {
 } from '@/contracts/sockets/friendships/friendships.schema';
 import { envPublic } from '@/lib/config/env.public';
 
-const friendsSocketUrl = new URL('/friends', envPublic.socketUrl).toString();
+function createSocketUrl(pathname: string): string {
+  const baseUrl = typeof window === 'undefined' ? envPublic.socketUrl : window.location.origin;
+  return new URL(pathname, baseUrl).toString();
+}
+
+const friendsSocketUrl = createSocketUrl('/friends');
 
 export const friendsSocket: Socket<ServerToClientFriendshipEvents, ClientToServerFriendshipEvents> =
   io(friendsSocketUrl, {

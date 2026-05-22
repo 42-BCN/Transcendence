@@ -8,6 +8,7 @@ import { Providers } from '@/app/providers';
 import { NavigationServer } from '@/features/navigation';
 import { SocialProvider } from '@/providers/social-provider';
 import { initializeSocialData } from '@/providers/social-initializer';
+import { SocialSocketBridge } from '@/features/social/store/social-store.bridge';
 
 export async function generateMetadata({
   params,
@@ -49,6 +50,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale}>
       <Providers locale={locale}>
         <SocialProvider initialData={socialInitialData}>
+          <SocialSocketBridge />
           <HtmlLangSync />
 
           <NavigationServer locale={locale} />
