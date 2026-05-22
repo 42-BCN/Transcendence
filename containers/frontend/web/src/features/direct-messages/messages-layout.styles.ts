@@ -2,7 +2,8 @@ import { cn } from '@/lib/styles/cn';
 
 export const messagesLayoutStyles = {
   root: 'pointer-events-auto relative flex h-[100dvh] w-full min-w-0 flex-1 overflow-hidden',
-  toggleButton: 'absolute right-4 top-16 z-20 pointer-events-auto md:hidden md:top-4',
+  // Raised z-index so the toggle sits above navigation overlays (mobile drawer)
+  toggleButton: 'absolute right-4 top-16 z-[200] pointer-events-auto md:hidden md:top-4',
   overlay:
     'absolute inset-0 z-10 flex pointer-events-none md:static md:z-auto md:flex-none md:pointer-events-auto',
   backdrop: (isVisible: boolean) =>
