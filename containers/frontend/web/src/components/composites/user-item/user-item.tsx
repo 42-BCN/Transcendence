@@ -11,20 +11,32 @@ export type UserItemProps = {
   subtitle?: string;
   children?: ReactNode;
   className?: string;
+  href?: string;
 };
 
-export function UserItem({ avatarUrl, username, subtitle, children, className }: UserItemProps) {
-  return (
+export function UserItem({
+  avatarUrl,
+  username,
+  subtitle,
+  children,
+  className,
+  href,
+}: UserItemProps) {
+  const stack = (
     <Stack direction="horizontal" align="center" gap="sm" className={userItemStyles({ className })}>
       <Avatar src={avatarUrl} />
 
       <div className="flex-1 self-start">
-        <InternalLink
-          href={`/other/${username}`}
-          className="no-underline !text-inherit font-body-sm font-bold"
-        >
-          {username}
-        </InternalLink>
+        {href ? (
+          <span className="!text-inherit font-body-sm font-bold">{username}</span>
+        ) : (
+          <InternalLink
+            href={`/other/${username}`}
+            className="no-underline !text-inherit font-body-sm font-bold"
+          >
+            {username}
+          </InternalLink>
+        )}
         {subtitle && (
           <Text variant="caption" as="p" color="tertiary">
             {subtitle}
@@ -34,5 +46,13 @@ export function UserItem({ avatarUrl, username, subtitle, children, className }:
 
       {children}
     </Stack>
+  );
+
+  return href ? (
+    <InternalLink href={href} className={className}>
+      {stack}
+    </InternalLink>
+  ) : (
+    stack
   );
 }

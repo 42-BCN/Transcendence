@@ -248,6 +248,21 @@
       "messageAriaLabel": "Missatge",
       "showChat": "Mostra el xat"
     },
+    "directMessages": {
+      "emptyState": "Encara no hi ha converses",
+      "listTitle": "Missatges",
+      "accessTitle": "Missatges directes",
+      "accessBody": {
+        "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
+        "unauthenticated": "Has d'iniciar sessió per obrir un xat privat."
+      },
+      "backToHome": "Torna a l'inici",
+      "presence": {
+        "online": "● En línia",
+        "away": "● Ausent",
+        "offline": "Desconnectat"
+      }
+    },
     "game": {
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
@@ -257,6 +272,7 @@
       "createAccount": "Crear compte",
       "game": "Joc",
       "home": "Inici",
+      "messages": "Missatges",
       "login": "Iniciar sessió",
       "logout": "Tancar sessió",
       "mainAriaLabel": "Navegació principal",

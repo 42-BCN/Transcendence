@@ -247,6 +247,21 @@
       "messageAriaLabel": "Mensaje",
       "showChat": "Mostrar chat"
     },
+    "directMessages": {
+      "emptyState": "Todavia no hay conversaciones",
+      "listTitle": "Mensajes",
+      "accessTitle": "Mensajes directos",
+      "accessBody": {
+        "authenticated": "Esta conversación solo está disponible entre amigos aceptados.",
+        "unauthenticated": "Necesitas iniciar sesión para abrir un chat privado."
+      },
+      "backToHome": "Volver al inicio",
+      "presence": {
+        "online": "● En línea",
+        "away": "● Ausente",
+        "offline": "Desconectado"
+      }
+    },
     "game": {
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
@@ -256,6 +271,7 @@
       "createAccount": "Crear cuenta",
       "game": "Juego",
       "home": "Inicio",
+      "messages": "Mensajes",
       "login": "Iniciar sesión",
       "logout": "Cerrar sesión",
       "mainAriaLabel": "Navegación principal",
