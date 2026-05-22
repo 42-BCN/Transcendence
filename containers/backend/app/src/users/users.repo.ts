@@ -62,6 +62,10 @@ export async function listUsers(limit: number, offset: number): Promise<UserPubl
   return rows.map(mapUserRow);
 }
 
+export async function countUsers(): Promise<number> {
+  return prisma.user.count();
+}
+
 export async function selectUserData(id: string): Promise<UserPublic | null> {
   const row = await prisma.user.findUnique({
     where: { id },
@@ -108,4 +112,25 @@ export async function searchUsersByUsername(
   `;
 
   return rows;
+}
+
+export async function searchPublicUsersByUsername(
+  query: string,
+  limit: number,
+): Promise<UserPublic[]> {
+  const rows = await prisma.user.findMany({
+    where: {
+      username: {
+        contains: query,
+        mode: 'insensitive',
+      },
+    },
+    orderBy: {
+      username: 'asc',
+    },
+    take: limit,
+    select: userPublicSelect,
+  });
+
+  return rows.map(mapUserRow);
 }

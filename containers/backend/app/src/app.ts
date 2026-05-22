@@ -16,11 +16,15 @@ import {
   handleInternalDirectMessageSend,
 } from './direct-messages/direct-messages.internal';
 import { authIpRateLimit } from './auth/auth.rate-limit';
+import { publicApiRouter } from './public-api/public-api.routes';
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) throw new Error('SESSION_SECRET is required');
+
+const publicApiKey = process.env.PUBLIC_API_KEY?.trim();
+if (!publicApiKey) throw new Error('PUBLIC_API_KEY is required');
 
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
@@ -63,6 +67,7 @@ app.get('/health', async (_req, res) => {
     res.status(500).json({ ok: false });
   }
 });
+app.use('/public-api', publicApiRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authIpRateLimit, authRouter);
 app.use('/protected', protectedRouter);

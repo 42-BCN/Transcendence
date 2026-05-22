@@ -2,7 +2,9 @@ import type { UserMeProfile, UserPublic, SearchUserResult } from '@contracts/use
 import { ApiError } from '@shared';
 
 import {
+  countUsers,
   listUsers,
+  searchPublicUsersByUsername,
   selectUserData,
   selectUserDataByUsername,
   selectUserMeProfileData,
@@ -19,6 +21,10 @@ export async function getUsers(args: getUsersProps): Promise<UserPublic[]> {
   const { limit, offset } = args;
   const data = await listUsers(limit, offset);
   return data;
+}
+
+export async function countPublicUsers(): Promise<number> {
+  return countUsers();
 }
 
 export async function findUserById(id: string): Promise<UserPublic> {
@@ -62,4 +68,8 @@ export async function searchUsers(
       friendshipId: friendship ? friendship.id : null,
     };
   });
+}
+
+export async function searchPublicUsers(query: string, limit: number): Promise<UserPublic[]> {
+  return searchPublicUsersByUsername(query, limit);
 }
