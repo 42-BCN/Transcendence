@@ -12,8 +12,8 @@ import { DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
 import { useTranslations } from 'next-intl';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { dispatchMobileMenuOpenEvent } from './mobile-menu.events';
-import { navigationClientStyles, type NavigationPosition } from './navigation.client.styles';
+import { dispatchMobileMenuCloseEvent, dispatchMobileMenuOpenEvent } from './mobile-menu.events';
+import { navigationClientStyles } from './navigation.client.styles';
 
 type NavigationClientProps = {
   locale: string;
@@ -49,9 +49,11 @@ function MobileNavigation(args: NavigationClientProps) {
   }, [pathname]);
 
   useEffect(() => {
-    if (!isOpen) return;
-
-    dispatchMobileMenuOpenEvent();
+    if (isOpen) {
+      dispatchMobileMenuOpenEvent();
+    } else {
+      dispatchMobileMenuCloseEvent();
+    }
   }, [isOpen]);
 
   const value = useMemo(

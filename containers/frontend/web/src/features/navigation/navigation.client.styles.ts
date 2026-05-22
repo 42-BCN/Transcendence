@@ -25,7 +25,7 @@ export const navigationClientStyles = {
     cn(
       forceVisibleTrigger ? '' : 'md:hidden',
       navigationPositionClassNames[position].mobileTrigger,
-      'pointer-events-auto right-4 top-4 z-[110]',
+      'pointer-events-auto right-4 top-3 z-[110]',
     ),
   desktop: (position: NavigationPosition, isExpanded: boolean) =>
     cn(

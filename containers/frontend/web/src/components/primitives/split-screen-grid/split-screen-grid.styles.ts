@@ -25,7 +25,7 @@ export function splitScreenGridStyles({
       `relative order-1 min-w-0 overflow-hidden ${mobileFullHeight} md:order-none md:col-span-2 md:col-start-1 md:row-start-1 md:h-[100dvh]`,
     ),
     side: cn(
-      `z-10 order-2 min-w-0 ${mobileSidePosition} pointer-events-none md:order-none md:relative md:col-start-2 md:row-start-1 md:h-[100dvh] md:inset-auto`,
+      `z-30 order-2 min-w-0 ${mobileSidePosition} pointer-events-none md:order-none md:relative md:col-start-2 md:row-start-1 md:h-[100dvh] md:inset-auto`,
     ),
   };
 }

@@ -8,7 +8,7 @@ import type { FriendPublic } from '@/contracts/api/friendships/friendships.contr
 import { IconButton } from '@components';
 import { useSocialStore } from '@/providers/social-provider';
 import { MessagesList } from './messages-list';
-import { MOBILE_MENU_OPEN_EVENT } from '../navigation/mobile-menu.events';
+import { MOBILE_MENU_CLOSE_EVENT, MOBILE_MENU_OPEN_EVENT } from '../navigation/mobile-menu.events';
 import { messagesLayoutStyles } from './messages-layout.styles';
 
 type MessagesLayoutProps = {
@@ -21,6 +21,7 @@ export function MessagesLayout({ friends, selectedUsername, children }: Messages
   const liveFriends = useSocialStore((state) => state.friends);
   const resolvedFriends = liveFriends.length > 0 ? liveFriends : friends;
   const [isListVisible, setIsListVisible] = useState(!selectedUsername);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations('features.directMessages');
 
@@ -33,21 +34,34 @@ export function MessagesLayout({ friends, selectedUsername, children }: Messages
       setIsListVisible(false);
     };
 
+    const openMenu = () => {
+      setIsMenuOpen(true);
+    };
+
+    const closeMenu = () => {
+      setIsMenuOpen(false);
+    };
+
     window.addEventListener(MOBILE_MENU_OPEN_EVENT, closeMessagesList);
+    window.addEventListener(MOBILE_MENU_OPEN_EVENT, openMenu);
+    window.addEventListener(MOBILE_MENU_CLOSE_EVENT, closeMenu);
 
     return () => {
       window.removeEventListener(MOBILE_MENU_OPEN_EVENT, closeMessagesList);
+      window.removeEventListener(MOBILE_MENU_OPEN_EVENT, openMenu);
+      window.removeEventListener(MOBILE_MENU_CLOSE_EVENT, closeMenu);
     };
   }, []);
 
   return (
     <div className={messagesLayoutStyles.root}>
-      {resolvedFriends.length > 0 && (
+      {resolvedFriends.length > 0 && !isMenuOpen && (
         <IconButton
           onPress={() => setIsListVisible((visible) => !visible)}
           icon={isListVisible ? 'close' : 'messages'}
           label={isListVisible ? t('closeList') : t('openList')}
           className={messagesLayoutStyles.toggleButton}
+          placement="left"
         />
       )}
 
