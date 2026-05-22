@@ -81,6 +81,16 @@ export const routing = defineRouting({
       es: '/juego',
       ca: '/joc',
     },
+    '/messages': {
+      en: '/messages',
+      es: '/mensajes',
+      ca: '/missatges',
+    },
+    '/messages/[userId]': {
+      en: '/messages/[userId]',
+      es: '/messages/[userId]',
+      ca: '/messages/[userId]',
+    },
     '/other/[username]': {
       en: '/other/[username]',
       es: '/otro/[username]',

@@ -71,6 +71,9 @@ export const ChatSocketManager = ({
 }: ChatSocketManagerProps) => {
   useEffect(() => {
     const handleConnect = () => console.log('Connected to chat socket server', chatSocket.id);
+    const handleConnectError = (error: Error) => {
+      console.error('Chat socket connect error', error);
+    };
     const handleDisconnect = () => console.log('Disconnected from chat socket server');
     const handleChatMessage = (payload: ChatMessage) => onChatMessage(payload);
     const handleChatSystemMessage = (payload: ChatSystemMessage) => onChatSystemMessage(payload);
@@ -81,6 +84,7 @@ export const ChatSocketManager = ({
 
     const reservedListeners = [
       ['connect', handleConnect],
+      ['connect_error', handleConnectError],
       ['disconnect', handleDisconnect],
     ] as const;
 

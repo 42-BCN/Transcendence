@@ -34,7 +34,7 @@ export function UsersList({ items, type, feedback = true }: UsersListProps) {
 
         return (
           <UserItem username={username} avatarUrl={avatar ?? undefined} subtitle={subtitle} key={id}>
-            <SocialUserActions type={type} userId={userId} />
+            <SocialUserActions type={type} userId={userId} username={username} />
           </UserItem>
         );
       })}

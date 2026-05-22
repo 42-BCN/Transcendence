@@ -313,6 +313,8 @@ NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
 EOF
 
+set_env_var "$SOCKET_ENV" "SOCKET_CORS_ORIGINS" "https://${HOST}:8443"
+
 echo "✅ Frontend env vars generated"
 
 echo

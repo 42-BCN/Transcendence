@@ -10,11 +10,12 @@ import type { UsersListType } from './users-list';
 interface SocialUserActionsProps {
   type: UsersListType;
   userId: string;
+  username: string;
 }
 
-export function SocialUserActions({ type, userId }: SocialUserActionsProps) {
+export function SocialUserActions({ type, userId, username }: SocialUserActionsProps) {
   const t = useTranslations('features.social.actions');
-  const messageHref = `/messages/${userId}` as const;
+  const messageHref = `/messages/${username}` as const;
 
   return (
     <>
@@ -32,7 +33,7 @@ export function SocialUserActions({ type, userId }: SocialUserActionsProps) {
       )}
 
       {(type === 'request' || type === 'pending' || type === 'search') && (
-        <SocialFriendshipActions userId={userId} />
+        <SocialFriendshipActions userId={userId} username={username} />
       )}
     </>
   );

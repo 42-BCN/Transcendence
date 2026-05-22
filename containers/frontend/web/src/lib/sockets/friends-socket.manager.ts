@@ -42,6 +42,10 @@ export const SocialSocketManager = ({
       emitCurrentPresence();
     };
 
+    const handleConnectError = (error: Error) => {
+      console.error('Friends socket connect error', error);
+    };
+
     const handleDisconnect = () => {
       console.log('Disconnected from friends socket server');
     };
@@ -72,6 +76,7 @@ export const SocialSocketManager = ({
 
     const reservedListeners = [
       ['connect', handleConnect],
+      ['connect_error', handleConnectError],
       ['disconnect', handleDisconnect],
     ] as const;
 

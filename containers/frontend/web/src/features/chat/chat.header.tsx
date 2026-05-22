@@ -13,9 +13,11 @@ export function ChatHeader(props: ChatHeaderProps) {
       <Text as="h2" variant="heading-sm">
         {room}
       </Text>
-      <Text as="p" variant="body-xs">
-        {participants.join(', ')}
-      </Text>
+      {participants.length !== 0 && (
+        <Text as="p" variant="body-xs">
+          {participants.join(', ')}
+        </Text>
+      )}
     </Stack>
   );
 }

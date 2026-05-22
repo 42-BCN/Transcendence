@@ -4,11 +4,16 @@ import { SocialSocketManager } from '@/lib/sockets/friends-socket.manager';
 import { useSocialStore } from '@/providers/social-provider';
 
 export function SocialSocketBridge() {
+  const currentUserId = useSocialStore((state) => state.currentUserId);
   const setFriendPresence = useSocialStore((state) => state.setFriendPresence);
 
   const receiveFriendRequest = useSocialStore((state) => state.receiveFriendRequest);
   const receiveFriendAccepted = useSocialStore((state) => state.receiveFriendAccepted);
   const receiveFriendRejected = useSocialStore((state) => state.receiveFriendRejected);
+
+  if (!currentUserId) {
+    return null;
+  }
 
   return (
     <SocialSocketManager

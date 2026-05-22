@@ -42,7 +42,7 @@ export type DynamicInternalLinkProps = DynamicInternalLinkStyleProps &
 
 /**
  * Component for dynamic internal routes that don't fit the strict InternalLink typing.
- * Suitable for routes like /messages/{id} or /other/{username}
+ * Suitable for routes like /messages/{slug} or /other/{username}
  */
 export function DynamicInternalLink(args: DynamicInternalLinkProps) {
   const {

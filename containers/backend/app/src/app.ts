@@ -11,6 +11,10 @@ import './auth/oauth/oauth.passport';
 import { authRouter } from './auth/auth.routes';
 import { friendsRouter } from './friendships/friendships.routes';
 import { handleInternalFriendsList } from './friendships/friendships.presence';
+import {
+  handleInternalDirectMessageHistory,
+  handleInternalDirectMessageSend,
+} from './direct-messages/direct-messages.internal';
 import { authIpRateLimit } from './auth/auth.rate-limit';
 
 // Ensure required environment variables are set
@@ -65,6 +69,8 @@ app.use('/protected', protectedRouter);
 app.use('/friends', friendsRouter);
 
 app.post('/internal/friends', handleInternalFriendsList);
+app.post('/internal/direct-messages/history', handleInternalDirectMessageHistory);
+app.post('/internal/direct-messages/send', handleInternalDirectMessageSend);
 
 app.use(errorMiddleware);
 

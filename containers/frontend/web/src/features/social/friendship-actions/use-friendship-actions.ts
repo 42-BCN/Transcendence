@@ -10,7 +10,13 @@ import { createFriendshipActionHandlers } from './friendship-actions.handlers';
 import type { FriendshipActionError } from './friendship-actions.types';
 import { getFriendshipStatus } from './friendship-actions.utils';
 
-export function useFriendshipActions(userId: string) {
+export function useFriendshipActions({
+  userId,
+  username,
+}: {
+  userId: string;
+  username?: string;
+}) {
   const t = useTranslations('features.social.actions');
   const [error, setError] = useState<FriendshipActionError>();
 
@@ -25,6 +31,7 @@ export function useFriendshipActions(userId: string) {
   const friend = friends.find((item) => item.id === userId);
   const requestReceived = pendingReceived.find((item) => item.userId === userId);
   const requestSent = pendingSent.find((item) => item.userId === userId);
+  const resolvedUsername = username ?? friend?.username ?? requestReceived?.username ?? requestSent?.username;
 
   const handlers = createFriendshipActionHandlers({
     userId,
@@ -40,6 +47,7 @@ export function useFriendshipActions(userId: string) {
 
   return createFriendshipActions({
     userId,
+    username: resolvedUsername,
     t,
     error,
     handlers,

@@ -19,7 +19,6 @@ import {
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode } from './store/social-store.types';
 import { useSocialStore } from '@/providers/social-provider';
-import { SocialSocketBridge } from './store/social-store.bridge';
 import {
   formatRequestAge,
   mapFriendshipToListItem,
@@ -240,8 +239,7 @@ function SocialContent() {
 
 export function SocialDashboard() {
   return (
-    <Stack className="h-full min-h-0" gap="none">
-      <SocialSocketBridge />
+    <Stack className="h-full min-h-0 pointer-events-auto" gap="none">
       <SocialHeader />
       <main className="flex flex-1 min-h-0">
         <SocialContent />
