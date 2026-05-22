@@ -251,6 +251,8 @@
     "directMessages": {
       "emptyState": "Encara no hi ha converses",
       "listTitle": "Missatges",
+      "selectionTitle": "Selecciona una conversa",
+      "selectionBody": "Tria un amic de la llista per obrir els teus missatges.",
       "accessTitle": "Missatges directes",
       "accessBody": {
         "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
