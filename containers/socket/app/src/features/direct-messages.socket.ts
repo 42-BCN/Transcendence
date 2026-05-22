@@ -1,10 +1,10 @@
 import { randomUUID } from 'crypto';
 
 import type { Namespace, Socket } from 'socket.io';
-import { z } from 'zod';
 
 import {
   DirectMessageSendSchema,
+  directMessageFriendUserIdSchema,
   directMessageSocketEvents,
   type ClientToServerDirectMessageEvents,
   type DirectMessageError,
@@ -13,8 +13,6 @@ import {
 
 import { fetchDirectMessageHistory, sendDirectMessage } from '../internal/direct-messages.client';
 import { fetchAcceptedFriendIds } from '../internal/friends.client';
-
-const friendUserIdSchema = z.string().uuid();
 
 function sortedPair(userId1: string, userId2: string): [string, string] {
   return userId1 < userId2 ? [userId1, userId2] : [userId2, userId1];
@@ -47,7 +45,9 @@ export function registerDirectMessagesSocket(
       socket: Socket<ClientToServerDirectMessageEvents, ServerToClientDirectMessageEvents>,
     ) => {
       const currentUserId = socket.data.userId;
-      const friendUserIdResult = friendUserIdSchema.safeParse(socket.handshake.auth?.friendUserId);
+      const friendUserIdResult = directMessageFriendUserIdSchema.safeParse(
+        socket.handshake.auth?.friendUserId,
+      );
 
       if (typeof currentUserId !== 'string' || currentUserId.length === 0) {
         socket.disconnect(true);

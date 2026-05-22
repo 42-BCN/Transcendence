@@ -1,4 +1,3 @@
-/* eslint-disable local/no-literal-ui-strings */
 import { DirectMessagesAccess, DirectMessagesFeature } from '@/features/direct-messages';
 import { MessagesLayout } from '@/features/direct-messages/messages-layout';
 import { getTranslations } from 'next-intl/server';

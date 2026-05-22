@@ -248,7 +248,7 @@
       "showChat": "Mostrar chat"
     },
     "directMessages": {
-      "emptyState": "Todavia no hay conversaciones",
+      "emptyState": "Todavía no hay conversaciones",
       "listTitle": "Mensajes",
       "accessTitle": "Mensajes directos",
       "accessBody": {
