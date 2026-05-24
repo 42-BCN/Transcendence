@@ -7,6 +7,7 @@
   },
   "components": {
     "breadcrumb": {
+      "edit": "Editar perfil",
       "home": "Inici",
       "me": "El Meu Compte",
       "reset-password": "Restablir Contrasenya"
@@ -251,6 +252,10 @@
     "directMessages": {
       "emptyState": "Encara no hi ha converses",
       "listTitle": "Missatges",
+      "openList": "Obrir llista de missatges",
+      "closeList": "Tancar llista de missatges",
+      "selectionTitle": "Selecciona una conversa",
+      "selectionBody": "Tria un amic de la llista per obrir els teus missatges.",
       "accessTitle": "Missatges directes",
       "accessBody": {
         "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
@@ -282,16 +287,26 @@
       "ui": "UI"
     },
     "profile": {
-      "accept": "Acceptar sol·licitud",
-      "addFriend": "Afegir amic",
+      "actions": {
+        "changePassword": "Canviar contrasenya",
+        "deleteAccount": "Eliminar compte",
+        "editProfile": "Editar perfil"
+      },
       "bio": "Biografia",
-      "cancelRequest": "Cancel·lar sol·licitud",
+      "delete": {
+        "body": "Aquesta acció elimina el teu compte de manera permanent, esborra el teu perfil i tanca la teva sessió. No es pot desfer.",
+        "cancel": "Cancel·lar",
+        "description": "Això elimina el teu compte de manera permanent i tanca la teva sessió.",
+        "title": "Eliminar compte?"
+      },
+      "edit": {
+        "placeholder": "Explica als altres jugadors una mica sobre tu",
+        "submit": "Desar canvis",
+        "title": "Editar perfil"
+      },
       "emptyBio": "Sense biografia",
       "fail": "No s'ha pogut carregar el teu perfil.",
-      "message": "Enviar missatge",
       "provider": "Proveïdor",
-      "reject": "Rebutjar sol·licitud",
-      "unfriend": "Eliminar amic",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
     },

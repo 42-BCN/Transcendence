@@ -10,6 +10,7 @@ declare const messages: {
   },
   "components": {
     "breadcrumb": {
+      "edit": "Edit profile",
       "home": "Home",
       "me": "My Account",
       "reset-password": "Reset Password"
@@ -253,6 +254,10 @@ declare const messages: {
     "directMessages": {
       "emptyState": "No conversations yet",
       "listTitle": "Messages",
+      "openList": "Open messages list",
+      "closeList": "Close messages list",
+      "selectionTitle": "Select a conversation",
+      "selectionBody": "Choose a friend from the list to open your messages.",
       "accessTitle": "Direct messages",
       "accessBody": {
         "authenticated": "This conversation is only available between accepted friends.",
@@ -284,7 +289,23 @@ declare const messages: {
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Change password",
+        "deleteAccount": "Delete account",
+        "editProfile": "Edit profile"
+      },
       "bio": "Bio",
+      "delete": {
+        "body": "This action permanently deletes your account, removes your profile, and signs you out. This cannot be undone.",
+        "cancel": "Cancel",
+        "description": "This permanently deletes your account and signs you out.",
+        "title": "Delete account?"
+      },
+      "edit": {
+        "placeholder": "Tell other players a little about yourself",
+        "submit": "Save changes",
+        "title": "Edit profile"
+      },
       "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
       "provider": "Provider",

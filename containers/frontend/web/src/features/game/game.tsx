@@ -552,7 +552,7 @@ export function Game() {
   }, [mapBounds]);
 
   return !mapBounds || mapBounds.width === 0 ? (
-    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
       <div className="text-center">
         <h2>Connecting to Server...</h2>
         <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>

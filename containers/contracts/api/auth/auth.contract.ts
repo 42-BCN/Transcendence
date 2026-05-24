@@ -141,6 +141,21 @@ export type ChangePasswordRes = ApiResponse<
 >;
 
 // ---------------------------------------
+// DELETE /api/protected/me
+// ---------------------------------------
+
+export type DeleteMeOk = null;
+
+export const AUTH_DELETE_ME_ERRORS = [
+  'AUTH_UNAUTHORIZED',
+  'AUTH_INTERNAL_ERROR',
+] as const satisfies readonly AuthErrorName[];
+
+export type DeleteMeError = (typeof AUTH_DELETE_ME_ERRORS)[number];
+
+export type DeleteMeRes = ApiResponse<DeleteMeOk, DeleteMeError>;
+
+// ---------------------------------------
 // GET /api/auth/callback/google
 // ---------------------------------------
 // Success redirects with 302, JSON is only for error cases.

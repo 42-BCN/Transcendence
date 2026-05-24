@@ -99,7 +99,12 @@ export function NavigationMain(args: NavigationMainProps) {
       ))}
       {isAuthenticated
         ? WithTooltip(
-            <Logout onPress={closeNavigation} label={t('logout')} isExpanded={isExpanded} />,
+            <Logout
+              onPress={closeNavigation}
+              label={t('logout')}
+              isExpanded={isExpanded}
+              presentation="navigation"
+            />,
             t('logout'),
             !isExpanded,
           )

@@ -2,6 +2,8 @@
 
 import {
   BASE_URL,
+  DELETE_TEST_EMAIL,
+  DELETE_TEST_PASSWORD,
   LOCKOUT_EMAIL,
   LOCKOUT_PASSWORD,
   LOCKOUT_WRONG_PASSWORD,
@@ -23,6 +25,15 @@ import {
   runTest,
   uniqueEmail,
 } from './smoke.utils';
+
+type MeProfile = {
+  id: string;
+  email: string;
+  username: string;
+  bio: string;
+  avatar: string | null;
+  provider: 'local' | 'google';
+};
 
 const results: TestResult[] = [];
 
@@ -259,6 +270,100 @@ async function testValidLoginLogoutRelogin(): Promise<void> {
   assert(relogin.body?.ok === true, 'Relogin should return ok=true');
 }
 
+async function testUpdateMeProfileBio(): Promise<void> {
+  logStep('authenticated user can update their own bio');
+  clearCookies();
+
+  const login = await request<ApiResponse<LoginSuccess>>('auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      identifier: TEST_EMAIL,
+      password: TEST_PASSWORD,
+    }),
+  });
+
+  logResponse(login.res, login.body, login.text);
+
+  assert(login.res.status === 200, 'Bio update login should return 200');
+  assert(login.body?.ok === true, 'Bio update login should return ok=true');
+
+  const bio = `Smoke bio ${Date.now()}`;
+  const update = await request<ApiResponse<MeProfile>>('protected/me/profile', {
+    method: 'PUT',
+    body: JSON.stringify({ bio }),
+  });
+
+  logResponse(update.res, update.body, update.text);
+
+  assert(update.res.status === 200, 'Profile bio update should return 200');
+  assert(update.body?.ok === true, 'Profile bio update should return ok=true');
+  assert(update.body.data.bio === bio, 'Profile bio update should return the updated bio');
+
+  const me = await request<ApiResponse<MeProfile>>('protected/me/profile', {
+    method: 'GET',
+  });
+
+  logResponse(me.res, me.body, me.text);
+
+  assert(me.res.status === 200, 'Profile fetch after bio update should return 200');
+  assert(me.body?.ok === true, 'Profile fetch after bio update should return ok=true');
+  assert(me.body.data.bio === bio, 'Profile fetch should persist the updated bio');
+}
+
+async function testDeleteMe(): Promise<void> {
+  logStep('authenticated user can delete their own account');
+  clearCookies();
+
+  const login = await request<ApiResponse<LoginSuccess>>('auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      identifier: DELETE_TEST_EMAIL,
+      password: DELETE_TEST_PASSWORD,
+    }),
+  });
+
+  logResponse(login.res, login.body, login.text);
+
+  assert(login.res.status === 200, 'Delete-account login should return 200');
+  assert(login.body?.ok === true, 'Delete-account login should return ok=true');
+
+  const remove = await request<ApiResponse<null>>('protected/me', {
+    method: 'DELETE',
+  });
+
+  logResponse(remove.res, remove.body, remove.text);
+
+  assert(remove.res.status === 200, 'Delete-account should return 200');
+  assert(remove.body?.ok === true, 'Delete-account should return ok=true');
+
+  const meAfterDelete = await request<ApiResponse<unknown>>('protected/me/profile', {
+    method: 'GET',
+  });
+
+  logResponse(meAfterDelete.res, meAfterDelete.body, meAfterDelete.text);
+
+  assert(meAfterDelete.res.status === 401, 'Deleted account session should no longer be authorized');
+
+  clearCookies();
+
+  const relogin = await request<ApiResponse<LoginSuccess>>('auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      identifier: DELETE_TEST_EMAIL,
+      password: DELETE_TEST_PASSWORD,
+    }),
+  });
+
+  logResponse(relogin.res, relogin.body, relogin.text);
+
+  assert(relogin.res.status === 401, 'Deleted account should no longer be able to log in');
+  assert(relogin.body?.ok === false, 'Deleted account login should return ok=false');
+  assert(
+    relogin.body.error.code === 'AUTH_INVALID_CREDENTIALS',
+    'Deleted account login should return AUTH_INVALID_CREDENTIALS',
+  );
+}
+
 async function testLockout(): Promise<void> {
   logStep('lockout triggers after repeated failed logins');
   clearCookies();
@@ -424,6 +529,8 @@ async function main(): Promise<void> {
   );
   await runTest(results, '/protected/me/profile unauthorized', testMeProfileUnauthorized);
   await runTest(results, 'valid login + logout + relogin', testValidLoginLogoutRelogin);
+  await runTest(results, 'update my bio', testUpdateMeProfileBio);
+  await runTest(results, 'delete my account', testDeleteMe);
 
   if (RUN_LOCKOUT) {
     await runTest(results, 'lockout flow', testLockout);

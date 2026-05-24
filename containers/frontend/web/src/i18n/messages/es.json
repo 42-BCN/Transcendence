@@ -7,6 +7,7 @@
   },
   "components": {
     "breadcrumb": {
+      "edit": "Editar perfil",
       "home": "Inicio",
       "me": "Mi Cuenta",
       "reset-password": "Restablecer Contraseña"
@@ -250,6 +251,10 @@
     "directMessages": {
       "emptyState": "Todavía no hay conversaciones",
       "listTitle": "Mensajes",
+      "openList": "Abrir lista de mensajes",
+      "closeList": "Cerrar lista de mensajes",
+      "selectionTitle": "Selecciona una conversación",
+      "selectionBody": "Elige un amigo de la lista para abrir tus mensajes.",
       "accessTitle": "Mensajes directos",
       "accessBody": {
         "authenticated": "Esta conversación solo está disponible entre amigos aceptados.",
@@ -281,16 +286,26 @@
       "ui": "UI"
     },
     "profile": {
-      "accept": "Aceptar solicitud",
-      "addFriend": "Añadir amigo",
+      "actions": {
+        "changePassword": "Cambiar contraseña",
+        "deleteAccount": "Eliminar cuenta",
+        "editProfile": "Editar perfil"
+      },
       "bio": "Biografía",
-      "cancelRequest": "Cancelar solicitud",
+      "delete": {
+        "body": "Esta acción elimina tu cuenta de forma permanente, borra tu perfil y cierra tu sesión. No se puede deshacer.",
+        "cancel": "Cancelar",
+        "description": "Esto elimina tu cuenta de forma permanente y cierra tu sesión.",
+        "title": "¿Eliminar cuenta?"
+      },
+      "edit": {
+        "placeholder": "Cuéntales a otros jugadores un poco sobre ti",
+        "submit": "Guardar cambios",
+        "title": "Editar perfil"
+      },
       "emptyBio": "Sin biografía",
       "fail": "No se pudo cargar tu perfil.",
-      "message": "Enviar mensaje",
       "provider": "Proveedor",
-      "reject": "Rechazar solicitud",
-      "unfriend": "Eliminar amigo",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"
     },

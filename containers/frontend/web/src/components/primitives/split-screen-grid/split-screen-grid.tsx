@@ -1,16 +1,29 @@
 import { type ReactNode } from 'react';
-import { splitScreenGridStyles } from './split-screen-grid.styles';
+import {
+  splitScreenGridStyles,
+  type SplitScreenGridMobileSideLayout,
+  type SplitScreenGridMobileStackMode,
+} from './split-screen-grid.styles';
 
 export type SplitScreenGridProps = {
   full: ReactNode;
   side?: ReactNode;
+  mobileStackMode?: SplitScreenGridMobileStackMode;
+  mobileSideLayout?: SplitScreenGridMobileSideLayout;
 };
 
-export function SplitScreenGrid({ full, side }: SplitScreenGridProps) {
+export function SplitScreenGrid({
+  full,
+  side,
+  mobileStackMode = 'full',
+  mobileSideLayout = 'stack',
+}: SplitScreenGridProps) {
+  const styles = splitScreenGridStyles({ mobileStackMode, mobileSideLayout });
+
   return (
-    <main className={splitScreenGridStyles.wrapper}>
-      <div className={splitScreenGridStyles.full}>{full}</div>
-      {side && <div className={splitScreenGridStyles.side}>{side}</div>}
+    <main className={styles.wrapper}>
+      <div className={styles.full}>{full}</div>
+      {side && <div className={styles.side}>{side}</div>}
     </main>
   );
 }

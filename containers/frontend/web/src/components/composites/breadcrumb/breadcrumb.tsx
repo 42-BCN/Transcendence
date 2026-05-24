@@ -51,6 +51,7 @@ export function Breadcrumb({ items, hideHome = false }: BreadcrumbProps) {
 
     const staticLabels: Record<string, string> = {
       me: t('me'),
+      edit: t('edit'),
       'reset-password': t('reset-password'),
     };
 

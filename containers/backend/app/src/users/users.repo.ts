@@ -93,6 +93,30 @@ export async function selectUserMeProfileData(id: string): Promise<UserMeProfile
   return row ? mapUserMeProfileRow(row) : null;
 }
 
+export async function updateUserBio(id: string, bio: string): Promise<UserMeProfile | null> {
+  const result = await prisma.user.updateMany({
+    where: { id },
+    data: { bio },
+  });
+
+  if (result.count === 0) return null;
+
+  const row = await prisma.user.findUnique({
+    where: { id },
+    select: userMeProfileSelect,
+  });
+
+  return row ? mapUserMeProfileRow(row) : null;
+}
+
+export async function deleteUserById(id: string): Promise<boolean> {
+  const result = await prisma.user.deleteMany({
+    where: { id },
+  });
+
+  return result.count > 0;
+}
+
 export async function searchUsersByUsername(
   query: string,
   limit: number,

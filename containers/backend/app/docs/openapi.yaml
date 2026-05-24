@@ -617,6 +617,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
+    delete:
+      tags: [Protected]
+      summary: Delete the current authenticated user account
+      operationId: deleteProtectedMe
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Account deleted and session destroyed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /protected/me/profile:
     get:
@@ -645,6 +670,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
+    put:
+      tags: [Protected]
+      summary: Update the current authenticated user's profile
+      description: Updates the current authenticated user's own profile data.
+      operationId: putProtectedMeProfile
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMeProfileRequest'
+      responses:
+        '200':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserMeProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
 
   /protected/me/reset-password:
     post:
@@ -1301,6 +1364,13 @@ components:
           properties:
             userId:
               type: string
+    UpdateMeProfileRequest:
+      type: object
+      required: [bio]
+      properties:
+        bio:
+          type: string
+          maxLength: 600
     UserPublic:
       type: object
       required: [id, username, avatar, bio]

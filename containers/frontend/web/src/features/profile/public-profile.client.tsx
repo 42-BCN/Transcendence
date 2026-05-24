@@ -25,7 +25,9 @@ export function PublicProfileClient({ userId, username, bio }: PublicProfileClie
           {t('bio')}
         </Text>
 
-        <Text variant={profileStyles.bioText}>{bio || t('emptyBio')}</Text>
+        <Text variant={profileStyles.bioText} className="break-words">
+          {bio || t('emptyBio')}
+        </Text>
       </div>
 
       <ProfileFriendshipActions actions={actions} />
