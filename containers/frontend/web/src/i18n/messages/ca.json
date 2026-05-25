@@ -7,6 +7,7 @@
   },
   "components": {
     "breadcrumb": {
+      "edit": "Editar perfil",
       "home": "Inici",
       "me": "El Meu Compte",
       "reset-password": "Restablir Contrasenya"
@@ -248,6 +249,25 @@
       "messageAriaLabel": "Missatge",
       "showChat": "Mostra el xat"
     },
+    "directMessages": {
+      "emptyState": "Encara no hi ha converses",
+      "listTitle": "Missatges",
+      "openList": "Obrir llista de missatges",
+      "closeList": "Tancar llista de missatges",
+      "selectionTitle": "Selecciona una conversa",
+      "selectionBody": "Tria un amic de la llista per obrir els teus missatges.",
+      "accessTitle": "Missatges directes",
+      "accessBody": {
+        "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
+        "unauthenticated": "Has d'iniciar sessió per obrir un xat privat."
+      },
+      "backToHome": "Torna a l'inici",
+      "presence": {
+        "online": "● En línia",
+        "away": "● Absent",
+        "offline": "Desconnectat"
+      }
+    },
     "game": {
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
@@ -257,6 +277,7 @@
       "createAccount": "Crear compte",
       "game": "Joc",
       "home": "Inici",
+      "messages": "Missatges",
       "login": "Iniciar sessió",
       "logout": "Tancar sessió",
       "mainAriaLabel": "Navegació principal",
@@ -266,7 +287,24 @@
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Canviar contrasenya",
+        "deleteAccount": "Eliminar compte",
+        "editProfile": "Editar perfil"
+      },
       "bio": "Biografia",
+      "delete": {
+        "body": "Aquesta acció elimina el teu compte de manera permanent, esborra el teu perfil i tanca la teva sessió. No es pot desfer.",
+        "cancel": "Cancel·lar",
+        "description": "Això elimina el teu compte de manera permanent i tanca la teva sessió.",
+        "title": "Eliminar compte?"
+      },
+      "edit": {
+        "placeholder": "Explica als altres jugadors una mica sobre tu",
+        "submit": "Desar canvis",
+        "title": "Editar perfil"
+      },
+      "emptyBio": "Sense biografia",
       "fail": "No s'ha pogut carregar el teu perfil.",
       "provider": "Proveïdor",
       "userId": "ID d'usuari",
@@ -283,9 +321,11 @@
         "accept": "Acceptar",
         "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
-        "chat": "Chat",
+        "cancelRequest": "Cancel·lar sol·licitud",
         "inviteToGame": "Convidar a partida",
-        "reject": "Rebutjar"
+        "message": "Missatge",
+        "reject": "Rebutjar",
+        "unfriend": "Eliminar amic"
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",
@@ -307,6 +347,7 @@
         "title": "Connecta amb la comunitat"
       },
       "requests": {
+        "now": "ara",
         "received": "Rebudes",
         "sent": "Enviades",
         "title": "Sol·licituds"

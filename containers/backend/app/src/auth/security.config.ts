@@ -10,17 +10,33 @@ export const authSecurityConfig = {
   lockoutDurationMs: 15 * MINUTE,
   resendVerificationCooldownMs: 60 * SECOND,
   rateLimit: {
+    authIp: {
+      max: 30,
+      windowMs: MINUTE,
+    },
     loginIp: {
       max: 20,
       windowMs: MINUTE,
     },
     loginIdentifier: {
-      max: 8,
+      max: 20,
       windowMs: 10 * MINUTE,
     },
     emailFlow: {
       max: 3,
       windowMs: 15 * MINUTE,
+    },
+    tokenFlow: {
+      max: 5,
+      windowMs: 15 * MINUTE,
+    },
+    sessionFlow: {
+      max: 60,
+      windowMs: MINUTE,
+    },
+    guestSession: {
+      max: 10,
+      windowMs: MINUTE,
     },
   },
   argon2: {

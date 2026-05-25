@@ -62,6 +62,10 @@ export async function listUsers(limit: number, offset: number): Promise<UserPubl
   return rows.map(mapUserRow);
 }
 
+export async function countUsers(): Promise<number> {
+  return prisma.user.count();
+}
+
 export async function selectUserData(id: string): Promise<UserPublic | null> {
   const row = await prisma.user.findUnique({
     where: { id },
@@ -89,6 +93,30 @@ export async function selectUserMeProfileData(id: string): Promise<UserMeProfile
   return row ? mapUserMeProfileRow(row) : null;
 }
 
+export async function updateUserBio(id: string, bio: string): Promise<UserMeProfile | null> {
+  const result = await prisma.user.updateMany({
+    where: { id },
+    data: { bio },
+  });
+
+  if (result.count === 0) return null;
+
+  const row = await prisma.user.findUnique({
+    where: { id },
+    select: userMeProfileSelect,
+  });
+
+  return row ? mapUserMeProfileRow(row) : null;
+}
+
+export async function deleteUserById(id: string): Promise<boolean> {
+  const result = await prisma.user.deleteMany({
+    where: { id },
+  });
+
+  return result.count > 0;
+}
+
 export async function searchUsersByUsername(
   query: string,
   limit: number,
@@ -108,4 +136,25 @@ export async function searchUsersByUsername(
   `;
 
   return rows;
+}
+
+export async function searchPublicUsersByUsername(
+  query: string,
+  limit: number,
+): Promise<UserPublic[]> {
+  const rows = await prisma.user.findMany({
+    where: {
+      username: {
+        contains: query,
+        mode: 'insensitive',
+      },
+    },
+    orderBy: {
+      username: 'asc',
+    },
+    take: limit,
+    select: userPublicSelect,
+  });
+
+  return rows.map(mapUserRow);
 }

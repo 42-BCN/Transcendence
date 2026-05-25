@@ -122,7 +122,7 @@ async function main() {
   assert(friends.ok === true, 'GET /friends');
   const friendRow = friends.data.friends.find((f) => f.id === idB);
   assert(friendRow, 'B in A friends list');
-  assert(typeof friendRow.isOnline === 'boolean', 'isOnline present');
+  assert(typeof friendRow.presence === 'string', 'presence present');
 
   const list = await a.req('/friends/detailed');
   assert(list.ok === true, 'GET /friends/detailed');

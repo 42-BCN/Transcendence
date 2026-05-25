@@ -6,6 +6,11 @@ import type {
   ClientToServerChatEvents,
 } from '@/contracts/sockets/chat/chat.schema';
 
+import type {
+  ServerToClientGameEvents,
+  ClientToServerGameEvents,
+} from '@/contracts/sockets/game/game.schema';
+
 export type Robot = {
   id: string;
   position: [number, number, number];
@@ -20,24 +25,79 @@ type ClientToServerRobotsEvents = {
   moveTo: (target: [number, number, number]) => void;
 };
 
+let sessionPromise: Promise<void> | null = null;
+
 export async function ensureChatSessionIdentity(): Promise<void> {
+  if (sessionPromise) return sessionPromise;
+
   const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/guest/session`;
 
-  const response = await fetch(endpoint, {
+  sessionPromise = fetch(endpoint, {
     method: 'POST',
     credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-    },
-  });
+    headers: { Accept: 'application/json' },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        sessionPromise = null;
+        throw new Error(`Failed to initialize chat session identity (${response.status})`);
+      }
+    })
+    .catch((error) => {
+      sessionPromise = null;
+      throw error;
+    });
 
-  if (!response.ok) {
-    throw new Error(`Failed to initialize chat session identity (${response.status})`);
-  }
+  return sessionPromise;
 }
 
-const robotsSocketUrl = new URL('/robots', envPublic.socketUrl).toString();
-const chatSocketUrl = new URL('/chat', envPublic.socketUrl).toString();
+function createSocketUrl(pathname: string): string {
+  const baseUrl = typeof window === 'undefined' ? envPublic.socketUrl : window.location.origin;
+  return new URL(pathname, baseUrl).toString();
+}
+
+const robotsSocketUrl = createSocketUrl('/robots');
+const chatSocketUrl = createSocketUrl('/chat');
+const gameSocketUrl = createSocketUrl('/game');
+
+export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
+  gameSocketUrl,
+  {
+    autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
+  },
+);
+
+// Immediate error logging
+gameSocket.on('error', (error) => {
+  console.error('🔴 [gameSocket] error event:', error);
+});
+
+gameSocket.on('connect_error', (error) => {
+  console.error('🔴 [gameSocket] connect_error:', error);
+  if (error instanceof Error) {
+    console.error('  Error message:', error.message);
+    console.error('  Error stack:', error.stack);
+  }
+});
+
+console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
+
+// Global error handlers
+gameSocket.on('error', (error) => {
+  console.error('🔴 gameSocket error:', error);
+});
+
+gameSocket.on('connect_error', (error) => {
+  console.error('🔴 gameSocket connect_error:', error);
+});
+
+console.log('📋 gameSocket configured for URL:', gameSocketUrl);
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,

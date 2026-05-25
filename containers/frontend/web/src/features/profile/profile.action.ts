@@ -1,20 +1,23 @@
 'use server';
 
-import { type UserMeProfileResponse } from '@/contracts/api/users/users.contracts';
+import {
+  type UserMeProfileResponse,
+  type UserPublicResponse,
+} from '@/contracts/api/users/users.contracts';
 
-import { cookies } from 'next/headers';
-import { fetchServer } from '@/lib/http/fetcher.server';
+import { fetchServerAction } from '@/lib/http/fetcher.server';
 
+/**
+ * Fetches the private profile of the current user (Me).
+ */
 export async function protectedMeProfileAction() {
-  const cookie = (await cookies()).toString();
+  return fetchServerAction<UserMeProfileResponse>('/protected/me/profile', 'GET');
+}
 
-  const { data } = await fetchServer<UserMeProfileResponse>(
-    '/protected/me/profile',
-    'GET',
-    undefined,
-    {
-      cookie,
-    },
-  );
-  return data;
+/**
+ * Fetches the public profile of another user by their username.
+ * Required for "Other Profile" functionality.
+ */
+export async function getPublicProfileAction(username: string) {
+  return fetchServerAction<UserPublicResponse>(`/users/username/${username}`, 'GET');
 }

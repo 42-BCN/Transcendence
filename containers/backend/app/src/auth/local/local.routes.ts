@@ -4,9 +4,11 @@ import { LoginReqSchema, SignupReqSchema } from '@contracts/auth/auth.validation
 import { validateBody } from '@shared/validation.middleware';
 
 import {
+  guestSessionRateLimit,
   localLoginIdentifierRateLimit,
   localLoginIpRateLimit,
   localSignupEmailRateLimit,
+  sessionIdentityRateLimit,
 } from './local.rate-limit';
 import {
   getSessionIdentity,
@@ -27,5 +29,6 @@ localRouter.post(
   postLogin,
 );
 localRouter.post('/logout', postLogout);
-localRouter.post('/guest/session', postGuestSession);
-localRouter.get('/session/identity', getSessionIdentity);
+localRouter.post('/guest/session', guestSessionRateLimit, postGuestSession);
+
+localRouter.get('/session/identity', sessionIdentityRateLimit, getSessionIdentity);

@@ -3,8 +3,10 @@ export { Checkbox, type CheckboxProps } from './controls/checkbox';
 export {
   ExternalLink,
   InternalLink,
+  DynamicInternalLink,
   type ExternalLinkProps,
   type InternalLinkProps,
+  type DynamicInternalLinkProps,
 } from './controls/link';
 export { Input, type InputProps } from './controls/input';
 export { NavLink, type NavLinkProps } from './controls/nav-link';
@@ -55,6 +57,7 @@ export { TooltipTrigger } from './composites/tooltip-trigger';
 
 export { AuthPageLayout, type AuthPageLayoutProps } from './primitives/auth-page-layout';
 export { Avatar, type AvatarProps } from './primitives/avatar';
+export { CountBadge, type CountBadgeProps } from './primitives/count-badge';
 export { Columns12Overlay, Grid4Overlay, Grid8Overlay } from './primitives/base-grid';
 export { GlassCard, type GlassCardProps } from './primitives/glass-card';
 export {
