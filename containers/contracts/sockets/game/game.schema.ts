@@ -141,3 +141,8 @@ export const UpdatePlanPayloadSchema = z.object({
 
 // export type GameEventPayload = z.infer<typeof GameEventPayloadSchema>;
 export type UpdatePlanPayload = z.infer<typeof UpdatePlanPayloadSchema>;
+
+export type gameRoomState = {
+	isGameRoomFull: boolean;
+	teammates: {userId: string, role?: string}[];
+}
