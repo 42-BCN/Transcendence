@@ -47,8 +47,9 @@ if (!process.env.SOCKET_INTERNAL_SECRET) {
 const allowedOrigins = (process.env.SOCKET_CORS_ORIGINS ?? '')
   .split(',')
   .map((origin: string) => origin.trim())
-  .filter(Boolean)
-  .push("http://localhost");
+  .filter(Boolean);
+  
+//  .push("http://localhost");
 
 const io = new Server(httpServer, {
   cors: {

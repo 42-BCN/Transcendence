@@ -7,3 +7,9 @@ _This project has been created as part of the 42 curriculum by cmanica-, [capape
 - [Frontend environment variables](docs/FE-env-variables.md)
 - [Backend public API](containers/backend/app/docs/public-api.md)
 - [Backend OpenAPI spec](containers/backend/app/docs/openapi.yaml)
+
+## my todo list.
+- [ ]	make a semi functional socket backend.
+- [ ]	change any thing in the front end.
+- [ ] make a functional front end.
+- [ ]	make a preatty front end.

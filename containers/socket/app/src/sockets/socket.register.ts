@@ -4,7 +4,7 @@ import { attachOptionalChatIdentity, requireSessionSocketAuth } from '../auth/se
 import { registerGameSocket } from '../features/game/game.socket';
 import { registerFriendsSocket } from '../features/friends.socket';
 import { registerChatSocket } from '../features/chat.socket';
-import { registerGameRoomSocket } from '../features/gameRoom.socket';
+import { registerGameRoomSocket } from '../features/game-room/gameRoom.socket';
 import { registerRobotsSocket } from '../features/robots.socket';
 import { registerDirectMessagesSocket } from '../features/direct-messages.socket';
 
@@ -19,6 +19,7 @@ export function registerSockets(io: Server) {
   friendsNsp.use(requireSessionSocketAuth);
   robotsNsp.use(requireSessionSocketAuth);
   gameNsp.use(attachOptionalChatIdentity);
+  gameRoomNsp.use(attachOptionalChatIdentity);
   chatNsp.use(attachOptionalChatIdentity);
   directMessagesNsp.use(requireSessionSocketAuth);
 

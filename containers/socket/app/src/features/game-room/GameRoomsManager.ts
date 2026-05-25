@@ -3,7 +3,7 @@ import type { gameRoomState } from '../../../contracts/sockets/game/game.schema'
 
 export class GameRoomsManager {
   #nextGameRoomId;  //  room are given numbers in acending order of creation. like 0, 1, 2, and so on.
-  gameRooms; a map of room id and room state;
+  gameRooms; // a map of room id and room state;
   consturctor() {
     nextRoomNumberId = 0;
     gameRooms = new Map();
