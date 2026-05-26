@@ -20,22 +20,6 @@ export function createAppMetadata(overrides: Metadata = {}): Metadata {
       template: titleTemplate,
     },
     description: defaultDescription,
-    openGraph: {
-      type: 'website',
-      siteName: appName,
-      title: defaultTitle,
-      description: defaultDescription,
-      url: '/',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: defaultTitle,
-      description: defaultDescription,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
     ...overrides,
     openGraph: {
       type: 'website',
