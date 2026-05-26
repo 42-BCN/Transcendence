@@ -1,5 +1,8 @@
 import { glassCardStyles, Stack } from '@components';
 import type { ReactNode } from 'react';
+import { createNoIndexMetadata } from '@/lib/metadata/metadata.config';
+
+export const metadata = createNoIndexMetadata();
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (

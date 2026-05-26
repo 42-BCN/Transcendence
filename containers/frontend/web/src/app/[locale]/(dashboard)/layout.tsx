@@ -6,6 +6,9 @@ import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/styles/cn';
 import { getCurrentUserIdOrNull } from '@/features/auth/me/get-current-user-id-or-null';
 import { SocialGuestView } from '@/features/social/social-variants';
+import { createNoIndexMetadata } from '@/lib/metadata/metadata.config';
+
+export const metadata = createNoIndexMetadata();
 
 type SocialLayoutProps = {
   children: ReactNode;

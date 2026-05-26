@@ -34,8 +34,10 @@
   },
   "layouts": {
     "locale": {
-      "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
-      "title": "Ejemplo next-intl"
+      "metadata": {
+        "description": "Juega a Transcendence, chatea con amigos y gestiona tu cuenta en un solo lugar.",
+        "title": "Transcendence"
+      }
     }
   },
   "pages": {
@@ -43,7 +45,19 @@
       "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan.",
       "title": "Hola desde Next en Docker 👋"
     },
+    "game": {
+      "description": "Juega a Transcendence y gestiona tus turnos.",
+      "metadata": {
+        "description": "Juega a Transcendence y gestiona tus turnos.",
+        "title": "Juego"
+      },
+      "title": "Juego"
+    },
     "me": {
+      "metadata": {
+        "description": "Consulta y gestiona los datos de tu cuenta de Transcendence.",
+        "title": "Mi Cuenta"
+      },
       "subtitle": "Accede a los datos protegidos de tu cuenta.",
       "title": "Mi Cuenta"
     },
@@ -53,6 +67,10 @@
       "title": "Página no encontrada"
     },
     "privacy": {
+      "metadata": {
+        "description": "Descubre qué datos recopila Transcendence, cómo los usa y cómo los protege.",
+        "title": "Política de Privacidad"
+      },
       "contact": {
         "description": "Si tienes alguna pregunta sobre esta política o deseas ejercer tus derechos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
         "title": "Contacto"
@@ -96,6 +114,10 @@
       "title": "Política de Privacidad"
     },
     "terms": {
+      "metadata": {
+        "description": "Consulta las reglas, responsabilidades y condiciones legales para usar Transcendence.",
+        "title": "Términos de Servicio"
+      },
       "acceptance": {
         "description": "Al crear una cuenta o utilizar nuestros servicios, aceptas estas condiciones en su totalidad. Si no estás de acuerdo con alguna parte de estos Términos, debes abstenerte de utilizar la plataforma.",
         "title": "Aceptación de los Términos"
@@ -194,6 +216,10 @@
       "login": {
         "forgotPassword": "¿Has olvidado la contraseña?",
         "goToSignup": "Crear una",
+        "metadata": {
+          "description": "Inicia sesión en tu cuenta de Transcendence para jugar, chatear y gestionar tu perfil.",
+          "title": "Iniciar sesión"
+        },
         "noAccount": "¿No tienes cuenta?",
         "submit": "Iniciar sesión",
         "title": "Iniciar sesión"
@@ -206,6 +232,10 @@
         "backToLogin": "Volver al inicio de sesión",
         "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
+        "metadata": {
+          "description": "Solicita un correo para restablecer la contraseña y recuperar el acceso a tu cuenta de Transcendence.",
+          "title": "Recuperar cuenta"
+        },
         "rememberedPassword": "¿Has recordado tu contraseña?",
         "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
         "title": "Revisa tu correo"
@@ -213,6 +243,10 @@
       "reset": {
         "backToLogin": "Volver a iniciar sesión",
         "description": "Introduce tu nueva contraseña.",
+        "metadata": {
+          "description": "Define una nueva contraseña para tu cuenta de Transcendence.",
+          "title": "Restablecer contraseña"
+        },
         "submit": "Guardar nueva contraseña",
         "success": "La contraseña se actualizó correctamente.",
         "title": "Restablecer contraseña"
@@ -220,6 +254,10 @@
       "signup": {
         "goToLogin": "Iniciar sesión",
         "haveAccount": "¿Ya tienes cuenta?",
+        "metadata": {
+          "description": "Crea tu cuenta de Transcendence para empezar a jugar y conectar con amigos.",
+          "title": "Crear cuenta"
+        },
         "privacy": {
           "error": "Debes aceptar la Política de Privacidad para continuar.",
           "label": "He leído y acepto la <link>Política de Privacidad</link>"
@@ -232,6 +270,10 @@
         "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
         "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
         "isConfirmed": "¿Ya confirmaste?",
+        "metadata": {
+          "description": "Confirma tu dirección de correo para activar tu cuenta de Transcendence.",
+          "title": "Verifica tu correo electrónico"
+        },
         "missingToken": "Falta el token de verificación.",
         "recoverTitle": "Recuperar cuenta",
         "resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta.",
@@ -249,6 +291,10 @@
       "showChat": "Mostrar chat"
     },
     "directMessages": {
+      "metadata": {
+        "description": "Abre conversaciones privadas con tus amigos en Transcendence.",
+        "title": "Mensajes directos"
+      },
       "emptyState": "Todavía no hay conversaciones",
       "listTitle": "Mensajes",
       "openList": "Abrir lista de mensajes",
@@ -305,6 +351,9 @@
       },
       "emptyBio": "Sin biografía",
       "fail": "No se pudo cargar tu perfil.",
+      "metadata": {
+        "publicDescription": "Consulta el perfil público de {username} en Transcendence."
+      },
       "provider": "Proveedor",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"
@@ -388,6 +437,7 @@
     "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad.",
     "FRIENDSHIP_REQUEST_NOT_FOUND": "La solicitud no existe o ya no está disponible.",
     "FRIENDSHIP_SELF_REQUEST": "No puedes añadirte a ti mismo.",
+    "generic": "Algo salió mal. Vuelve a intentarlo.",
     "INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
     "UNAUTHORIZED_ACTION": "Acción no permitida.",
     "USER_NOT_FOUND": "Usuario no encontrado.",
