@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useMemo, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame } from './store';
@@ -17,8 +17,11 @@ function AbButtons() {
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
   const abilityCD = useGame((state) => {
-    ent && ent.id ? state.players[ent.id].abilitiesCD
-      || state.clones[ent.id]?.abilitiesCD : null
+    if (!ent?.id)
+      return null;
+    return state.players[ent.id]?.abilitiesCD
+      ?? state.clones[ent.id]?.abilitiesCD
+      ?? null;
   });
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
@@ -98,7 +101,7 @@ function DiceButtons() {
             }}
             onPress={() => {
               if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
-                (canSelect || !!ability) ? selectDice(diceNum) : movDice(diceNum);
+                (canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
               }
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -429,10 +432,9 @@ export function Game() {
   const initRef = useRef(false);
 
   useEffect(() => {
-    if (!initRef.current) {
-      initRef.current = true;
-      initSocketListeners();
-    }
+    // if (!initRef.current) {
+    //   initRef.current = true;
+    initSocketListeners();
 
     return () => {
       cleanupSocketListeners();
@@ -452,7 +454,7 @@ export function Game() {
   }, [mapBounds]);
 
   return !mapBounds || mapBounds.width === 0 ? (
-    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
       <div className="text-center">
         <h2>Connecting to Server...</h2>
         <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>

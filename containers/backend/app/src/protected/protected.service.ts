@@ -1,10 +1,12 @@
 import argon2 from 'argon2';
 
 import { ApiError } from '@shared';
+import type { UserMeProfile } from '@contracts/users/users.contracts';
 
 import { hashPassword } from '@/auth/local/local.service';
+import { findUserByIdWithPassword, findUserById } from '@/auth/shared.repo';
 import { updatePasswordHash } from '@/auth/local/local.repo';
-import { findUserByIdWithPassword } from '@/auth/shared.repo';
+import { deleteUserById, updateUserBio } from '@/users/users.repo';
 
 export async function resetPasswordForMe(input: {
   userId: string;
@@ -25,4 +27,25 @@ export async function resetPasswordForMe(input: {
 
   const passwordHash = await hashPassword(input.newPassword);
   await updatePasswordHash(user.id, passwordHash);
+}
+
+export async function updateBioForMe(input: {
+  userId: string;
+  bio: string;
+}): Promise<UserMeProfile> {
+  const profile = await updateUserBio(input.userId, input.bio);
+
+  if (!profile) throw new ApiError('USER_NOT_FOUND');
+
+  return profile;
+}
+
+export async function deleteAccountForMe(userId: string): Promise<void> {
+  const user = await findUserById(userId);
+
+  if (!user) throw new ApiError('AUTH_UNAUTHORIZED');
+
+  const deleted = await deleteUserById(userId);
+
+  if (!deleted) throw new ApiError('AUTH_UNAUTHORIZED');
 }

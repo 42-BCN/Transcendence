@@ -3,12 +3,13 @@
 import { type ReactNode } from 'react';
 import { getPathname } from '@/i18n/navigation';
 import { usePathname } from 'next/navigation';
-import { Icon, NavLink, Stack, TooltipTrigger } from '@components';
+import { CountBadge, Icon, NavLink, Stack, TooltipTrigger } from '@components';
 import { type NavItem } from '../navigation.config';
 import { useTranslations } from 'next-intl';
 import { Logout } from '../../auth/logout';
 import { useNavigationContext } from '../navigation.context';
 import { headerStyles } from '../navigation-header/navigation-header.styles';
+import { useSocialStore } from '@/providers/social-provider';
 
 type NavLinkItemProps = {
   navItem: NavItem;
@@ -22,15 +23,17 @@ type RenderNavLinkContentProps = {
   icon: NavItem['icon'];
   label: string;
   isExpanded: boolean;
+  badgeCount?: number;
 };
 
 export function RenderNavLinkContent(args: RenderNavLinkContentProps) {
-  const { icon, label, isExpanded } = args;
+  const { icon, label, isExpanded, badgeCount } = args;
 
   return (
     <>
-      <div className={headerStyles.wrapper}>
+      <div className={`${headerStyles.wrapper} relative`}>
         <Icon name={icon} size={20} />
+        <CountBadge count={badgeCount} placement="overlay" />
       </div>
       {isExpanded ? <span className="whitespace-nowrap pe-3 leading-none">{label}</span> : null}
     </>
@@ -44,6 +47,9 @@ function WithTooltip(content: ReactNode, label: string, enabled: boolean) {
 function NavLinkItem(args: NavLinkItemProps) {
   const { navItem } = args;
   const { isExpanded, locale, closeNavigation } = useNavigationContext();
+  const unreadTotal = useSocialStore((state) =>
+    state.friends.reduce((sum, friend) => sum + (friend.unreadMessageCount ?? 0), 0),
+  );
 
   const t = useTranslations('features.navigation');
   const label = t(navItem.key);
@@ -64,7 +70,12 @@ function NavLinkItem(args: NavLinkItemProps) {
       w={isExpanded ? 'full' : 'auto'}
       className={navLinkClassName}
     >
-      <RenderNavLinkContent icon={navItem.icon} label={label} isExpanded={isExpanded} />
+      <RenderNavLinkContent
+        icon={navItem.icon}
+        label={label}
+        isExpanded={isExpanded}
+        badgeCount={navItem.href === '/messages' ? unreadTotal : undefined}
+      />
     </NavLink>
   );
 
@@ -88,7 +99,12 @@ export function NavigationMain(args: NavigationMainProps) {
       ))}
       {isAuthenticated
         ? WithTooltip(
-            <Logout onPress={closeNavigation} label={t('logout')} isExpanded={isExpanded} />,
+            <Logout
+              onPress={closeNavigation}
+              label={t('logout')}
+              isExpanded={isExpanded}
+              presentation="navigation"
+            />,
             t('logout'),
             !isExpanded,
           )

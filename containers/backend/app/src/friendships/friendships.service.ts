@@ -16,6 +16,7 @@ import {
   rejectFriendRequest,
   deleteFriendship,
 } from './friendships.repo';
+import { countUnreadDirectMessagesByFriendshipIds } from '../direct-messages/direct-messages.repo';
 import {
   notifyFriendAccepted,
   notifyFriendRequest,
@@ -115,13 +116,19 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
   if (friends.length === 0) return [];
 
   const friendIds = friends.map((friend) => friend.id);
+  const friendshipIds = friends.map((friend) => friend.friendshipId);
   const presenceByUserId = await resolvePresence(friendIds);
+  const unreadById = await countUnreadDirectMessagesByFriendshipIds({
+    friendshipIds,
+    userId,
+  });
 
   return friends.map((friend) => ({
     id: friend.id,
     username: friend.username,
     avatar: friend.avatar,
     presence: presenceByUserId[friend.id] ?? 'offline',
+    unreadMessageCount: unreadById.get(friend.friendshipId) ?? 0,
   }));
 }
 

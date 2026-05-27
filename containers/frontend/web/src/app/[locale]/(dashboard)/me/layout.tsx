@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
+import { getTranslations } from 'next-intl/server';
 
 import { Stack, Avatar, Text, Breadcrumb } from '@components';
-import { getTranslations } from 'next-intl/server';
 import { protectedMeProfileAction } from '@/features/profile/profile.action';
 
 export default async function ProtectedLayout({ children }: { children: ReactNode }) {
@@ -19,9 +19,7 @@ export default async function ProtectedLayout({ children }: { children: ReactNod
         <Avatar src="" size="lg" />
         <div>
           <Text as="h2">{data.data.username}</Text>
-          <Text variant="body-sm" className="text-text-secondary">
-            {data.data.email || t('noEmailAvailable')}
-          </Text>
+          <Text variant="body-sm" className="text-text-secondary">{data.data.email}</Text>
         </div>
       </Stack>
       {children}

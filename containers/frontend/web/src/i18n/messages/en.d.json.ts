@@ -11,6 +11,7 @@ declare const messages: {
   },
   "components": {
     "breadcrumb": {
+      "edit": "Edit profile",
       "home": "Home",
       "me": "My Account",
       "reset-password": "Reset Password"
@@ -251,6 +252,25 @@ declare const messages: {
       "messageAriaLabel": "Message",
       "showChat": "Show Chat"
     },
+    "directMessages": {
+      "emptyState": "No conversations yet",
+      "listTitle": "Messages",
+      "openList": "Open messages list",
+      "closeList": "Close messages list",
+      "selectionTitle": "Select a conversation",
+      "selectionBody": "Choose a friend from the list to open your messages.",
+      "accessTitle": "Direct messages",
+      "accessBody": {
+        "authenticated": "This conversation is only available between accepted friends.",
+        "unauthenticated": "You need to be signed in to open a private chat."
+      },
+      "backToHome": "Back to home",
+      "presence": {
+        "online": "● Online",
+        "away": "● Away",
+        "offline": "Offline"
+      }
+    },
     "game": {
       "endTurn": "End turn",
       "healthLabel": "HP",
@@ -260,6 +280,7 @@ declare const messages: {
       "createAccount": "Create account",
       "game": "Game",
       "home": "Home",
+      "messages": "Messages",
       "login": "Log in",
       "logout": "Logout",
       "mainAriaLabel": "Main navigation",
@@ -269,13 +290,25 @@ declare const messages: {
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Change password",
+        "deleteAccount": "Delete account",
+        "editProfile": "Edit profile"
+      },
       "bio": "Bio",
-      "changePassword": "Change password",
-      "deleteAccount": "Delete account",
-      "editProfile": "Edit profile",
-      "emptyBio": "No bio available",
+      "delete": {
+        "body": "This action permanently deletes your account, removes your profile, and signs you out. This cannot be undone.",
+        "cancel": "Cancel",
+        "description": "This permanently deletes your account and signs you out.",
+        "title": "Delete account?"
+      },
+      "edit": {
+        "placeholder": "Tell other players a little about yourself",
+        "submit": "Save changes",
+        "title": "Edit profile"
+      },
+      "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
-      "noEmailAvailable": "No email available",
       "provider": "Provider",
       "userId": "User ID",
       "username": "Username"
@@ -291,9 +324,11 @@ declare const messages: {
         "accept": "Accept",
         "addFriend": "Add friend",
         "cancel": "Cancel",
-        "chat": "Chat",
+        "cancelRequest": "Cancel Request",
         "inviteToGame": "Invite to Game",
-        "reject": "Reject"
+        "message": "Message",
+        "reject": "Reject",
+        "unfriend": "Remove Friend"
       },
       "emptyStates": {
         "offline": "No friends offline",
@@ -315,6 +350,7 @@ declare const messages: {
         "title": "Connect with the community"
       },
       "requests": {
+        "now": "now",
         "received": "Received",
         "sent": "Sent",
         "title": "Requests"

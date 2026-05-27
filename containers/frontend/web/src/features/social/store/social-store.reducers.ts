@@ -82,7 +82,7 @@ function replaceSearchResultByUserId(
 function addUniqueFriend(friends: FriendPublic[], friend: FriendPublic): FriendPublic[] {
   if (friends.some((item) => item.id === friend.id)) return friends;
 
-  return [...friends, friend];
+  return [friend, ...friends];
 }
 
 function addUniquePending(
@@ -91,7 +91,7 @@ function addUniquePending(
 ): FriendshipPublic[] {
   if (requests.some((item) => item.id === friendship.id)) return requests;
 
-  return [...requests, friendship];
+  return [friendship, ...requests];
 }
 
 function removePendingByFriendshipId(
@@ -139,6 +139,17 @@ function setFriendPresenceReducer(
       friend.id === userId ? { ...friend, presence } : friend,
     ),
     searchResults: moveSearchResultPresence(state.searchResults, userId, presence),
+  });
+}
+
+function setFriendUnreadMessageCountReducer(
+  userId: string,
+  count: number,
+): (state: SocialState) => Partial<SocialState> {
+  return (state) => ({
+    friends: state.friends.map((friend) =>
+      friend.id === userId ? { ...friend, unreadMessageCount: count } : friend,
+    ),
   });
 }
 
@@ -373,6 +384,23 @@ function addPendingRequestReducer(
   };
 }
 
+function removeFriendByIdReducer(id: string): (state: SocialState) => Partial<SocialState> {
+  return (state) => ({
+    friends: state.friends.filter((item) => item.id !== id),
+    searchResults: replaceSearchResultByUserId(
+      state.searchResults,
+      id,
+      (item) => ({
+        ...item,
+        friendshipStatus: 'none',
+        friendshipId: null,
+        senderId: null,
+      }),
+      state,
+    ),
+  });
+}
+
 export function createSocialActions(set: SetState) {
   return {
     setFriends: (friends: FriendPublic[]) => set({ friends }),
@@ -390,6 +418,9 @@ export function createSocialActions(set: SetState) {
     setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') =>
       set(setFriendPresenceReducer(userId, presence)),
 
+    setFriendUnreadMessageCount: (userId: string, count: number) =>
+      set(setFriendUnreadMessageCountReducer(userId, count)),
+
     receiveFriendRequest: (payload: FriendRequestNotificationPayload) =>
       set(receiveFriendRequestReducer(payload)),
 
@@ -401,6 +432,7 @@ export function createSocialActions(set: SetState) {
 
     removePendingById: (list: PendingListKey, id: string) =>
       set(removePendingByIdReducer(list, id)),
+    removeFriendById: (id: string) => set(removeFriendByIdReducer(id)),
 
     acceptPendingById: (id: string) => set(acceptPendingByIdReducer(id)),
 

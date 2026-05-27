@@ -8,6 +8,7 @@
   },
   "components": {
     "breadcrumb": {
+      "edit": "Editar perfil",
       "home": "Inicio",
       "me": "Mi Cuenta",
       "reset-password": "Restablecer Contraseña"
@@ -248,6 +249,25 @@
       "messageAriaLabel": "Mensaje",
       "showChat": "Mostrar chat"
     },
+    "directMessages": {
+      "emptyState": "Todavía no hay conversaciones",
+      "listTitle": "Mensajes",
+      "openList": "Abrir lista de mensajes",
+      "closeList": "Cerrar lista de mensajes",
+      "selectionTitle": "Selecciona una conversación",
+      "selectionBody": "Elige un amigo de la lista para abrir tus mensajes.",
+      "accessTitle": "Mensajes directos",
+      "accessBody": {
+        "authenticated": "Esta conversación solo está disponible entre amigos aceptados.",
+        "unauthenticated": "Necesitas iniciar sesión para abrir un chat privado."
+      },
+      "backToHome": "Volver al inicio",
+      "presence": {
+        "online": "● En línea",
+        "away": "● Ausente",
+        "offline": "Desconectado"
+      }
+    },
     "game": {
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
@@ -257,6 +277,7 @@
       "createAccount": "Crear cuenta",
       "game": "Juego",
       "home": "Inicio",
+      "messages": "Mensajes",
       "login": "Iniciar sesión",
       "logout": "Cerrar sesión",
       "mainAriaLabel": "Navegación principal",
@@ -266,13 +287,25 @@
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Cambiar contraseña",
+        "deleteAccount": "Eliminar cuenta",
+        "editProfile": "Editar perfil"
+      },
       "bio": "Biografía",
-      "changePassword": "Cambiar contraseña",
-      "deleteAccount": "Eliminar cuenta",
-      "editProfile": "Editar perfil",
-      "emptyBio": "No hay biografía disponible",
+      "delete": {
+        "body": "Esta acción elimina tu cuenta de forma permanente, borra tu perfil y cierra tu sesión. No se puede deshacer.",
+        "cancel": "Cancelar",
+        "description": "Esto elimina tu cuenta de forma permanente y cierra tu sesión.",
+        "title": "¿Eliminar cuenta?"
+      },
+      "edit": {
+        "placeholder": "Cuéntales a otros jugadores un poco sobre ti",
+        "submit": "Guardar cambios",
+        "title": "Editar perfil"
+      },
+      "emptyBio": "Sin biografía",
       "fail": "No se pudo cargar tu perfil.",
-      "noEmailAvailable": "No hay email disponible",
       "provider": "Proveedor",
       "userId": "ID de usuario",
       "username": "Nombre de usuario"
@@ -288,9 +321,11 @@
         "accept": "Aceptar",
         "addFriend": "Añadir amigo",
         "cancel": "Cancelar",
-        "chat": "Chat",
+        "cancelRequest": "Cancelar solicitud",
         "inviteToGame": "Invitar a partida",
-        "reject": "Rechazar"
+        "message": "Mensaje",
+        "reject": "Rechazar",
+        "unfriend": "Eliminar amigo"
       },
       "emptyStates": {
         "offline": "No hay amigos desconectados",
@@ -312,6 +347,7 @@
         "title": "Conéctate con la comunidad"
       },
       "requests": {
+        "now": "ahora",
         "received": "Recibidas",
         "sent": "Enviadas",
         "title": "Solicitudes"
