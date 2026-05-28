@@ -60,9 +60,17 @@ export const SearchUsersQuerySchema = z
     path: ['limit'],
   });
 
+export const AvatarEnum = z.enum([
+  '/avatars/avatar-1.png',
+  '/avatars/avatar-2.png',
+  '/avatars/avatar-3.png',
+  '/avatars/avatar-4.png',
+]);
+
 export const UpdateMeProfileReqSchema = z
   .object({
     bio: z.string().trim().max(600, { message: VALIDATION.FIELD_TOO_LONG }),
+    avatar: AvatarEnum.nullable().optional(),
   })
   .strict();
 

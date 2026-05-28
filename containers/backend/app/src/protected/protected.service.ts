@@ -6,7 +6,7 @@ import type { UserMeProfile } from '@contracts/users/users.contracts';
 import { hashPassword } from '@/auth/local/local.service';
 import { findUserByIdWithPassword, findUserById } from '@/auth/shared.repo';
 import { updatePasswordHash } from '@/auth/local/local.repo';
-import { deleteUserById, updateUserBio } from '@/users/users.repo';
+import { deleteUserById, updateUserProfile } from '@/users/users.repo';
 
 export async function resetPasswordForMe(input: {
   userId: string;
@@ -29,11 +29,12 @@ export async function resetPasswordForMe(input: {
   await updatePasswordHash(user.id, passwordHash);
 }
 
-export async function updateBioForMe(input: {
+export async function updateProfileForMe(input: {
   userId: string;
   bio: string;
+  avatar: string | null;
 }): Promise<UserMeProfile> {
-  const profile = await updateUserBio(input.userId, input.bio);
+  const profile = await updateUserProfile(input.userId, input.bio, input.avatar);
 
   if (!profile) throw new ApiError('USER_NOT_FOUND');
 

@@ -348,6 +348,8 @@ declare const messages: {
         "title": "Delete account?"
       },
       "edit": {
+        "avatarAlt": "Select avatar {name}",
+        "chooseAvatar": "Choose your avatar",
         "placeholder": "Tell other players a little about yourself",
         "submit": "Save changes",
         "title": "Edit profile"

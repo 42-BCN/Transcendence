@@ -19,7 +19,7 @@ export async function EditProfileFeature() {
         {t('edit.title')}
       </Text>
 
-      <EditProfileForm initialBio={data.data.bio} />
+      <EditProfileForm initialBio={data.data.bio} initialAvatar={data.data.avatar} />
     </Stack>
   );
 }
