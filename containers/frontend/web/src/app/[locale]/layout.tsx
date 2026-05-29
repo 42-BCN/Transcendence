@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getFormatter, getNow, getTimeZone, getTranslations } from 'next-intl/server';
 import { HtmlLangSync } from '@/i18n/html-lang-sync';
-import { envPublic } from '@/lib/config/env.public';
+import { createAppMetadata, getMetadataBase, titleTemplate } from '@/lib/metadata/metadata.config';
 import { Providers } from '@/app/providers';
 import { NavigationServer } from '@/features/navigation';
 import { SocialProvider } from '@/providers/social-provider';
@@ -18,22 +18,45 @@ export async function generateMetadata({
   const { locale } = await params;
 
   const [t, formatter, now, timeZone] = await Promise.all([
-    getTranslations({ locale, namespace: 'layouts.locale' }),
+    getTranslations({ locale, namespace: 'layouts.locale.metadata' }),
     getFormatter({ locale }),
     getNow({ locale }),
     getTimeZone({ locale }),
   ]);
 
-  const base = new URL(envPublic.appUrl);
-  return {
-    metadataBase: base,
-    title: t('title'),
+  return createAppMetadata({
+    metadataBase: getMetadataBase(),
+    title: {
+      default: t('title'),
+      template: titleTemplate,
+    },
     description: t('description'),
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        ca: '/ca',
+        en: '/en',
+        es: '/es',
+      },
+    },
+    openGraph: {
+      locale,
+      type: 'website',
+      title: t('title'),
+      description: t('description'),
+      url: `/${locale}`,
+      siteName: 'Transcendence',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('description'),
+    },
     other: {
       currentYear: formatter.dateTime(now, { year: 'numeric' }),
       timeZone,
     },
-  };
+  });
 }
 
 export default async function LocaleLayout({
