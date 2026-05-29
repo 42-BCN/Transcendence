@@ -1,4 +1,6 @@
-import { ExternalLink } from '@components';
+'use client';
+
+import { Button } from '@components';
 import type { ReactNode } from 'react';
 
 function GoogleLogo() {
@@ -26,9 +28,13 @@ function GoogleLogo() {
 }
 
 export function Oauth({ children }: { children: ReactNode }) {
+  function startGoogleOauth(): void {
+    window.location.assign('/api/auth/google');
+  }
+
   return (
-    <ExternalLink icon={<GoogleLogo />} href={'/api/auth/google'} target="_self">
+    <Button icon={<GoogleLogo />} variant="secondary" onPress={startGoogleOauth}>
       {children}
-    </ExternalLink>
+    </Button>
   );
 }
