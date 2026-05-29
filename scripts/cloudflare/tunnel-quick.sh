@@ -25,7 +25,7 @@ tunnel_url=""
 
 while [ "$attempt" -le "$LOG_POLL_ATTEMPTS" ]; do
   logs="$(compose_dev logs --no-color cloudflared 2>/dev/null || true)"
-  tunnel_url="$(printf '%s\n' "$logs" | grep -Eo 'https://[[:alnum:].-]+trycloudflare\.com' | tail -n 1 || true)"
+  tunnel_url="$(printf '%s\n' "$logs" | grep -Eo 'https://[[:alnum:]-]+\.trycloudflare\.com' | tail -n 1 || true)"
 
   if [ -n "$tunnel_url" ]; then
     break

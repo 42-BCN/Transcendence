@@ -9,10 +9,8 @@ import { HttpStatus } from '@contracts/http';
 
 import { normalizeEmailLocale } from '../mail';
 import * as SharedRepo from '../shared.repo';
+import { getAuthCookieSameSite } from '../auth.cookies';
 import * as Service from './local.service';
-
-const publicAppBaseUrl = process.env.APP_BASE_URL?.trim() ?? '';
-const sessionSameSite = publicAppBaseUrl.includes('.trycloudflare.com') ? 'none' : 'lax';
 
 function errorStatus(code: AuthErrorName): number {
   return AUTH_ERRORS[code] ?? HttpStatus.INTERNAL_SERVER_ERROR;
@@ -179,7 +177,7 @@ export function postLogout(req: Request, res: Response): void {
 
     res.clearCookie('sid', {
       path: '/',
-      sameSite: sessionSameSite,
+      sameSite: getAuthCookieSameSite(),
     });
 
     sendOk(res, null, 200);

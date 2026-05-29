@@ -1,17 +1,23 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
 import type { Request, Response, CookieOptions } from 'express';
+import type OAuth2Strategy from 'passport-oauth2';
+
+import { getAuthCookieSameSite } from '../auth.cookies';
 
 const STATE_COOKIE_NAME = 'google_oauth_state';
 const STATE_COOKIE_PATH = '/api/auth/callback/google';
 const STATE_MAX_AGE_MS = 10 * 60 * 1000;
 
 type VerifyFailure = { message: string };
+type OAuthMetadata = OAuth2Strategy.Metadata;
+type StateStoreCallback = OAuth2Strategy.StateStoreStoreCallback;
+type StateVerifyCallback = OAuth2Strategy.StateStoreVerifyCallback;
 
 function stateCookieOptions(): CookieOptions {
   return {
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
+    sameSite: getAuthCookieSameSite(),
     path: STATE_COOKIE_PATH,
     maxAge: STATE_MAX_AGE_MS,
   };
@@ -22,7 +28,7 @@ function clearStateCookie(res: Response | undefined): void {
   res.clearCookie(STATE_COOKIE_NAME, {
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
+    sameSite: getAuthCookieSameSite(),
     path: STATE_COOKIE_PATH,
   });
 }
@@ -65,11 +71,23 @@ function safeEqual(left: string, right: string): boolean {
 export class GoogleOauthStateStore {
   constructor(private readonly secret: string) {}
 
-  store(req: Request, callback: (err: Error | null, state?: string) => void): void {
+  store(req: Request, callback: StateStoreCallback): void;
+  store(req: Request, meta: OAuthMetadata, callback: StateStoreCallback): void;
+  store(
+    req: Request,
+    metaOrCallback: OAuthMetadata | StateStoreCallback,
+    callback?: StateStoreCallback,
+  ): void {
+    const done = typeof metaOrCallback === 'function' ? metaOrCallback : callback;
+
+    if (!done) {
+      throw new Error('OAuth state store callback is required.');
+    }
+
     const res = req.res;
 
     if (!res) {
-      callback(new Error('OAuth response object is not available.'));
+      done(new Error('OAuth response object is not available.'), null);
       return;
     }
 
@@ -79,51 +97,77 @@ export class GoogleOauthStateStore {
     const signature = sign(this.secret, payload);
 
     res.cookie(STATE_COOKIE_NAME, `${payload}.${signature}`, stateCookieOptions());
-    callback(null, state);
+    done(null, state);
   }
 
+  verify(req: Request, providedState: string, callback: StateVerifyCallback): void;
   verify(
     req: Request,
     providedState: string,
-    callback: (err: Error | null, ok?: boolean, info?: VerifyFailure) => void,
+    meta: OAuthMetadata,
+    callback: StateVerifyCallback,
+  ): void;
+  verify(
+    req: Request,
+    providedState: string,
+    metaOrCallback: OAuthMetadata | StateVerifyCallback,
+    callback?: StateVerifyCallback,
   ): void {
+    const done = typeof metaOrCallback === 'function' ? metaOrCallback : callback;
+
+    if (!done) {
+      throw new Error('OAuth state verify callback is required.');
+    }
+
     const cookies = parseCookieHeader(req.headers.cookie);
     const rawCookie = cookies[STATE_COOKIE_NAME];
 
     clearStateCookie(req.res);
 
     if (!rawCookie) {
-      callback(null, false, { message: 'Missing authorization request state cookie.' });
+      done(null, false, { message: 'Missing authorization request state cookie.' });
       return;
     }
 
     const parts = rawCookie.split('.');
 
     if (parts.length !== 3) {
-      callback(null, false, { message: 'Malformed authorization request state cookie.' });
+      done(null, false, { message: 'Malformed authorization request state cookie.' });
       return;
     }
 
-    const [expectedState, expiresAtRaw, providedSignature] = parts;
+    const expectedState = parts[0];
+    const expiresAtRaw = parts[1];
+    const providedSignature = parts[2];
+
+    if (
+      expectedState === undefined ||
+      expiresAtRaw === undefined ||
+      providedSignature === undefined
+    ) {
+      done(null, false, { message: 'Malformed authorization request state cookie.' });
+      return;
+    }
+
     const payload = `${expectedState}.${expiresAtRaw}`;
     const expectedSignature = sign(this.secret, payload);
     const expiresAt = Number(expiresAtRaw);
 
     if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) {
-      callback(null, false, { message: 'Expired authorization request state cookie.' });
+      done(null, false, { message: 'Expired authorization request state cookie.' });
       return;
     }
 
     if (!safeEqual(expectedSignature, providedSignature)) {
-      callback(null, false, { message: 'Invalid authorization request state cookie.' });
+      done(null, false, { message: 'Invalid authorization request state cookie.' });
       return;
     }
 
     if (!safeEqual(expectedState, providedState)) {
-      callback(null, false, { message: 'Invalid authorization request state.' });
+      done(null, false, { message: 'Invalid authorization request state.' });
       return;
     }
 
-    callback(null, true);
+    done(null, true, null);
   }
 }

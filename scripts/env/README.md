@@ -17,7 +17,7 @@ Use [setup-env.sh](./setup-env.sh) to generate the local `.env.<env>` files used
 
 `PUBLIC_APP_URL=https://your-host.example APP_ENV=development sh scripts/env/setup-env.sh development`
 
-This keeps `APP_BASE_URL`, `GOOGLE_CALLBACK_URL`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SOCKET_URL`, and `SOCKET_CORS_ORIGINS` aligned.
+This keeps the app URL values aligned across backend, frontend, and socket env files. If `PUBLIC_APP_URL` uses a raw IP address, `GOOGLE_CALLBACK_URL` is generated with `localhost` instead so Google OAuth can use a local callback host.
 
 ## Socket service runtime env
 
@@ -54,9 +54,10 @@ Once those values exist, `make tunnel` will automatically prefer the stable tunn
 
 Google OAuth in this project is host-sensitive:
 
-- `GOOGLE_CALLBACK_URL` must exactly match the public URL currently written into `containers/backend/docker/.env.<env>`
+- `GOOGLE_CALLBACK_URL` must exactly match the value currently written into `containers/backend/docker/.env.<env>`
+- when `APP_BASE_URL` is a local IP such as `https://192.168.x.x:8443`, `setup-env.sh` writes `GOOGLE_CALLBACK_URL` with `https://localhost:8443/...` instead
 - Quick Tunnel hostnames change, so the Google OAuth redirect URI must be updated every time the tunnel URL changes
-- the `/api/auth/google` start route now redirects `localhost` requests to the configured public host before creating OAuth state
+- the `/api/auth/google` start route now redirects to the host used by `GOOGLE_CALLBACK_URL` before creating OAuth state
 
 For the most reliable flow:
 

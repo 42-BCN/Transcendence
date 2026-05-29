@@ -7,8 +7,9 @@ import { getGoogleCallback } from './oauth.controller';
 
 export const oauthRouter = Router();
 
-function getConfiguredPublicOrigin(): string | null {
-  const value = process.env.APP_BASE_URL?.trim();
+function getConfiguredGoogleOauthOrigin(): string | null {
+  const value =
+    process.env.GOOGLE_CALLBACK_URL?.trim() || process.env.APP_BASE_URL?.trim();
 
   if (!value) return null;
 
@@ -19,8 +20,12 @@ function getConfiguredPublicOrigin(): string | null {
   }
 }
 
-function ensureGoogleOauthStartsOnPublicHost(req: Request, res: Response, next: NextFunction): void {
-  const publicOrigin = getConfiguredPublicOrigin();
+function ensureGoogleOauthStartsOnCallbackHost(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const publicOrigin = getConfiguredGoogleOauthOrigin();
 
   if (!publicOrigin) {
     next();
@@ -39,7 +44,7 @@ function ensureGoogleOauthStartsOnPublicHost(req: Request, res: Response, next: 
 
 oauthRouter.get(
   '/google',
-  ensureGoogleOauthStartsOnPublicHost,
+  ensureGoogleOauthStartsOnCallbackHost,
   passport.authenticate(
     'google',
     googleAuthenticateOptions as unknown as passport.AuthenticateOptions,

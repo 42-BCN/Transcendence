@@ -4,12 +4,10 @@ import type { UserMeProfileResponse } from '@contracts/users/users.contracts';
 import type { UpdateMeProfileReq } from '@contracts/users/users.validation';
 import { sendError } from '@shared';
 
+import { getAuthCookieSameSite } from '@/auth/auth.cookies';
 import { findUserMeProfileById } from '@/users/users.service';
 
 import * as Service from './protected.service';
-
-const publicAppBaseUrl = process.env.APP_BASE_URL?.trim() ?? '';
-const sessionSameSite = publicAppBaseUrl.includes('.trycloudflare.com') ? 'none' : 'lax';
 
 export async function getMeProfile(
   req: Request,
@@ -71,7 +69,7 @@ export async function deleteMe(req: Request, res: Response<DeleteMeRes>): Promis
 
     res.clearCookie('sid', {
       path: '/',
-      sameSite: sessionSameSite,
+      sameSite: getAuthCookieSameSite(),
     });
 
     res.status(200).json({
