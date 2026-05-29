@@ -27,6 +27,9 @@ if (!sessionSecret) throw new Error('SESSION_SECRET is required');
 const publicApiKey = process.env.PUBLIC_API_KEY?.trim();
 if (!publicApiKey) throw new Error('PUBLIC_API_KEY is required');
 
+const publicAppBaseUrl = process.env.APP_BASE_URL?.trim() ?? '';
+const sessionSameSite = publicAppBaseUrl.includes('.trycloudflare.com') ? 'none' : 'lax';
+
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
 
@@ -51,7 +54,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: 'auto',
-      sameSite: 'lax',
+      sameSite: sessionSameSite,
       path: '/',
       maxAge: SEVEN_DAYS_MS,
     },
