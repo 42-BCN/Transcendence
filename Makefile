@@ -8,6 +8,9 @@ COMPOSE_PROD = APP_ENV=production NODE_ENV=production $(COMPOSE_BASE) -f contain
 COMPOSE = APP_ENV=$(ENV) NODE_ENV=$(NODE_ENV_VALUE) $(COMPOSE_BASE)
 
 SETUP_SCRIPT = scripts/env/setup-env.sh
+TUNNEL_SCRIPT = scripts/cloudflare/tunnel.sh
+TUNNEL_QUICK_SCRIPT = scripts/cloudflare/tunnel-quick.sh
+TUNNEL_STABLE_SCRIPT = scripts/cloudflare/tunnel-stable.sh
 
 BACKEND_DIR = containers/backend/app
 FRONTEND_DIR = containers/frontend/web
@@ -16,6 +19,7 @@ SOCKET_DIR = containers/socket/app
 ENV_FILES = \
 	containers/nginx/.env.$(ENV) \
 	containers/backend/docker/.env.$(ENV) \
+	containers/cloudflared/.env.$(ENV) \
 	containers/frontend/docker/.env.$(ENV) \
 	containers/database/docker/.env.$(ENV)
 
@@ -24,6 +28,7 @@ GENERATED_ENVS = development demo production
 ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/nginx/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/backend/docker/.env.$(env)) \
+	$(foreach env,$(GENERATED_ENVS),containers/cloudflared/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/frontend/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/database/docker/.env.$(env))
 
@@ -33,6 +38,9 @@ ALL_ENV_FILES = \
 	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps \
 	up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
+	tunnel tunnel-logs tunnel-down \
+	tunnel-stable tunnel-stable-down tunnel-stable-logs \
+	tunnel-quick tunnel-quick-down tunnel-quick-logs \
 	db-reset db-seed db-push db-setup prisma-generate \
 	clean-env clean-all-env \
 	ps restart shell-frontend shell-api shell-db shell-socket setup stop \
@@ -205,6 +213,32 @@ logs-split:
 	tmux send-keys -t logs:0.1 '$(COMPOSE_DEV) logs -f backend' C-m
 	tmux select-layout -t logs:0 even-horizontal
 	tmux attach -t logs
+
+#---- Cloudflare tunnel ----
+
+tunnel:
+	sh $(TUNNEL_SCRIPT)
+
+tunnel-logs:
+	$(COMPOSE_DEV) logs -f cloudflared
+
+tunnel-down: tunnel-quick-down
+
+tunnel-stable:
+	sh $(TUNNEL_STABLE_SCRIPT)
+
+tunnel-stable-down: tunnel-quick-down
+
+tunnel-stable-logs: tunnel-logs
+
+# Quick (dashboard-free) tunnel
+tunnel-quick:
+	sh $(TUNNEL_QUICK_SCRIPT)
+
+tunnel-quick-down:
+	$(COMPOSE_DEV) rm -sf cloudflared
+
+tunnel-quick-logs: tunnel-logs
 
 #---- Env cleanup ----
 

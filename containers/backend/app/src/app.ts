@@ -17,6 +17,7 @@ import {
   handleInternalDirectMessageSend,
 } from './direct-messages/direct-messages.internal';
 import { authIpRateLimit } from './auth/auth.rate-limit';
+import { getAuthCookieSameSite } from './auth/auth.cookies';
 import { publicApiRouter } from './public-api/public-api.routes';
 
 // Ensure required environment variables are set
@@ -51,7 +52,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: 'auto',
-      sameSite: 'lax',
+      sameSite: getAuthCookieSameSite(),
       path: '/',
       maxAge: SEVEN_DAYS_MS,
     },
