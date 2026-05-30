@@ -9,12 +9,15 @@ import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { useShallow } from 'zustand/react/shallow';
 
 const s = 0.975;
 
 function FloatingVfx({ entityId }: { entityId: string }) {
-  const entries = useGame((s) =>
-    Object.values(s.pendingVfx).filter((v) => v.targetId === entityId)
+  const entries = useGame(
+    useShallow((s) =>
+      Object.values(s.vfx).filter((v) => v.eid === entityId)
+    )
   );
 
   if (entries.length === 0) return null;
@@ -22,7 +25,7 @@ function FloatingVfx({ entityId }: { entityId: string }) {
   return (
     <>
       {entries.map((v) => (
-        <Html key={v.id} position={[0, 1.2, 0]} center style={{ pointerEvents: 'none' }}>
+        <Html key={v.vfxid} position={[0, 1.2, 0]} center style={{ pointerEvents: 'none' }}>
           <span style={{
             display: 'block',
             animation: 'floatUp 1.4s ease-out forwards',
@@ -31,8 +34,8 @@ function FloatingVfx({ entityId }: { entityId: string }) {
             whiteSpace: 'nowrap',
             textShadow: '0 0 4px #000',
             color:
-              v.type === 'damage' ? '#ff4444' :
-                v.type === 'heal' ? '#44ff88' :
+              v.type === 'hurt' ? '#ff4444' :
+                v.type === 'effect' ? '#44ff88' :
                   v.type === 'doom' ? '#ff8800' :
                     '#ffcc00',
           }}>
@@ -242,7 +245,11 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
         if (phase !== 'PLAN')
           return;
         event.stopPropagation();
-        moveClone(id);
+        if (color === 'lightpink') {
+          if (isSelectable)
+            addHistoryAbility(id);
+          else moveClone(id);
+        }
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -276,14 +283,15 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
         event.stopPropagation();
         setHover(false);
       }}
+      onClick={(event) => {
+        if (phase !== 'PLAN') return;
+        event.stopPropagation();
+        if (canSelect) selectEntity(id);
+        else if (isTarget && selected && selectedDice && selectedAb)
+          addHistoryAbility(id);
+      }}
     >
-      {/* onClick={(event) => { */}
-      {/*   if (phase !== "PLAN") */}
-      {/*     return; */}
-      {/*   event.stopPropagation(); */}
-      {/*   if (canSelect) */}
-      {/*     selectEntity(id); */}
-      {/* }} */}
+      <FloatingVfx entityId={id} />
       <boxGeometry args={[s, s, s]} />
       <meshStandardMaterial color={color} />
     </mesh>
@@ -324,7 +332,6 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
         event.stopPropagation();
         if (canSelect) selectEntity(id);
         else if (isTarget && selected && selectedDice && selectedAb)
-          // ts errors
           addHistoryAbility(id);
       }}
     >
@@ -366,10 +373,10 @@ function Player({ id, pos }: { id: string; pos: pos }) {
         event.stopPropagation();
         if (canSelect) selectEntity(id);
         else if (isTarget)
-          // ts errors
           addHistoryAbility(id);
       }}
     >
+      <FloatingVfx entityId={id} />
       <boxGeometry args={[s, s, s]} />
       <meshStandardMaterial color={color} />
     </mesh>
@@ -448,14 +455,14 @@ function DoomCounter() {
   )
 }
 
-function VfxDisplay() {
-  const vfx = useGame((state) => state.vfx);
-  return (
-    <div className="z-10 absolute left-32 bottom-8">
-      {percent ?? "ERROR"}
-    </div>
-  )
-}
+// function VfxDisplay() {
+//   const vfx = useGame((state) => state.vfx);
+//   return (
+//     <div className="z-10 absolute left-32 bottom-8">
+//       {percent ?? "ERROR"}
+//     </div>
+//   )
+// }
 
 function name(phase: string) {
   switch (phase) {

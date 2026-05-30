@@ -93,7 +93,8 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
   gameState.clones = {};
   for (const action of gameState.history) {
     if (action.type === "ability" && action.abName) {
-      executeAbility(action.who, action.abName, action.target, action.dice);
+      // executeAbility(action.who, action.abName, action.target, action.dice, vfx);
+      executeAbility(action.who, action.abName, action.target, action.dice, vfx, action.id);
       sync();
       await sleep(400);
     }
@@ -109,14 +110,15 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
 
 export function incrementDoom(vfx: (effect) => void) {
   for (const enemy of Object.values(gameState.enemies)) {
+    const name = enemy.id.split('_')[0];
     const doom: vfx = { vfxid: `doom_${Date.now()}`, eid: enemy.id, type: 'doom', amount: null };
     if (enemy.isDead)
       doom.amount = 0;
-    else if (enemy.id === 'crawler' || enemy.id === 'drone')
+    else if (name === 'crawler' || name === 'drone')
       doom.amount = 1;
-    else if (enemy.id === 'jaeger' || enemy.id === 'centurion')
+    else if (name === 'jaeger' || name === 'centurion')
       doom.amount = 3;
-    else if (enemy.id === 'generator')
+    else if (name === 'generator')
       doom.amount = 5;
     doom.amount = gameState.doom + doom.amount > 100 ? 100 - gameState.doom : doom.amount;
     vfx(doom);
@@ -152,6 +154,10 @@ export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
         targetId = player.id;
       }
     }
+    if (enemy.status === 'restrain' && enemy.dice.length > 0) {
+      enemy.usedDice.push(enemy.dice[0]);
+      enemy.dice.splice(0, 1);
+    }
     if (closestDistance === Infinity || !targetId || path.length === 0)
       continue;
     const reaches = Math.max(...enemy.dice) >= closestDistance ? true : false;
@@ -176,7 +182,7 @@ export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
     if (reaches) {
       // INFO: move Selection
       const idx = Math.floor(Math.random() * enemy.abilities.length);
-      executeAbility(enemy.id, enemy.abilities[idx], targetId, Math.max(...enemy.dice))
+      executeAbility(enemy.id, enemy.abilities[idx], targetId, Math.max(...enemy.dice), vfx)
     }
   }
   phaseClean();
@@ -186,23 +192,37 @@ export async function endTurn(sync: () => void, vfx: (effect) => void) {
   gameState.phase = 'END';
   sync();
   const entities = { ...gameState.players, ...gameState.enemies }
-  Object.keys(entities).forEach((id) => {
-    const ent = entities[id];
+  for (const ent of Object.values(entities)) {
     if (!ent)
       return console.log('no ent in end turn');
     updateCooldowns(ent.id);
+    const status = ent.status;
+    if (status) {
+      if (status === 'burn') {
+        vfx({ vfxid: `burn_proc${Date.now()}`, eid: ent.id, type: 'damage', amount: ent.statusTurns });
+        if ((ent.hp -= ent.statusTurns) <= 0) {
+          ent.hp = 0;
+          ent.isDead = true;
+        }
+      }
+      if (ent.status === 'boost' || --ent.statusTurns === 0) {
+        ent.status = null;
+        ent.statusTurns = 0;
+        vfx({ vfxid: `stat_expire_${Date.now()}`, eid: ent.id, type: 'stat expire', amount: null });
+      }
+    }
     if (ent.isDead) {
       if (ent.type === 'player')
-        delete gameState.players[id];
+        delete gameState.players[ent.id];
       else if (ent.type === 'enemy')
-        delete gameState.enemies[id];
+        delete gameState.enemies[ent.id];
     }
     else {
       ent.dice = [...ent.dice, ...ent.usedDice].sort((a, b) => a - b);
       ent.usedDice = [];
       ent.hasMoved = false;
     }
-  });
+  };
   gameState.turn = gameState.turn + 1;
   gameState.phase = 'PLAN';
   gameState.history = [];
@@ -304,6 +324,154 @@ export function addDisplaceHistory(cause: string, id: string, origin: string, po
   moveClone(id, `${x},${y},${z}`, 0, cause);
 }
 
+function getLiveEnt(id: string) {
+  return (
+    gameState.players[id]
+    ?? gameState.enemies[id]
+    ?? gameState.clones[id]
+    ?? gameState.clones[`clone_${id}`]
+  );
+}
+
+function killEntity(ent: any) {
+  ent.usedDice = [...ent.dice, ...ent.usedDice];
+  ent.dice = [];
+  ent.isDead = true;
+}
+
+function applyCollisionDamage(id: string, vfx: (effect: vfx) => void) {
+  const ent: any = getLiveEnt(id);
+  if (!ent || ent.isDead) return;
+
+  ent.hp = Math.max(0, ent.hp - 1);
+  if (ent.hp === 0) {
+    killEntity(ent);
+  }
+
+  vfx({
+    vfxid: `col_${Date.now()}_${id}`,
+    eid: id,
+    type: 'damage',
+    amount: 1,
+  });
+}
+
+function getDisplaceDir(
+  attackerPos: pos,
+  targetPos: pos,
+  direction: 'away' | 'towards'
+): { dx: number; dz: number } {
+  const rawDx = Math.sign(targetPos.x - attackerPos.x);
+  const rawDz = Math.sign(targetPos.z - attackerPos.z);
+
+  return direction === 'towards'
+    ? { dx: -rawDx, dz: -rawDz }
+    : { dx: rawDx, dz: rawDz };
+}
+
+export function resolveDisplace(
+  id: string,
+  dx: number,
+  dz: number,
+  steps: number,
+  vfx: (effect: vfx) => void,
+  cause: string | null = null
+): void {
+  for (let step = 0; step < steps; step++) {
+    const chain: string[] = [];
+    let cursor = id;
+
+    while (true) {
+      const ent: any = getLiveEnt(cursor);
+      if (!ent || ent.isDead) break;
+
+      chain.push(cursor);
+
+      const nx = ent.position.x + dx;
+      const ny = ent.position.y;
+      const nz = ent.position.z + dz;
+      const nextEnt: any = checkEnt(nx, ny, nz);
+
+      if (nextEnt && !nextEnt.isDead) cursor = nextEnt.id;
+      else break;
+    }
+
+    if (chain.length === 0) return;
+
+    const lastEnt: any = getLiveEnt(chain[chain.length - 1]);
+    if (!lastEnt) return;
+
+    const endX = lastEnt.position.x + dx;
+    const endY = lastEnt.position.y;
+    const endZ = lastEnt.position.z + dz;
+
+    const wallAhead =
+      isOOB(endX, endY, endZ) ||
+      !!gameState.tiles[`${endX},${endY},${endZ}`] ||
+      !!checkEnt(endX, endY, endZ);
+
+    if (wallAhead) {
+      chain.forEach((eid) => applyCollisionDamage(eid, vfx));
+      return;
+    }
+
+    for (let i = chain.length - 1; i >= 0; i--) {
+      const eid = chain[i];
+      const ent: any = getLiveEnt(eid);
+      if (!ent) continue;
+
+      const tx = ent.position.x + dx;
+      let ty = ent.position.y;
+      const tz = ent.position.z + dz;
+
+      if (!hasFloor(tx, ty, tz)) {
+        let fallY = ty - 1;
+        while (fallY > 0 && !hasFloor(tx, fallY, tz)) fallY--;
+        const fallDmg = ty - fallY;
+        ty = fallY;
+
+        if (fallDmg > 0) {
+          ent.hp = Math.max(0, ent.hp - fallDmg);
+          if (ent.hp === 0) {
+            killEntity(ent);
+          }
+          vfx({
+            vfxid: `fall_${Date.now()}_${eid}`,
+            eid,
+            type: 'damage',
+            amount: fallDmg,
+          });
+        }
+      }
+
+      addHistory(eid, 'mov', `${tx},${ty - 1},${tz}`, 0, null, cause);
+      ent.position = { x: tx, y: ty, z: tz };
+    }
+  }
+}
+
+export function applyDisplace(
+  actioner: string,
+  targetId: string,
+  ab: abilityInfo,
+  cause: string | null,
+  vfx: (effect: vfx) => void
+): void {
+  if (!ab.effect || ab.effect[0] !== 'move') return;
+
+  const direction = ab.effect[1] as 'away' | 'towards';
+  const steps = ab.effect[2] ? Number(ab.effect[2]) : 1;
+
+  const attacker: any = getLiveEnt(actioner);
+  const target: any = getLiveEnt(targetId);
+  if (!attacker || !target || target.isDead) return;
+
+  const { dx, dz } = getDisplaceDir(attacker.position, target.position, direction);
+  if (dx === 0 && dz === 0) return;
+
+  resolveDisplace(targetId, dx, dz, steps, vfx, cause);
+}
+
 
 export function manageUndo(action: historyAction, deleted: Set<string>) {
   const who = action.who;
@@ -377,13 +545,22 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
   }
 }
 
-export function takeAb(id: string, ab: abilityInfo, roll: number, vfx: (effect) => void) {
+export function calcDmg(actioner: string, id: string, ab: abilityInfo, roll: number) {
   const target = gameState.enemies[id] || gameState.players[id];
-  if (!target)
-    return console.log('target not found in takeAb');
-  // TODO: send signal with the damage dealt to make a html of how much it was done
-  const eff: vfx = { vfxid: `damage_${Date.now()}`, eid: id, type: 'damage', amount: null };
+  const attacker = gameState.enemies[actioner] || gameState.players[actioner];
+  if (!target || !attacker)
+    return console.log('target not found in calcDmg');
+  // INFO: base
   let dmg = (typeof ab.dmg === 'function' ? ab.dmg(roll) : ab.dmg);
+  if (attacker.status === 'boost') {
+    dmg += Math.ceil(Math.random() * attacker.statusTurns);
+    attacker.status = null;
+    attacker.statusTurns = 0;
+  }
+  const trueArmor = target.armor
+    - (target.status === 'oxidation' ? target.statusTurns : 0)
+    + (target.status === 'shield' ? target.statusTurns : 0);
+  dmg = Math.max(dmg - trueArmor, 0);
   target.hp -= dmg;
   if (target.hp <= 0) {
     dmg += target.hp;
@@ -392,38 +569,120 @@ export function takeAb(id: string, ab: abilityInfo, roll: number, vfx: (effect) 
     target.dice = [];
     target.isDead = true;
   }
-  eff.amount = dmg;
+  return dmg;
+}
+
+export function takeAb(
+  actioner: string,
+  id: string,
+  ab: abilityInfo,
+  roll: number,
+  vfx: (effect) => void,
+  cause: string | null = null
+) {
+  const target = gameState.enemies[id] || gameState.players[id];
+  if (!target)
+    return console.log('target not found in takeAb');
+
+  const eff: vfx = {
+    vfxid: `damage_${Date.now()}`,
+    eid: id,
+    type: 'damage',
+    amount: null
+  };
+
+  eff.amount = calcDmg(actioner, id, ab, roll) ?? 0;
   vfx(eff);
+
+  if (ab.effect && ab.effect[STATUS_TYPE] === 'move' && !target.isDead) {
+    applyDisplace(actioner, id, ab, cause, vfx);
+    return;
+  }
+
   const hadStatus = Boolean(target.status);
-  if (ab.effect && ab.effect[STATUS_TYPE] && !target.status) {
+  if (ab.effect && ab.effect[STATUS_TYPE] && (!target.status || ab.effect[STATUS_TYPE] === target.status)) {
     target.status = ab.effect[STATUS_TYPE];
     vfx({ vfxid: `status_${Date.now()}`, eid: id, type: target.status, amount: null });
     if (target.status !== 'push' && !hadStatus) {
-      target.statusTurns = Number(ab.effect[N_TURNS]);
+      target.statusTurns += Number(ab.effect[N_TURNS]);
     }
   }
 }
 
-export function executeAbility(who: string, which: string, target: string, dice: number) {
+// export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: number, vfx: (effect) => void) {
+//   const target = gameState.enemies[id] || gameState.players[id];
+//   if (!target)
+//     return console.log('target not found in takeAb');
+//   // INFO: send signal with the damage dealt to make a html of how much it was done
+//   const eff: vfx = { vfxid: `damage_${Date.now()}`, eid: id, type: 'damage', amount: null };
+//   eff.amount = calcDmg(actioner, id, ab, roll) ?? 0;
+//   vfx(eff);
+//   const hadStatus = Boolean(target.status);
+//   if (ab.effect && ab.effect[STATUS_TYPE] && (!target.status || ab.effect[STATUS_TYPE] === target.status)) {
+//     target.status = ab.effect[STATUS_TYPE];
+//     vfx({ vfxid: `status_${Date.now()}`, eid: id, type: target.status, amount: null });
+//     if (target.status !== 'push' && !hadStatus) {
+//       target.statusTurns += Number(ab.effect[N_TURNS]);
+//     }
+//   }
+// }
+
+export function executeAbility(
+  who: string,
+  which: string,
+  target: string,
+  dice: number,
+  vfx: (effect) => void,
+  cause: string | null = null
+) {
   if (!which || !who)
     return;
+
   const ent = gameState.players[who] || gameState.enemies[who] || gameState.clones[who];
   if (!ent)
     throw new Error('No entity found!');
+
   const ab = getAbility(which);
   const dvalue = dice;
   if (!dvalue)
     throw new Error('No dice value found when executing ability!');
+
   const roll = Math.ceil(Math.random() * dvalue);
-  if (!ab.cond(roll)) return;
+
+  if (!ab.cond(roll))
+    return;
+
   let targets: string[] = [];
   if (!target.includes(','))
     targets = [target];
   if (ab.AoE)
     targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
-  targets.forEach((id) => takeAb(id, ab, roll));
+
+  targets.forEach((id) => takeAb(who, id, ab, roll, vfx, cause));
 }
 
+// export function executeAbility(who: string, which: string, target: string, dice: number, vfx: (effect) => void) {
+//   if (!which || !who)
+//     return;
+//   const ent = gameState.players[who] || gameState.enemies[who] || gameState.clones[who];
+//   if (!ent)
+//     throw new Error('No entity found!');
+//   const ab = getAbility(which);
+//   const dvalue = dice;
+//   if (!dvalue)
+//     throw new Error('No dice value found when executing ability!');
+//   const roll = Math.ceil(Math.random() * dvalue);
+//   // INFO: if miss, ignore buffs
+//   if (!ab.cond(roll))
+//     return;
+//   let targets: string[] = [];
+//   if (!target.includes(','))
+//     targets = [target];
+//   if (ab.AoE)
+//     targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
+//   targets.forEach((id) => takeAb(who, id, ab, roll, vfx));
+// }
+//
 export function restructureHistory(id: string, deleted: Set<string>, until: number = -1) {
   if (until === -1)
     until = gameState.history.findIndex(action => action.who === id);
@@ -819,19 +1078,17 @@ export function getAbility(name: string) {
         type: "cross",
         cond: (x: number) => (x % 2) !== 0,
         range: 1,
-        dmg: 1,
+        dmg: (res: number) => Math.floor(res / 2),
         cd: 0,
         self: false,
-        effect: ["bleed", "1"],
       }
     case "Dagger Throw":
       return {
         name: name,
         type: "cross",
-        effect: ["bleed", "1"],
         cond: (x: number) => x > 3,
         range: 3,
-        dmg: 1,
+        dmg: 2,
         cd: 0,
         self: false,
       }
@@ -850,7 +1107,7 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["restrain", "2"],
+        effect: ["restrain", '1'],
         cond: (x: number) => x > 2,
         range: 3,
         dmg: 1,
@@ -871,12 +1128,12 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["defend", "2"],
+        effect: ["shield", '1'],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
         cd: 0,
-        self: false,
+        self: true,
       }
     case "Shield Bash":
       return {
@@ -950,7 +1207,7 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "cross",
-        effect: ["bonus dice", "1"],
+        effect: ["boost", '2'],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
@@ -965,7 +1222,7 @@ export function getAbility(name: string) {
         cond: (x: number) => x > 2,
         range: 3,
         dmg: 1,
-        cd: 0,
+        cd: 1,
         self: false,
       }
     case "Bombastic Flask":
@@ -976,7 +1233,7 @@ export function getAbility(name: string) {
         cond: (x: number) => x > 2,
         range: 2,
         dmg: (res: number) => Math.floor(res / 2) - 2,
-        cd: 0,
+        cd: 1,
         self: false,
       }
     case "Oxidation":
@@ -995,7 +1252,7 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["oxidation", "2"],
+        effect: [],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
@@ -1006,7 +1263,6 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["oxidation", "2"],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
@@ -1039,7 +1295,6 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["oxidation", "2"],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
@@ -1050,7 +1305,6 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["oxidation", "2"],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
@@ -1061,7 +1315,6 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["oxidation", "2"],
         cond: (x: number) => x > 2,
         range: 2,
         dmg: 0,
@@ -1071,7 +1324,7 @@ export function getAbility(name: string) {
     case "Atomic Bomb":
       return {
         name: name,
-        type: "circle",
+        type: "sphere",
         effect: ["oxidation", "2"],
         cond: (x: number) => x > 2,
         range: 2,

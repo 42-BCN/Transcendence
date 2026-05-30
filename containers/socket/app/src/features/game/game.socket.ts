@@ -66,8 +66,9 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       socket.on('game:client:showMoveRange', (diceValue: number) => {
         if (!gameState.clients[role] || !role || !gameState.clients[role].selectedEnt)
           return;
-        if (gameState.clients[role].selectedEnt.startsWith('clone_')
-          && gameState.clones[`clone_${role}`].hasMoved === true)
+        const selectedEnt = gameState.clients[role].selectedEnt;
+        const playerClone = gameState.clones?.[`clone_${role}`];
+        if (selectedEnt?.startsWith('clone_') && playerClone?.hasMoved === true)
           return (console.log(role, 'has already moved'));
         console.log('Received move range event with dice:',
           diceValue, 'for character', role);

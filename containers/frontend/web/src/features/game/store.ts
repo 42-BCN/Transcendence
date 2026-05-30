@@ -277,9 +277,9 @@ export const useGame = create<gameState>()((set, get) => ({
 
       set((s) => ({
         vfx: {
-          ...s.pendingVfx,
+          ...s.vfx,
           [effect.vfxid]: {
-            id: effect.vfxid,
+            vfxid: effect.vfxid,
             eid: effect.eid,
             type: effect.type,
             amount: effect.amount,
@@ -289,12 +289,11 @@ export const useGame = create<gameState>()((set, get) => ({
       }));
       setTimeout(() => {
         set((s) => {
-          const next = { ...s.pendingVfx };
+          const next = { ...s.vfx };
           delete next[effect.vfxid];
-          return { pendingVfx: next };
+          return { vfx: next };
         });
       }, 1400);
-
     }
 
     const handleSync = (state: localGameState) => {
@@ -337,6 +336,7 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:init');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
+    gameSocket.off('game:server:vfx');
     gameSocket.disconnect();
   },
 }));
