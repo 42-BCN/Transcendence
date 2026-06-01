@@ -11,6 +11,8 @@ import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { JoinGameRoomForm } from './rooms/join.form';
 
+import { gameRoomSocket } from '@/lib/sockets/socket';
+
 const s = 0.975;
 
 function AbButtons() {
@@ -421,6 +423,10 @@ function name(phase: string) {
   }
 }
 
+//import { gameRoomSocket } from '@/lib/sockets/socket';
+
+gameRoomSocket.on();
+
 export function Game() {
   const phase = useGame((state) => state.phase);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
@@ -431,6 +437,8 @@ export function Game() {
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
+  
+  const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("finding a room.");
 
   useEffect(() => {
     // if (!initRef.current) {
@@ -457,7 +465,7 @@ export function Game() {
   return !mapBounds || mapBounds.width === 0 ? (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
-        <JoinGameRoomForm />
+        <p>{gameRoomsDebugInfo}</p>
       </div>
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center">
@@ -470,7 +478,7 @@ export function Game() {
   ) : (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
-        <JoinGameRoomForm />
+        <p>{gameRoomsDebugInfo}</p>
       </div>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}

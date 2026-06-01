@@ -58,6 +58,7 @@ function createSocketUrl(pathname: string): string {
 
 const robotsSocketUrl = createSocketUrl('/robots');
 const chatSocketUrl = createSocketUrl('/chat');
+const gameRoomSocketUrl = createSocketUrl('/game-room');
 const gameSocketUrl = createSocketUrl('/game');
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
@@ -117,3 +118,14 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
     auth: {},
   },
 );
+
+export const gameRoomSocket: Socket = io(
+  gameRoomSocketUrl,
+  {
+    autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+    auth: {},
+  },
+);
+

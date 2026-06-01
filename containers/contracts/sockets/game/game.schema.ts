@@ -146,3 +146,4 @@ export type gameRoomState = {
 	isGameRoomFull: boolean;
 	teammates: {userId: string, role?: string}[];
 }
+
