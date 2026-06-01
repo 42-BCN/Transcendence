@@ -59,14 +59,6 @@ async function dispatchSignupVerificationMail(user: AuthUser, locale: EmailLocal
       reason: 'mail_not_configured',
       userId: user.id,
     });
-    
-    // DEV WORKAROUND: Generate the token and print the link to the console
-    const verificationToken = await createEmailVerificationToken(user.id);
-    const verifyUrl = `${process.env.APP_BASE_URL?.trim() || 'https://localhost:8443'}/verify-email?token=${encodeURIComponent(verificationToken)}`;
-    console.log('\n\n========================================================');
-    console.log(`✉️  [DEV MODE] Email skipped. Simulate email sent to ${user.email}`);
-    console.log(`🔗 Verification URL: ${verifyUrl}`);
-    console.log('========================================================\n\n');
     return;
   }
 
