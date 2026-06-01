@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Html, MapControls, OrthographicCamera } from '@react-three/drei';
+import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
@@ -10,15 +10,40 @@ import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { useShallow } from 'zustand/react/shallow';
+import { Crawler } from './meshes/Crawler.jsx';
+import { Drone } from './meshes/Drone.jsx';
+import { Gunner } from './meshes/Gunner.jsx';
+import { Fighter } from './meshes/Fighter.jsx';
+import { Generator } from './meshes/Generator.jsx';
+import { Mage } from './meshes/Mage.jsx';
+import { Alchemist } from './meshes/Alchemist.jsx';
+import { Assassin } from './meshes/Assassin.jsx';
+import { Paladin } from './meshes/Paladin.jsx';
 
 const s = 0.975;
 
+// ─── Replace the entire FloatingVfx function ──────────────────────────────────
 function FloatingVfx({ entityId }: { entityId: string }) {
   const entries = useGame(
-    useShallow((s) =>
-      Object.values(s.vfx).filter((v) => v.eid === entityId)
-    )
+    useShallow((s) => Object.values(s.vfx).filter((v) => v.eid === entityId))
   );
+
+  // Inject the keyframe globally once so the animation always works
+  useEffect(() => {
+    const STYLE_ID = 'float-vfx-keyframes';
+    if (!document.getElementById(STYLE_ID)) {
+      const style = document.createElement('style');
+      style.id = STYLE_ID;
+      style.textContent = `
+        @keyframes floatUp {
+          0%   { opacity: 1; transform: translateY(0px);   }
+          70%  { opacity: 1;                               }
+          100% { opacity: 0; transform: translateY(-40px); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
 
   if (entries.length === 0) return null;
 
@@ -26,19 +51,21 @@ function FloatingVfx({ entityId }: { entityId: string }) {
     <>
       {entries.map((v) => (
         <Html key={v.vfxid} position={[0, 1.2, 0]} center style={{ pointerEvents: 'none' }}>
-          <span style={{
-            display: 'block',
-            animation: 'floatUp 1.4s ease-out forwards',
-            fontWeight: 'bold',
-            fontSize: 18,
-            whiteSpace: 'nowrap',
-            textShadow: '0 0 4px #000',
-            color:
-              v.type === 'hurt' ? '#ff4444' :
-                v.type === 'effect' ? '#44ff88' :
-                  v.type === 'doom' ? '#ff8800' :
-                    '#ffcc00',
-          }}>
+          <span
+            style={{
+              display: 'block',
+              animation: 'floatUp 1.4s ease-out forwards',
+              fontWeight: 'bold',
+              fontSize: 18,
+              whiteSpace: 'nowrap',
+              textShadow: '0 0 4px #000',
+              color:
+                v.type === 'hurt' ? '#ff4444' :
+                  v.type === 'effect' ? '#44ff88' :
+                    v.type === 'doom' ? '#ff8800' :
+                      '#ffcc00',
+            }}
+          >
             {v.label}
           </span>
         </Html>
@@ -155,7 +182,9 @@ function Reset() {
   const history = useGame((state) => state.history);
   const resetHistory = useGame((state) => state.resetHistory);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
-  if (!history.some((h) => h.who === assignedCharacter))
+  // Exclude "forcedMov" entries: those belong to another player's ability and
+  // should not make the Reset button appear for the displaced player.
+  if (!history.some((h) => h.who === assignedCharacter && h.type !== 'forcedMov'))
     return null;
   return (
     <Button
@@ -194,7 +223,7 @@ function EndPlan() {
 function HUD() {
   const t = useTranslations('features.game');
   const typeEnt = useGame((state) => state.typeEnt);
-  const canSelect = useGame((state) => state.selectedEnt);
+  const canSelect = useGame((state) => state.canSelect);
   const ent = useGame((state) => state.getSel());
   return !ent ? null : (
     <>
@@ -221,6 +250,7 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   const isHighlighted = useGame((state) => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id]);
+  const addHistoryAbility = useGame((state) => state.addHistoryAbility);
   const [isHovered, setHover] = useState(false);
   let color = 'orange';
   if (id.split(',')[1] === '0') color = 'green';
@@ -258,12 +288,38 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
+export function getMesh(id: string) {
+  const name = id.split('_')[0].toLowerCase();
+  switch (name) {
+    case 'crawler':
+      return Crawler;
+    case 'drone':
+      return Drone;
+    case 'fighter':
+      return Fighter;
+    case 'generator':
+      return Generator;
+    case 'gunner':
+      return Gunner;
+    case 'alchemist':
+      return Alchemist;
+    case 'paladin':
+      return Paladin;
+    case 'mage':
+      return Mage;
+    case 'assassin':
+      return Assassin;
+  }
+}
 function Enemy({ id, pos }: { id: string; pos: pos }) {
   const eRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
   const selected = useGame((state) => state.selectedEnt);
+  const selectedDice = useGame((state) => state.selectedDice);
+  const selectedAb = useGame((state) => state.selectedAb);
   const canSelect = useGame((state) => state.canSelect);
+  const addHistoryAbility = useGame((state) => state.addHistoryAbility);
   const isTarget = useGame((state) => state.selectables[id]);
   const [isHovered, setHover] = useState(false);
   let color = selected === id ? 'lightpink' : 'violet';
@@ -271,30 +327,30 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
   else if (isHovered) color = 'lightgray';
   if (color === 'red' && isHovered) color = 'lightpink';
 
+  const Model = getMesh(id);
   return (
-    <mesh
-      position={[pos.x, pos.y, pos.z]}
-      ref={eRef}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHover(true);
-      }}
-      onPointerOut={(event) => {
-        event.stopPropagation();
-        setHover(false);
-      }}
-      onClick={(event) => {
-        if (phase !== 'PLAN') return;
-        event.stopPropagation();
-        if (canSelect) selectEntity(id);
-        else if (isTarget && selected && selectedDice && selectedAb)
-          addHistoryAbility(id);
-      }}
-    >
+    <group position={[pos.x, pos.y, pos.z]}>
+      <Model
+        position={[0, 0, 0]}
+        ref={eRef}
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          setHover(true);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
+          setHover(false);
+        }}
+        onClick={(event) => {
+          if (phase !== 'PLAN') return;
+          event.stopPropagation();
+          if (canSelect) selectEntity(id);
+          else if (isTarget && selected && selectedDice && selectedAb)
+            addHistoryAbility(id);
+        }}
+      />
       <FloatingVfx entityId={id} />
-      <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    </group>
   );
 }
 
@@ -315,8 +371,10 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
   else if (isHovered) color = 'lightblue';
   if (color === 'pink' && isHovered) color = 'lightpink';
 
+  const meshid = id.replace('clone_', '')
+  const Model = getMesh(meshid);
   return (
-    <mesh
+    <Model
       position={[pos.x, pos.y, pos.z]}
       ref={pRef}
       onPointerOver={(event) => {
@@ -334,10 +392,7 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
         else if (isTarget && selected && selectedDice && selectedAb)
           addHistoryAbility(id);
       }}
-    >
-      <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    />
   );
 }
 
@@ -356,30 +411,32 @@ function Player({ id, pos }: { id: string; pos: pos }) {
   else if (isHovered) color = 'lightblue';
   if (color === 'pink' && isHovered) color = 'lightpink';
 
+
+  const Model = getMesh(id);
   return (
-    <mesh
-      position={[pos.x, pos.y, pos.z]}
-      ref={pRef}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHover(true);
-      }}
-      onPointerOut={(event) => {
-        event.stopPropagation();
-        setHover(false);
-      }}
-      onClick={(event) => {
-        if (phase !== 'PLAN') return;
-        event.stopPropagation();
-        if (canSelect) selectEntity(id);
-        else if (isTarget)
-          addHistoryAbility(id);
-      }}
-    >
+    <group position={[pos.x, pos.y, pos.z]}>
+      <Model
+        position={[0, 0, 0]}
+        ref={pRef}
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          setHover(true);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
+          setHover(false);
+        }}
+        onClick={(event) => {
+          if (phase !== 'PLAN') return;
+          event.stopPropagation();
+          if (canSelect) selectEntity(id);
+          else if (isTarget)
+            addHistoryAbility(id);
+        }}
+      />
       <FloatingVfx entityId={id} />
-      <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    </group>
+
   );
 }
 
@@ -393,6 +450,7 @@ function Scene() {
     <>
       <ambientLight intensity={Math.PI / 4} />
       <pointLight position={[7, 6, 7]} decay={0} intensity={2.5} />
+      <Environment preset="city" />
       <OrthographicCamera makeDefault position={[5, 5, 5]} zoom={50} near={-50} far={100} />
       <MapControls makeDefault target={[0, 0, 0]} maxPolarAngle={Math.PI / 2} minPolarAngle={0} />
       {Object.keys(tiles).map((t) => {

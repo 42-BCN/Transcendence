@@ -80,17 +80,18 @@ export type vfx = {
 }
 
 export type serverGameState = {
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE',
-  turn: number,
-  doom: number,
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE';
+  turn: number;
+  doom: number;
   players: Record<string, entity>;
   ghosts: Record<string, entity>;
   clones: Record<string, entity>;
   enemies: Record<string, entity>;
   tiles: Record<string, boolean>;
-  clients: Record<string, clientGameState>
+  clients: Record<string, clientGameState>;
   history: historyAction[];
-  mapBounds: mapInfo,
+  mapBounds: mapInfo;
+  forcedMoveOrigins: Record<string, pos>;
 }
 
 export type clientGameState = {

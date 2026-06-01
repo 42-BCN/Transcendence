@@ -18,8 +18,8 @@ wwowoowoww
 wooowwooow
 ooooooooow
 oooooooooo
-oooowwoooo
-ooooooooow
+ocoowwodoo
+oocooodoow
 woooooooow
 wwooooooww
 wwwapmlwww,

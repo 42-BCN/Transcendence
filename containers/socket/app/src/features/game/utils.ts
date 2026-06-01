@@ -8,9 +8,12 @@ const OK = 0;
 const FALL = 1;
 const COLLISION = 2;
 
+let _historySeq = 0;
+
 export const gameState: serverGameState = {
   phase: 'PLAN',
   turn: 1,
+  doom: 0,
   players: {},
   ghosts: {},
   clones: {},
@@ -19,6 +22,7 @@ export const gameState: serverGameState = {
   clients: {},
   history: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
+  forcedMoveOrigins: {}
 };
 
 export function initClientGameState(id: string) {
@@ -78,8 +82,49 @@ export async function nextPhase(sync: () => void, vfx: (effect) => void) {
   }
 }
 
+async function executeForcedMov(action: historyAction, vfx: (effect) => void, sync: () => void) {
+  const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+  const ent: any = gameState.players[action.who] || gameState.enemies[action.who];
+  if (!ent || ent.isDead)
+    return;
+  const [tx, ty, tz] = action.target.split(',').map(Number);
+  const destPos = { x: tx, y: ty + 1, z: tz };
+  const fromPos = { ...ent.position };
+  if (fromPos.x === destPos.x && fromPos.y === destPos.y && fromPos.z === destPos.z)
+    return;
+  const destBlocked = isOOB(destPos.x, destPos.y, destPos.z) ||
+    !!gameState.tiles[`${destPos.x},${destPos.y},${destPos.z}`] ||
+    !!checkEntnc(action.who, destPos.x, destPos.y, destPos.z);
+  if (destBlocked) {
+    applyCollisionDamage(action.who, vfx);
+    sync();
+    await sleep(300);
+    return;
+  }
+  if (destPos.y < fromPos.y) {
+    const fallDmg = fromPos.y - destPos.y;
+    ent.hp = Math.max(0, ent.hp - fallDmg);
+    if (ent.hp === 0) killEntity(ent);
+    vfx({
+      vfxid: `fall_${Date.now()}_${ent.id}`,
+      eid: ent.id,
+      type: 'damage',
+      amount: fallDmg,
+    });
+  }
+  ent.position = { ...destPos };
+  sync();
+  await sleep(300);
+}
+
 export async function executionPhase(sync: () => void, vfx: (effect) => void) {
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+  for (const entityId in gameState.forcedMoveOrigins) {
+    const ent: any = gameState.players[entityId] ||
+      gameState.enemies[entityId] || gameState.clones[entityId];
+    if (ent) ent.position = { ...gameState.forcedMoveOrigins[entityId] };
+  }
+  gameState.forcedMoveOrigins = {};
   for (const id in gameState.ghosts) {
     gameState.players[id] = {
       ...gameState.ghosts[id],
@@ -91,19 +136,23 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
   }
   gameState.ghosts = {};
   gameState.clones = {};
-  for (const action of gameState.history) {
-    if (action.type === "ability" && action.abName) {
-      // executeAbility(action.who, action.abName, action.target, action.dice, vfx);
+  const historySnapshot = [...gameState.history];
+  for (const action of historySnapshot) {
+    if (action.type === 'ability' && action.abName) {
       executeAbility(action.who, action.abName, action.target, action.dice, vfx, action.id);
       sync();
       await sleep(400);
+    }
+    else if (action.type === 'mov') {
+      await moveTo(action.who, action.target, sync);
+    }
+    else if (action.type === 'forcedMov') {   // ← was silently skipped before
+      await executeForcedMov(action, vfx, sync);
     }
     if (Object.values(gameState.enemies).some(e => e.id === 'generator' && e.isDead)) {
       gameState.phase = 'WIN';
       return;
     }
-    else if (action.type === 'mov')
-      await moveTo(action.who, action.target, sync);
   }
   phaseClean();
 }
@@ -147,7 +196,7 @@ export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
       const newPath = Astar(enemy.position, player.position);
       if (newPath === undefined)
         continue;
-      const newDist = newPath.length - 1; //remove the player position
+      const newDist = newPath.length - 1;
       if (newDist < closestDistance) {
         closestDistance = newDist;
         path = newPath;
@@ -170,7 +219,7 @@ export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
     }
     enemy.dice.splice(enemy.dice.indexOf(reach), 1);
     enemy.usedDice.push(reach);
-    path.pop(); // don't step over the player
+    path.pop(); // INFO: remove so it does not step over the player
     const steps = Math.min(path.length - 1, reach);
     for (let i = 1; i <= steps; ++i) {
       await sleep(300);
@@ -180,7 +229,6 @@ export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
       sync();
     }
     if (reaches) {
-      // INFO: move Selection
       const idx = Math.floor(Math.random() * enemy.abilities.length);
       executeAbility(enemy.id, enemy.abilities[idx], targetId, Math.max(...enemy.dice), vfx)
     }
@@ -194,7 +242,7 @@ export async function endTurn(sync: () => void, vfx: (effect) => void) {
   const entities = { ...gameState.players, ...gameState.enemies }
   for (const ent of Object.values(entities)) {
     if (!ent)
-      return console.log('no ent in end turn');
+      continue;
     updateCooldowns(ent.id);
     const status = ent.status;
     if (status) {
@@ -224,6 +272,7 @@ export async function endTurn(sync: () => void, vfx: (effect) => void) {
     }
   };
   gameState.turn = gameState.turn + 1;
+  gameState.forcedMoveOrigins = {};
   gameState.phase = 'PLAN';
   gameState.history = [];
   gameState.clones = {};
@@ -285,43 +334,71 @@ export async function moveTo(entId: string, tileId: string, sync: () => void) {
   }
 }
 
-
-export function addDisplaceHistory(cause: string, id: string, origin: string, pos: pos, many: number) {
-  const [ox, oy, oz] = origin.split(',').map(Number);
-  const [dx, dy, dz] = [Math.sign(pos.x - ox),
-  Math.sign(pos.y - oy), Math.sign(pos.z - oz)];
-  let x = pos.x, y = pos.y, z = pos.z;
-  let situation = OK;
-  let traveled = 0;
-  for (let n = 1; n <= many; ++n) {
-    const nx = x + dx;
-    const nz = z + dz;
-
-    if (isOOB(nx, y, nz) || isBlockednc(id, nx, y, nz)) {
-      situation = COLLISION;
-      break;
+export function addDisplaceHistory(
+  cause: string,
+  id: string,
+  origin: string,
+  pos: pos,
+  many: number
+): void {
+  const [ox, , oz] = origin.split(',').map(Number);
+  const dx = Math.sign(pos.x - ox);
+  const dz = Math.sign(pos.z - oz);
+  if (dx === 0 && dz === 0)
+    return;
+  for (let step = 0; step < many; step++) {
+    const chain: string[] = [];
+    let cursor = id;
+    while (true) {
+      const ent =
+        gameState.players[cursor] ??
+        gameState.clones[`clone_${cursor}`] ??
+        gameState.enemies[cursor];
+      if (!ent || ent.isDead)
+        break;
+      chain.push(cursor);
+      const nx = ent.position.x + dx;
+      const nz = ent.position.z + dz;
+      const nextEnt = checkEnt(nx, ent.position.y, nz);
+      if (nextEnt && !nextEnt.isDead)
+        cursor = nextEnt.id.replace('clone_', '');
+      else
+        break;
     }
-    else if (!hasFloor(nx, y, nz)) {
-      situation = FALL;
-      x = nx; z = nz;
-      traveled++;
-      break;
+    if (chain.length === 0)
+      return;
+    const lastId = chain[chain.length - 1];
+    const lastEnt = gameState.players[lastId] ??
+      gameState.clones[`clone_${lastId}`] ??
+      gameState.enemies[lastId];
+    if (!lastEnt)
+      return;
+    const endX = lastEnt.position.x + dx;
+    const endY = lastEnt.position.y;
+    const endZ = lastEnt.position.z + dz;
+    if (isOOB(endX, endY, endZ) || !!gameState.tiles[`${endX},${endY},${endZ}`])
+      return;
+    for (let i = chain.length - 1; i >= 0; i--) {
+      const eid = chain[i];
+      const ent =
+        gameState.players[eid] ??
+        gameState.clones[`clone_${eid}`] ??
+        gameState.enemies[eid];
+      if (!ent)
+        continue;
+      const tx = ent.position.x + dx;
+      let ty = ent.position.y;
+      const tz = ent.position.z + dz;
+      if (!hasFloor(tx, ty, tz)) {
+        let fallY = ty - 1;
+        while (fallY > 0 && !hasFloor(tx, fallY, tz)) fallY--;
+        if (fallY < 0)
+          return;
+        ty = fallY;
+      }
+      moveClone(eid, `${tx},${ty - 1},${tz}`, 0, cause);
     }
-
-    x = nx; z = nz;
-    traveled++;
   }
-  if (situation === FALL) {
-    let fallY = y - 1;
-    while (fallY > 0 && !hasFloor(x, fallY, z))
-      fallY--;
-    const fallDamage = (y - fallY);
-    // applyFallDamage(id, fallDamage);
-    y = fallY;
-  }
-  while (!hasFloor(x, --y, z));
-  // WARN: Move clone will cause some problems due to pathfinding
-  moveClone(id, `${x},${y},${z}`, 0, cause);
 }
 
 function getLiveEnt(id: string) {
@@ -347,7 +424,6 @@ function applyCollisionDamage(id: string, vfx: (effect: vfx) => void) {
   if (ent.hp === 0) {
     killEntity(ent);
   }
-
   vfx({
     vfxid: `col_${Date.now()}_${id}`,
     eid: id,
@@ -356,80 +432,59 @@ function applyCollisionDamage(id: string, vfx: (effect: vfx) => void) {
   });
 }
 
-function getDisplaceDir(
-  attackerPos: pos,
-  targetPos: pos,
-  direction: 'away' | 'towards'
-): { dx: number; dz: number } {
+function getDisplaceDir(attackerPos: pos, targetPos: pos, direction: 'away' | 'towards') {
   const rawDx = Math.sign(targetPos.x - attackerPos.x);
   const rawDz = Math.sign(targetPos.z - attackerPos.z);
-
   return direction === 'towards'
     ? { dx: -rawDx, dz: -rawDz }
     : { dx: rawDx, dz: rawDz };
 }
 
-export function resolveDisplace(
-  id: string,
-  dx: number,
-  dz: number,
-  steps: number,
-  vfx: (effect: vfx) => void,
-  cause: string | null = null
-): void {
+export function resolveDisplace(id: string, dx: number, dz: number, steps: number, vfx: (effect: vfx) => void, cause: string | null = null) {
   for (let step = 0; step < steps; step++) {
     const chain: string[] = [];
     let cursor = id;
-
     while (true) {
       const ent: any = getLiveEnt(cursor);
-      if (!ent || ent.isDead) break;
-
+      if (!ent || ent.isDead)
+        break;
       chain.push(cursor);
-
       const nx = ent.position.x + dx;
       const ny = ent.position.y;
       const nz = ent.position.z + dz;
       const nextEnt: any = checkEnt(nx, ny, nz);
-
       if (nextEnt && !nextEnt.isDead) cursor = nextEnt.id;
-      else break;
+      else
+        break;
     }
-
-    if (chain.length === 0) return;
-
+    if (chain.length === 0)
+      return;
     const lastEnt: any = getLiveEnt(chain[chain.length - 1]);
-    if (!lastEnt) return;
-
+    if (!lastEnt)
+      return;
     const endX = lastEnt.position.x + dx;
     const endY = lastEnt.position.y;
     const endZ = lastEnt.position.z + dz;
-
-    const wallAhead =
-      isOOB(endX, endY, endZ) ||
+    const wallAhead = isOOB(endX, endY, endZ) ||
       !!gameState.tiles[`${endX},${endY},${endZ}`] ||
       !!checkEnt(endX, endY, endZ);
-
     if (wallAhead) {
       chain.forEach((eid) => applyCollisionDamage(eid, vfx));
       return;
     }
-
     for (let i = chain.length - 1; i >= 0; i--) {
       const eid = chain[i];
       const ent: any = getLiveEnt(eid);
-      if (!ent) continue;
-
+      if (!ent)
+        continue;
       const tx = ent.position.x + dx;
       let ty = ent.position.y;
       const tz = ent.position.z + dz;
-
       if (!hasFloor(tx, ty, tz)) {
         let fallY = ty - 1;
         while (fallY > 0 && !hasFloor(tx, fallY, tz)) fallY--;
         const fallDmg = ty - fallY;
         ty = fallY;
-
         if (fallDmg > 0) {
           ent.hp = Math.max(0, ent.hp - fallDmg);
           if (ent.hp === 0) {
@@ -443,35 +498,80 @@ export function resolveDisplace(
           });
         }
       }
-
       addHistory(eid, 'mov', `${tx},${ty - 1},${tz}`, 0, null, cause);
       ent.position = { x: tx, y: ty, z: tz };
     }
   }
 }
 
-export function applyDisplace(
-  actioner: string,
-  targetId: string,
-  ab: abilityInfo,
-  cause: string | null,
-  vfx: (effect: vfx) => void
-): void {
-  if (!ab.effect || ab.effect[0] !== 'move') return;
-
+function calcPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo,) {
+  if (!ab.effect || ab.effect[0] !== 'move')
+    return null;
   const direction = ab.effect[1] as 'away' | 'towards';
   const steps = ab.effect[2] ? Number(ab.effect[2]) : 1;
-
   const attacker: any = getLiveEnt(actioner);
   const target: any = getLiveEnt(targetId);
-  if (!attacker || !target || target.isDead) return;
-
+  if (!attacker || !target || target.isDead)
+    return null;
   const { dx, dz } = getDisplaceDir(attacker.position, target.position, direction);
-  if (dx === 0 && dz === 0) return;
-
-  resolveDisplace(targetId, dx, dz, steps, vfx, cause);
+  if (dx === 0 && dz === 0)
+    return null;
+  let x = target.position.x;
+  let y = target.position.y;
+  let z = target.position.z;
+  for (let step = 0; step < steps; step++) {
+    const nx = x + dx;
+    const nz = z + dz;
+    if (isOOB(nx, y, nz) || !!gameState.tiles[`${nx},${y},${nz}`])
+      break;
+    if (checkEntnc(targetId, nx, y, nz))
+      break;
+    let ny = y;
+    if (!hasFloor(nx, ny, nz)) {
+      let fallY = ny - 1;
+      while (fallY > 0 && !hasFloor(nx, fallY, nz)) fallY--;
+      ny = fallY;
+    }
+    x = nx; y = ny; z = nz;
+  }
+  return { x, y, z };
 }
 
+export function applyPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo, abilityActionId: string) {
+  const newPos = calcPlanningDisplace(actioner, targetId, ab);
+  if (!newPos)
+    return;
+  const entObj: any = gameState.players[targetId] || gameState.enemies[targetId] ||
+    gameState.clones[targetId] || gameState.clones[`clone_${targetId}`];
+  if (!entObj)
+    return;
+  if (newPos.x === entObj.position.x &&
+    newPos.y === entObj.position.y &&
+    newPos.z === entObj.position.z)
+    return;
+  const actualId: string = entObj.id;
+  if (!gameState.forcedMoveOrigins[actualId]) {
+    gameState.forcedMoveOrigins[actualId] = { ...entObj.position };
+  }
+  entObj.position = { ...newPos };
+  const who = targetId.startsWith("clone_") ? targetId.replace("clone_", "") : targetId;
+  addHistory(who, "forcedMov", `${newPos.x},${newPos.y - 1},${newPos.z}`, 0, null, abilityActionId);
+}
+
+export function applyDisplace(actioner: string, targetId: string, ab: abilityInfo, cause: string | null, vfx: (effect: vfx) => void) {
+  if (!ab.effect || ab.effect[0] !== 'move')
+    return;
+  const direction = ab.effect[1] as 'away' | 'towards';
+  const steps = ab.effect[2] ? Number(ab.effect[2]) : 1;
+  const attacker: any = getLiveEnt(actioner);
+  const target: any = getLiveEnt(targetId);
+  if (!attacker || !target || target.isDead)
+    return;
+  const { dx, dz } = getDisplaceDir(attacker.position, target.position, direction);
+  if (dx === 0 && dz === 0)
+    return;
+  resolveDisplace(targetId, dx, dz, steps, vfx, cause);
+}
 
 export function manageUndo(action: historyAction, deleted: Set<string>) {
   const who = action.who;
@@ -542,6 +642,20 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
       }
       break;
     }
+    case "forcedMov": {
+      const ent: any =
+        gameState.players[who] ||
+        gameState.clones[`clone_${who}`] ||
+        gameState.enemies[who];
+      if (!ent)
+        break;
+      const origin = gameState.forcedMoveOrigins[ent.id];
+      if (!origin)
+        break;
+      ent.position = { ...origin };
+      delete gameState.forcedMoveOrigins[ent.id];
+      break;
+    }
   }
 }
 
@@ -572,33 +686,24 @@ export function calcDmg(actioner: string, id: string, ab: abilityInfo, roll: num
   return dmg;
 }
 
-export function takeAb(
-  actioner: string,
-  id: string,
-  ab: abilityInfo,
-  roll: number,
-  vfx: (effect) => void,
-  cause: string | null = null
-) {
+export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: number, vfx: (effect) => void, cause: string | null = null) {
   const target = gameState.enemies[id] || gameState.players[id];
   if (!target)
     return console.log('target not found in takeAb');
-
   const eff: vfx = {
     vfxid: `damage_${Date.now()}`,
     eid: id,
     type: 'damage',
     amount: null
   };
-
   eff.amount = calcDmg(actioner, id, ab, roll) ?? 0;
   vfx(eff);
-
   if (ab.effect && ab.effect[STATUS_TYPE] === 'move' && !target.isDead) {
-    applyDisplace(actioner, id, ab, cause, vfx);
+    if (gameState.phase !== 'EXEC') {
+      applyDisplace(actioner, id, ab, cause, vfx);
+    }
     return;
   }
-
   const hadStatus = Boolean(target.status);
   if (ab.effect && ab.effect[STATUS_TYPE] && (!target.status || ab.effect[STATUS_TYPE] === target.status)) {
     target.status = ab.effect[STATUS_TYPE];
@@ -609,81 +714,7 @@ export function takeAb(
   }
 }
 
-// export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: number, vfx: (effect) => void) {
-//   const target = gameState.enemies[id] || gameState.players[id];
-//   if (!target)
-//     return console.log('target not found in takeAb');
-//   // INFO: send signal with the damage dealt to make a html of how much it was done
-//   const eff: vfx = { vfxid: `damage_${Date.now()}`, eid: id, type: 'damage', amount: null };
-//   eff.amount = calcDmg(actioner, id, ab, roll) ?? 0;
-//   vfx(eff);
-//   const hadStatus = Boolean(target.status);
-//   if (ab.effect && ab.effect[STATUS_TYPE] && (!target.status || ab.effect[STATUS_TYPE] === target.status)) {
-//     target.status = ab.effect[STATUS_TYPE];
-//     vfx({ vfxid: `status_${Date.now()}`, eid: id, type: target.status, amount: null });
-//     if (target.status !== 'push' && !hadStatus) {
-//       target.statusTurns += Number(ab.effect[N_TURNS]);
-//     }
-//   }
-// }
-
-export function executeAbility(
-  who: string,
-  which: string,
-  target: string,
-  dice: number,
-  vfx: (effect) => void,
-  cause: string | null = null
-) {
-  if (!which || !who)
-    return;
-
-  const ent = gameState.players[who] || gameState.enemies[who] || gameState.clones[who];
-  if (!ent)
-    throw new Error('No entity found!');
-
-  const ab = getAbility(which);
-  const dvalue = dice;
-  if (!dvalue)
-    throw new Error('No dice value found when executing ability!');
-
-  const roll = Math.ceil(Math.random() * dvalue);
-
-  if (!ab.cond(roll))
-    return;
-
-  let targets: string[] = [];
-  if (!target.includes(','))
-    targets = [target];
-  if (ab.AoE)
-    targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
-
-  targets.forEach((id) => takeAb(who, id, ab, roll, vfx, cause));
-}
-
-// export function executeAbility(who: string, which: string, target: string, dice: number, vfx: (effect) => void) {
-//   if (!which || !who)
-//     return;
-//   const ent = gameState.players[who] || gameState.enemies[who] || gameState.clones[who];
-//   if (!ent)
-//     throw new Error('No entity found!');
-//   const ab = getAbility(which);
-//   const dvalue = dice;
-//   if (!dvalue)
-//     throw new Error('No dice value found when executing ability!');
-//   const roll = Math.ceil(Math.random() * dvalue);
-//   // INFO: if miss, ignore buffs
-//   if (!ab.cond(roll))
-//     return;
-//   let targets: string[] = [];
-//   if (!target.includes(','))
-//     targets = [target];
-//   if (ab.AoE)
-//     targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
-//   targets.forEach((id) => takeAb(who, id, ab, roll, vfx));
-// }
-//
-export function restructureHistory(id: string, deleted: Set<string>, until: number = -1) {
+export function restructureHistory(id: string, deleted: Set<string>, until: number = -1, isCascade: boolean = false) {
   if (until === -1)
     until = gameState.history.findIndex(action => action.who === id);
   if (until === -1)
@@ -694,16 +725,18 @@ export function restructureHistory(id: string, deleted: Set<string>, until: numb
       continue;
     gameState.history.forEach((otherAction) => {
       if (otherAction.dependsOn === action.id && !deleted.has(otherAction.id))
-        restructureHistory(otherAction.who, deleted, i);
+        restructureHistory(otherAction.who, deleted, i, true);
     });
     if (action.who === id && !deleted.has(action.id)) {
+      if (!isCascade && action.type === 'forcedMov')
+        continue;
       manageUndo(action, deleted);
       deleted.add(action.id);
     }
   }
 }
 
-export function addHistory(id: string, type: string, target: string, dice: number = -1, ability: string | null = null, dependency: string | null = null) {
+export function addHistory(id: string, type: string, target: string, dice: number = -1, ability: string | null = null, dependency: string | null = null,) {
   const who = id.startsWith("clone_") ? id.replace("clone_", "") : id;
   const isVoluntaryMov = type === "mov" && dice > 0;
   const aftermov = isVoluntaryMov ? false : gameState.history.some(
@@ -718,15 +751,14 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
   }
   if (type === 'ability') {
     const ent = gameState.players[id] || gameState.clones[id];
-    if (!ent)
-      return console.log('no ent in addHistory!');
+    if (!ent) {
+      console.log('no ent in addHistory!');
+      return undefined;
+    }
     ent.abilitiesCD[ability] = getAbility(ability)?.cd;
   }
-  const actionNumber = gameState.history.reduce((count, action) => {
-    return action.who === who ? count + 1 : count
-  }, 1);
   const newAction = {
-    id: `${who}_${actionNumber}`,
+    id: `${who}_${++_historySeq}`,
     who: who,
     type: type,
     target: target,
@@ -737,13 +769,14 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
   };
   gameState.history.push(newAction);
   console.log("new history: ", gameState.history);
+  return newAction.id;
 }
 
 export function moveClone(id: string, tileId: string, dice: number, cause: string | null = null) {
   const [x, y, z] = tileId.split(',').map(Number);
   const dest = { x, y: y + 1, z };
   const cloneId = `clone_${id}`;
-  const source = gameState.players[id] || gameState.clones[`clone_${id}`];
+  const source = gameState.players[id] || gameState.clones[`clone_${id}`] || gameState.enemies[id];
   if (!source)
     return;
   addHistory(id, "mov", tileId, dice, null, cause);
@@ -769,10 +802,8 @@ export function initState() {
   const playEnt: Record<string, player> = {};
   const enemEnt: Record<string, enemy> = {};
   const worldMap: Record<string, boolean> = {};
-
   const map = testMap;
   const { tiles, entities, width, height, depth } = parseMap(map)
-
   tiles.forEach((tile) => {
     worldMap[tile.id] = true;
   });
@@ -906,6 +937,41 @@ export function isValid(x: number, y: number, z: number) {
     || z >= gameState.mapBounds.depth || x < 0 || y < 0 || z < 0 ? false : true)
 }
 
+function euclidTiles(pos: pos, range: number, is3D: boolean) {
+  const hmax = is3D ? range : 0;
+  const hmin = is3D ? -range : 0;
+  const valid: Record<string, boolean> = {};
+  for (let dx = -range; dx <= range; ++dx) {
+    for (let dy = hmin; dy <= hmax; ++dy) {
+      for (let dz = -range; dz <= range; ++dz) {
+        const x = pos.x + dx;
+        const y = pos.y + dy;
+        const z = pos.z + dz;
+        if (
+          !isValid(x, y, z) ||
+          gameState.tiles[`${x},${y},${z}`] ||
+          range * range < dx * dx + dy * dy + dz * dz
+        )
+          continue;
+        const resLoS = hasLoS(pos, x, y, z);
+        if (resLoS === -1)
+          continue;
+        if (resLoS === 0) {
+          const ent = checkEnt(x, y, z);
+          if (ent) {
+            valid[ent.id] = true;
+            const floorKey = `${x},${y - 1},${z}`;
+            if (gameState.tiles[floorKey]) valid[floorKey] = true;
+          }
+          continue;
+        }
+        valid[`${x},${y - 1},${z}`] = true;
+      }
+    }
+  }
+  return valid;
+}
+
 export function crossTiles(pos: pos, range: number) {
   const CROSS = [
     [1, 0, 0], [-1, 0, 0],
@@ -917,94 +983,95 @@ export function crossTiles(pos: pos, range: number) {
       const x = pos.x + n * dx;
       const y = pos.y + n * dy;
       const z = pos.z + n * dz;
-      if (!isValid(x, y, z) || gameState.tiles[`${x},${y},${z}`])
-        break;
+      if (!isValid(x, y, z) || gameState.tiles[`${x},${y},${z}`]) break;
       const ent = checkEnt(x, y, z);
       if (ent) {
         valid[ent.id] = true;
+        const floorKey = `${x},${y - 1},${z}`;
+        if (gameState.tiles[floorKey]) valid[floorKey] = true;
         break;
       }
       valid[`${x},${y - 1},${z}`] = true;
     }
   }
-  return (valid);
+  return valid;
 }
 
-function euclidTiles(pos: pos, range: number, is3D: boolean) {
-  const hmax = is3D ? range : 0;
-  const hmin = is3D ? -range : 0;
-  const valid: Record<string, boolean> = {};
-  for (let dx = -range; dx <= range; ++dx) {
-    for (let dy = hmin; dy <= hmax; ++dy) {
-      for (let dz = -range; dz <= range; ++dz) {
-        const x = pos.x + dx;
-        const y = pos.y + dy;
-        const z = pos.z + dz;
-        if (!isValid(x, y, z) || gameState.tiles[`${x},${y},${z}`]
-          || (range * range < dx * dx + dy * dy + dz * dz))
-          continue;
-        const resLoS = hasLoS(pos, x, y, z);
-        if (resLoS === -1)
-          continue;
-        if (resLoS === 0) {
-          const entid = checkEnt(x, y, z)?.id;
-          if (entid)
-            valid[entid] = true;
-          continue;
-        }
-        valid[`${x},${y - 1},${z}`] = true;
-      }
-    }
+function circleTargets(range: number, tileid: string): string[] {
+  let cx: number, cy: number, cz: number;
+  if (tileid.includes(',')) {
+    const [tx, ty, tz] = tileid.split(',').map(Number);
+    cx = tx; cy = ty + 1; cz = tz;
+  } else {
+    const ent = getLiveEnt(tileid);
+    if (!ent)
+      return [];
+    ({ x: cx, y: cy, z: cz } = ent.position);
   }
-  return (valid);
-}
 
-function verticalTargets(tileid: string) {
-  const [tx, ty, tz] = tileid.split(",").map(Number);
-  const targets = [];
-  const vertical = [[0, 0, 0], [0, 1, 0], [0, -1, 0]];
-  for (const [dx, dy, dz] of vertical) {
-    const x = tx + dx;
-    const y = ty + dy;
-    const z = tz + dz;
-    if (isOOB(x, y, z))
-      continue;
-    const entid = checkEnt(x, y, z)?.id;
-    if (entid)
-      targets.push(entid);
-  }
-  return (targets);
-}
+  const centre = { x: cx, y: cy, z: cz };
+  const targets: string[] = [];
 
-function circleTargets(range: number, tileid: string) {
-  const targets = [];
-  const [tx, ty, tz] = tileid.split(",").map(Number);
-  const pos = { x: tx, y: ty, z: tz };
   for (let dx = -range; dx <= range; ++dx) {
     for (let dz = -range; dz <= range; ++dz) {
-      const x = pos.x + dx;
-      const y = pos.y;
-      const z = pos.z + dz;
-      if (!isValid(x, y, z) || gameState.tiles[`${x},${y},${z}`]
-        || (range * range < dx * dx + dz * dz))
+      if (range * range < dx * dx + dz * dz)
         continue;
-      if (hasLoS(pos, x, y, z) === 0) {
-        const entid = checkEnt(x, y, z)?.id;
-        if (entid)
-          targets.push(entid);
+      const x = cx + dx;
+      const z = cz + dz;
+      if (!isValid(x, cy, z) || gameState.tiles[`${x},${cy},${z}`])
         continue;
+      const los = hasLoS(centre, x, cy, z);
+      if (los === 0) {
+        const entid = checkEnt(x, cy, z)?.id;
+        if (entid) targets.push(entid);
       }
     }
   }
-  return (targets);
+  return targets;
 }
 
-function coneTargets(id: string, tileid: string) {
-  const o = gameState.players[id].position;
-  const [tx, ty, tz] = tileid.split(",").map(Number);
+function verticalTargets(tileid: string): string[] {
+  let cx: number, cy: number, cz: number;
+  if (tileid.includes(',')) {
+    const [tx, ty, tz] = tileid.split(',').map(Number);
+    cx = tx; cy = ty + 1; cz = tz;
+  } else {
+    const ent = getLiveEnt(tileid);
+    if (!ent)
+      return [];
+    ({ x: cx, y: cy, z: cz } = ent.position);
+  }
+  const targets: string[] = [];
+  for (const [dx, dy, dz] of [[0, 0, 0], [0, 1, 0], [0, -1, 0]] as const) {
+    const x = cx + dx, y = cy + dy, z = cz + dz;
+    if (isOOB(x, y, z)) continue;
+    const entid = checkEnt(x, y, z)?.id;
+    if (entid) targets.push(entid);
+  }
+  return targets;
+}
+
+function coneTargets(id: string, tileid: string): string[] {
+  const attacker =
+    gameState.players[id] ||
+    gameState.clones[id] ||
+    gameState.clones[`clone_${id}`];
+  if (!attacker)
+    return [];
+  const o = attacker.position;
+  let tx: number, ty: number, tz: number;
+  if (tileid.includes(',')) {
+    [tx, ty, tz] = tileid.split(',').map(Number);
+    ty = ty + 1;
+  } else {
+    const ent = getLiveEnt(tileid);
+    if (!ent)
+      return [];
+    ({ x: tx, y: ty, z: tz } = ent.position);
+  }
   const [fx, fz] = [Math.sign(tx - o.x), Math.sign(tz - o.z)];
   const [px, pz] = [fz, fx];
-  const targets = [];
+  const targets: string[] = [];
   const cone = [
     [1, 0, 0], [2, 0, 0], [2, 1, 0], [2, -1, 0], [2, 0, -1],
     [2, 0, 1], [3, 0, 0], [3, 1, 0], [3, -1, 0], [3, 0, 1],
@@ -1018,32 +1085,50 @@ function coneTargets(id: string, tileid: string) {
       continue;
     if (hasLoS(o, x, y, z) === 0) {
       const entid = checkEnt(x, y, z)?.id;
-      if (entid)
-        targets.push(entid);
+      if (entid) targets.push(entid);
     }
   }
-  return (targets);
+  return targets;
 }
 
-function getAoE(who: string, tileid: string, type: string, range: number) {
-  let targets: string[] = [];
+function getAoE(who: string, tileid: string, type: string, range: number | undefined) {
   switch (type) {
-    case 'circle':
-      targets = circleTargets(range, tileid)
-      break;
-    case 'vertical':
-      targets = verticalTargets(tileid)
-      break;
-    case 'cone':
-      targets = coneTargets(who, tileid)
-      break;
+    case 'circle': return circleTargets(range ?? 1, tileid);
+    case 'vertical': return verticalTargets(tileid);
+    case 'cone': return coneTargets(who, tileid);
+    default: return [];
   }
-  return (targets);
+}
+
+export function executeAbility(who: string, which: string, target: string, dice: number, vfx: (effect) => void, cause: string | null = null) {
+  if (!which || !who)
+    return;
+  const ent = gameState.players[who] || gameState.enemies[who] || gameState.clones[who];
+  if (!ent)
+    throw new Error('No entity found!');
+  const ab = getAbility(which);
+  if (!dice)
+    throw new Error('No dice value found when executing ability!');
+  const roll = Math.ceil(Math.random() * dice);
+  if (!ab.cond(roll))
+    return;
+  let targets: string[] = [];
+  if (!target.includes(',')) {
+    targets = [target];
+  }
+  else {
+    const [x, y, z] = target.split(',').map(Number);
+    const entOnTile = checkEnt(x, y + 1, z);
+    if (entOnTile && !entOnTile.isDead) targets = [entOnTile.id];
+  }
+  if (ab.AoE) {
+    targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
+  }
+  targets.forEach((id) => takeAb(who, id, ab, roll, vfx, cause));
 }
 
 export function paint(who: string, pos: pos, type: string, range: number, self: boolean) {
-  if (gameState.clients[who] && !gameState.clients[who].selectedEnt)
-    return {};
+  if (gameState.clients[who] && !gameState.clients[who].selectedEnt) return {};
   let valid: Record<string, boolean>;
   switch (type) {
     case 'cross':
@@ -1064,10 +1149,12 @@ export function paint(who: string, pos: pos, type: string, range: number, self: 
     default:
       valid = {};
   }
-  valid[gameState.clients[who].selectedEnt] = false
-  if (self)
-    valid[gameState.clients[who].selectedEnt] = true;
-  return (valid);
+  const selectedEnt = gameState.clients[who]?.selectedEnt;
+  if (selectedEnt != null) {
+    valid[selectedEnt] = false;
+    if (self) valid[selectedEnt] = true;
+  }
+  return valid;
 }
 
 export function getAbility(name: string) {
@@ -1247,7 +1334,6 @@ export function getAbility(name: string) {
         cd: 0,
         self: false,
       }
-
     case "Swoop":
       return {
         name: name,
@@ -1370,7 +1456,6 @@ export function getAbility(name: string) {
 export function checkEntnc(id: string, x: number, y: number, z: number) {
   const baseId = id.replace("clone_", "");
   const cloneId = `clone_${baseId}`;
-
   return (
     Object.values(gameState.enemies).some(e =>
       e.position.x === x && e.position.y === y && e.position.z === z)

@@ -95,6 +95,8 @@ export type globalGameState = {
   history: historyAction[];
   vfx: Record<string, vfx>;
   mapBounds: mapInfo;
+  readyPlayers: string[];
+  activePlayers: string[];
 }
 
 export type localGameState = {
@@ -125,7 +127,7 @@ type gameState = globalGameState & localGameState & {
   selectDice: (dice: number) => void;
   moveClone: (tileId: string) => void;
   selectAbility: (name: string) => void;
-  showMoveRange: (mov: string) => void;
+  showMoveRange: (mov: number) => void;
   showAbRange: (name: string) => void;
   clearHighlights: () => void;
   clearSelectables: () => void;
@@ -136,6 +138,7 @@ export const useGame = create<gameState>()((set, get) => ({
   assignedCharacter: 'spectator',
 
   turn: 1,
+  doom: 0,
   phase: 'PLAN',
   canSelect: true,
   typeEnt: null,

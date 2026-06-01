@@ -1,12 +1,11 @@
 import type { Namespace, Socket } from 'socket.io';
 import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
-import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase } from './utils';
+import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase, applyPlanningDisplace } from './utils';
 
 const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
 const playerIds: string[] = [...roles].reverse();
 const users: Record<string, string> = {};
 const readyPlayers: string[] = [];
-const activePlayers: string[] = [];
 
 
 function shuffleArray(array) {
@@ -36,7 +35,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     if (playerIds.length === 4) {
       console.log('init state happens');
       const initstate = initState();
-      gameState.turn = 0;
+      gameState.turn = 1;
       gameState.doom = 0;
       gameState.players = initstate.players;
       gameState.enemies = initstate.enemies;
@@ -45,6 +44,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       gameState.clones = {};
       gameState.ghosts = {};
       gameState.history = [];
+      gameState.forcedMoveOrigins = {};
     }
     // WARN: DO NOT CHANGE, else will not render the map 
     nsp.emit('game:server:globalSync', gameState);
@@ -206,9 +206,10 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         console.log('selected ab:', gameState.clients[role].selectedAb);
         const entid = gameState.clients[role].selectedEnt;
         const seldice = gameState.clients[role].selectedDice;
-        if (!entid || !seldice || !gameState.clients[role].selectedAb)
+        const abName = gameState.clients[role].selectedAb;
+        if (!entid || !seldice || !abName)
           return (console.log("couldn't add ability to history!"));
-        addHistory(entid, "ability", target, seldice, gameState.clients[role].selectedAb);
+        const abilityActionId = addHistory(entid, "ability", target, seldice, abName);
         const source = gameState.players[entid] || gameState.clones[entid];
         if (!source)
           return (console.log("couldn't find a valid source in addAbilityHistory!"));
@@ -224,6 +225,12 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           setClear(role);
           gameState.clones[entid].dice = source.dice.toSpliced(source.dice.indexOf(seldice), 1);
           gameState.clones[entid].usedDice = [...source.usedDice, seldice].sort((a, b) => a - b);
+        }
+        if (abilityActionId) {
+          const ab = getAbility(abName);
+          if (ab.effect && ab.effect[0] === 'move') {
+            applyPlanningDisplace(entid, target, ab, abilityActionId);
+          }
         }
         setClear(role);
         socket.emit('game:server:sync', gameState.clients[role]);
@@ -268,10 +275,11 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
 
       socket.on('game:client:resetHistory', () => {
         resetHistory(role);
+        setClear(role);
+        gameState.clients[role].selectedEnt = null;
+        socket.emit('game:server:sync', gameState.clients[role]);
         gsync();
       });
-
-      // INFO: helpers/debug
 
       socket.on('game:client:sync', () => {
         socket.emit('game:server:sync', gameState.clients[role]);
@@ -281,11 +289,12 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         gsync();
       });
     }
-
     socket.on('disconnect', () => {
       if (role) {
         playerIds.push(role);
         delete users[socket.id];
+        const ri = readyPlayers.indexOf(role);
+        if (ri !== -1) readyPlayers.splice(ri, 1);
         console.log(role, 'disconnected, role', playerIds[playerIds.length - 1], 'is available again.');
         gsync();
       }
