@@ -19,6 +19,7 @@ export type FriendPublic = {
   avatar: string | null;
   presence: 'online' | 'away' | 'offline';
   unreadMessageCount?: number;
+  friendshipId: string;
 };
 
 export type GetFriendsListOk = { friends: FriendPublic[] };

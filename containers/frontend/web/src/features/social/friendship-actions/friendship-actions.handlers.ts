@@ -37,12 +37,13 @@ async function runAction({
 
 function handleDeleteFriend(args: FriendshipActionHandlersArgs) {
   const friendId = args.friend?.id;
+  const friendshipId = args.friend?.friendshipId;
 
   return async () => {
-    if (!friendId) return;
+    if (!friendId || !friendshipId) return;
 
     await runAction({
-      action: () => deleteFriendship(friendId),
+      action: () => deleteFriendship(friendshipId),
       onSuccess: () => args.removeFriendById(friendId),
       setError: args.setError,
     });

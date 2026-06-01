@@ -215,6 +215,7 @@ function receiveFriendAcceptedReducer(
       username: payload.friendUsername,
       avatar: pendingSent?.avatar ?? pendingReceived?.avatar ?? existingSearchUser?.avatar ?? null,
       presence: existingFriend?.presence ?? 'offline',
+      friendshipId: payload.friendshipId,
     };
 
     return {
@@ -287,6 +288,7 @@ function createFriendFromPendingRequest(request: FriendshipPublic): FriendPublic
     username: request.username,
     avatar: request.avatar,
     presence: 'offline',
+    friendshipId: request.id,
   };
 }
 
@@ -298,6 +300,7 @@ function createFriendFromSearchItem(
     username: searchItem.username,
     avatar: searchItem.avatar,
     presence: 'offline',
+    friendshipId: searchItem.friendshipId!,
   };
 }
 
@@ -349,6 +352,7 @@ function addPendingRequestReducer(
         username: friendship.username,
         avatar: friendship.avatar,
         presence: 'offline',
+        friendshipId: friendship.id,
       };
 
       return {

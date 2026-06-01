@@ -61,6 +61,7 @@ export async function sendFriendRequest(
       await notifyFriendAccepted(
         { userId: senderId, username: senderBrief.username },
         { userId: targetId, username: targetBrief.username },
+        accepted.id,
       );
     }
 
@@ -100,6 +101,7 @@ export async function sendFriendRequest(
       await notifyFriendAccepted(
         { userId: senderId, username: senderBrief.username },
         { userId: targetId, username: targetBrief.username },
+        accepted.id,
       );
     }
 
@@ -129,6 +131,7 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
     avatar: friend.avatar,
     presence: presenceByUserId[friend.id] ?? 'offline',
     unreadMessageCount: unreadById.get(friend.friendshipId) ?? 0,
+    friendshipId: friend.friendshipId,
   }));
 }
 
@@ -171,6 +174,7 @@ export async function respondToFriendRequest(
       await notifyFriendAccepted(
         { userId: currentUserId, username: receiverBrief.username },
         { userId: row.senderId, username: senderBrief.username },
+        friendship.id,
       );
     }
 

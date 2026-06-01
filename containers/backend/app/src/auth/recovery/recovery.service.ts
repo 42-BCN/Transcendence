@@ -48,6 +48,14 @@ async function dispatchPasswordResetMailByIdentifier(
       reason: 'mail_not_configured',
       userId: user.id,
     });
+    
+    // DEV WORKAROUND: Generate the token and print the link to the console
+    const resetToken = await createPasswordResetToken(user.id);
+    const resetUrl = `${process.env.APP_BASE_URL?.trim() || 'https://localhost:8443'}/reset-password?token=${encodeURIComponent(resetToken)}`;
+    console.log('\n\n========================================================');
+    console.log(`🔑 [DEV MODE] Email skipped. Simulate password reset to ${user.email}`);
+    console.log(`🔗 Reset URL: ${resetUrl}`);
+    console.log('========================================================\n\n');
     return;
   }
 
