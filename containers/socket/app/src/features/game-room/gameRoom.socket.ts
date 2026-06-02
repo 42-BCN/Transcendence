@@ -3,7 +3,7 @@ import { GameRoomsManager } from './GameRoomsManager.ts';
 import type {
   ClientToServerGameRoomsEvents,
   ServerToClientGameRoomsEvents,
-} from '@contracts/sockets/chat/chat.schema';
+} from '@contracts/sockets/chat/gameRooms.schema';
 
 const gameRoomsManager = new GameRoomsManager();
 
@@ -18,12 +18,16 @@ interface ClientToServerGameRoomEvents {
 export function registerGameRoomSocket(
   nsp: Namespace,
 ) {
+  console.log("[GameRoom Socket] registering the socket!!");
   nsp.on('connection', 
-      (socket: Socket<ClientToServerGameRoomEvents, ServerToClientGameRoomsEvents>) => {
+      (socket: Socket) => {
     let currentGameRoomId: number | undefined = undefined;
+    console.log("[GameRoom Socket] look at me");
     socket.on("gameRoom:teammate:joinAny", () => {
-      //  TODO: manage errors regarding incorrect actions.
+      console.log("[GameRoom Socket] called the join any room");
+      //  TODO: manage errors regarding incorrect actions.i
       let gameRoomId = gameRoomsManager.joinUserToAnyGameRoom(socket.id);
+      console.log(gameRoomId);
       socket.join(gameRoomId.toString());
       socket.to(gameRoomId.toString()).emit("gameRoom:teammate:joined", socket.id);
       currentGameRoomId = gameRoomId;

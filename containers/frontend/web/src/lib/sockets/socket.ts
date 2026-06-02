@@ -1,4 +1,5 @@
-import { io, type Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import type { Socket }  from 'socket.io-client';
 
 import { envPublic } from '@/lib/config/env.public';
 import type {
@@ -10,6 +11,11 @@ import type {
   ServerToClientGameEvents,
   ClientToServerGameEvents,
 } from '@/contracts/sockets/game/game.schema';
+
+import type {
+  ServerToClientGameRoomsEvents,
+  ClientToServerGameRoomsEvents
+} from "@/contracts/sockets/gameRooms.schema";
 
 export type Robot = {
   id: string;
@@ -125,7 +131,6 @@ export const gameRoomSocket: Socket = io(
     autoConnect: false,
     transports: ['websocket'],
     withCredentials: true,
-    auth: {},
   },
 );
 

@@ -425,7 +425,10 @@ function name(phase: string) {
 
 //import { gameRoomSocket } from '@/lib/sockets/socket';
 
-gameRoomSocket.on();
+//function init_room_socket(setGameRoomsDebugInfo: )
+//{
+//  gameRoomSocket.on();
+//}
 
 export function Game() {
   const phase = useGame((state) => state.phase);
@@ -440,6 +443,7 @@ export function Game() {
   
   const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("finding a room.");
 
+
   useEffect(() => {
     // if (!initRef.current) {
     //   initRef.current = true;
@@ -449,6 +453,12 @@ export function Game() {
       cleanupSocketListeners();
     };
   }, []);
+
+
+  gameRoomSocket.connect();
+  console.log("[Client GameRoom Socket] joining any");
+  console.log(gameRoomSocket);
+  gameRoomSocket.emit("gameRoom:teammate:joinAny");
 
   useEffect(() => {
     const debugTimer = setInterval(() => {

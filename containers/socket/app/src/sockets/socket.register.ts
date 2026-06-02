@@ -26,7 +26,7 @@ export function registerSockets(io: Server) {
   registerFriendsSocket(friendsNsp);
   registerRobotsSocket(robotsNsp);
   registerChatSocket(chatNsp);
-  registerGameRoomSocket(gameRoomNsp);
   registerGameSocket(gameNsp);
+  registerGameRoomSocket(gameRoomNsp);
   registerDirectMessagesSocket(directMessagesNsp);
 }
