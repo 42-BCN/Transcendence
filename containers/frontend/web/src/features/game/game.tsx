@@ -12,7 +12,8 @@ import { Text } from '@components/primitives/text';
 import { JoinGameRoomForm } from './rooms/join.form';
 
 import { gameRoomSocket } from '@/lib/sockets/socket';
-import { initGameRoomSocketManager, deinitGameRoomSocketManager } from '@/lib/sockets/game-room-socket.manager';
+import { initGameRoomSocketHandelers, deinitGameRoomSocketHandelers } from '@/lib/sockets/game-room-socket.manager';
+import { GameRoomTest } from './rooms/gameRoomTest';
 
 const s = 0.975;
 
@@ -424,14 +425,6 @@ function name(phase: string) {
   }
 }
 
-//import { gameRoomSocket } from '@/lib/sockets/socket';
-
-//function init_room_socket(setGameRoomsDebugInfo: )
-//{
-//  gameRoomSocket.on();
-//}
-
-
 export function Game() {
   const phase = useGame((state) => state.phase);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
@@ -443,13 +436,19 @@ export function Game() {
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
   
-  const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("finding a room.");
+  const [gameRoomsDebugState, setGameRoomsDebugState] = useState("not connected to socket.");
+  const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("not connected to socket.");
+  const [gameRoomsErrorInfo, setGameRoomsErrorInfo] = useState("not connected to socket.");
 
   useEffect(() => {
     // if (!initRef.current) {
     //   initRef.current = true;
     initSocketListeners();
-    initGameRoomSocketManager(setGameRoomsDebugInfo);
+    initGameRoomSocketHandelers(
+	    setGameRoomsDebugState,
+	    setGameRoomsDebugInfo,
+	    setGameRoomsErrorInfo
+    );
 
     return () => {
       cleanupSocketListeners();
@@ -471,7 +470,10 @@ export function Game() {
   return !mapBounds || mapBounds.width === 0 ? (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
+        <p>{gameRoomsDebugState}</p>
         <p>{gameRoomsDebugInfo}</p>
+        <p>{gameRoomsErrorInfo}</p>
+		<GameRoomTest />
       </div>
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center">
@@ -484,7 +486,10 @@ export function Game() {
   ) : (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
+        <p>{gameRoomsDebugState}</p>
         <p>{gameRoomsDebugInfo}</p>
+        <p>{gameRoomsErrorInfo}</p>
+		<GameRoomTest />
       </div>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}
