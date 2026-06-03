@@ -1,51 +1,54 @@
 
 import type { gameRoomState } from '../../../contracts/sockets/game/game.schema';
 
+
 export class GameRoomsManager {
   #nextGameRoomId;  //  room are given numbers in acending order of creation. like 0, 1, 2, and so on.
   nextGameRoomId = 0;
   gameRooms = new Map();
+  joined_users = new Set();
   
-  createGameRoom(): number {
+  createGameRoom(): gameRoomState {
   
     const newGameRoomId = this.nextGameRoomId;
     this.nextGameRoomId++;
 
     let newGameRoom: gameRoomState = {};
-    console.log(newGameRoom);
+	newGameRoom.id = newGameRoomId
     newGameRoom.isGameRoomFull = false;
     newGameRoom.teammates = [];
 
     this.gameRooms.set(newGameRoomId, newGameRoom);
 
-    console.log("patata: " + newGameRoomId);
-    return (newGameRoomId);
+    return (newGameRoom);
   }
 
-  getFirstNonEmtyGameRoomId(): number {
+  //	in case of not finding a emty room it will return undefined.
+  getFirstNonEmtyGameRoomId(): gameRoomState | undefined {
     for (const [key, value] of this.gameRooms) {
       if (!value.isGameRoomFull) {
-        return key;
+        return this.gameRooms.get(key);
       }
     }
-    return -1;
+    return undefined;
   }
 
-  joinUserToAnyGameRoom(userId: string): number {
-    let gameRoomId: number;
-    gameRoomId = this.getFirstNonEmtyGameRoomId();
-    if (gameRoomId == -1) {
-      console.log("hint!!");
-      gameRoomId = this.createGameRoom();
+  joinUserToAnyGameRoom(userId: string): gameRoomState {
+    let gameRoom: gameRoomState | undefined ;
+    gameRoom = this.getFirstNonEmtyGameRoomId();
+    if (gameRoom === undefined) {
+      gameRoom = this.createGameRoom();
     }
-    this.joinUserToGameRoom(userId, gameRoomId);
-    return gameRoomId;
+    this.joinUserToGameRoom(userId, gameRoom.id);
+    return gameRoom;
   }
   
-  joinUserToGameRoom(userId: string, gameRoomId: number) {
-    console.log("the game room is:  " + gameRoomId);
-    console.log(this.gameRooms);
-    console.log(this.gameRooms.get(gameRoomId));
+  //	in case of assignig correcly the user to the room it will return the room, else it returns undefined.
+  joinUserToGameRoom(userId: string, gameRoomId: number): gameRoomState | undefined {
+	if (this.joined_users.has(userId)) {
+		return false ;
+	}
+	this.joined_users.add(userId);
     if (this.gameRooms.get(gameRoomId).isGameRoomFull == true) {
       return false ;
     }

@@ -12,6 +12,7 @@ import { Text } from '@components/primitives/text';
 import { JoinGameRoomForm } from './rooms/join.form';
 
 import { gameRoomSocket } from '@/lib/sockets/socket';
+import { initGameRoomSocketManager, deinitGameRoomSocketManager } from '@/lib/sockets/game-room-socket.manager';
 
 const s = 0.975;
 
@@ -430,6 +431,7 @@ function name(phase: string) {
 //  gameRoomSocket.on();
 //}
 
+
 export function Game() {
   const phase = useGame((state) => state.phase);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
@@ -443,22 +445,16 @@ export function Game() {
   
   const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("finding a room.");
 
-
   useEffect(() => {
     // if (!initRef.current) {
     //   initRef.current = true;
     initSocketListeners();
+    initGameRoomSocketManager(setGameRoomsDebugInfo);
 
     return () => {
       cleanupSocketListeners();
     };
   }, []);
-
-
-  gameRoomSocket.connect();
-  console.log("[Client GameRoom Socket] joining any");
-  console.log(gameRoomSocket);
-  gameRoomSocket.emit("gameRoom:teammate:joinAny");
 
   useEffect(() => {
     const debugTimer = setInterval(() => {
