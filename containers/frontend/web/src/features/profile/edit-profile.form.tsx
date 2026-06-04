@@ -44,6 +44,7 @@ export function EditProfileForm({ initialBio, initialAvatar }: EditProfileFormPr
                   aria-label={t('edit.avatarAlt', {
                     name: avatarPath.replace('/avatars/avatar-', '').replace('.png', ''),
                   })}
+                  aria-pressed={form.values.avatar === avatarPath}
                   className={`rounded-lg transition-all duration-200 shrink-0 ${
                     form.values.avatar === avatarPath
                       ? 'outline outline-2 outline-primary outline-offset-2 scale-110 opacity-100'
