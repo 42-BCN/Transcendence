@@ -4,11 +4,10 @@ import type { vfx, pos, player, enemy, serverGameState, node, historyAction, abi
 
 const STATUS_TYPE = 0;
 const N_TURNS = 1;
-const OK = 0;
-const FALL = 1;
-const COLLISION = 2;
 
 let _historySeq = 0;
+let _vfxSeq = 0;
+export const nextVfxId = (label: string) => `${label}_${Date.now()}_${++_vfxSeq}`;
 
 export const gameState: serverGameState = {
   phase: 'PLAN',
@@ -22,7 +21,8 @@ export const gameState: serverGameState = {
   clients: {},
   history: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
-  forcedMoveOrigins: {}
+  forcedMoveOrigins: {},
+  planningStatusOrigins: {}
 };
 
 export function initClientGameState(id: string) {
@@ -106,7 +106,7 @@ async function executeForcedMov(action: historyAction, vfx: (effect) => void, sy
     ent.hp = Math.max(0, ent.hp - fallDmg);
     if (ent.hp === 0) killEntity(ent);
     vfx({
-      vfxid: `fall_${Date.now()}_${ent.id}`,
+      vfxid: nextVfxId(`fall_${ent.id}`),
       eid: ent.id,
       type: 'damage',
       amount: fallDmg,
@@ -125,6 +125,22 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
     if (ent) ent.position = { ...gameState.forcedMoveOrigins[entityId] };
   }
   gameState.forcedMoveOrigins = {};
+  for (const entityId in gameState.planningStatusOrigins) {
+    const ent: any =
+      gameState.players[entityId] ||
+      gameState.enemies[entityId] ||
+      gameState.clones[`clone_${entityId}`];
+    if (ent) {
+      const origin = gameState.planningStatusOrigins[entityId];
+      ent.status = origin.status;
+      ent.statusTurns = origin.statusTurns;
+      if (origin.dice !== undefined) {
+        ent.dice = [...origin.dice];
+        ent.usedDice = [...origin.usedDice!];
+      }
+    }
+  }
+  gameState.planningStatusOrigins = {};
   for (const id in gameState.ghosts) {
     gameState.players[id] = {
       ...gameState.ghosts[id],
@@ -146,7 +162,7 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
     else if (action.type === 'mov') {
       await moveTo(action.who, action.target, sync);
     }
-    else if (action.type === 'forcedMov') {   // ← was silently skipped before
+    else if (action.type === 'forcedMov') {
       await executeForcedMov(action, vfx, sync);
     }
     if (Object.values(gameState.enemies).some(e => e.id === 'generator' && e.isDead)) {
@@ -160,18 +176,23 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
 export function incrementDoom(vfx: (effect) => void) {
   for (const enemy of Object.values(gameState.enemies)) {
     const name = enemy.id.split('_')[0];
-    const doom: vfx = { vfxid: `doom_${Date.now()}`, eid: enemy.id, type: 'doom', amount: null };
+    let doomAmt = 0;
     if (enemy.isDead)
-      doom.amount = 0;
+      doomAmt = 0;
     else if (name === 'crawler' || name === 'drone')
-      doom.amount = 1;
+      doomAmt = 1;
     else if (name === 'jaeger' || name === 'centurion')
-      doom.amount = 3;
+      doomAmt = 3;
     else if (name === 'generator')
-      doom.amount = 5;
-    doom.amount = gameState.doom + doom.amount > 100 ? 100 - gameState.doom : doom.amount;
-    vfx(doom);
-    gameState.doom = gameState.doom + doom.amount;
+      doomAmt = 5;
+    const capped = gameState.doom + doomAmt > 100 ? 100 - gameState.doom : doomAmt;
+    vfx({
+      vfxid: nextVfxId(`doom_${enemy.id}`),
+      eid: enemy.id,
+      type: 'doom',
+      amount: capped,
+    });
+    gameState.doom = gameState.doom + capped;
     if (gameState.doom === 100) {
       gameState.phase = 'LOSE';
       return;
@@ -247,7 +268,7 @@ export async function endTurn(sync: () => void, vfx: (effect) => void) {
     const status = ent.status;
     if (status) {
       if (status === 'burn') {
-        vfx({ vfxid: `burn_proc${Date.now()}`, eid: ent.id, type: 'damage', amount: ent.statusTurns });
+        vfx({ vfxid: nextVfxId(`burn_proc_${ent.id}`), eid: ent.id, type: 'damage', amount: ent.statusTurns });
         if ((ent.hp -= ent.statusTurns) <= 0) {
           ent.hp = 0;
           ent.isDead = true;
@@ -256,7 +277,7 @@ export async function endTurn(sync: () => void, vfx: (effect) => void) {
       if (ent.status === 'boost' || --ent.statusTurns === 0) {
         ent.status = null;
         ent.statusTurns = 0;
-        vfx({ vfxid: `stat_expire_${Date.now()}`, eid: ent.id, type: 'stat expire', amount: null });
+        vfx({ vfxid: nextVfxId(`stat_expire_${ent.id}`), eid: ent.id, type: 'stat expire', amount: null });
       }
     }
     if (ent.isDead) {
@@ -272,10 +293,11 @@ export async function endTurn(sync: () => void, vfx: (effect) => void) {
     }
   };
   gameState.turn = gameState.turn + 1;
-  gameState.forcedMoveOrigins = {};
   gameState.phase = 'PLAN';
   gameState.history = [];
   gameState.clones = {};
+  gameState.forcedMoveOrigins = {};
+  gameState.planningStatusOrigins = {};
   sync();
   for (const id in gameState.clients)
     setClear(id);
@@ -425,7 +447,7 @@ function applyCollisionDamage(id: string, vfx: (effect: vfx) => void) {
     killEntity(ent);
   }
   vfx({
-    vfxid: `col_${Date.now()}_${id}`,
+    vfxid: nextVfxId(`col_${id}`),
     eid: id,
     type: 'damage',
     amount: 1,
@@ -491,7 +513,7 @@ export function resolveDisplace(id: string, dx: number, dz: number, steps: numbe
             killEntity(ent);
           }
           vfx({
-            vfxid: `fall_${Date.now()}_${eid}`,
+            vfxid: nextVfxId(`fall_${eid}`),
             eid,
             type: 'damage',
             amount: fallDmg,
@@ -504,16 +526,16 @@ export function resolveDisplace(id: string, dx: number, dz: number, steps: numbe
   }
 }
 
-function calcPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo,) {
+function calcPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo, centerPos?: pos) {
   if (!ab.effect || ab.effect[0] !== 'move')
     return null;
   const direction = ab.effect[1] as 'away' | 'towards';
   const steps = ab.effect[2] ? Number(ab.effect[2]) : 1;
-  const attacker: any = getLiveEnt(actioner);
+  const originPos: pos | undefined = centerPos ?? (getLiveEnt(actioner) as any)?.position;
   const target: any = getLiveEnt(targetId);
-  if (!attacker || !target || target.isDead)
+  if (!originPos || !target || target.isDead)
     return null;
-  const { dx, dz } = getDisplaceDir(attacker.position, target.position, direction);
+  const { dx, dz } = getDisplaceDir(originPos, target.position, direction);
   if (dx === 0 && dz === 0)
     return null;
   let x = target.position.x;
@@ -537,8 +559,8 @@ function calcPlanningDisplace(actioner: string, targetId: string, ab: abilityInf
   return { x, y, z };
 }
 
-export function applyPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo, abilityActionId: string) {
-  const newPos = calcPlanningDisplace(actioner, targetId, ab);
+export function applyPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo, abilityActionId: string, centerPos?: pos) {
+  const newPos = calcPlanningDisplace(actioner, targetId, ab, centerPos);
   if (!newPos)
     return;
   const entObj: any = gameState.players[targetId] || gameState.enemies[targetId] ||
@@ -556,6 +578,45 @@ export function applyPlanningDisplace(actioner: string, targetId: string, ab: ab
   entObj.position = { ...newPos };
   const who = targetId.startsWith("clone_") ? targetId.replace("clone_", "") : targetId;
   addHistory(who, "forcedMov", `${newPos.x},${newPos.y - 1},${newPos.z}`, 0, null, abilityActionId);
+}
+
+export function applyPlanningStatus(actioner: string, targetId: string, ab: abilityInfo, abilityActionId: string) {
+  if (!ab.effect || !ab.effect[0] || ab.effect[0] === 'move')
+    return;
+  let targets: string[] = [];
+  if (!targetId.includes(',')) {
+    targets = [targetId];
+  }
+  else {
+    const [x, y, z] = targetId.split(',').map(Number);
+    const entOnTile = checkEnt(x, y + 1, z);
+    if (entOnTile && !entOnTile.isDead) targets = [entOnTile.id];
+  }
+  if (ab.AoE) {
+    targets = [...new Set([...targets, ...getAoE(actioner, targetId, ab.AoE, ab.AoErange)])];
+  }
+  for (const tid of targets) {
+    const ent: any = getLiveEnt(tid);
+    if (!ent || ent.isDead)
+      continue;
+    const entityKey = tid.startsWith('clone_') ? tid.replace('clone_', '') : tid;
+    if (gameState.planningStatusOrigins[entityKey] === undefined) {
+      gameState.planningStatusOrigins[entityKey] = {
+        status: ent.status,
+        statusTurns: ent.statusTurns,
+        dice: [...ent.dice],
+        usedDice: [...ent.usedDice],
+      };
+    }
+    ent.status = ab.effect[0];
+    ent.statusTurns = Number(ab.effect[1] ?? 0);
+    if (ab.effect[0] === 'restrain' && ent.dice.length > 0) {
+      const removed = ent.dice[0];
+      ent.dice = ent.dice.slice(1);
+      ent.usedDice = [...ent.usedDice, removed].sort((a: number, b: number) => a - b);
+    }
+    addHistory(entityKey, 'planningStatus', '', 0, ab.effect[0], abilityActionId);
+  }
 }
 
 export function applyDisplace(actioner: string, targetId: string, ab: abilityInfo, cause: string | null, vfx: (effect: vfx) => void) {
@@ -656,6 +717,24 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
       delete gameState.forcedMoveOrigins[ent.id];
       break;
     }
+    case "planningStatus": {
+      const ent =
+        gameState.players[who] ||
+        gameState.enemies[who] ||
+        gameState.clones[`clone_${who}`];
+      if (!ent) break;
+      const origin = gameState.planningStatusOrigins[who];
+      if (origin !== undefined) {
+        ent.status = origin.status;
+        ent.statusTurns = origin.statusTurns;
+        if (origin.dice !== undefined) {
+          (ent as any).dice = [...origin.dice];
+          (ent as any).usedDice = [...origin.usedDice!];
+        }
+        delete gameState.planningStatusOrigins[who];
+      }
+      break;
+    }
   }
 }
 
@@ -690,8 +769,8 @@ export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: numb
   const target = gameState.enemies[id] || gameState.players[id];
   if (!target)
     return console.log('target not found in takeAb');
-  const eff: vfx = {
-    vfxid: `damage_${Date.now()}`,
+  const eff: any = {
+    vfxid: nextVfxId(`damage_${id}`),
     eid: id,
     type: 'damage',
     amount: null
@@ -707,7 +786,7 @@ export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: numb
   const hadStatus = Boolean(target.status);
   if (ab.effect && ab.effect[STATUS_TYPE] && (!target.status || ab.effect[STATUS_TYPE] === target.status)) {
     target.status = ab.effect[STATUS_TYPE];
-    vfx({ vfxid: `status_${Date.now()}`, eid: id, type: target.status, amount: null });
+    vfx({ vfxid: nextVfxId(`status_${id}`), eid: id, type: target.status, amount: null });
     if (target.status !== 'push' && !hadStatus) {
       target.statusTurns += Number(ab.effect[N_TURNS]);
     }
@@ -728,7 +807,7 @@ export function restructureHistory(id: string, deleted: Set<string>, until: numb
         restructureHistory(otherAction.who, deleted, i, true);
     });
     if (action.who === id && !deleted.has(action.id)) {
-      if (!isCascade && action.type === 'forcedMov')
+      if (!isCascade && (action.type === 'forcedMov' || action.type === 'planningStatus'))
         continue;
       manageUndo(action, deleted);
       deleted.add(action.id);
@@ -1091,11 +1170,36 @@ function coneTargets(id: string, tileid: string): string[] {
   return targets;
 }
 
-function getAoE(who: string, tileid: string, type: string, range: number | undefined) {
+function crossAoETargets(range: number, tileid: string): string[] {
+  let cx: number, cy: number, cz: number;
+  if (tileid.includes(',')) {
+    const [tx, ty, tz] = tileid.split(',').map(Number);
+    cx = tx; cy = ty + 1; cz = tz;
+  } else {
+    const ent = getLiveEnt(tileid);
+    if (!ent) return [];
+    ({ x: cx, y: cy, z: cz } = ent.position);
+  }
+  const DIRS = [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1]] as const;
+  const targets: string[] = [];
+  for (const [dx, , dz] of DIRS) {
+    for (let n = 1; n <= range; ++n) {
+      const x = cx + n * dx;
+      const z = cz + n * dz;
+      if (!isValid(x, cy, z) || gameState.tiles[`${x},${cy},${z}`]) break;
+      const ent = checkEnt(x, cy, z);
+      if (ent && !ent.isDead) targets.push(ent.id);
+    }
+  }
+  return targets;
+}
+
+export function getAoE(who: string, tileid: string, type: string, range: number | undefined) {
   switch (type) {
     case 'circle': return circleTargets(range ?? 1, tileid);
     case 'vertical': return verticalTargets(tileid);
     case 'cone': return coneTargets(who, tileid);
+    case 'cross': return crossAoETargets(range ?? 1, tileid);
     default: return [];
   }
 }
@@ -1110,8 +1214,19 @@ export function executeAbility(who: string, which: string, target: string, dice:
   if (!dice)
     throw new Error('No dice value found when executing ability!');
   const roll = Math.ceil(Math.random() * dice);
-  if (!ab.cond(roll))
+  if (!ab.cond(roll)) {
+    let missEid = who;
+    if (!target.includes(',')) {
+      if (target !== who) missEid = target;
+    }
+    else {
+      const [x, y, z] = target.split(',').map(Number);
+      const entOnTile = checkEnt(x, y + 1, z);
+      if (entOnTile) missEid = entOnTile.id;
+    }
+    vfx({ vfxid: nextVfxId(`miss_${missEid}`), eid: missEid, type: 'miss', amount: null });
     return;
+  }
   let targets: string[] = [];
   if (!target.includes(',')) {
     targets = [target];
@@ -1123,6 +1238,10 @@ export function executeAbility(who: string, which: string, target: string, dice:
   }
   if (ab.AoE) {
     targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
+  }
+  if (ab.effect && ab.effect[0] === 'move') {
+    const attackerBase = who.replace('clone_', '');
+    targets = targets.filter(id => id.replace('clone_', '') !== attackerBase);
   }
   targets.forEach((id) => takeAb(who, id, ab, roll, vfx, cause));
 }
@@ -1138,10 +1257,12 @@ export function paint(who: string, pos: pos, type: string, range: number, self: 
       valid = euclidTiles(pos, range, false);
       break;
     case 'smcircle':
+      // Small Meteor: aerial cast targets top-level tiles
       valid = euclidTiles({ x: pos.x, y: gameState.mapBounds.height, z: pos.z }, range, false);
       break;
     case 'rtcircle':
-      valid = euclidTiles({ x: pos.x, y: gameState.mapBounds.height, z: pos.z }, range, false);
+      // Rising Thorns: ground-level cast targets bottom-level tiles (counterpart of smcircle)
+      valid = euclidTiles({ x: pos.x, y: 1, z: pos.z }, range, false);
       break;
     case 'sphere':
       valid = euclidTiles(pos, range, true);
@@ -1152,7 +1273,14 @@ export function paint(who: string, pos: pos, type: string, range: number, self: 
   const selectedEnt = gameState.clients[who]?.selectedEnt;
   if (selectedEnt != null) {
     valid[selectedEnt] = false;
-    if (self) valid[selectedEnt] = true;
+    if (self) {
+      valid[selectedEnt] = true;
+      const entData = getLiveEnt(selectedEnt);
+      if (entData) {
+        const tileKey = `${entData.position.x},${entData.position.y - 1},${entData.position.z}`;
+        valid[tileKey] = true;
+      }
+    }
   }
   return valid;
 }
@@ -1227,11 +1355,11 @@ export function getAbility(name: string) {
         name: name,
         type: "cross",
         effect: ["move", "away"],
-        cond: (x: number) => x > 5,
+        cond: (x: number) => x >= 5,
         range: 0,
         dmg: 4,
         cd: 2,
-        AoE: "circle",
+        AoE: "cross",
         AoErange: 2,
         self: true,
       }
@@ -1311,6 +1439,10 @@ export function getAbility(name: string) {
         dmg: 1,
         cd: 1,
         self: false,
+        AoE: "cross",
+        AoErange: 1,
+        displaceFromCenter: true,
+        collisionRejects: true,
       }
     case "Bombastic Flask":
       return {
@@ -1322,6 +1454,9 @@ export function getAbility(name: string) {
         dmg: (res: number) => Math.floor(res / 2) - 2,
         cd: 1,
         self: false,
+        AoE: "cross",
+        AoErange: 1,
+        displaceFromCenter: true,
       }
     case "Oxidation":
       return {
@@ -1337,95 +1472,31 @@ export function getAbility(name: string) {
     case "Swoop":
       return {
         name: name,
-        type: "circle",
-        effect: [],
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
+        type: "cross",
+        cond: (x: number) => x > 1,
+        range: 1,
+        dmg: 1,
         cd: 0,
         self: false,
       }
     case "Claw":
       return {
         name: name,
-        type: "circle",
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
-        cd: 0,
-        self: false,
-      }
-    case "Spawn Drone":
-      return {
-        name: name,
-        type: "circle",
-        effect: ["oxidation", "2"],
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
-        cd: 0,
-        self: false,
-      }
-    case "Spawn Crawler":
-      return {
-        name: name,
-        type: "circle",
-        effect: ["oxidation", "2"],
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
-        cd: 0,
-        self: false,
-      }
-    case "Shoot":
-      return {
-        name: name,
-        type: "circle",
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
-        cd: 0,
-        self: false,
-      }
-    case "Reload":
-      return {
-        name: name,
-        type: "circle",
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
-        cd: 0,
-        self: false,
-      }
-    case "Charge":
-      return {
-        name: name,
-        type: "circle",
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
-        cd: 0,
-        self: false,
-      }
-    case "Atomic Bomb":
-      return {
-        name: name,
-        type: "sphere",
-        effect: ["oxidation", "2"],
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
+        type: "cross",
+        cond: (x: number) => x > 1,
+        range: 1,
+        dmg: 1,
         cd: 0,
         self: false,
       }
     case "Push":
       return {
         name: name,
-        type: "circle",
-        effect: ["oxidation", "2"],
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
+        type: "cross",
+        effect: ["move", "away", "2"],
+        cond: (x: number) => x > 3,
+        range: 1,
+        dmg: (x: number) => x,
         cd: 0,
         self: false,
       }
@@ -1433,11 +1504,33 @@ export function getAbility(name: string) {
       return {
         name: name,
         type: "circle",
-        effect: ["oxidation", "2"],
-        cond: (x: number) => x > 2,
-        range: 2,
-        dmg: 0,
+        cond: (x: number) => x > 5,
+        range: 6,
+        dmg: (x: number) => Math.floor(x / 2),
+        cd: 1,
+        self: false,
+      }
+    case "Charge":
+      return {
+        name: name,
+        type: "cross",
+        effect: ["move", "away"],
+        cond: (x: number) => x > 4,
+        range: 3,
+        dmg: (x: number) => Math.floor(x / 2),
         cd: 0,
+        self: false,
+      }
+    case "Atomic Bomb":
+      return {
+        name: name,
+        type: "sphere",
+        cond: (x: number) => x > 3,
+        range: 2,
+        dmg: (x: number) => Math.floor(x / 2) + 2,
+        cd: 2,
+        AoE: "circle",
+        AoErange: 2,
         self: false,
       }
     default:

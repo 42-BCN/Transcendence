@@ -115,6 +115,7 @@ type gameState = globalGameState & localGameState & {
   typeEnt: string | null;
   affected: Record<string, boolean>;
   vfx: Record<string, vfx>;
+  entityTints: Record<string, { color: string; expiresAt: number }>;
 
   nextPhase: () => void;
 
@@ -151,6 +152,7 @@ export const useGame = create<gameState>()((set, get) => ({
   clones: {},
   tiles: {},
   highlights: {},
+  entityTints: {},
   selectables: {},
   affected: {},
   vfx: {},
@@ -274,10 +276,14 @@ export const useGame = create<gameState>()((set, get) => ({
         return;
       const label =
         effect.type === 'damage' ? `-${effect.amount}` :
-          effect.type === 'doom' ? `☠ +${effect.amount}` :
-            effect.type === 'shield' ? `+${effect.amount}` :
-              effect.type;
-
+          effect.type === 'doom' ? `☠ +${effect.amount ?? 0}` :
+            effect.type === 'burn' ? `🔥 ${effect.type}` :
+              effect.type === 'restrain' ? `⛓ ${effect.type}` :
+                effect.type === 'oxidation' ? `⚗ ${effect.type}` :
+                  effect.type === 'boost' ? `⚡ ${effect.type}` :
+                    effect.type === 'shield' ? `🛡 ${effect.type}` :
+                      effect.type === 'miss' ? `✗ MISS` :
+                        effect.type;
       set((s) => ({
         vfx: {
           ...s.vfx,
@@ -286,7 +292,7 @@ export const useGame = create<gameState>()((set, get) => ({
             eid: effect.eid,
             type: effect.type,
             amount: effect.amount,
-            label
+            label,
           },
         },
       }));
@@ -297,7 +303,23 @@ export const useGame = create<gameState>()((set, get) => ({
           return { vfx: next };
         });
       }, 1400);
-    }
+      if (effect.type === 'damage' || effect.type === 'miss') {
+        const tintColor = effect.type === 'damage' ? '#ff2222' : '#22ff66';
+        const eid = effect.eid;
+        const expiresAt = Date.now() + 500;
+        set((s) => ({
+          entityTints: { ...s.entityTints, [eid]: { color: tintColor, expiresAt } },
+        }));
+        setTimeout(() => {
+          set((s) => {
+            const existing = s.entityTints[eid];
+            if (!existing || existing.expiresAt > Date.now()) return s;
+            const { [eid]: _removed, ...rest } = s.entityTints;
+            return { entityTints: rest };
+          });
+        }, 550);
+      }
+    };
 
     const handleSync = (state: localGameState) => {
       if (!state)

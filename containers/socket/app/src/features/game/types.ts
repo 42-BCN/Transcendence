@@ -70,6 +70,8 @@ export type abilityInfo = {
   AoE?: string;
   AoErange?: number;
   effect?: string[];
+  displaceFromCenter?: boolean;
+  collisionRejects?: boolean;
 }
 
 export type vfx = {
@@ -92,6 +94,7 @@ export type serverGameState = {
   history: historyAction[];
   mapBounds: mapInfo;
   forcedMoveOrigins: Record<string, pos>;
+  planningStatusOrigins: Record<string, { status: string | null; statusTurns: number; dice?: number[] }>;
 }
 
 export type clientGameState = {

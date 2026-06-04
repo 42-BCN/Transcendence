@@ -1,6 +1,6 @@
 import type { Namespace, Socket } from 'socket.io';
 import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
-import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase, applyPlanningDisplace } from './utils';
+import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase, applyPlanningDisplace, applyPlanningStatus, checkEnt, getAoE, nextVfxId } from './utils';
 
 const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
 const playerIds: string[] = [...roles].reverse();
@@ -45,6 +45,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       gameState.ghosts = {};
       gameState.history = [];
       gameState.forcedMoveOrigins = {};
+      gameState.planningStatusOrigins = {};
     }
     // WARN: DO NOT CHANGE, else will not render the map 
     nsp.emit('game:server:globalSync', gameState);
@@ -229,7 +230,69 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         if (abilityActionId) {
           const ab = getAbility(abName);
           if (ab.effect && ab.effect[0] === 'move') {
-            applyPlanningDisplace(entid, target, ab, abilityActionId);
+            if (!ab.displaceFromCenter) {
+              applyPlanningDisplace(entid, target, ab, abilityActionId);
+            }
+            if (ab.AoE) {
+              const aoeTargets = getAoE(entid, target, ab.AoE, ab.AoErange);
+              if (ab.displaceFromCenter) {
+                let centerPos: { x: number; y: number; z: number } | undefined;
+                if (target.includes(',')) {
+                  const [cx, cy, cz] = target.split(',').map(Number);
+                  centerPos = { x: cx, y: cy + 1, z: cz };
+                } else {
+                  const baseId = target.replace('clone_', '');
+                  const centEnt =
+                    gameState.players[baseId] ??
+                    gameState.enemies[baseId] ??
+                    gameState.clones[`clone_${baseId}`] ??
+                    gameState.clones[target];
+                  if (centEnt) centerPos = { ...(centEnt as any).position };
+                }
+                if (ab.collisionRejects && aoeTargets.length >= 2) {
+                  for (const aoeId of aoeTargets) {
+                    vfx({
+                      vfxid: nextVfxId(`plan_col_${aoeId}`),
+                      eid: aoeId,
+                      type: 'damage',
+                      amount: 1,
+                    });
+                  }
+                } else {
+                  for (const aoeId of aoeTargets) {
+                    if (aoeId !== target) {
+                      applyPlanningDisplace(entid, aoeId, ab, abilityActionId, centerPos);
+                    }
+                  }
+                }
+              } else {
+                for (const aoeId of aoeTargets) {
+                  if (aoeId !== target) {
+                    applyPlanningDisplace(entid, aoeId, ab, abilityActionId);
+                  }
+                }
+              }
+            }
+          }
+          else if (ab.effect && ab.effect[0]) {
+            applyPlanningStatus(entid, target, ab, abilityActionId);
+            let vfxEid: string | null = null;
+            if (!target.includes(',')) {
+              vfxEid = target;
+            }
+            else {
+              const [x, y, z] = target.split(',').map(Number);
+              const entOnTile = checkEnt(x, y + 1, z);
+              if (entOnTile && !entOnTile.isDead) vfxEid = entOnTile.id;
+            }
+            if (vfxEid) {
+              vfx({
+                vfxid: nextVfxId(`plan_${ab.effect[0]}_${vfxEid}`),
+                eid: vfxEid,
+                type: ab.effect[0],
+                amount: null,
+              });
+            }
           }
         }
         setClear(role);
