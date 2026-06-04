@@ -294,13 +294,14 @@ function createFriendFromPendingRequest(request: FriendshipPublic): FriendPublic
 
 function createFriendFromSearchItem(
   searchItem: GroupedSearchResults['requests'][number],
-): FriendPublic {
+): FriendPublic | null {
+  if (!searchItem.friendshipId) return null;
   return {
     id: searchItem.id,
     username: searchItem.username,
     avatar: searchItem.avatar,
     presence: 'offline',
-    friendshipId: searchItem.friendshipId ?? '',
+    friendshipId: searchItem.friendshipId,
   };
 }
 
