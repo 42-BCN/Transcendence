@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import { faker } from '@faker-js/faker';
 import { usernameSchema } from '@contracts/auth/auth.validation';
 
@@ -22,6 +23,6 @@ export function generateUsername(): string {
   }
 
   // Fallback if all attempts fail
-  const randomSuffix = Math.floor(10000000 + Math.random() * 90000000);
+  const randomSuffix = randomInt(10000000, 100000000);
   return `user${randomSuffix}`;
 }
