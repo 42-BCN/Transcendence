@@ -300,7 +300,7 @@ function createFriendFromSearchItem(
     username: searchItem.username,
     avatar: searchItem.avatar,
     presence: 'offline',
-    friendshipId: searchItem.friendshipId!,
+    friendshipId: searchItem.friendshipId ?? '',
   };
 }
 
