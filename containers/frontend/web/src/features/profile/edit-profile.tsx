@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Stack, Text } from '@components';
 
 import type { UpdateMeProfileReq } from '@/contracts/api/users/users.validation';
+import { AvatarEnum } from '@/contracts/api/users/users.validation';
 
 import { protectedMeProfileAction } from './profile.action';
 import { EditProfileForm } from './edit-profile.form';
@@ -15,6 +16,9 @@ export async function EditProfileFeature() {
     return <div>{t('fail')}</div>;
   }
 
+  const parsedAvatar = AvatarEnum.safeParse(data.data.avatar);
+  const initialAvatar = parsedAvatar.success ? parsedAvatar.data : null;
+
   return (
     <Stack className="flex-1" gap="sm">
       <Text as="h1" variant="body-lg" className="font-bold">
@@ -23,7 +27,7 @@ export async function EditProfileFeature() {
 
       <EditProfileForm
         initialBio={data.data.bio}
-        initialAvatar={data.data.avatar as UpdateMeProfileReq['avatar']}
+        initialAvatar={initialAvatar}
       />
     </Stack>
   );
