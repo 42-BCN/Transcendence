@@ -6,7 +6,7 @@ import type {
   ServerToClientGameRoomsEvents,
 } from '@contracts/sockets/chat/gameRooms.schema';
 import { gameRoomSocket } from '@/lib/sockets/socket';
-import type { gameRoomState} from '@contracts/sockets/game/game.schema';
+import type { gameRoomState } from '@contracts/sockets/game/game.schema';
 
 export function GameRoomSocketJoinAnyRoom() {
   gameRoomSocket.emit("gameRoom:teammate:joinAny");
@@ -35,11 +35,13 @@ export function initGameRoomSocketHandelers(
 
   gameRoomSocket.on('gameRoom:teammate:joinAny:ack', (gameRoom: gameRoomState) => {
     console.log("[ gameRoom ] connection to room succesfulll.");
-    setDebugState("state: { " + "roomId: " + gameRoom.id + " }");
+    console.log("[ gameRoom ] state: ", gameRoom);
+    setDebugState("state: " + JSON.stringify(gameRoom));
   
   });
-  gameRoomSocket.on('gameRoom:room:joined', (userId: string) => {
-    console.log("[ gameRoom ] joining a game room", userId);
+  gameRoomSocket.on('gameRoom:room:joined', (gameRoom: gameRoomState, userId: string) => {
+    console.log("[ gameRoom ] joining a game room", gameRoom, userId);
+    setDebugState("state: " + JSON.stringify(gameRoom));
     setDebugMsg("new user joined: " + userId);
   });
   gameRoomSocket.connect();

@@ -11,31 +11,31 @@ export const authSecurityConfig = {
   resendVerificationCooldownMs: 60 * SECOND,
   rateLimit: {
     authIp: {
-      max: 30,
+      max: 3000,
       windowMs: MINUTE,
     },
     loginIp: {
-      max: 20,
+      max: 2000,
       windowMs: MINUTE,
     },
     loginIdentifier: {
-      max: 20,
+      max: 2000,
       windowMs: 10 * MINUTE,
     },
     emailFlow: {
-      max: 3,
+      max: 300,
       windowMs: 15 * MINUTE,
     },
     tokenFlow: {
-      max: 5,
+      max: 500,
       windowMs: 15 * MINUTE,
     },
     sessionFlow: {
-      max: 60,
+      max: 6000,
       windowMs: MINUTE,
     },
     guestSession: {
-      max: 10,
+      max: 1000,
       windowMs: MINUTE,
     },
   },

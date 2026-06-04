@@ -17,7 +17,6 @@ export function makeGameRoomAction(action: (formData: FormData) => void) {
   };
 }
 
-
 export function GameRoomTest() {
 
   return (

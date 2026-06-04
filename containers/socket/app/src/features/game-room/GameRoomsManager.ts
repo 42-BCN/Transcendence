@@ -33,18 +33,22 @@ export class GameRoomsManager {
     return undefined;
   }
 
-  joinUserToAnyGameRoom(userId: string): gameRoomState {
+  joinUserToAnyGameRoom(userId: string, userNickName: string): gameRoomState | undefined {
+    if (this.joined_users.has(userId)) {
+		  return undefined ;
+	  }
+    
     let gameRoom: gameRoomState | undefined ;
     gameRoom = this.getFirstNonEmtyGameRoomId();
     if (gameRoom === undefined) {
       gameRoom = this.createGameRoom();
     }
-    this.joinUserToGameRoom(userId, gameRoom.id);
+    this.joinUserToGameRoom(userId, userNickName, gameRoom.id);
     return gameRoom;
   }
   
   //	in case of assignig correcly the user to the room it will return the room, else it returns undefined.
-  joinUserToGameRoom(userId: string, gameRoomId: number): gameRoomState | undefined {
+  joinUserToGameRoom(userId: string, userNickName: string, gameRoomId: number): gameRoomState | undefined {
 	if (this.joined_users.has(userId)) {
 		return false ;
 	}
@@ -53,7 +57,7 @@ export class GameRoomsManager {
       return false ;
     }
     // TODO: check if user is alredy in room.
-    this.gameRooms.get(gameRoomId).teammates.push({userId, undefined});
+    this.gameRooms.get(gameRoomId).teammates.push({userId, userNickName});
     if (this.gameRooms.get(gameRoomId).teammates.length == 4) {
       this.gameRooms.get(gameRoomId).isGameRoomFull = true;
     }
@@ -63,7 +67,7 @@ export class GameRoomsManager {
   removeUserFromGameRoom(userId: number, gameRoomId: number) {
     let newTeammates: {userId: string, role?: string}[];
     for ( const teammate of this.gameRooms.get(gameRoomId).teammates) {
-      if (userId != teammates.userId) {
+      if (userId != teammate.userId) {
         newTeammates.push(teammate);
       }
     }

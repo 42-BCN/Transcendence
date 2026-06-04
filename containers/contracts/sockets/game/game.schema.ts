@@ -145,6 +145,6 @@ export type UpdatePlanPayload = z.infer<typeof UpdatePlanPayloadSchema>;
 export type gameRoomState = {
 	id: number;
 	isGameRoomFull: boolean;
-	teammates: {userId: string, role?: string}[];
+	teammates: {userId: string, userNickName: string, role?: string}[];
 }
 
