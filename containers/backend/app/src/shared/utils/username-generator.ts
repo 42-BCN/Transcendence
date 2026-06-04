@@ -2,10 +2,9 @@ import { faker } from '@faker-js/faker';
 import { usernameSchema } from '@contracts/auth/auth.validation';
 
 export function generateUsername(): string {
-  let isValid = false;
-  let username = '';
+  const MAX_RETRIES = 10;
 
-  while (!isValid) {
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     const adjective = faker.word.adjective();
     const noun = faker.word.noun();
     const number = faker.number.int({ min: 10, max: 99 });
@@ -14,13 +13,15 @@ export function generateUsername(): string {
     const raw = `${adjective}${noun}${number}`.replace(/[^a-zA-Z0-9]/g, '');
 
     // Max length is 15
-    username = raw.slice(0, 15).toLowerCase();
+    const username = raw.slice(0, 15).toLowerCase();
 
     // Verify it actually passes the strict contract rules
     if (usernameSchema.safeParse(username).success) {
-      isValid = true;
+      return username;
     }
   }
 
-  return username;
+  // Fallback if all attempts fail
+  const randomSuffix = Math.floor(10000000 + Math.random() * 90000000);
+  return `user${randomSuffix}`;
 }
