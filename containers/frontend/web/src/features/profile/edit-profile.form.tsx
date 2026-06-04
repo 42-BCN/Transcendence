@@ -41,7 +41,9 @@ export function EditProfileForm({ initialBio, initialAvatar }: EditProfileFormPr
                   key={avatarPath}
                   type="button"
                   onClick={() => form.setValue('avatar', avatarPath)}
-                  aria-label={t('edit.avatarAlt', { name: avatarPath })}
+                  aria-label={t('edit.avatarAlt', {
+                    name: avatarPath.replace('/avatars/avatar-', '').replace('.png', ''),
+                  })}
                   className={`rounded-lg transition-all duration-200 shrink-0 ${
                     form.values.avatar === avatarPath
                       ? 'outline outline-2 outline-primary outline-offset-2 scale-110 opacity-100'
