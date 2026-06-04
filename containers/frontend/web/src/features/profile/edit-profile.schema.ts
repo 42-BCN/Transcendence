@@ -5,7 +5,7 @@ export const BIO_MAX_LENGTH = 600;
 
 const fieldNames = ['bio', 'avatar'] as const satisfies readonly (keyof UpdateMeProfileReq)[];
 
-export function createEditProfileForm(initialBio: string, initialAvatar: string | null) {
+export function createEditProfileForm(initialBio: string, initialAvatar: UpdateMeProfileReq['avatar']) {
   return {
     schema: UpdateMeProfileReqSchema,
     fieldNames,

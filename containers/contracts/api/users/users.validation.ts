@@ -70,7 +70,7 @@ export const AvatarEnum = z.enum([
 export const UpdateMeProfileReqSchema = z
   .object({
     bio: z.string().trim().max(600, { message: VALIDATION.FIELD_TOO_LONG }),
-    avatar: AvatarEnum.nullable().optional(),
+    avatar: AvatarEnum.nullable(),
   })
   .strict();
 

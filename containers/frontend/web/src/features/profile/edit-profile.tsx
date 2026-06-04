@@ -2,6 +2,8 @@ import { getTranslations } from 'next-intl/server';
 
 import { Stack, Text } from '@components';
 
+import type { UpdateMeProfileReq } from '@/contracts/api/users/users.validation';
+
 import { protectedMeProfileAction } from './profile.action';
 import { EditProfileForm } from './edit-profile.form';
 
@@ -19,7 +21,10 @@ export async function EditProfileFeature() {
         {t('edit.title')}
       </Text>
 
-      <EditProfileForm initialBio={data.data.bio} initialAvatar={data.data.avatar} />
+      <EditProfileForm
+        initialBio={data.data.bio}
+        initialAvatar={data.data.avatar as UpdateMeProfileReq['avatar']}
+      />
     </Stack>
   );
 }

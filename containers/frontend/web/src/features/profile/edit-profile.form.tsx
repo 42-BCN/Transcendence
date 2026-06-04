@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Avatar, Form, Stack, SubmitButton, Text, TextAreaField } from '@components';
 import { useForm } from '@/hooks';
 import { createSubmitHandler } from '@/lib/http/submitHandler';
+import type { UpdateMeProfileReq } from '@/contracts/api/users/users.validation';
 import { AvatarEnum } from '@/contracts/api/users/users.validation';
 
 import { editProfileAction } from './edit-profile.action';
@@ -13,7 +14,7 @@ import { BIO_MAX_LENGTH, createEditProfileForm } from './edit-profile.schema';
 
 type EditProfileFormProps = {
   initialBio: string;
-  initialAvatar: string | null;
+  initialAvatar: UpdateMeProfileReq['avatar'];
 };
 
 export function EditProfileForm({ initialBio, initialAvatar }: EditProfileFormProps) {
