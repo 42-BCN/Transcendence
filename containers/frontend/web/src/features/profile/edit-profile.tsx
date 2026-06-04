@@ -2,7 +2,6 @@ import { getTranslations } from 'next-intl/server';
 
 import { Stack, Text } from '@components';
 
-import type { UpdateMeProfileReq } from '@/contracts/api/users/users.validation';
 import { AvatarEnum } from '@/contracts/api/users/users.validation';
 
 import { protectedMeProfileAction } from './profile.action';
