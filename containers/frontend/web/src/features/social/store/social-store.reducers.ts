@@ -248,6 +248,7 @@ function receiveFriendRejectedReducer(
   return (state) => ({
     pendingSent: removePendingByFriendshipId(state.pendingSent, payload.friendshipId),
     pendingReceived: removePendingByFriendshipId(state.pendingReceived, payload.friendshipId),
+    friends: state.friends.filter((friend) => friend.friendshipId !== payload.friendshipId),
     searchResults: replaceSearchResultByUserId(
       state.searchResults,
       payload.rejectedByUserId,

@@ -193,7 +193,14 @@ export async function respondToFriendRequest(
 }
 
 export async function removeFriendship(friendshipId: string, currentUserId: string): Promise<void> {
-  const outcome = await deleteFriendship(friendshipId, currentUserId);
-  if (outcome === 'not_found') throw new ApiError('FRIENDSHIP_NOT_FOUND');
-  if (outcome === 'forbidden') throw new ApiError('UNAUTHORIZED_ACTION');
+  const result = await deleteFriendship(friendshipId, currentUserId);
+  if (result.outcome === 'not_found') throw new ApiError('FRIENDSHIP_NOT_FOUND');
+  if (result.outcome === 'forbidden') throw new ApiError('UNAUTHORIZED_ACTION');
+
+  const { friendship } = result;
+  const otherUserId = friendship.userId1 === currentUserId ? friendship.userId2 : friendship.userId1;
+  await notifyFriendRejected(otherUserId, {
+    rejectedByUserId: currentUserId,
+    friendshipId,
+  });
 }
