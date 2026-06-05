@@ -4,6 +4,7 @@ import type { UserMeProfileResponse } from '@contracts/users/users.contracts';
 import type { UpdateMeProfileReq } from '@contracts/users/users.validation';
 import { sendError } from '@shared';
 
+import { getAuthCookieSameSite } from '@/auth/auth.cookies';
 import { findUserMeProfileById } from '@/users/users.service';
 
 import * as Service from './protected.service';
@@ -69,7 +70,7 @@ export async function deleteMe(req: Request, res: Response<DeleteMeRes>): Promis
 
     res.clearCookie('sid', {
       path: '/',
-      sameSite: 'lax',
+      sameSite: getAuthCookieSameSite(),
     });
 
     res.status(200).json({
