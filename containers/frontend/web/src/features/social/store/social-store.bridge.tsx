@@ -1,14 +1,25 @@
 'use client';
 
+import { useCallback } from 'react';
+
 import { SocialSocketManager } from '@/lib/sockets/friends-socket.manager';
 import { useSocialStore } from '@/providers/social-provider';
+import { getFriendsList } from '@/features/social/actions/social.server.actions';
 
 export function SocialSocketBridge() {
   const setFriendPresence = useSocialStore((state) => state.setFriendPresence);
+  const setFriends = useSocialStore((state) => state.setFriends);
 
   const receiveFriendRequest = useSocialStore((state) => state.receiveFriendRequest);
   const receiveFriendAccepted = useSocialStore((state) => state.receiveFriendAccepted);
   const receiveFriendRejected = useSocialStore((state) => state.receiveFriendRejected);
+
+  const handleReconnect = useCallback(async () => {
+    const result = await getFriendsList();
+    if (result.ok) {
+      setFriends(result.data.friends);
+    }
+  }, [setFriends]);
 
   return (
     <SocialSocketManager
@@ -18,6 +29,7 @@ export function SocialSocketBridge() {
       onFriendRequest={receiveFriendRequest}
       onFriendAccepted={receiveFriendAccepted}
       onFriendRejected={receiveFriendRejected}
+      onReconnect={handleReconnect}
     />
   );
 }

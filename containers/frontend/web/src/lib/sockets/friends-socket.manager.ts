@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import {
   friendshipSocketEvents,
@@ -22,6 +22,7 @@ type SocialSocketManagerProps = {
   onFriendRequest: (payload: FriendRequestNotificationPayload) => void;
   onFriendAccepted: (payload: FriendAcceptedNotificationPayload) => void;
   onFriendRejected: (payload: FriendRejectedNotificationPayload) => void;
+  onReconnect?: () => void;
 };
 
 export const SocialSocketManager = ({
@@ -31,7 +32,10 @@ export const SocialSocketManager = ({
   onFriendRequest,
   onFriendAccepted,
   onFriendRejected,
+  onReconnect,
 }: SocialSocketManagerProps) => {
+  const isFirstConnect = useRef(true);
+
   useEffect(() => {
     const emitCurrentPresence = () => {
       friendsSocket.emit(document.hidden ? presenceSocketEvents.away : presenceSocketEvents.active);
@@ -40,6 +44,12 @@ export const SocialSocketManager = ({
     const handleConnect = () => {
       console.log('Connected to friends socket server', friendsSocket.id);
       emitCurrentPresence();
+
+      if (isFirstConnect.current) {
+        isFirstConnect.current = false;
+      } else {
+        onReconnect?.();
+      }
     };
 
     const handleDisconnect = () => {
@@ -127,6 +137,7 @@ export const SocialSocketManager = ({
     onFriendRequest,
     onFriendAccepted,
     onFriendRejected,
+    onReconnect,
   ]);
 
   return null;

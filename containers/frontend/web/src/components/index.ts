@@ -69,6 +69,11 @@ export {
   type GlassIntensity,
 } from './primitives/glass-card/glass-card.styles';
 export { Icon, type IconName } from './primitives/icon';
+export {
+  PresenceBadge,
+  type PresenceBadgeProps,
+  type PresenceStatus,
+} from './primitives/presence-badge';
 export { InlineLinkPrompt } from './composites/inline-link-prompt/inline-link-prompt';
 export { MessageBubble, type MessageBubbleProps } from './primitives/message-bubble';
 export { ScrollArea, type ScrollAreaProps } from './primitives/scroll-area';

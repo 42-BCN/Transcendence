@@ -217,6 +217,83 @@ input:-webkit-autofill:hover,
 textarea:-webkit-autofill:hover,
 select:-webkit-autofill:hover {
 } */
+/* Animation utilities (cross-browser compatible alternative to tailwindcss-animate) */
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translate3d(
+        var(--tw-enter-translate-x, 0),
+        var(--tw-enter-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1)
+      )
+      rotate(var(--tw-enter-rotate, 0));
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: translate3d(
+        var(--tw-exit-translate-x, 0),
+        var(--tw-exit-translate-y, 0),
+        0
+      )
+      scale3d(
+        var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1)
+      )
+      rotate(var(--tw-exit-rotate, 0));
+  }
+}
+
+.animate-in {
+  animation-name: enter;
+  animation-duration: 150ms;
+  --tw-enter-opacity: 0;
+  --tw-enter-translate-x: 0;
+  --tw-enter-translate-y: 0;
+  --tw-enter-scale: 1;
+  --tw-enter-rotate: 0;
+}
+
+.animate-out {
+  animation-name: exit;
+  animation-duration: 150ms;
+  --tw-exit-opacity: 0;
+  --tw-exit-translate-x: 0;
+  --tw-exit-translate-y: 0;
+  --tw-exit-scale: 1;
+  --tw-exit-rotate: 0;
+}
+
+.fade-in { --tw-enter-opacity: 0; }
+.fade-out { --tw-exit-opacity: 0; }
+
+.slide-in-from-top-0\.5 { --tw-enter-translate-y: -2px; }
+.slide-in-from-bottom-0\.5 { --tw-enter-translate-y: 2px; }
+.slide-in-from-left-0\.5 { --tw-enter-translate-x: -2px; }
+.slide-in-from-right-0\.5 { --tw-enter-translate-x: 2px; }
+
+.slide-out-to-top-0\.5 { --tw-exit-translate-y: -2px; }
+.slide-out-to-bottom-0\.5 { --tw-exit-translate-y: 2px; }
+.slide-out-to-left-0\.5 { --tw-exit-translate-x: -2px; }
+.slide-out-to-right-0\.5 { --tw-exit-translate-x: 2px; }
+
+/* Cross-browser backdrop-filter fallback */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-fallback,
+  [class*='backdrop-blur'] {
+    background-color: var(--color-bg-primary) !important;
+    opacity: 0.97;
+  }
+}
+
 .fancy-btn {
   position: relative;
   overflow: hidden;

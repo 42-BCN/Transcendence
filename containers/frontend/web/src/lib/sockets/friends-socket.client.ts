@@ -12,7 +12,7 @@ const friendsSocketUrl = new URL('/friends', envPublic.socketUrl).toString();
 export const friendsSocket: Socket<ServerToClientFriendshipEvents, ClientToServerFriendshipEvents> =
   io(friendsSocketUrl, {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
   });
 
