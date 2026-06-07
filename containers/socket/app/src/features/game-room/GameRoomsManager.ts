@@ -34,7 +34,9 @@ export class GameRoomsManager {
   }
 
   joinUserToAnyGameRoom(userId: string, userNickName: string): gameRoomState | undefined {
+    console.log("[ gameRoom ] adding user to any game room!");
     if (this.joined_users.has(userId)) {
+      console.log("[ gameRoom ] user alredi in room.");
 		  return undefined ;
 	  }
     
@@ -44,6 +46,7 @@ export class GameRoomsManager {
       gameRoom = this.createGameRoom();
     }
     this.joinUserToGameRoom(userId, userNickName, gameRoom.id);
+    console.log("[ gameRoom ] this is the new game room: ", gameRoom);
     return gameRoom;
   }
   
@@ -64,17 +67,22 @@ export class GameRoomsManager {
     return true;
   }
 
-  removeUserFromGameRoom(userId: number, gameRoomId: number) {
-    let newTeammates: {userId: string, role?: string}[];
-    for ( const teammate of this.gameRooms.get(gameRoomId).teammates) {
-      if (userId != teammate.userId) {
-        newTeammates.push(teammate);
-      }
+  removeUserFromGameRoom(userId: string, gameRoomId: number): gameRoomState | undefined {
+    if (! this.joined_users.has(userId)) {
+      return undefined ;
     }
-    this.gameRooms.get(gameRoomId).teammates = [...newTeammates];
-    if (this.gameRooms.get(gameRoomId).isGameRoomFull == true) {
-      this.gameRooms.get(gameRoomId).isGameRoomFull = false;
+    if (! this.gameRooms.get(gameRoomId)) {
+      return undefined ;
     }
+    if (! this.gameRooms
+        .get(gameRoomId)
+        .map((item) => {item.userId == userId? true: false})
+        .includes(true) ) {
+      return undefined ;
+    }
+    this.gameRooms.get(gameRoomId).teammates = [...this.gameRooms.get(gameRoomId).teammates.filter((item) => {item.userId != userId})];
+    this.gameRooms.get(gameRoomId).isGameRoomFull = false;
+    return this.gameRooms.get(gameRoomId);
   }
 };
 

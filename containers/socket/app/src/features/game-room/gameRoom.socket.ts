@@ -25,22 +25,26 @@ export function registerGameRoomSocket(
     
     socket.on("gameRoom:teammate:joinAny", () => {
       console.log("[ GameRoom ] join request, from: ", socket.data.identityKey.toString());
-      console.log("[ GameRoom ] data : ", socket.data);
-      let gameRoom = gameRoomsManager.joinUserToAnyGameRoom(socket.data.identityKey, socket.data.username);
-      console.log("[ GameRoom ] !! ", gameRoom);
+      const gameRoom = gameRoomsManager.joinUserToAnyGameRoom(socket.data.identityKey, socket.data.username);
       if (gameRoom === undefined) {
         return ;
       }
       socket.join("GameRoom-" + gameRoom.id.toString());
-      socket.to("GameRoom-" + gameRoom.id.toString())
+      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
         .emit("gameRoom:room:joined", gameRoom, socket.data.username);
       socket.nsp.to(socket.id).emit("gameRoom:teammate:joinAny:ack", gameRoom);
     });
     
-    socket.on("gameRoom:teammate:leave", () => {
-      socket.leave("GameRoom-" + currentGameRoomId.toString());
-      socket.to("GameRoom-" + currentGameRoomId.toString())
+    socket.on("gameRoom:teammate:leave", (gameRoomId: number) => {
+      console.log("[ TAHA TAHERE ] READ THIS: ", gameRoomId);
+      if (gameRoomId === null) {
+        return ;
+      }
+      socket.leave("GameRoom-" + gameRoomId.toString());
+      const gameRoom = gameRoomsManager.removeUserFromGameRoom(socket.data.identityKey, gameRoomId);
+      socket.to("GameRoom-" + gameRoomId.toString())
         .emit("gameRoom:teammate:left", socket.data.identityKey);
+      console.log("[ gameRoom ] user removed.", gameRoom);
     });
   });
 }

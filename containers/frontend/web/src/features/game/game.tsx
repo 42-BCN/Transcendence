@@ -14,6 +14,7 @@ import { JoinGameRoomForm } from './rooms/join.form';
 import { gameRoomSocket } from '@/lib/sockets/socket';
 import { initGameRoomSocketHandelers, deinitGameRoomSocketHandelers } from '@/lib/sockets/game-room-socket.manager';
 import { GameRoomTest } from './rooms/gameRoomTest';
+import type { gameRoomState } from '@contracts/sockets/game/game.schema';
 
 const s = 0.975;
 
@@ -436,16 +437,16 @@ export function Game() {
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
   
-  const [gameRoomsDebugState, setGameRoomsDebugState] = useState("not connected to socket.");
   const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("not connected to socket.");
   const [gameRoomsErrorInfo, setGameRoomsErrorInfo] = useState("not connected to socket.");
+  const [gameRoomStateCtx, setGameRoomStateCtx] = useState<gameRoomState | unedefined>(undefined);
 
   useEffect(() => {
     // if (!initRef.current) {
     //   initRef.current = true;
     initSocketListeners();
     initGameRoomSocketHandelers(
-	    setGameRoomsDebugState,
+	    setGameRoomStateCtx,
 	    setGameRoomsDebugInfo,
 	    setGameRoomsErrorInfo
     );
@@ -470,10 +471,10 @@ export function Game() {
   return !mapBounds || mapBounds.width === 0 ? (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
-        <p>{gameRoomsDebugState}</p>
+        <p>{JSON.stringify(gameRoomStateCtx)}</p>
         <p>{gameRoomsDebugInfo}</p>
         <p>{gameRoomsErrorInfo}</p>
-		<GameRoomTest />
+		<GameRoomTest gameRoomStateCtx={gameRoomStateCtx} />
       </div>
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center">
@@ -486,7 +487,7 @@ export function Game() {
   ) : (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
-        <p>{gameRoomsDebugState}</p>
+        <p>{JSON.stringify(gameRoomStateCtx)}</p>
         <p>{gameRoomsDebugInfo}</p>
         <p>{gameRoomsErrorInfo}</p>
 		<GameRoomTest />

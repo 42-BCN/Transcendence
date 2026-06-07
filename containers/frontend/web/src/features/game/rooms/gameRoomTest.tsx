@@ -3,8 +3,11 @@
 import { useActionState, FormEvent } from 'react';
 import { Form, SubmitButton, TextField} from '@components';
 
+import type { gameRoomState } from '@contracts/sockets/game/game.schema';
+
 import {
   GameRoomSocketJoinAnyRoom,
+  makeGameRoomSocketLeaveRoom,
 } from "@/lib/sockets/game-room-socket.manager"
 
 
@@ -17,12 +20,20 @@ export function makeGameRoomAction(action: (formData: FormData) => void) {
   };
 }
 
-export function GameRoomTest() {
+export function GameRoomTest(gameRoomStateCtx: gameRoomState) {
 
+  console.log("[ DEBUG TEST IMPORTANT !!! ] ", gameRoomStateCtx);
   return (
+	<>
     <Form onSubmit={makeGameRoomAction(GameRoomSocketJoinAnyRoom)}>
       <SubmitButton idleLabel="join any room." />
     </Form>
+    <Form onSubmit={makeGameRoomAction(makeGameRoomSocketLeaveRoom(gameRoomStateCtx.id))}>
+      <SubmitButton idleLabel="leave current game room." />
+    </Form>
+	</>
   );
 }
+
+
 
