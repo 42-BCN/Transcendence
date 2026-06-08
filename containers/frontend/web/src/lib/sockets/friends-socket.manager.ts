@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 
 import {
+  directMessageUnreadSocketEvents,
+  type DirectMessageUnreadUpdatedPayload,
   friendshipSocketEvents,
   presenceSocketEvents,
   type FriendAcceptedNotificationPayload,
@@ -52,6 +54,10 @@ export const SocialSocketManager = ({
       }
     };
 
+    const handleConnectError = (error: Error) => {
+      console.error('Friends socket connect error', error);
+    };
+
     const handleDisconnect = () => {
       console.log('Disconnected from friends socket server');
     };
@@ -80,8 +86,13 @@ export const SocialSocketManager = ({
       onFriendRejected(payload);
     };
 
+    const handleUnreadUpdated = (payload: DirectMessageUnreadUpdatedPayload) => {
+      onUnreadUpdated(payload);
+    };
+
     const reservedListeners = [
       ['connect', handleConnect],
+      ['connect_error', handleConnectError],
       ['disconnect', handleDisconnect],
     ] as const;
 
@@ -95,6 +106,7 @@ export const SocialSocketManager = ({
       [friendshipSocketEvents.request, handleFriendRequest],
       [friendshipSocketEvents.accepted, handleFriendAccepted],
       [friendshipSocketEvents.rejected, handleFriendRejected],
+      [directMessageUnreadSocketEvents.updated, handleUnreadUpdated],
     ] as const;
 
     reservedListeners.forEach(([event, handler]) => {

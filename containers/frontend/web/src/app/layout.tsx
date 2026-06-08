@@ -2,10 +2,10 @@ import type { ReactNode } from 'react';
 import { getLocale } from 'next-intl/server';
 
 import { mono, primary } from './fonts';
+import { createAppMetadata } from '@/lib/metadata/metadata.config';
 import './globals.css';
 
-export const metadata = {
-  title: 'untitled',
+export const metadata = createAppMetadata({
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -14,7 +14,7 @@ export const metadata = {
     ],
     apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
   },
-};
+});
 
 export const viewport = {
   width: 'device-width',

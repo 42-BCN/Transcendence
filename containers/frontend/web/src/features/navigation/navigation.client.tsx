@@ -12,8 +12,8 @@ import { DialogTrigger } from 'react-aria-components';
 import { Settings } from '../settings';
 import { useTranslations } from 'next-intl';
 import { useMediaQuery } from '@/hooks/use-media-query';
-
-type NavigationPosition = 'fixed' | 'absolute';
+import { dispatchMobileMenuCloseEvent, dispatchMobileMenuOpenEvent } from './mobile-menu.events';
+import { navigationClientStyles } from './navigation.client.styles';
 
 type NavigationClientProps = {
   locale: string;
@@ -47,10 +47,6 @@ function getMobileNavigationValue(locale: string, closeNavigation: () => void) {
     closeNavigation,
   };
 }
-
-function getMobileNavigationClassName(position: NavigationPosition) {
-  return `group z-10 flex ${navigationPositionClassNames[position].mobileDrawer} w-full overflow-y-auto overscroll-contain rounded-s-none rounded-e-md px-2 py-4`;
-}
 function MobileNavigation(args: NavigationClientProps) {
   const position = args.position ?? 'fixed';
   const [isOpen, setIsOpen] = useState(false);
@@ -65,6 +61,14 @@ function MobileNavigation(args: NavigationClientProps) {
     setIsOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (isOpen) {
+      dispatchMobileMenuOpenEvent();
+    } else {
+      dispatchMobileMenuCloseEvent();
+    }
+  }, [isOpen]);
+
   const value = useMemo(
     () => getMobileNavigationValue(args.locale, closeNavigation),
     [args.locale, closeNavigation],
@@ -75,18 +79,16 @@ function MobileNavigation(args: NavigationClientProps) {
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <IconButton
           label={t('menu')}
-          className={`${args.forceVisibleTrigger ? '' : 'md:hidden'} ${
-            navigationPositionClassNames[position].mobileTrigger
-          } pointer-events-auto left-[24px] top-5 z-[30]`}
+          className={navigationClientStyles.mobileTrigger(position, args.forceVisibleTrigger)}
           icon={isOpen ? 'close' : 'menu'}
           placement="right"
         />
 
-        <Drawer>
+        <Drawer isDismissable>
           <Stack
             as="nav"
             aria-label={t('mainAriaLabel')}
-            className={getMobileNavigationClassName(position)}
+            className={navigationClientStyles.mobileDrawer(position)}
             align="start"
           >
             <NavigationHeader />
@@ -129,9 +131,7 @@ function DesktopNavigation(args: NavigationClientProps) {
         className={glassCardStyles({
           intensity: 'medium',
           blur: 'sm',
-          className: `group top-0 z-10 overflow-y-auto rounded-s-none rounded-e-md px-2 py-4 ${
-            navigationPositionClassNames[position].desktop
-          } ${isExpanded ? 'w-44' : 'w-min'}`,
+          className: navigationClientStyles.desktop(position, isExpanded),
         })}
         align="start"
       >

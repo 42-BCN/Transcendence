@@ -1,5 +1,22 @@
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Stack, Text, ContentSection, ExternalLink } from '@components';
+import { createRouteMetadata } from '@/lib/metadata/metadata.config';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const t = await getTranslations('pages.privacy.metadata');
+  const { locale } = await params;
+
+  return createRouteMetadata({
+    title: t('title'),
+    description: t('description'),
+    canonical: `/${locale}/privacy`,
+  });
+}
 
 export default async function PrivacyPolicyPage() {
   const t = await getTranslations('pages.privacy');

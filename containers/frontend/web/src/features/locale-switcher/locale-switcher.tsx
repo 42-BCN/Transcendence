@@ -59,7 +59,8 @@ export function LocaleSwitcher() {
     if (next === locale) return;
     if (next !== 'en' && next !== 'es' && next !== 'ca') return;
     document.cookie = `${envPublic.localeCookieName}=${next};path=/;max-age=${LOCALE_COOKIE_MAX_AGE}`;
-    router.replace(pathname, { locale: next });
+    const target = typeof window !== 'undefined' ? window.location.pathname : pathname;
+    router.replace(target, { locale: next });
   };
 
   const options = [

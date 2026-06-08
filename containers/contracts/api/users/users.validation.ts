@@ -60,6 +60,13 @@ export const SearchUsersQuerySchema = z
     path: ['limit'],
   });
 
+export const UpdateMeProfileReqSchema = z
+  .object({
+    bio: z.string().trim().max(600, { message: VALIDATION.FIELD_TOO_LONG }),
+  })
+  .strict();
+
 export type GetUsersQuery = z.infer<typeof GetUsersQuerySchema>;
 export type GetUserByIdParam = z.infer<typeof GetUserByIdParamSchema>;
 export type SearchUsersQuery = z.infer<typeof SearchUsersQuerySchema>;
+export type UpdateMeProfileReq = z.infer<typeof UpdateMeProfileReqSchema>;

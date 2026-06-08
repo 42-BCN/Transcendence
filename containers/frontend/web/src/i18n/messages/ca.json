@@ -7,6 +7,7 @@
   },
   "components": {
     "breadcrumb": {
+      "edit": "Editar perfil",
       "home": "Inici",
       "me": "El Meu Compte",
       "reset-password": "Restablir Contrasenya"
@@ -25,7 +26,7 @@
       "es": "ES"
     },
     "submitButton": {
-      "pendingLabel": "CHANGE_LATER"
+      "pendingLabel": "Enviant..."
     },
     "textAreaField": {
       "characterCount": "{current} de {max} caràcters"
@@ -33,8 +34,10 @@
   },
   "layouts": {
     "locale": {
-      "description": "Aquest és un exemple de com utilitzar next-intl al directori app.",
-      "title": "Exemple next-intl"
+      "metadata": {
+        "description": "Juga a Transcendence, xateja amb amics i gestiona el teu compte des d'un sol lloc.",
+        "title": "Transcendence"
+      }
     }
   },
   "pages": {
@@ -42,7 +45,19 @@
       "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen.",
       "title": "Hola des de Next en Docker 👋"
     },
+    "game": {
+      "description": "Juga a Transcendence i gestiona els teus torns.",
+      "metadata": {
+        "description": "Juga a Transcendence i gestiona els teus torns.",
+        "title": "Joc"
+      },
+      "title": "Joc"
+    },
     "me": {
+      "metadata": {
+        "description": "Consulta i gestiona les dades del teu compte de Transcendence.",
+        "title": "El Meu Compte"
+      },
       "subtitle": "Accedeix a les dades protegides del teu compte.",
       "title": "El Meu Compte"
     },
@@ -52,6 +67,10 @@
       "title": "Pàgina no trobada"
     },
     "privacy": {
+      "metadata": {
+        "description": "Descobreix quines dades recopila Transcendence, com les fa servir i com les protegeix.",
+        "title": "Política de Privacitat"
+      },
       "contact": {
         "description": "Si tens alguna pregunta sobre aquesta política o desitges exercir els teus drets, si us plau, contacta amb l'equip de desenvolupament a través del nostre <link>repositori de GitHub</link>.",
         "title": "Contacte"
@@ -95,6 +114,10 @@
       "title": "Política de Privacitat"
     },
     "terms": {
+      "metadata": {
+        "description": "Consulta les regles, responsabilitats i condicions legals per fer servir Transcendence.",
+        "title": "Termes de Servei"
+      },
       "acceptance": {
         "description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma.",
         "title": "Acceptació dels Termes"
@@ -193,6 +216,10 @@
       "login": {
         "forgotPassword": "Has oblidat la contrasenya?",
         "goToSignup": "Crear-ne un",
+        "metadata": {
+          "description": "Inicia sessió al teu compte de Transcendence per jugar, xatejar i gestionar el teu perfil.",
+          "title": "Iniciar sessió"
+        },
         "noAccount": "No tens compte?",
         "submit": "Iniciar sessió",
         "title": "Iniciar sessió"
@@ -205,6 +232,10 @@
         "backToLogin": "Torna a iniciar sessió",
         "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+        "metadata": {
+          "description": "Sol·licita un correu de restabliment de contrasenya per recuperar l'accés al teu compte de Transcendence.",
+          "title": "Recuperar compte"
+        },
         "rememberedPassword": "Has recordat la teva contrasenya?",
         "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
         "title": "Revisa el teu correu"
@@ -212,6 +243,10 @@
       "reset": {
         "backToLogin": "Torna a iniciar sessió",
         "description": "Introdueix la teva nova contrasenya.",
+        "metadata": {
+          "description": "Defineix una contrasenya nova per al teu compte de Transcendence.",
+          "title": "Restableix la contrasenya"
+        },
         "rememberedPassword": "Has recordat la contrasenya?",
         "submit": "Desa la contrasenya nova",
         "success": "La contrasenya s'ha actualitzat correctament.",
@@ -220,6 +255,10 @@
       "signup": {
         "goToLogin": "Iniciar sessió",
         "haveAccount": "Ja tens compte?",
+        "metadata": {
+          "description": "Crea el teu compte de Transcendence per començar a jugar i connectar amb amics.",
+          "title": "Crear compte"
+        },
         "privacy": {
           "error": "Has d'acceptar la Política de Privacitat per continuar.",
           "label": "He llegit i accepto la <link>Política de Privacitat</link>"
@@ -232,6 +271,10 @@
         "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
         "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
         "isConfirmed": "Ja has confirmat?",
+        "metadata": {
+          "description": "Confirma la teva adreça de correu electrònic per activar el teu compte de Transcendence.",
+          "title": "Verifica el teu correu electrònic"
+        },
         "missingToken": "Falta el token de verificació.",
         "recoverTitle": "Recuperar compte",
         "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte.",
@@ -248,6 +291,29 @@
       "messageAriaLabel": "Missatge",
       "showChat": "Mostra el xat"
     },
+    "directMessages": {
+      "metadata": {
+        "description": "Obre converses privades amb els teus amics a Transcendence.",
+        "title": "Missatges directes"
+      },
+      "emptyState": "Encara no hi ha converses",
+      "listTitle": "Missatges",
+      "openList": "Obrir llista de missatges",
+      "closeList": "Tancar llista de missatges",
+      "selectionTitle": "Selecciona una conversa",
+      "selectionBody": "Tria un amic de la llista per obrir els teus missatges.",
+      "accessTitle": "Missatges directes",
+      "accessBody": {
+        "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
+        "unauthenticated": "Has d'iniciar sessió per obrir un xat privat."
+      },
+      "backToHome": "Torna a l'inici",
+      "presence": {
+        "online": "● En línia",
+        "away": "● Absent",
+        "offline": "Desconnectat"
+      }
+    },
     "game": {
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
@@ -257,6 +323,7 @@
       "createAccount": "Crear compte",
       "game": "Joc",
       "home": "Inici",
+      "messages": "Missatges",
       "login": "Iniciar sessió",
       "logout": "Tancar sessió",
       "mainAriaLabel": "Navegació principal",
@@ -266,8 +333,28 @@
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Canviar contrasenya",
+        "deleteAccount": "Eliminar compte",
+        "editProfile": "Editar perfil"
+      },
       "bio": "Biografia",
+      "delete": {
+        "body": "Aquesta acció elimina el teu compte de manera permanent, esborra el teu perfil i tanca la teva sessió. No es pot desfer.",
+        "cancel": "Cancel·lar",
+        "description": "Això elimina el teu compte de manera permanent i tanca la teva sessió.",
+        "title": "Eliminar compte?"
+      },
+      "edit": {
+        "placeholder": "Explica als altres jugadors una mica sobre tu",
+        "submit": "Desar canvis",
+        "title": "Editar perfil"
+      },
+      "emptyBio": "Sense biografia",
       "fail": "No s'ha pogut carregar el teu perfil.",
+      "metadata": {
+        "publicDescription": "Consulta el perfil públic de {username} a Transcendence."
+      },
       "provider": "Proveïdor",
       "userId": "ID d'usuari",
       "username": "Nom d'usuari"
@@ -283,9 +370,11 @@
         "accept": "Acceptar",
         "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
-        "chat": "Chat",
+        "cancelRequest": "Cancel·lar sol·licitud",
         "inviteToGame": "Convidar a partida",
-        "reject": "Rebutjar"
+        "message": "Missatge",
+        "reject": "Rebutjar",
+        "unfriend": "Eliminar amic"
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",
@@ -307,6 +396,7 @@
         "title": "Connecta amb la comunitat"
       },
       "requests": {
+        "now": "ara",
         "received": "Rebudes",
         "sent": "Enviades",
         "title": "Sol·licituds"
@@ -348,6 +438,7 @@
     "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat.",
     "FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
     "FRIENDSHIP_SELF_REQUEST": "No et pots afegir a tu mateix.",
+    "generic": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
     "UNAUTHORIZED_ACTION": "Acció no permesa.",
     "USER_NOT_FOUND": "Usuari no trobat.",

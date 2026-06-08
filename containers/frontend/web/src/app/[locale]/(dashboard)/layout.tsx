@@ -6,6 +6,9 @@ import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/styles/cn';
 import { getCurrentUserIdOrNull } from '@/features/auth/me/get-current-user-id-or-null';
 import { SocialGuestView } from '@/features/social/social-variants';
+import { createNoIndexMetadata } from '@/lib/metadata/metadata.config';
+
+export const metadata = createNoIndexMetadata();
 
 type SocialLayoutProps = {
   children: ReactNode;
@@ -18,17 +21,18 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
   return (
     <SplitScreenGrid
       full={
-        <main className="p-20">
+        <section className="flex h-full max-w-3xl flex-col justify-end gap-3 px-6 pb-10 pt-24 md:justify-start md:p-20">
           <h1>{t('title')}</h1>
           <p>{t('subtitle')}</p>
-        </main>
+        </section>
       }
+      mobileStackMode="split"
       side={
         <aside
           className={cn(
             glassBackgroundStyles({ intensity: 'medium', blur: 'sm' }),
             glassBorderStyles(),
-            'h-full w-full overflow-hidden rounded-s-md border-r-0',
+            'h-full w-full overflow-hidden rounded-none pointer-events-auto md:rounded-s-md md:border-r-0',
           )}
         >
           {userId ? (

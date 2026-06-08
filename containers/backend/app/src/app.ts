@@ -11,12 +11,22 @@ import './auth/oauth/oauth.passport';
 import { authRouter } from './auth/auth.routes';
 import { friendsRouter } from './friendships/friendships.routes';
 import { handleInternalFriendsList } from './friendships/friendships.presence';
+import {
+  handleInternalDirectMessageHistory,
+  handleInternalDirectMessageRead,
+  handleInternalDirectMessageSend,
+} from './direct-messages/direct-messages.internal';
 import { authIpRateLimit } from './auth/auth.rate-limit';
+import { getAuthCookieSameSite } from './auth/auth.cookies';
+import { publicApiRouter } from './public-api/public-api.routes';
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) throw new Error('SESSION_SECRET is required');
+
+const publicApiKey = process.env.PUBLIC_API_KEY?.trim();
+if (!publicApiKey) throw new Error('PUBLIC_API_KEY is required');
 
 const ONE_DAY_MS = 1000 * 60 * 60 * 24;
 const SEVEN_DAYS_MS = ONE_DAY_MS * 7;
@@ -42,7 +52,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: 'auto',
-      sameSite: 'lax',
+      sameSite: getAuthCookieSameSite(),
       path: '/',
       maxAge: SEVEN_DAYS_MS,
     },
@@ -59,12 +69,16 @@ app.get('/health', async (_req, res) => {
     res.status(500).json({ ok: false });
   }
 });
+app.use('/public-api', publicApiRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authIpRateLimit, authRouter);
 app.use('/protected', protectedRouter);
 app.use('/friends', friendsRouter);
 
 app.post('/internal/friends', handleInternalFriendsList);
+app.post('/internal/direct-messages/history', handleInternalDirectMessageHistory);
+app.post('/internal/direct-messages/read', handleInternalDirectMessageRead);
+app.post('/internal/direct-messages/send', handleInternalDirectMessageSend);
 
 app.use(errorMiddleware);
 

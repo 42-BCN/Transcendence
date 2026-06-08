@@ -9,7 +9,7 @@ type GameLayoutProps = {
 export default function GameLayout({ children, side }: GameLayoutProps) {
   return (
     <ChatProvider>
-      <SplitScreenGrid full={children} side={side} />
+      <SplitScreenGrid full={children} side={side} mobileSideLayout="overlay" />
     </ChatProvider>
   );
 }

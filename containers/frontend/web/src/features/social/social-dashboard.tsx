@@ -1,9 +1,11 @@
 /* eslint-disable local/no-literal-ui-strings */
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 
 import {
+  ScrollArea,
   Stack,
   Text,
   Tabs,
@@ -17,31 +19,47 @@ import {
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode } from './store/social-store.types';
 import { useSocialStore } from '@/providers/social-provider';
-import { SearchResults } from './social-variants/users-list';
-import { SocialSocketBridge } from './store/social-store.bridge';
+import {
+  formatRequestAge,
+  mapFriendshipToListItem,
+  mapFriendToListItem,
+  mapSearchResultToListItem,
+} from './social-variants/social-list-items';
+
+const MINUTE_IN_MS = 60_000;
+
+function useRelativeNow() {
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    setNow(Date.now());
+
+    const intervalId = window.setInterval(() => {
+      setNow(Date.now());
+    }, MINUTE_IN_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  return now;
+}
 
 function FriendsList({ error }: { error?: SocialErrorCode }) {
   const t = useTranslations('features.social.friends');
   const friends = useSocialStore((s) => s.friends);
   const onlineFriends = friends.filter((f) => f.presence !== 'offline');
   const offlineFriends = friends.filter((f) => f.presence === 'offline');
+  const onlineItems = onlineFriends.map(mapFriendToListItem);
+  const offlineItems = offlineFriends.map(mapFriendToListItem);
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['online']}>
       <DisclosureFull id="online" title={`${t('online')} (${onlineFriends.length})`}>
-        {error ? (
-          <SocialError error={error} />
-        ) : (
-          <UsersList friends={onlineFriends} type="online" />
-        )}
+        {error ? <SocialError error={error} /> : <UsersList items={onlineItems} type="online" />}
       </DisclosureFull>
 
       <DisclosureFull id="offline" title={`${t('offline')} (${offlineFriends.length})`}>
-        {error ? (
-          <SocialError error={error} />
-        ) : (
-          <UsersList friends={offlineFriends} type="offline" />
-        )}
+        {error ? <SocialError error={error} /> : <UsersList items={offlineItems} type="offline" />}
       </DisclosureFull>
     </DisclosureGroup>
   );
@@ -49,9 +67,38 @@ function FriendsList({ error }: { error?: SocialErrorCode }) {
 
 function RequestsList() {
   const t = useTranslations('features.social.requests');
+  const locale = useLocale();
+  const now = useRelativeNow();
   const pendingReceived = useSocialStore((s) => s.pendingReceived);
   const pendingSent = useSocialStore((s) => s.pendingSent);
   const errors = useSocialStore((s) => s.errors);
+  const nowLabel = t('now');
+  const pendingReceivedItems = pendingReceived.map((request) =>
+    mapFriendshipToListItem(
+      request,
+      now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined,
+    ),
+  );
+  const pendingSentItems = pendingSent.map((request) =>
+    mapFriendshipToListItem(
+      request,
+      now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined,
+    ),
+  );
 
   return (
     <DisclosureGroup allowsMultipleExpanded={true} defaultExpandedKeys={['received']}>
@@ -59,7 +106,7 @@ function RequestsList() {
         {errors.pendingReceived ? (
           <SocialError error={errors.pendingReceived} />
         ) : (
-          <UsersList friends={pendingReceived} type="request" />
+          <UsersList items={pendingReceivedItems} type="request" />
         )}
       </DisclosureFull>
 
@@ -67,10 +114,61 @@ function RequestsList() {
         {errors.pendingSent ? (
           <SocialError error={errors.pendingSent} />
         ) : (
-          <UsersList friends={pendingSent} type="pending" />
+          <UsersList items={pendingSentItems} type="pending" />
         )}
       </DisclosureFull>
     </DisclosureGroup>
+  );
+}
+
+function SearchResults() {
+  const t = useTranslations('features.social.requests');
+  const locale = useLocale();
+  const now = useRelativeNow();
+  const searchResults = useSocialStore((state) => state.searchResults);
+  const pendingReceived = useSocialStore((state) => state.pendingReceived);
+  const pendingSent = useSocialStore((state) => state.pendingSent);
+  const nowLabel = t('now');
+  const onlineItems = searchResults.online.map((result) => mapSearchResultToListItem(result));
+  const offlineItems = searchResults.offline.map((result) => mapSearchResultToListItem(result));
+  const requestItems = searchResults.requests.map((result) => {
+    const request = pendingReceived.find((item) => item.userId === result.id);
+    const subtitle =
+      request && now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined;
+
+    return mapSearchResultToListItem(result, subtitle);
+  });
+  const pendingItems = searchResults.pending.map((result) => {
+    const request = pendingSent.find((item) => item.userId === result.id);
+    const subtitle =
+      request && now
+        ? formatRequestAge({
+            createdAt: request.createdAt,
+            now,
+            locale,
+            nowLabel,
+          })
+        : undefined;
+
+    return mapSearchResultToListItem(result, subtitle);
+  });
+  const noneItems = searchResults.none.map((result) => mapSearchResultToListItem(result));
+
+  return (
+    <Stack gap="none" className="w-full py-2 pb-4">
+      <UsersList items={onlineItems} type="online" feedback={false} />
+      <UsersList items={offlineItems} type="offline" feedback={false} />
+      <UsersList items={requestItems} type="request" feedback={false} />
+      <UsersList items={pendingItems} type="pending" feedback={false} />
+      <UsersList items={noneItems} type="search" feedback={false} />
+    </Stack>
   );
 }
 
@@ -102,43 +200,50 @@ function SocialContent() {
 
     if (isEmpty) {
       return (
-        <Stack align="center" justify="center" className="px-3 py-3 text-center">
-          <Text variant="caption" color="tertiary">
-            {t('emptyStates.search')}
-          </Text>
-        </Stack>
+        <ScrollArea>
+          <Stack align="center" justify="center" className="px-3 py-3 text-center">
+            <Text variant="caption" color="tertiary">
+              {t('emptyStates.search')}
+            </Text>
+          </Stack>
+        </ScrollArea>
       );
     }
 
-    return <SearchResults />;
+    return (
+      <ScrollArea>
+        <SearchResults />
+      </ScrollArea>
+    );
   }
 
   return (
-    <Tabs defaultSelectedKey="friends">
+    <Tabs defaultSelectedKey="friends" className="flex flex-1 min-h-0 flex-col">
       <TabList className="px-3">
         <Tab id="friends">{t('friends.title')}</Tab>
         <Tab id="requests">{t('requests.title')}</Tab>
       </TabList>
 
-      <TabPanel id="friends" className="outline-none">
-        <FriendsList error={errors.friends} />
-      </TabPanel>
+      <ScrollArea>
+        <TabPanel id="friends" className="outline-none">
+          <FriendsList error={errors.friends} />
+        </TabPanel>
 
-      <TabPanel id="requests" className="outline-none">
-        <RequestsList />
-      </TabPanel>
+        <TabPanel id="requests" className="outline-none">
+          <RequestsList />
+        </TabPanel>
+      </ScrollArea>
     </Tabs>
   );
 }
 
 export function SocialDashboard() {
   return (
-    <>
-      <SocialSocketBridge />
+    <Stack className="h-full min-h-0 pointer-events-auto" gap="none">
       <SocialHeader />
-      <main>
+      <main className="flex flex-1 min-h-0">
         <SocialContent />
       </main>
-    </>
+    </Stack>
   );
 }

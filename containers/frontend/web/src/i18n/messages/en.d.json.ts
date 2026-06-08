@@ -10,6 +10,7 @@ declare const messages: {
   },
   "components": {
     "breadcrumb": {
+      "edit": "Edit profile",
       "home": "Home",
       "me": "My Account",
       "reset-password": "Reset Password"
@@ -36,8 +37,10 @@ declare const messages: {
   },
   "layouts": {
     "locale": {
-      "description": "This is an example of using next-intl in the `app` directory.",
-      "title": "next-intl example"
+      "metadata": {
+        "description": "Play Transcendence, chat with friends, and manage your account in one place.",
+        "title": "Transcendence"
+      }
     }
   },
   "pages": {
@@ -45,7 +48,19 @@ declare const messages: {
       "subtitle": "If you can see this, routing + dev server work.",
       "title": "Hello from Next in Docker 👋"
     },
+    "game": {
+      "description": "Play the Transcendence game and manage your turns.",
+      "metadata": {
+        "description": "Play the Transcendence game and manage your turns.",
+        "title": "Game"
+      },
+      "title": "Game"
+    },
     "me": {
+      "metadata": {
+        "description": "View and manage your Transcendence account details.",
+        "title": "My Account"
+      },
       "subtitle": "Access your protected account data.",
       "title": "My Account"
     },
@@ -55,6 +70,10 @@ declare const messages: {
       "title": "Page not found"
     },
     "privacy": {
+      "metadata": {
+        "description": "Learn what data Transcendence collects, how it is used, and how it is protected.",
+        "title": "Privacy Policy"
+      },
       "contact": {
         "description": "If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>.",
         "title": "Contact"
@@ -98,6 +117,10 @@ declare const messages: {
       "title": "Privacy Policy"
     },
     "terms": {
+      "metadata": {
+        "description": "Review the rules, responsibilities, and legal terms for using Transcendence.",
+        "title": "Terms of Service"
+      },
       "acceptance": {
         "description": "By creating an account or using our services, you agree to these conditions in their entirety. If you do not agree with any part of these Terms, you must refrain from using the platform.",
         "title": "Acceptance of Terms"
@@ -196,6 +219,10 @@ declare const messages: {
       "login": {
         "forgotPassword": "Forgot password?",
         "goToSignup": "Create one",
+        "metadata": {
+          "description": "Sign in to your Transcendence account to play, chat, and manage your profile.",
+          "title": "Log in"
+        },
         "noAccount": "Don’t have an account?",
         "submit": "Log in",
         "title": "Log in"
@@ -208,6 +235,10 @@ declare const messages: {
         "backToLogin": "Back to login",
         "checkInbox": "Check your inbox and follow the instructions to set a new password.",
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
+        "metadata": {
+          "description": "Request a password reset email to regain access to your Transcendence account.",
+          "title": "Recover account"
+        },
         "rememberedPassword": "Remembered your password?",
         "sent": "We've sent password reset instructions to the address you entered.",
         "title": "Check your email"
@@ -215,6 +246,10 @@ declare const messages: {
       "reset": {
         "backToLogin": "Back to login",
         "description": "Enter your new password.",
+        "metadata": {
+          "description": "Set a new password for your Transcendence account.",
+          "title": "Reset password"
+        },
         "submit": "Save new password",
         "success": "Password updated successfully.",
         "title": "Reset password"
@@ -222,6 +257,10 @@ declare const messages: {
       "signup": {
         "goToLogin": "Log in",
         "haveAccount": "Already have an account?",
+        "metadata": {
+          "description": "Create your Transcendence account to start playing and connecting with friends.",
+          "title": "Create account"
+        },
         "privacy": {
           "error": "You must accept the Privacy Policy to continue.",
           "label": "I have read and agree to the <link>Privacy Policy</link>"
@@ -234,6 +273,10 @@ declare const messages: {
         "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
         "invalidOrExpired": "Verification link is invalid or expired.",
         "isConfirmed": "Already confirmed?",
+        "metadata": {
+          "description": "Confirm your email address to activate your Transcendence account.",
+          "title": "Verify your email"
+        },
         "missingToken": "Verification token is missing.",
         "recoverTitle": "Recover account",
         "resendDescription": "Enter the email address you used to create your account.",
@@ -250,6 +293,29 @@ declare const messages: {
       "messageAriaLabel": "Message",
       "showChat": "Show Chat"
     },
+    "directMessages": {
+      "metadata": {
+        "description": "Open private conversations with your friends on Transcendence.",
+        "title": "Direct messages"
+      },
+      "emptyState": "No conversations yet",
+      "listTitle": "Messages",
+      "openList": "Open messages list",
+      "closeList": "Close messages list",
+      "selectionTitle": "Select a conversation",
+      "selectionBody": "Choose a friend from the list to open your messages.",
+      "accessTitle": "Direct messages",
+      "accessBody": {
+        "authenticated": "This conversation is only available between accepted friends.",
+        "unauthenticated": "You need to be signed in to open a private chat."
+      },
+      "backToHome": "Back to home",
+      "presence": {
+        "online": "● Online",
+        "away": "● Away",
+        "offline": "Offline"
+      }
+    },
     "game": {
       "endTurn": "End turn",
       "healthLabel": "HP",
@@ -259,6 +325,7 @@ declare const messages: {
       "createAccount": "Create account",
       "game": "Game",
       "home": "Home",
+      "messages": "Messages",
       "login": "Log in",
       "logout": "Logout",
       "mainAriaLabel": "Main navigation",
@@ -268,8 +335,28 @@ declare const messages: {
       "ui": "UI"
     },
     "profile": {
+      "actions": {
+        "changePassword": "Change password",
+        "deleteAccount": "Delete account",
+        "editProfile": "Edit profile"
+      },
       "bio": "Bio",
+      "delete": {
+        "body": "This action permanently deletes your account, removes your profile, and signs you out. This cannot be undone.",
+        "cancel": "Cancel",
+        "description": "This permanently deletes your account and signs you out.",
+        "title": "Delete account?"
+      },
+      "edit": {
+        "placeholder": "Tell other players a little about yourself",
+        "submit": "Save changes",
+        "title": "Edit profile"
+      },
+      "emptyBio": "No bio yet",
       "fail": "Could not load your profile.",
+      "metadata": {
+        "publicDescription": "View {username}'s public Transcendence profile."
+      },
       "provider": "Provider",
       "userId": "User ID",
       "username": "Username"
@@ -285,9 +372,11 @@ declare const messages: {
         "accept": "Accept",
         "addFriend": "Add friend",
         "cancel": "Cancel",
-        "chat": "Chat",
+        "cancelRequest": "Cancel Request",
         "inviteToGame": "Invite to Game",
-        "reject": "Reject"
+        "message": "Message",
+        "reject": "Reject",
+        "unfriend": "Remove Friend"
       },
       "emptyStates": {
         "offline": "No friends offline",
@@ -309,6 +398,7 @@ declare const messages: {
         "title": "Connect with the community"
       },
       "requests": {
+        "now": "now",
         "received": "Received",
         "sent": "Sent",
         "title": "Requests"

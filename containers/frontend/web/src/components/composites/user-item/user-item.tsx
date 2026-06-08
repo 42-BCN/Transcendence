@@ -5,6 +5,7 @@ import { Avatar } from '@components/primitives/avatar';
 import { PresenceBadge } from '@components/primitives/presence-badge';
 import type { PresenceStatus } from '@components/primitives/presence-badge';
 import { userItemStyles } from './user-item.styles';
+import { InternalLink } from '../../controls/link';
 
 export type UserItemProps = {
   avatarUrl?: string | null;
@@ -13,6 +14,7 @@ export type UserItemProps = {
   presence?: PresenceStatus;
   children?: ReactNode;
   className?: string;
+  href?: string;
 };
 
 export function UserItem({
@@ -43,5 +45,13 @@ export function UserItem({
 
       {children}
     </Stack>
+  );
+
+  return href ? (
+    <InternalLink href={href} className={className}>
+      {stack}
+    </InternalLink>
+  ) : (
+    stack
   );
 }
