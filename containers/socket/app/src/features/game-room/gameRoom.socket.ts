@@ -19,7 +19,7 @@ export function registerGameRoomSocket(
   nsp.on('connection', (socket: Socket<ClientToServerGameRoomsEvents, ServerToClientGameRoomsEvents>) => {
     console.log("[ GameRoom ] client connection: " + socket.data.identityKey);
 
-    socket.nsp.to(socket.id).emit("gameRoom:debug:state", "none");
+    socket.nsp.to(socket.id).emit("gameRoom:debug:state", {});
     socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "first connection");
     socket.nsp.to(socket.id).emit("gameRoom:error:msg", "none");
     
@@ -34,16 +34,16 @@ export function registerGameRoomSocket(
         .emit("gameRoom:room:joined", gameRoom, socket.data.username);
       socket.nsp.to(socket.id).emit("gameRoom:teammate:joinAny:ack", gameRoom);
     });
-    
-    socket.on("gameRoom:teammate:leave", (gameRoomId: number) => {
-      console.log("[ TAHA TAHERE ] READ THIS: ", gameRoomId);
-      if (gameRoomId === null) {
-        return ;
-      }
+  
+
+    socket.on("gameRoom:teammate:leave", () => {
+      const gameRoom = gameRoomsManager.removeUserFromGameRoom(socket.data.identityKey);
+      const gameRoomId = gameRoom.id;
       socket.leave("GameRoom-" + gameRoomId.toString());
-      const gameRoom = gameRoomsManager.removeUserFromGameRoom(socket.data.identityKey, gameRoomId);
       socket.to("GameRoom-" + gameRoomId.toString())
         .emit("gameRoom:teammate:left", socket.data.identityKey);
+      socket.nsp.to(socket.id).emit();
+      socket.nsp.to(socket.id).emit("gameRoom:debug:state", gameRoom);
       console.log("[ gameRoom ] user removed.", gameRoom);
     });
   });

@@ -7,7 +7,7 @@ import type { gameRoomState } from '@contracts/sockets/game/game.schema';
 
 import {
   GameRoomSocketJoinAnyRoom,
-  makeGameRoomSocketLeaveRoom,
+  GameRoomSocketLeaveRoom,
 } from "@/lib/sockets/game-room-socket.manager"
 
 
@@ -28,7 +28,7 @@ export function GameRoomTest(gameRoomStateCtx: gameRoomState) {
     <Form onSubmit={makeGameRoomAction(GameRoomSocketJoinAnyRoom)}>
       <SubmitButton idleLabel="join any room." />
     </Form>
-    <Form onSubmit={makeGameRoomAction(makeGameRoomSocketLeaveRoom(gameRoomStateCtx.id))}>
+    <Form onSubmit={makeGameRoomAction(GameRoomSocketLeaveRoom)}>
       <SubmitButton idleLabel="leave current game room." />
     </Form>
 	</>
