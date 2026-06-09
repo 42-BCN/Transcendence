@@ -1,5 +1,9 @@
 # todo stack
 
+- [x] remove all random console logs.
+- [ ] have better console loging.
+- [ ] find out why some things don't work as intended.
+
 ## to do
 
 - [x] tie the acctions to forms.
@@ -9,7 +13,7 @@
 - [x] notify the rest of connections in the socket.
 - [x] change the crude id for the user name for a proper userId.
 
-- [ ] remove users.
+- [x] remove users.
 - [ ] join room by id.
 - [ ] make room join form.
 

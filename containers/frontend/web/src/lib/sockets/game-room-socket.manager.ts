@@ -13,7 +13,11 @@ export function GameRoomSocketJoinAnyRoom() {
 }
 
 export function GameRoomSocketLeaveRoom() {
-  gameRoomSocket.emit("gameRoom:teammate:leave");
+  gameRoomSocket.emit("gameRoom:teammate:joinAny");
+}
+
+export function GameRoomSocketPrintDebug() {
+  gameRoomSocket.emit("gameRoom:teammate:printDebug");
 }
 
 export function initGameRoomSocketHandelers(
