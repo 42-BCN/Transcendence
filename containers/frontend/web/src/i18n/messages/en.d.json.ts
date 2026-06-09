@@ -5,7 +5,8 @@ declare const messages: {
   "common": {
     "globalError": {
       "title": "Something went wrong",
-      "tryAgain": "Try again"
+      "tryAgain": "Try again",
+      "unexpectedMessage": "An unexpected error occurred"
     }
   },
   "components": {

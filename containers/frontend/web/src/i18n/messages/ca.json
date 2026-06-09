@@ -2,7 +2,8 @@
   "common": {
     "globalError": {
       "title": "Alguna cosa ha anat malament",
-      "tryAgain": "Torna-ho a provar"
+      "tryAgain": "Torna-ho a provar",
+      "unexpectedMessage": "S'ha produït un error inesperat"
     }
   },
   "components": {
