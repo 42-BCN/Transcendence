@@ -53,7 +53,7 @@ Main responsibility:
 Main responsibility:
 - Project architecture and definition of technical standards and best practices.
 - DevOps, Docker orchestration, and Nginx reverse proxy configuration.
-- UI/UX conceptual design (Figma) and foundational frontend structure.
+- UI/UX conceptual design (Figma), foundational frontend structure and development of core visual interfaces and layouts.
 - Core ownership of the Authentication flows, security setups, and global state management
 - Cross-cutting technical support and shared work on internationalization (i18n).
 - Writing and organizing the project's internal technical documentation.
@@ -98,11 +98,12 @@ The team's work was organized  mainly **by features and GitHub issues**, allowin
 
 ---
 ## Technical Stack
+The platform is built on a unified **TypeScript** stack, sharing type definitions and **Zod** validation schemas across the frontend, backend, and socket services to ensure end-to-end type safety and contract integrity.
 
 ### Frontend
 
 - **Framework**: **Next.js 16 + React 19 (App Router)**. Chosen for Server-Side Rendering (SSR) capabilities, modern routing, and providing a solid structure for a complex web application.
-- **Language**: **TypeScript**. Adds modularity, strict typing, and long-term maintainability to the codebase.
+- **Language**: **TypeScript**. Ensures strict typing, component safety, and maintainability across the client application.
 - **Styling**: **Tailwind CSS**. Enables rapid iteration while maintaining design consistency across the app.
 - **UI & Accessibility**: **React Aria Components**. Helps build robust, accessible, and highly reusable custom components.
 - **State Management**: **Zustand**. Selected for its lightweight and efficient approach to global state handling compared to heavier alternatives.
@@ -113,9 +114,9 @@ The team's work was organized  mainly **by features and GitHub issues**, allowin
 ### Backend
 
 - **Environment & Framework**: **Node.js + Express**. Selected to maintain a clear, lightweight, and tightly controlled REST API architecture.
-- **Language**: **TypeScript**. Essential for reducing integration errors and maintaining end-to-end type safety alongside the frontend.
+- **Language**: **TypeScript**. Enforces strict type consistency with the frontend and socket services to reduce integration errors.
 - **ORM (Database)**: **Prisma**. Makes interacting with the PostgreSQL database intuitive by providing a highly maintainable and fully typed relational model.
-- **Data Validation**: **Zod**. Used to explicitly validate API contracts and incoming data, ensuring maximum security and stability.
+- **Data Validation**: **Zod**. Used to explicitly validate shared API contracts, request payloads, and socket event data, ensuring maximum security and stability.
 
 ### Realtime layer
 
@@ -142,14 +143,35 @@ The application is composed of several independent services coordinated through 
 
 ### High-level flow
 ```mermaid
-flowchart LR
-   User["Browser"] --> Nginx["Nginx reverse proxy"]
-   Nginx --> Frontend["Next.js frontend"]
-   Nginx --> Backend["Express backend"]
-   Nginx --> Socket["Socket.IO service"]
-   Backend --> DB["PostgreSQL"]
-   Backend --> Redis["Redis"]
-   Socket --> Backend
+flowchart TD
+   subgraph Clients
+      Browser["Browser (Client)"]
+   end
+
+   subgraph Gateway
+      Nginx["Nginx Reverse Proxy (HTTPS: 8443)"]
+   end
+
+   subgraph Services
+      Frontend["Next.js Frontend (Port: 3000)"]
+      Backend["Express Backend (Port: 4000)"]
+      Socket["Socket.IO Service (Port: 3100)"]
+   end
+
+   subgraph Persistence ["Persistence Layer (Internal Network)"]
+      DB["PostgreSQL 16"]
+      Redis["Redis (Sessions)"]
+   end
+
+   Browser <--> Nginx
+   Nginx <--> Frontend
+   Nginx <--> Backend
+   Nginx <--> Socket
+
+   Frontend <--> Backend
+   Backend <--> Socket
+   Backend <--> DB
+   Backend <--> Redis
 ```
 
 ### Code Organization & Architecture Principles
