@@ -366,7 +366,7 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 
 | Section | Module | Type | Points | Status |
 |:---|:---|:---|:---:|:---|
-| **Web** | Full-Stack Framework (Next.js & Express) | Major | 2 | Completed |
+| **Web** | Use a framework for both the frontend and backend (Next.js & Express) | Major | 2 | Completed |
 | **Web** | Real-Time WebSockets | Major | 2 | Completed |
 | **Web** | User Interaction (DMs, Profile, Friends) | Major | 2 | Completed |
 | **Web** | Public API with Secured Key & Rate Limiting | Major | 2 | Completed |
@@ -387,13 +387,13 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 
 #### 1. Web Modules
 
-##### [Major] Full-Stack Framework (Next.js & Express)
-* **Subject Requirement**: Use a framework for both the frontend and backend.
-* **Justification**: A multi-container decoupled application where Next.js handles the user interface and Express handles the API.
+##### [Major] Use a framework for both the frontend and backend (Next.js & Express)
+* **Subject Requirement**: Use a frontend framework (React, Vue, etc.) and a backend framework (Express, NestJS, etc.).
+* **Justification**: The application implements a decoupled architecture that utilizes Next.js (React 19) as the frontend framework and Express (Node.js) as the backend API framework.
 * **Implementation Details**:
-  * **Frontend**: Next.js 16 (App Router, Turbopack, React 19) serving dynamic layout structures.
-  * **Backend**: Express 5.2 managing database transactions, REST API endpoints, and inter-service communication.
-  * **Proxy**: Nginx acts as the primary reverse proxy, securing all traffic over HTTPS (port 8443).
+  * **Frontend**: Next.js 16 (App Router, React 19) handles client-side rendering, routing, localized views, and user interface layouts.
+  * **Backend**: Express 5.2 handles the business logic, database transactions via Prisma, session validation, and inter-service communication.
+  * **Proxy & Integration**: Nginx acts as the primary reverse proxy, securing all external traffic over HTTPS and routing traffic to the respective decoupled containers.
 
 ##### [Major] Real-Time WebSockets
 * **Subject Requirement**: Implement real-time features using WebSockets or similar technology.
