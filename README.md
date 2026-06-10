@@ -57,12 +57,14 @@ Main responsibility:
 - Core ownership of the Authentication flows, security setups, and global state management
 - Cross-cutting technical support and shared work on internationalization (i18n).
 - Writing and organizing the project's internal technical documentation.
+- Built the social/profile foundation and friendship interactions.
 
 ### mfontser | Project Manager
 Main responsibility:
 - Tracking of project requirements, module completion, and missing features by proposing team meetings and feature status reviews.
 - UI/UX development across the web application, including theme management (dark/light mode), static pages, and co-implementation of internationalization (i18n).
-- End-to-end feature planning and and frontend implementation of the Social ecosystem (Dashboard, profiles, user interactions).
+- End-to-end feature planning of social features.
+- Added public profile support with username routing and public user access.
 - Writing, structuring, and maintaining the main README file.
 
 ### joanavar | Developer (Backend)
