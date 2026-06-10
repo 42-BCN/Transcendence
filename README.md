@@ -52,32 +52,34 @@ Main responsibility:
 ### capapes | Tech Lead
 Main responsibility:
 - Project architecture and definition of technical standards and best practices.
-- DevOps, Docker orchestration, and Nginx reverse proxy configuration.
-- UI/UX conceptual design (Figma), foundational frontend structure and development of core visual interfaces and layouts.
-- Core ownership of the Authentication flows, security setups, and global state management
+- DevOps, Docker orchestration, environment setup, and Nginx reverse proxy configuration.
+- UI/UX conceptual design, foundational frontend structure, reusable layout patterns, and core visual interfaces.
+- Core ownership of authentication flows, security setup, public API work, global state management, and account management.
+- Built the social/profile foundation, including private profiles, social state management, friendship workflows, presence integration, and direct messaging.
 - Cross-cutting technical support and shared work on internationalization (i18n).
 - Writing and organizing the project's internal technical documentation.
-- Built the social/profile foundation and friendship interactions.
 
 ### mfontser | Project Manager
 Main responsibility:
-- Tracking of project requirements, module completion, and missing features by proposing team meetings and feature status reviews.
-- UI/UX development across the web application, including theme management (dark/light mode), static pages, and co-implementation of internationalization (i18n).
-- End-to-end feature planning of social features.
-- Added public profile support with username routing and public user access.
+- Tracking project requirements, module completion, and missing features through team meetings and feature status reviews.
+- UI/UX development across the web application, including theme management, static pages, and co-implementation of internationalization (i18n).
+- End-to-end feature planning of the Social ecosystem (Dashboard, profiles, user interactions).
+- Added public profile support by reusing and extending the existing social/profile foundation, including username-based public access and public user fetching.
+- Added public-profile-specific social actions such as unfriend functionality.
 - Writing, structuring, and maintaining the main README file.
 
 ### joanavar | Developer (Backend)
 Main responsibility:
-- Backend implementation of social, friendship-related API endpoints and database schemas.
-- Real-time presence backend integration and multi-device connection tracking via WebSockets.
-- Development of the frontend and testing infrastructure for the cross-browser compatibility layer (Firefox, Safari, Edge support).
+- Backend implementation of social and friendship-related API endpoints and database schemas.
+- Real-time presence backend integration and multi-device connection tracking through WebSockets.
+- Development of frontend and testing infrastructure for the cross-browser compatibility layer.
 
 ### tatahere | Developer
 Main responsibility:
-- Connection between the game and the web platform
-- Networking, environment setup support, and integration fixes
-- Cross-service integration support across the web, game, and runtime environment
+- Connection between the game and the web platform.
+- Networking, environment setup support, and integration fixes.
+- Cross-service integration support across the web, game, and runtime environment.
+- Support on infrastructure, runtime configuration, and security-hardening fixes.
 
 ---
 
