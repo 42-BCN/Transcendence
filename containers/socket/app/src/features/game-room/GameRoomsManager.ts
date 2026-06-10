@@ -127,6 +127,7 @@ export class GameRoomsManager {
   removeUserFromGameRoom(userId: string): gameRoomState
     | "error:no_assigned_room" 
   {
+
     if (! this.joined_users.has(userId)) {
       console.log("[ gameRoom ][ error ] no_assigned_room: ");
       console.log("\t-->\tuser id:", userId);
@@ -158,7 +159,7 @@ export class GameRoomsManager {
       this.joined_users.delete(userId);
       return "error:no_assigned_room" ;
     }
-    this.gameRooms.get(gameRoomId).teammates = [...this.gameRooms.get(gameRoomId).teammates.filter((item) => {item.userId != userId})];
+    this.gameRooms.get(gameRoomId).teammates = [...this.gameRooms.get(gameRoomId).teammates.filter((item) => item.userId != userId)];
     this.gameRooms.get(gameRoomId).isGameRoomFull = false;
     this.joined_users.delete(userId);
     return this.gameRooms.get(gameRoomId);
