@@ -331,18 +331,21 @@ This section outlines the core functionalities implemented in the platform, deta
 - **Functionality**: Includes secure user registration, local login/logout, server-side session management with Redis, Google OAuth 2.0 integration, email verification flows, password recovery, and protected route management.
 
 ### 2. User Profiles
-- **Team Members**: mfontser, capapes
-- **Description**: Enables users to expose and manage their information publicly and privately, acting as the starting point for social interactions.
-- **Functionality**: Features private profile settings, public profile pages, localized routing for public views, direct social actions from the profile interface, profile editing, avatar customization, and account deletion flows.
+- **Team Members**: capapes, mfontser
+- **Description**: Enables users to manage their own profile and view other users' public profiles.
+- **Functionality**: Includes the authenticated/private profile foundation, profile editing, avatar customization, account deletion, public profile access, username-based public user fetching, and social actions from profile views.
+- **Ownership Note**: capapes implemented the original profile/social foundation; mfontser added the public profile layer by reusing and extending that existing foundation.
+
 ### 3. Social System
-- **Team Members**: mfontser, capapes, joanavar
-- **Description**: A central pillar of the web application. It organizes user interactions and supports the project's social dimension.
-- **Functionality**: Includes user search, online/offline friend tabs, management of sent and received requests, live presence indicators, unread counters, direct social actions from the dashboard, and one-to-one direct messaging between friends.
+- **Team Members**: capapes, joanavar, mfontser
+- **Description**: A central pillar of the web application that organizes user interactions and supports the project's social dimension.
+- **Functionality**: Includes user search, online/offline friend tabs, sent and received friend requests, live presence indicators, unread counters, direct social actions, and one-to-one direct messaging.
+- **Ownership Note**: capapes implemented the frontend social architecture, state management, friendship workflows, presence integration, and direct messaging; joanavar contributed backend/socket presence and friendship support; mfontser extended the system in the public profile context.
 
 ### 4. Real-Time Interactions
 - **Team Members**: joanavar, capapes, tatahere
-- **Description**: Provides the real-time behavior necessary for a live, connected application, especially for social features and gameplay.
-- **Functionality**: Dedicated Socket.IO infrastructure handling live presence events, reactive synchronization of social changes, and live status updates across connected clients.
+- **Description**: Provides the real-time behavior necessary for social features and gameplay.
+- **Functionality**: Dedicated Socket.IO infrastructure handling live presence events, social change synchronization, direct message updates, and live status updates across connected clients.
 
 ### 5. Multiplayer Game
 - **Team Members**: cmanica-, tatahere
