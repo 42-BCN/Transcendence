@@ -44,12 +44,12 @@ export function initGameRoomSocketHandelers(
   gameRoomSocket.on('gameRoom:teammate:joinAny:ack', (gameRoom: gameRoomState) => {
     console.log("[ gameRoom ] connection to room succesfulll.");
     console.log("[ gameRoom ] state: ", gameRoom);
-    setDebugState("state: " + JSON.stringify(gameRoom));
+    setDebugState(gameRoom);
   
   });
   gameRoomSocket.on('gameRoom:room:joined', (gameRoom: gameRoomState, userId: string) => {
     console.log("[ gameRoom ] joining a game room", gameRoom, userId);
-    setDebugState("state: " + JSON.stringify(gameRoom));
+    setDebugState(gameRoom);
     setDebugMsg("new user joined: " + userId);
   });
   gameRoomSocket.connect();

@@ -3,7 +3,7 @@
 - [x] remove all random console logs.
 - [x] have better console loging.
 - [x] find out why some things don't work as intended.
-- [ ] make the visualization of the room information better.
+- [x] make the visualization of the room information better.
 - [ ] separete out the game room updates from other logic.
 
 ## to do

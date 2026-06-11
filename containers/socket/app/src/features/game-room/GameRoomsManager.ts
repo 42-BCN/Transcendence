@@ -7,10 +7,9 @@ import type { gameRoomState } from '../../../contracts/sockets/game/game.schema'
 //		- error:full_room
 //		- error:no_assigned_room
 
-
 export class GameRoomsManager {
   #nextGameRoomId;  //  room are given numbers in acending order of creation. like 0, 1, 2, and so on.
-  nextGameRoomId = 0;
+  nextGameRoomId = 1;
   gameRooms = new Map();
   joined_users = new Set();
   
