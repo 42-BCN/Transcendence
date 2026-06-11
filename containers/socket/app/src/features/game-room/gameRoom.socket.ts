@@ -13,16 +13,25 @@ const gameRoomsManager = new GameRoomsManager();
 //    socket.data.identityKey is the same as a user id for me.
 //    socket.data.username is the same as a nickname or username for me.
 
+
 export function registerGameRoomSocket(
   nsp: Namespace
 ) {
   nsp.on('connection', (socket: Socket<ClientToServerGameRoomsEvents, ServerToClientGameRoomsEvents>) => {
 
-    socket.nsp.to(socket.id).emit("gameRoom:room:update", {
-      id: 0, 
-      isGameRoomFull: false, 
-      teammates: [],
-    });
+    const currentGameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
+    if (currentGameRoom === "error:no_assigned_room") {
+      socket.nsp.to(socket.id).emit("gameRoom:room:update", {
+        id: 0, 
+        isGameRoomFull: false, 
+        teammates: [],
+      });
+    } else if (typeof currentGameRoom === "string") {
+      socket.nsp.to(socket.id)
+        .emit("gameRoom:error:msg", "something has gone wrong try again later.");
+    } else {
+      socket.nsp.to(socket.id).emit("gameRoom:room:update", currentGameRoom);
+    }
     socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "first connection");
     socket.nsp.to(socket.id).emit("gameRoom:error:msg", "none");
     
@@ -46,11 +55,27 @@ export function registerGameRoomSocket(
       //  check for returned errors.
       if (gameRoom === "error:alredy_joined_another_room") {
         socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
-        //  TODO: add game room update.
+        //  update the game room state.
+        const gameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
+        if (gameRoom === "error:no_assigned_room") {
+          socket.nsp.to(socket.id).emit("gameRoom:room:update", {
+            id: 0, 
+            isGameRoomFull: false, 
+            teammates: [],
+          });
+          return ;
+        }
+        if (typeof gameRoom === "string") {
+          socket.nsp.to(socket.id)
+            .emit("gameRoom:error:msg", "something has gone wrong try again later.");
+          return ;
+        }
+        socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
         return ;
       }
       if (typeof gameRoom == "string") {
-        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "sorry something has gone wrong try again later.");
+        socket.nsp.to(socket.id)
+          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
         return ;
       }
       socket.nsp.to("GameRoom-" + gameRoom.id.toString())
@@ -58,7 +83,7 @@ export function registerGameRoomSocket(
       socket.nsp.to("GameRoom-" + gameRoom.id.toString())
         .emit("gameRoom:room:update", gameRoom);
       socket.join("GameRoom-" + gameRoom.id.toString());
-      socket.nsp.to(socket.id).emit("gameRoom:teammate:joinAny:ack", gameRoom);
+      socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
     });
   
 
@@ -81,7 +106,8 @@ export function registerGameRoomSocket(
         });
       }
       if (typeof gameRoom == "string") {
-        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "something has gone wrong try again later.");
+        socket.nsp.to(socket.id)
+          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
         return ;
       }
       const gameRoomId = gameRoom.id;
@@ -106,10 +132,28 @@ export function registerGameRoomSocket(
       console.log("[ GameRoom ] request to print debug info: ");
       console.log("");
       gameRoomsManager.printInfo();
-      // TODO: update the game room state.
-    
-    });
 
+      const gameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
+      if (gameRoom === "error:no_assigned_room") {
+        socket.nsp.to(socket.id).emit("gameRoom:room:update", {
+          id: 0, 
+          isGameRoomFull: false, 
+          teammates: [],
+        });
+        return ;
+      }
+      if (typeof gameRoom === "string") {
+        socket.nsp.to(socket.id)
+          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
+        return ;
+      }
+      socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
+    });
   });
 }
+
+
+//  really important:
+//    socket.data.identityKey is the same as a user id for me.
+//    socket.data.username is the same as a nickname or username for me.
 

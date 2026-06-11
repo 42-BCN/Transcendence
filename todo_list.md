@@ -16,13 +16,14 @@
 - [x] change the crude id for the user name for a proper userId.
 
 - [x] remove users.
-- [ ] automaticaly assign room to reconected players.
+- [x] automaticaly assign room to reconected players.
 
 - [ ] join room by id.
-- [ ] make room join form.
+- [ ] test join room by url.
 
 - [ ] add states to rooms (open, closed).
+- [ ] add states to users (connected, disconected).
 - [ ] remove disconected users before the room closses.
 
-- [ ] allow players to chose character.
+- [ ] allow players to chose a role.
 
