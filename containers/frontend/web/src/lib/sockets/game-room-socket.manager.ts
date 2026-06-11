@@ -20,12 +20,13 @@ export function GameRoomSocketPrintDebug() {
   gameRoomSocket.emit("gameRoom:teammate:printDebug");
 }
 
+
 export function initGameRoomSocketHandelers(
   setDebugState: (text: gameRoomState) => void,
   setDebugMsg: (text: string) => void,
   setDebugError: (text: string) => void)
 {
-  gameRoomSocket.on('gameRoom:debug:state', (state: gameRoomState) => {
+  gameRoomSocket.on('gameRoom:room:update', (state: gameRoomState) => {
     console.log('[ gameRoom ] debug state');
     console.log('the debug state is: ', state);
     setDebugState(state);
@@ -45,13 +46,18 @@ export function initGameRoomSocketHandelers(
     console.log("[ gameRoom ] connection to room succesfulll.");
     console.log("[ gameRoom ] state: ", gameRoom);
     setDebugState(gameRoom);
-  
   });
-  gameRoomSocket.on('gameRoom:room:joined', (gameRoom: gameRoomState, userId: string) => {
-    console.log("[ gameRoom ] joining a game room", gameRoom, userId);
-    setDebugState(gameRoom);
-    setDebugMsg("new user joined: " + userId);
+
+  gameRoomSocket.on('gameRoom:room:joined', (username: string) => {
+    console.log("[ gameRoom ] user joining this game room: ", username);
+    setDebugMsg("new user joined: " + username);
   });
+  gameRoomSocket.on('gameRoom:room:left', (username: string) => {
+    console.log("[ gameRoom ] user leaving gaem room: ", username);
+    setDebugMsg("user left: " + username);
+  });
+
+
   gameRoomSocket.connect();
   console.log("[ GameRoom ] connected.");
 }

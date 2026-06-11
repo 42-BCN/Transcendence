@@ -4,7 +4,7 @@
 - [x] have better console loging.
 - [x] find out why some things don't work as intended.
 - [x] make the visualization of the room information better.
-- [ ] separete out the game room updates from other logic.
+- [x] separete out the game room updates from other logic.
 
 ## to do
 
@@ -16,12 +16,13 @@
 - [x] change the crude id for the user name for a proper userId.
 
 - [x] remove users.
+- [ ] automaticaly assign room to reconected players.
+
 - [ ] join room by id.
 - [ ] make room join form.
 
 - [ ] add states to rooms (open, closed).
 - [ ] remove disconected users before the room closses.
-- [ ] automaticaly assign room to reconected players.
 
 - [ ] allow players to chose character.
 
