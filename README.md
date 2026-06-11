@@ -334,13 +334,11 @@ This section outlines the core functionalities implemented in the platform, deta
 - **Team Members**: capapes, mfontser
 - **Description**: Enables users to manage their own profile and view other users' public profiles.
 - **Functionality**: Includes the authenticated/private profile foundation, profile editing, avatar customization, account deletion, public profile access, username-based public user fetching, and social actions from profile views.
-- **Ownership Note**: capapes implemented the original profile/social foundation; mfontser added the public profile layer by reusing and extending that existing foundation.
 
 ### 3. Social System
 - **Team Members**: capapes, joanavar, mfontser
 - **Description**: A central pillar of the web application that organizes user interactions and supports the project's social dimension.
 - **Functionality**: Includes user search, online/offline friend tabs, sent and received friend requests, live presence indicators, unread counters, direct social actions, and one-to-one direct messaging.
-- **Ownership Note**: capapes implemented the frontend social architecture, state management, friendship workflows, presence integration, and direct messaging; joanavar contributed backend/socket presence and friendship support; mfontser extended the system in the public profile context.
 
 ### 4. Real-Time Interactions
 - **Team Members**: joanavar, capapes, tatahere
