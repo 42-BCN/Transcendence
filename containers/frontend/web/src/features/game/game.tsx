@@ -439,7 +439,11 @@ export function Game() {
   
   const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("not connected to socket.");
   const [gameRoomsErrorInfo, setGameRoomsErrorInfo] = useState("not connected to socket.");
-  const [gameRoomStateCtx, setGameRoomStateCtx] = useState<gameRoomState | unedefined>(undefined);
+  const [gameRoomStateCtx, setGameRoomStateCtx] = useState<gameRoomState>({
+    id: 0, 
+    isGameRoomFull: false, 
+    teammates: [],
+  });
 
   useEffect(() => {
     // if (!initRef.current) {
@@ -471,9 +475,10 @@ export function Game() {
   return !mapBounds || mapBounds.width === 0 ? (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
-        <p>{JSON.stringify(gameRoomStateCtx)}</p>
+        <p> raw: {JSON.stringify(gameRoomStateCtx)}</p>
         <p>{gameRoomsDebugInfo}</p>
         <p>{gameRoomsErrorInfo}</p>
+        <p>gameRoomId: {gameRoomStateCtx.id === 0 ? gameRoomStateCtx.id : "not on any game room."}</p>
 		<GameRoomTest gameRoomStateCtx={gameRoomStateCtx} />
       </div>
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
@@ -487,10 +492,17 @@ export function Game() {
   ) : (
     <>
       <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
-        <p>{JSON.stringify(gameRoomStateCtx)}</p>
+        <p> raw: {JSON.stringify(gameRoomStateCtx)}</p>
         <p>{gameRoomsDebugInfo}</p>
         <p>{gameRoomsErrorInfo}</p>
-		<GameRoomTest />
+        <p>gameRoomId: {gameRoomStateCtx.id === 0 ? gameRoomStateCtx.id : "not on any game room."}</p>
+        <div>
+          <p>users: </p>
+          {gameRoomStateCtx.id === 0 && gameRoomStateCtx.teammates.length != 0 ? 
+            gameRoomStateCtx.teammates.
+            : "no teammates."}
+        </div>
+		  <GameRoomTest />
       </div>
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
         {name(phase)}

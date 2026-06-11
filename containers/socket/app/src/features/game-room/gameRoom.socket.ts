@@ -18,7 +18,11 @@ export function registerGameRoomSocket(
 ) {
   nsp.on('connection', (socket: Socket<ClientToServerGameRoomsEvents, ServerToClientGameRoomsEvents>) => {
 
-    socket.nsp.to(socket.id).emit("gameRoom:debug:state", {});
+    socket.nsp.to(socket.id).emit("gameRoom:debug:state", {
+      id: 0, 
+      isGameRoomFull: false, 
+      teammates: [],
+    });
     socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "first connection");
     socket.nsp.to(socket.id).emit("gameRoom:error:msg", "none");
     

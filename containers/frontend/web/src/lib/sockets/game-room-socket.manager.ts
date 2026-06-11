@@ -21,14 +21,14 @@ export function GameRoomSocketPrintDebug() {
 }
 
 export function initGameRoomSocketHandelers(
-  setDebugState: (text: string) => void,
+  setDebugState: (text: gameRoomState) => void,
   setDebugMsg: (text: string) => void,
   setDebugError: (text: string) => void)
 {
-  gameRoomSocket.on('gameRoom:debug:state', (text: string) => {
+  gameRoomSocket.on('gameRoom:debug:state', (state: gameRoomState) => {
     console.log('[ gameRoom ] debug state');
-    console.log('the debug state is: ' + text);
-    setDebugState("state: { " + text + ' }');
+    console.log('the debug state is: ', state);
+    setDebugState(state);
   });
   gameRoomSocket.on('gameRoom:debug:msg', (text: string) => {
     console.log('[ gameRoom ] debug msg');

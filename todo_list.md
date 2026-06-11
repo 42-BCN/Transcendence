@@ -1,8 +1,10 @@
 # todo stack
 
 - [x] remove all random console logs.
-- [ ] have better console loging.
-- [ ] find out why some things don't work as intended.
+- [x] have better console loging.
+- [x] find out why some things don't work as intended.
+- [ ] make the visualization of the room information better.
+- [ ] separete out the game room updates from other logic.
 
 ## to do
 
