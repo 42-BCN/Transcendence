@@ -31,6 +31,7 @@ export function registerGameRoomSocket(
         .emit("gameRoom:error:msg", "something has gone wrong try again later.");
     } else {
       socket.nsp.to(socket.id).emit("gameRoom:room:update", currentGameRoom);
+      socket.join("GameRoom-" + currentGameRoom.id.toString());
     }
     socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "first connection");
     socket.nsp.to(socket.id).emit("gameRoom:error:msg", "none");
@@ -71,6 +72,7 @@ export function registerGameRoomSocket(
           return ;
         }
         socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
+        socket.join("GameRoom-" + gameRoom.id.toString());
         return ;
       }
       if (typeof gameRoom == "string") {
