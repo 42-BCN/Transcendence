@@ -5,6 +5,7 @@
 - [x] find out why some things don't work as intended.
 - [x] make the visualization of the room information better.
 - [x] separete out the game room updates from other logic.
+- [x] add a button to hidde the test ui for the rooms.
 
 ## to do
 

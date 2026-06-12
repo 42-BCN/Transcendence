@@ -426,6 +426,8 @@ function name(phase: string) {
   }
 }
 
+const test_ui_style = "fixed top-1/2 left-1/2 z-20";
+
 export function Game() {
   const phase = useGame((state) => state.phase);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
@@ -444,6 +446,8 @@ export function Game() {
     isGameRoomFull: false, 
     teammates: [],
   });
+
+  const [testUiVisibility, setTestUiVisibility] = useState(true);
 
   useEffect(() => {
     // if (!initRef.current) {
@@ -474,7 +478,17 @@ export function Game() {
 
   return !mapBounds || mapBounds.width === 0 ? (
     <>
-      <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
+      <Button
+        className="fixed bottom-0 right-0 text-nowrap w-auto z-20"
+        onPress={() => {setTestUiVisibility(! testUiVisibility)}}
+        variant="primary"
+      >
+        togle test rooms ui visibility
+      </Button>
+      <div 
+        className={test_ui_style + ( testUiVisibility === true ? "": " hidden") } 
+        style={{transform: `translate(-50%, -50%)`}}
+      >
 		    <GameRoomTest 
           gameRoomStateCtx={gameRoomStateCtx} 
           gameRoomsDebugInfo={gameRoomsDebugInfo}
@@ -491,7 +505,17 @@ export function Game() {
     </>
   ) : (
     <>
-      <div className="fixed top-1/2 left-1/2 z-20" style={{transform: `translate(-50%, -50%)`}}>
+      <Button
+        className="fixed bottom-0 right-0 text-nowrap w-auto z-20"
+        onPress={() => {setTestUiVisibility(! testUiVisibility)}}
+        variant="primary"
+      >
+        togle test rooms ui visibility
+      </Button>
+      <div 
+        className={test_ui_style + ( testUiVisibility === true ? "": " hidden") } 
+        style={{transform: `translate(-50%, -50%)`}}
+      >
 		    <GameRoomTest 
           gameRoomStateCtx={gameRoomStateCtx} 
           gameRoomsDebugInfo={gameRoomsDebugInfo}
