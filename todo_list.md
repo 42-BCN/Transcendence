@@ -22,7 +22,7 @@
 - [x] automaticaly assign room to reconected players.
 
 - [x] join room by id.
-- [ ] test join room by url.
+- [x] test join room by url.
 
 - [ ] add states to rooms (open, closed).
 - [ ] add states to users (connected, disconected).

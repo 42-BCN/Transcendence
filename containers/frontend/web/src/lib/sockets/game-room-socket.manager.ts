@@ -62,8 +62,12 @@ export function initGameRoomSocketHandelers(
     setDebugMsg("user left: " + username);
   });
 
-
   gameRoomSocket.connect();
+  console.log("[ GameRoom ][ IMPORTANND DEBUG ]", window.location.search);
+  const urlParams = new URLSearchParams(window.location.search);
+  console.log("[ GameRoom ][ IMPORTANND DEBUG ]", urlParams);
+  console.log("[ GameRoom ][ IMPORTANND DEBUG ]", urlParams.get("roomId"));
+  gameRoomSocket.emit("gameRoom:teammate:join", Number(urlParams.get("roomId")));
   console.log("[ GameRoom ] connected.");
 }
 

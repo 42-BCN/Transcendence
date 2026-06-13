@@ -28,7 +28,7 @@ export function makeGameRoomAction(action: (formData: FormData) => void) {
   };
 }
 
-const room_test_ui_style = "bg-black/30 backdrop-blur-sm p-10 rounded-xl outline h-[95vh] overflow-scroll";
+const room_test_ui_style = "bg-black/60 backdrop-blur-sm p-10 rounded-xl outline h-[95vh] overflow-scroll";
 
 
 export function GameRoomTest({
@@ -41,6 +41,9 @@ export function GameRoomTest({
     <li key={user.userId} >{user.userName} (): {user.userId}</li>
   );
 
+  const inviteUrl = gameRoomStateCtx.id !== 0 ? 
+    window.location.origin + window.location.pathname + "?roomId=" + gameRoomStateCtx.id : "" ;
+
 
   return (
   <>
@@ -52,10 +55,16 @@ export function GameRoomTest({
       <hr className="m-4"/>
       <h5 className="text-xl" >room info</h5>
       <p>gameRoomId: {gameRoomStateCtx.id !== 0 ? gameRoomStateCtx.id : "not on any game room."}</p>
+      <hr className="m-1 w-[4rem]"/>
       <p>teammates: {gameRoomStateCtx.id !== 0 ? "" : "not on any game room."}</p>
       <div>
         <ul>{teammates}</ul>
       </div>
+      
+      <hr className="m-1 w-[4rem]"/>
+      
+      <p>invite link: </p>
+      <a href={inviteUrl} > {inviteUrl} </a>
 
 
 
@@ -66,7 +75,7 @@ export function GameRoomTest({
         <SubmitButton idleLabel="join any room." />
       </Form>
 
-      <hr className="m-4"/>
+      <hr className="m-2 w-[4rem]"/>
 
       <h4>join room by id form.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketJoin)}>
@@ -77,21 +86,21 @@ export function GameRoomTest({
         <SubmitButton idleLabel="join room." />
       </Form>
 
-      <hr className="m-4"/>
+      <hr className="m-2 w-[4rem]"/>
       
       <h4>leave current room form.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketLeaveRoom)}>
         <SubmitButton idleLabel="leave current game room." />
       </Form>
 
-      <hr className="m-4"/>
+      <hr className="m-2 w-[4rem]"/>
 
       <h4>print debug info backend.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketPrintDebug)}>
         <SubmitButton idleLabel="print debug info." />
       </Form>
 
-      <hr className="m-4"/>
+      <hr className="m-2 w-[4rem]"/>
 
 	  </div>
   </>
