@@ -7,6 +7,7 @@
 - [x] separete out the game room updates from other logic.
 - [x] add a button to hidde the test ui for the rooms.
 - [x] fix edge case or reconnection not being joined to chanel in socket.
+- [ ] refactor: move to a seprate function some common logic.
 
 ## to do
 
