@@ -24,9 +24,21 @@ function  setEmtyGameRoomState(socket: Socket) {
   });
 }
 
-function  updateGameRoomState() {
-  
+function  updateGameRoomState(socket: Socket) {
+  const gameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
+  if (gameRoom === "error:no_assigned_room") {
+    setEmtyGameRoomState(socket);
+    return ;
+  }
+  if (typeof gameRoom === "string") {
+    socket.nsp.to(socket.id)
+      .emit("gameRoom:error:msg", "something has gone wrong try again later.");
+    return ;
+  }
+  socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
+  socket.join("GameRoom-" + gameRoom.id.toString());
 }
+
 
 //  all the server acctions.
 
@@ -35,16 +47,7 @@ export function registerGameRoomSocket(
 ) {
   nsp.on('connection', (socket: Socket) => {
 
-    const currentGameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
-    if (currentGameRoom === "error:no_assigned_room") {
-      setEmtyGameRoomState(socket);
-    } else if (typeof currentGameRoom === "string") {
-      socket.nsp.to(socket.id)
-        .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-    } else {
-      socket.nsp.to(socket.id).emit("gameRoom:room:update", currentGameRoom);
-      socket.join("GameRoom-" + currentGameRoom.id.toString());
-    }
+    updateGameRoomState(socket);
     socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "first connection");
     socket.nsp.to(socket.id).emit("gameRoom:error:msg", "none");
     
@@ -68,19 +71,7 @@ export function registerGameRoomSocket(
       //  check for returned errors.
       if (gameRoom === "error:alredy_joined_another_room") {
         socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
-        //  update the game room state.
-        const gameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
-        if (gameRoom === "error:no_assigned_room") {
-          setEmtyGameRoomState(socket.id);
-          return ;
-        }
-        if (typeof gameRoom === "string") {
-          socket.nsp.to(socket.id)
-            .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-          return ;
-        }
-        socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
-        socket.join("GameRoom-" + gameRoom.id.toString());
+        updateGameRoomState(socket);
         return ;
       }
       if (typeof gameRoom == "string") {
@@ -113,17 +104,8 @@ export function registerGameRoomSocket(
 //      );
 //      if (gameRoom === "error:alredy_joined_another_room") {
 //        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
-//        //  update the game room state.
-//        const gameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
-//        if (gameRoom === "error:no_assigned_room") {
-//          setEmtyGameRoomState(socket);
-//          return ;
-//        }
-//        if (typeof gameRoom === "string") {
-//          socket.nsp.to(socket.id)
-//            .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-//          return ;
-//        }
+//        updateGameRoomState(socket);
+//        return ;
 //      }
 //      if (typeof gameRoom === "string") {
 //        socket.nsp.to(socket.id)
@@ -173,17 +155,7 @@ export function registerGameRoomSocket(
       console.log("");
       gameRoomsManager.printInfo();
 
-      const gameRoom = gameRoomsManager.getUserCurrentGameRoom(socket.data.identityKey);
-      if (gameRoom === "error:no_assigned_room") {
-        setEmtyGameRoomState(socket);
-        return ;
-      }
-      if (typeof gameRoom === "string") {
-        socket.nsp.to(socket.id)
-          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-        return ;
-      }
-      socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
+      updateGameRoomState(socket);
     });
   });
 }
