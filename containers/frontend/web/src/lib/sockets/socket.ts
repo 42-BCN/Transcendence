@@ -1,4 +1,5 @@
-import { io, type Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import type { Socket }  from 'socket.io-client';
 
 import { envPublic } from '@/lib/config/env.public';
 import type {
@@ -10,6 +11,11 @@ import type {
   ServerToClientGameEvents,
   ClientToServerGameEvents,
 } from '@/contracts/sockets/game/game.schema';
+
+import type {
+  ServerToClientGameRoomsEvents,
+  ClientToServerGameRoomsEvents
+} from "@/contracts/sockets/gameRooms.schema";
 
 export type Robot = {
   id: string;
@@ -58,6 +64,7 @@ function createSocketUrl(pathname: string): string {
 
 const robotsSocketUrl = createSocketUrl('/robots');
 const chatSocketUrl = createSocketUrl('/chat');
+const gameRoomSocketUrl = createSocketUrl('/game-room');
 const gameSocketUrl = createSocketUrl('/game');
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
@@ -117,3 +124,13 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
     auth: {},
   },
 );
+
+export const gameRoomSocket: Socket = io(
+  gameRoomSocketUrl,
+  {
+    autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+  },
+);
+

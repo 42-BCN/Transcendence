@@ -5,11 +5,14 @@ import type { Namespace, Socket } from 'socket.io';
 import {
   DirectMessageSendSchema,
   directMessageFriendUserIdSchema,
-  directMessageSocketEvents,
-  type DirectMessageRead,
-  type ClientToServerDirectMessageEvents,
-  type DirectMessageError,
-  type ServerToClientDirectMessageEvents,
+  directMessageSocketEvents
+} from '@contracts/sockets/direct-messages/direct-messages.schema';
+
+import type {
+  DirectMessageRead,
+  ClientToServerDirectMessageEvents,
+  DirectMessageError,
+  ServerToClientDirectMessageEvents,
 } from '@contracts/sockets/direct-messages/direct-messages.schema';
 import { directMessageUnreadSocketEvents } from '@contracts/sockets/friendships/friendships.schema';
 

@@ -61,6 +61,22 @@ export const LoginReqSchema = z
 
 export type LoginReq = z.infer<typeof LoginReqSchema>;
 
+//	my stuff
+
+export const GameRoomJoinSchema = z
+  .object({
+    gameRoomId: z
+      .string()
+      .trim()
+      .regex(/\d+/)
+      .transform((val: string) => val.trim()),
+  })
+  .strict();
+
+export type GameRoomJoin = z.infer<typeof GameRoomJoinSchema>;
+
+// my stuff
+
 export const SignupReqSchema = z
   .object({
     email: emailSchema,

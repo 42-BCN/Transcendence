@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Game } from '@/features/game';
+import { Rooms } from '@/features/rooms';
 import { createRouteMetadata } from '@/lib/metadata/metadata.config';
 
 export async function generateMetadata({
@@ -20,5 +21,10 @@ export async function generateMetadata({
 }
 
 export default function GamePage() {
-  return <Game />;
+  return (
+    <>
+      <Rooms />
+      <Game />
+    </>
+  );
 }

@@ -33,7 +33,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
 
   nsp.on('connection', (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
     if (playerIds.length === 4) {
-      console.log('init state happens');
+      console.log('init state happens !!!!!!');
       const initstate = initState();
       gameState.turn = 1;
       gameState.doom = 0;

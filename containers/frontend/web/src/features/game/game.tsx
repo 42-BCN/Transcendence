@@ -19,6 +19,8 @@ import { Mage } from './meshes/Mage.jsx';
 import { Alchemist } from './meshes/Alchemist.jsx';
 import { Assassin } from './meshes/Assassin.jsx';
 import { Paladin } from './meshes/Paladin.jsx';
+import { JoinGameRoomForm } from './rooms/join.form';
+
 
 const s = 0.975;
 
@@ -651,6 +653,7 @@ function HandlePhaseScreen() {
   }
 }
 
+
 export function Game() {
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
@@ -658,6 +661,8 @@ export function Game() {
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
+  
+
 
   useEffect(() => {
     initSocketListeners();
