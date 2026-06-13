@@ -1,12 +1,19 @@
 'use client';
 
 import { useActionState, FormEvent, useState } from 'react';
-import { Form, SubmitButton, TextField, Button} from '@components';
+import { 
+    Form, 
+    SubmitButton, 
+    TextField, 
+    TextAreaField, 
+    Button
+} from '@components';
 
 import type { gameRoomState } from '@contracts/sockets/game/game.schema';
 
 import {
   GameRoomSocketJoinAnyRoom,
+  GameRoomSocketJoin,
   GameRoomSocketLeaveRoom,
   GameRoomSocketPrintDebug,
 } from "@/lib/sockets/game-room-socket.manager"
@@ -21,7 +28,7 @@ export function makeGameRoomAction(action: (formData: FormData) => void) {
   };
 }
 
-const room_test_ui_style = "bg-black/30 backdrop-blur-sm p-10 rounded-xl outline h-[50rem] overflow-scroll";
+const room_test_ui_style = "bg-black/30 backdrop-blur-sm p-10 rounded-xl outline h-[95vh] overflow-scroll";
 
 
 export function GameRoomTest({
@@ -51,21 +58,39 @@ export function GameRoomTest({
       </div>
 
 
+
       <hr className="m-4"/>
+
       <h4>join any room form.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketJoinAnyRoom)}>
         <SubmitButton idleLabel="join any room." />
       </Form>
+
       <hr className="m-4"/>
+
+      <h4>join room by id form.</h4>
+      <Form onSubmit={makeGameRoomAction(GameRoomSocketJoin)}>
+        <TextAreaField
+          name="gameRoomId"
+          labelKey="features.game.room.fields.gameRoomId"
+        />
+        <SubmitButton idleLabel="join room." />
+      </Form>
+
+      <hr className="m-4"/>
+      
       <h4>leave current room form.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketLeaveRoom)}>
         <SubmitButton idleLabel="leave current game room." />
       </Form>
+
       <hr className="m-4"/>
+
       <h4>print debug info backend.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketPrintDebug)}>
         <SubmitButton idleLabel="print debug info." />
       </Form>
+
       <hr className="m-4"/>
 
 	  </div>

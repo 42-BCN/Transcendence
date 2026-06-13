@@ -12,6 +12,11 @@ export function GameRoomSocketJoinAnyRoom() {
   gameRoomSocket.emit("gameRoom:teammate:joinAny");
 }
 
+export function GameRoomSocketJoin(formData: FormData) {
+  const gameRoomId = String(formData.get('') ?? '');
+  gameRoomSocket.emit("gameRoom:teammate:join", Number(formData.get("gameRoomId")));
+}
+
 export function GameRoomSocketLeaveRoom() {
   gameRoomSocket.emit("gameRoom:teammate:leave");
 }

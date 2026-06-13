@@ -7,7 +7,7 @@
 - [x] separete out the game room updates from other logic.
 - [x] add a button to hidde the test ui for the rooms.
 - [x] fix edge case or reconnection not being joined to chanel in socket.
-- [ ] refactor: move to a seprate function some common logic.
+- [x] refactor: move to a seprate function some common logic.
 
 ## to do
 
@@ -21,7 +21,7 @@
 - [x] remove users.
 - [x] automaticaly assign room to reconected players.
 
-- [ ] join room by id.
+- [x] join room by id.
 - [ ] test join room by url.
 
 - [ ] add states to rooms (open, closed).

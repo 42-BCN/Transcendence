@@ -89,32 +89,41 @@ export function registerGameRoomSocket(
  
 
 
-//    socket.on("gameRoom:teammate:join", (gameRoomId: number) => {
-//      console.log("");
-//      console.log("[ GameRoom ] request to joim ", gameRoomId, " :");
-//      console.log("\t-->\tsocket id:", socket.id);
-//      console.log("\t-->\tsocket user id:", socket.data.identityKey);
-//      console.log("\t-->\tsocket user name:", socket.data.username);
-//      console.log("");
-//
-//      const gameRoom = gameRoomsManager.joinUserToGameRoom(
-//        socket.data.identityKey, 
-//        socket.data.username,
-//        gameRoomId
-//      );
-//      if (gameRoom === "error:alredy_joined_another_room") {
-//        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
-//        updateGameRoomState(socket);
-//        return ;
-//      }
-//      if (typeof gameRoom === "string") {
-//        socket.nsp.to(socket.id)
-//          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-//        return ;
-//      }
-//
-//
-//    });
+    socket.on("gameRoom:teammate:join", (gameRoomId: number) => {
+      console.log("");
+      console.log("[ GameRoom ] request to joim ", gameRoomId, " :");
+      console.log("\t-->\tsocket id:", socket.id);
+      console.log("\t-->\tsocket user id:", socket.data.identityKey);
+      console.log("\t-->\tsocket user name:", socket.data.username);
+      console.log("");
+
+      const gameRoom = gameRoomsManager.joinUserToGameRoom(
+        socket.data.identityKey, 
+        socket.data.username,
+        gameRoomId
+      );
+      if (gameRoom === "error:alredy_joined_another_room") {
+        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
+        updateGameRoomState(socket);
+        return ;
+      }
+      if (gameRoom === "error:invalid_room_id") {
+        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "inexistent room");
+        updateGameRoomState(socket);
+        return ;
+      }
+      if (typeof gameRoom === "string") {
+        socket.nsp.to(socket.id)
+          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
+        return ;
+      }
+      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
+        .emit("gameRoom:room:joined", socket.data.username);
+      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
+        .emit("gameRoom:room:update", gameRoom);
+      socket.join("GameRoom-" + gameRoom.id.toString());
+      socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
+    });
 
 
 

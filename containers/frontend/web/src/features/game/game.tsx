@@ -426,7 +426,7 @@ function name(phase: string) {
   }
 }
 
-const test_ui_style = "fixed top-1/2 left-1/2 z-20";
+const test_ui_style = "fixed top-1/2 left-1/2 z-30";
 
 export function Game() {
   const phase = useGame((state) => state.phase);
