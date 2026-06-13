@@ -13,19 +13,19 @@ wwwwwwwwww
 wwwwwwwwww
 wwwwwwwwww,
 
-wwwwwwwwww
-wwowwwwoww
+wwwwgowwww
+wwowoowoww
 wooowwooow
 ooooooooow
 oooooooooo
-oooowwoooo
-ooooooooow
+ocoowwodoo
+oocooodoow
 woooooooow
 wwooooooww
 wwwapmlwww,
 
-wwwwwwwwww
-wwoowwooww
+wwwwoowwww
+wwowoowoww
 woooooooow
 woooooooow
 oooooooooo
@@ -36,7 +36,7 @@ owoooooowo
 wwooooooww,
 
 wwwwoowwww
-owooeooowo
+owoooooowo
 oooooooooo
 oooooooooo
 woooooooow
@@ -160,6 +160,14 @@ export const parseMap = (map: string) => {
             entities.push({
               id: `centurion`,
               type: 'centurion',
+              position
+            });
+            break;
+          case 'g':
+            ++enenum;
+            entities.push({
+              id: `generator`,
+              type: 'generator',
               position
             });
             break;
