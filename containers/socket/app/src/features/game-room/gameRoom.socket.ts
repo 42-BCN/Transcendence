@@ -1,208 +1,192 @@
 import type { Namespace, Socket } from 'socket.io';
-import type {
-  ClientToServerGameRoomsEvents,
-  ServerToClientGameRoomsEvents,
-} from '@contracts/sockets/rooms/gameRooms.schema';
+
 import {
+  cancelPendingGameRoomRemoval,
   decrementGameRoomConnection,
   gameRoomsManager,
+  getPreviousRoomMemberKey,
   getRoomMemberKey,
   incrementGameRoomConnection,
+  scheduleGameRoomRemoval,
 } from './gameRooms.shared';
 
-//interface Client
+type EmptyGameRoomState = {
+  id: 0;
+  isGameRoomFull: false;
+  teammates: [];
+};
 
-//  really important:
-//    socket.data.identityKey is the same as a user id for me.
-//    socket.data.username is the same as a nickname or username for me.
+const EMPTY_GAME_ROOM_STATE: EmptyGameRoomState = {
+  id: 0,
+  isGameRoomFull: false,
+  teammates: [],
+};
 
-
-//  some helper functions.
-
-function  setEmtyGameRoomState(socket: Socket) {
-  socket.nsp.to(socket.id).emit("gameRoom:room:update", {
-    id: 0, 
-    isGameRoomFull: false, 
-    teammates: [],
-  });
+function getGameRoomChannel(gameRoomId: number) {
+  return `GameRoom-${gameRoomId}`;
 }
 
-function  updateGameRoomState(socket: Socket) {
+function emitEmptyGameRoomState(socket: Socket) {
+  socket.nsp.to(socket.id).emit('gameRoom:room:update', EMPTY_GAME_ROOM_STATE);
+}
+
+function emitGameRoomError(socket: Socket, message: string) {
+  socket.nsp.to(socket.id).emit('gameRoom:error:msg', message);
+}
+
+function updateGameRoomState(socket: Socket) {
   const roomMemberKey = getRoomMemberKey(socket);
   if (!roomMemberKey) {
-    setEmtyGameRoomState(socket);
-    return ;
+    emitEmptyGameRoomState(socket);
+    return;
   }
+
   const gameRoom = gameRoomsManager.getUserCurrentGameRoom(roomMemberKey);
-  if (gameRoom === "error:no_assigned_room") {
-    setEmtyGameRoomState(socket);
-    return ;
+  if (gameRoom === 'error:no_assigned_room') {
+    emitEmptyGameRoomState(socket);
+    return;
   }
-  if (typeof gameRoom === "string") {
-    socket.nsp.to(socket.id)
-      .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-    return ;
-  }
-  socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
-  socket.join("GameRoom-" + gameRoom.id.toString());
+
+  socket.nsp.to(socket.id).emit('gameRoom:room:update', gameRoom);
+  void socket.join(getGameRoomChannel(gameRoom.id));
 }
 
+function emitJoinedRoomState(socket: Socket, gameRoomId: number, username: string) {
+  const gameRoomChannel = getGameRoomChannel(gameRoomId);
+  socket.nsp.to(gameRoomChannel).emit('gameRoom:room:joined', username);
+}
 
-//  all the server acctions.
+function broadcastRoomUpdate(socket: Socket, gameRoomId: number, gameRoomState: unknown) {
+  const gameRoomChannel = getGameRoomChannel(gameRoomId);
+  socket.nsp.to(gameRoomChannel).emit('gameRoom:room:update', gameRoomState);
+}
 
-export function registerGameRoomSocket(
-  nsp: Namespace
+function handleJoinResult(socket: Socket, username: string, gameRoom: ReturnType<typeof gameRoomsManager.joinUserToGameRoom>) {
+  if (gameRoom === 'error:alredy_joined_another_room') {
+    emitGameRoomError(socket, 'alredy in a room.');
+    updateGameRoomState(socket);
+    return;
+  }
+
+  if (gameRoom === 'error:invalid_room_id') {
+    emitGameRoomError(socket, 'inexistent room');
+    updateGameRoomState(socket);
+    return;
+  }
+
+  if (gameRoom === 'error:full_room') {
+    emitGameRoomError(socket, 'room is full.');
+    updateGameRoomState(socket);
+    return;
+  }
+
+  emitJoinedRoomState(socket, gameRoom.id, username);
+  broadcastRoomUpdate(socket, gameRoom.id, gameRoom);
+  void socket.join(getGameRoomChannel(gameRoom.id));
+  socket.nsp.to(socket.id).emit('gameRoom:room:update', gameRoom);
+}
+
+function handleLeaveResult(socket: Socket, username: string, gameRoom: ReturnType<typeof gameRoomsManager.removeUserFromGameRoom>) {
+  if (gameRoom === 'error:no_assigned_room') {
+    emitGameRoomError(socket, 'not on any room.');
+    emitEmptyGameRoomState(socket);
+    return;
+  }
+
+  const { id: gameRoomId } = gameRoom;
+  const gameRoomChannel = getGameRoomChannel(gameRoomId);
+  void socket.leave(gameRoomChannel);
+  socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
+  socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
+  emitEmptyGameRoomState(socket);
+  socket.nsp.to(socket.id).emit('gameRoom:debug:msg', 'left room');
+}
+
+function logConnection(socket: Socket, roomMemberKey: string, username: string) {
+  console.log('=========================================================');
+  console.log('[ GameRoom ] new socket connection: ');
+  console.log('\t-->\tsocket id:', socket.id);
+  console.log('\t-->\tsocket user id:', roomMemberKey);
+  console.log('\t-->\tsocket user name:', username);
+  console.log('=========================================================');
+}
+
+function migrateGuestRoomIfNeeded(
+  socket: Socket,
+  roomMemberKey: string,
+  previousRoomMemberKey: string | null,
+  username: string,
 ) {
+  if (!previousRoomMemberKey) {
+    return;
+  }
+
+  cancelPendingGameRoomRemoval(previousRoomMemberKey);
+
+  const migratedRoom = gameRoomsManager.migrateUserToMemberKey(
+    previousRoomMemberKey,
+    roomMemberKey,
+    username,
+  );
+
+  if (typeof migratedRoom !== 'string') {
+    broadcastRoomUpdate(socket, migratedRoom.id, migratedRoom);
+  }
+}
+
+export function registerGameRoomSocket(nsp: Namespace) {
   nsp.on('connection', (socket: Socket) => {
     const roomMemberKey = incrementGameRoomConnection(socket);
+    const previousRoomMemberKey = getPreviousRoomMemberKey(socket);
     const username = socket.data.username;
 
-    if (!roomMemberKey || typeof username !== "string" || username.length === 0) {
+    if (!roomMemberKey || typeof username !== 'string' || username.length === 0) {
       socket.disconnect(true);
-      return ;
+      return;
     }
 
+    migrateGuestRoomIfNeeded(socket, roomMemberKey, previousRoomMemberKey, username);
     updateGameRoomState(socket);
-    socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "first connection");
-    socket.nsp.to(socket.id).emit("gameRoom:error:msg", "none");
-    
-    console.log("=========================================================");
-    console.log("[ GameRoom ] new socket connection: ");
-    console.log("\t-->\tsocket id:", socket.id);
-    console.log("\t-->\tsocket user id:", roomMemberKey);
-    console.log("\t-->\tsocket user name:", username);
-    console.log("=========================================================");
+    socket.nsp.to(socket.id).emit('gameRoom:debug:msg', 'first connection');
+    socket.nsp.to(socket.id).emit('gameRoom:error:msg', 'none');
+    logConnection(socket, roomMemberKey, username);
 
-    
-
-    socket.on("gameRoom:teammate:joinAny", () => {
-      console.log("");
-      console.log("[ GameRoom ] request to join any room: ");
-      console.log("\t-->\tsocket id:", socket.id);
-      console.log("\t-->\tsocket user id:", roomMemberKey);
-      console.log("\t-->\tsocket user name:", username);
-      console.log("");
+    socket.on('gameRoom:teammate:joinAny', () => {
       const gameRoom = gameRoomsManager.joinUserToAnyGameRoom(roomMemberKey, username);
-      //  check for returned errors.
-      if (gameRoom === "error:alredy_joined_another_room") {
-        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
-        updateGameRoomState(socket);
-        return ;
-      }
-      if (typeof gameRoom == "string") {
-        socket.nsp.to(socket.id)
-          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-        return ;
-      }
-      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
-        .emit("gameRoom:room:joined", username);
-      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
-        .emit("gameRoom:room:update", gameRoom);
-      socket.join("GameRoom-" + gameRoom.id.toString());
-      socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
-    });
- 
-
-
-    socket.on("gameRoom:teammate:join", (gameRoomId: number) => {
-      console.log("");
-      console.log("[ GameRoom ] request to joim ", gameRoomId, " :");
-      console.log("\t-->\tsocket id:", socket.id);
-      console.log("\t-->\tsocket user id:", roomMemberKey);
-      console.log("\t-->\tsocket user name:", username);
-      console.log("");
-
-      const gameRoom = gameRoomsManager.joinUserToGameRoom(
-        roomMemberKey,
-        username,
-        gameRoomId
-      );
-      if (gameRoom === "error:alredy_joined_another_room") {
-        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "alredy in a room.");
-        updateGameRoomState(socket);
-        return ;
-      }
-      if (gameRoom === "error:invalid_room_id") {
-        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "inexistent room");
-        updateGameRoomState(socket);
-        return ;
-      }
-      if (typeof gameRoom === "string") {
-        socket.nsp.to(socket.id)
-          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-        return ;
-      }
-      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
-        .emit("gameRoom:room:joined", username);
-      socket.nsp.to("GameRoom-" + gameRoom.id.toString())
-        .emit("gameRoom:room:update", gameRoom);
-      socket.join("GameRoom-" + gameRoom.id.toString());
-      socket.nsp.to(socket.id).emit("gameRoom:room:update", gameRoom);
+      handleJoinResult(socket, username, gameRoom);
     });
 
+    socket.on('gameRoom:teammate:join', (gameRoomId: number) => {
+      const gameRoom = gameRoomsManager.joinUserToGameRoom(roomMemberKey, username, gameRoomId);
+      handleJoinResult(socket, username, gameRoom);
+    });
 
-
-    socket.on("gameRoom:teammate:leave", () => {
-      console.log("");
-      console.log("[ GameRoom ] request to leave: ");
-      console.log("\t-->\tsocket id:", socket.id);
-      console.log("\t-->\tsocket user id:", roomMemberKey);
-      console.log("\t-->\tsocket user name:", username);
-      console.log("");
+    socket.on('gameRoom:teammate:leave', () => {
       const gameRoom = gameRoomsManager.removeUserFromGameRoom(roomMemberKey);
-      //  check for returned errors.
-      if (gameRoom === "error:no_assigned_room") {
-        socket.nsp.to(socket.id).emit("gameRoom:error:msg", "not on any room.");
-        setEmtyGameRoomState(socket);
-      }
-      if (typeof gameRoom == "string") {
-        socket.nsp.to(socket.id)
-          .emit("gameRoom:error:msg", "something has gone wrong try again later.");
-        return ;
-      }
-      const gameRoomId = gameRoom.id;
-      socket.leave("GameRoom-" + gameRoomId.toString());
-      socket.to("GameRoom-" + gameRoomId.toString())
-        .emit("gameRoom:room:left", username);
-      socket.to("GameRoom-" + gameRoomId.toString())
-        .emit("gameRoom:room:update", gameRoom);
-
-      setEmtyGameRoomState(socket);
-      socket.nsp.to(socket.id).emit("gameRoom:debug:msg", "left room");
+      handleLeaveResult(socket, username, gameRoom);
     });
-    
-    
 
-    socket.on("gameRoom:teammate:printDebug", () => {
-      console.log("");
-      console.log("[ GameRoom ] request to print debug info: ");
-      console.log("");
+    socket.on('gameRoom:teammate:printDebug', () => {
       gameRoomsManager.printInfo();
-
       updateGameRoomState(socket);
     });
 
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
       const connectionState = decrementGameRoomConnection(socket);
       if (!connectionState || connectionState.hasActiveConnections) {
         return;
       }
 
-      const gameRoom = gameRoomsManager.removeUserFromGameRoom(connectionState.roomMemberKey);
+      scheduleGameRoomRemoval(connectionState.roomMemberKey, (expiredMemberKey) => {
+        const gameRoom = gameRoomsManager.removeUserFromGameRoom(expiredMemberKey);
+        if (gameRoom === 'error:no_assigned_room') {
+          return;
+        }
 
-      if (typeof gameRoom === "string") {
-        return;
-      }
-
-      socket.to("GameRoom-" + gameRoom.id.toString())
-        .emit("gameRoom:room:left", username);
-      socket.to("GameRoom-" + gameRoom.id.toString())
-        .emit("gameRoom:room:update", gameRoom);
+        const gameRoomChannel = getGameRoomChannel(gameRoom.id);
+        socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
+        socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
+      });
     });
   });
 }
-
-
-//  really important:
-//    socket.data.identityKey is the same as a user id for me.
-//    socket.data.username is the same as a nickname or username for me.

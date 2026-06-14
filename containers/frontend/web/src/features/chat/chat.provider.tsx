@@ -124,6 +124,7 @@ function useChatMessages(
 export function ChatProvider({ children }: ChatProviderProps) {
   const [messages, setMessages] = useState<ChatHistoryType>([]);
   const [selfUsername, setSelfUsername] = useState<string | null>(null);
+  const [previousSelfUsername, setPreviousSelfUsername] = useState<string | null>(null);
   const [value, setValue] = useState('');
   const roomsStore = useContext(RoomsStoreContext);
 
@@ -150,6 +151,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
   useEffect(() => {
     const handleIdentityChanged = () => {
       setMessages([]);
+      setPreviousSelfUsername(selfUsername);
       setSelfUsername(null);
     };
 
@@ -158,7 +160,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
     return () => {
       window.removeEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
     };
-  }, []);
+  }, [selfUsername]);
 
   const {
     handleChatMessage,
@@ -168,6 +170,23 @@ export function ChatProvider({ children }: ChatProviderProps) {
     handleChatError,
     handleGameEvent,
   } = useChatMessages(setMessages, selfUsername, setSelfUsername);
+
+  const handleChatIdentityWithMemberKey = useCallback(
+    (identity: ChatIdentity) => {
+      const nextMemberKey =
+        typeof identity.userId === 'string' && identity.userId.length > 0
+          ? `user:${identity.userId}`
+          : identity.identityKey;
+
+      handleChatIdentity(identity);
+      roomsStore.replaceTeammateName({
+        nextUserName: identity.username,
+        previousUserName: previousSelfUsername ?? selfUsername,
+        nextMemberKey,
+      });
+    },
+    [handleChatIdentity, previousSelfUsername, roomsStore, selfUsername],
+  );
 
   const contextValue = useMemo(
     () => ({
@@ -188,7 +207,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
         onChatMessage={handleChatMessage}
         onChatSystemMessage={handleChatSystemMessage}
         onChatHistory={handleChatHistory}
-        onChatIdentity={handleChatIdentity}
+        onChatIdentity={handleChatIdentityWithMemberKey}
         onChatError={handleChatError}
         onGameEvent={handleGameEvent}
       />

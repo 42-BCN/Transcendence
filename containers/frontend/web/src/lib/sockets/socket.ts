@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import type { Socket }  from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 
 import { envPublic } from '@/lib/config/env.public';
 import type {
@@ -14,8 +14,8 @@ import type {
 
 import type {
   ServerToClientGameRoomsEvents,
-  ClientToServerGameRoomsEvents
-} from "@/contracts/sockets/rooms/gameRooms.schema";
+  ClientToServerGameRoomsEvents,
+} from '@/contracts/sockets/rooms/gameRooms.schema';
 
 export type Robot = {
   id: string;
@@ -57,6 +57,10 @@ export async function ensureChatSessionIdentity(): Promise<void> {
   return sessionPromise;
 }
 
+export function resetChatSessionIdentity(): void {
+  sessionPromise = null;
+}
+
 function createSocketUrl(pathname: string): string {
   const baseUrl = typeof window === 'undefined' ? envPublic.socketUrl : window.location.origin;
   return new URL(pathname, baseUrl).toString();
@@ -90,12 +94,6 @@ gameSocket.on('connect_error', (error: unknown) => {
 
 console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
 
-gameSocket.on('connect_error', (error: unknown) => {
-  console.error('🔴 gameSocket connect_error:', error);
-});
-
-console.log('📋 gameSocket configured for URL:', gameSocketUrl);
-
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
   {
@@ -115,12 +113,11 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
   },
 );
 
-export const gameRoomSocket: Socket = io(
-  gameRoomSocketUrl,
-  {
-    autoConnect: false,
-    transports: ['websocket'],
-    withCredentials: true,
-  },
-);
-
+export const gameRoomSocket: Socket<
+  ServerToClientGameRoomsEvents,
+  ClientToServerGameRoomsEvents
+> = io(gameRoomSocketUrl, {
+  autoConnect: false,
+  transports: ['websocket'],
+  withCredentials: true,
+});

@@ -6,13 +6,20 @@ import { usePathname } from 'next/navigation';
 import { envPublic } from '@/lib/config/env.public';
 import { directMessagesSocket } from './direct-messages-socket.client';
 import { friendsSocket } from './friends-socket.client';
-import { chatSocket, gameRoomSocket, gameSocket } from './socket';
+import {
+  chatSocket,
+  gameRoomSocket,
+  gameSocket,
+  resetChatSessionIdentity,
+} from './socket';
 
 type SessionIdentity = {
   identityKey: string;
+  username: string;
   isGuest: boolean;
   userId?: string;
   guestId?: string;
+  previousGuestId?: string;
 };
 
 type SessionIdentityResponse = {
@@ -28,6 +35,16 @@ function hasMountedListeners(socket: {
   listeners: (event: string) => unknown[];
 }) {
   return socket.listeners('connect').length > 0 || socket.listeners('disconnect').length > 0;
+}
+
+function hasMountedGameRoomListeners() {
+  return (
+    gameRoomSocket.listeners('gameRoom:room:update').length > 0
+    || gameRoomSocket.listeners('gameRoom:debug:msg').length > 0
+    || gameRoomSocket.listeners('gameRoom:error:msg').length > 0
+    || gameRoomSocket.listeners('gameRoom:room:joined').length > 0
+    || gameRoomSocket.listeners('gameRoom:room:left').length > 0
+  );
 }
 
 async function getCurrentSessionIdentity(): Promise<SessionIdentity | null> {
@@ -82,7 +99,7 @@ function getStoredRoomId() {
 
 async function rejoinStoredRoomIfNeeded() {
   const roomId = getStoredRoomId();
-  if (roomId === null || !hasMountedListeners(gameRoomSocket)) {
+  if (roomId === null || !hasMountedGameRoomListeners()) {
     return;
   }
 
@@ -137,6 +154,7 @@ export function RealtimeSessionBridge() {
       }
 
       lastIdentityKeyRef.current = nextIdentityKey;
+      resetChatSessionIdentity();
       window.dispatchEvent(new CustomEvent(REALTIME_IDENTITY_CHANGED_EVENT));
 
       if (!nextIdentityKey) {

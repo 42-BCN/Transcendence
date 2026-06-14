@@ -9,6 +9,11 @@ const ACTIVE_ROOM_STORAGE_KEY = 'transcendence:active-room-id';
 export type RoomsStore = {
   roomState: gameRoomState;
   setRoomState: (state: gameRoomState) => void;
+  replaceTeammateName: (args: {
+    nextUserName: string;
+    previousUserName?: string | null;
+    nextMemberKey?: string | null;
+  }) => void;
 };
 
 export const RoomStateEmpty: gameRoomState = {
@@ -35,9 +40,38 @@ export function RoomsProvider({
     window.sessionStorage.removeItem(ACTIVE_ROOM_STORAGE_KEY);
   }, [roomState.id]);
 
+  const replaceTeammateName: RoomsStore['replaceTeammateName'] = ({
+    nextUserName,
+    previousUserName,
+    nextMemberKey,
+  }) => {
+    setRoomState((currentState) => {
+      const teammates = currentState.teammates.map((teammate) => {
+        const matchesMemberKey = nextMemberKey && teammate.userId === nextMemberKey;
+        const matchesPreviousUserName = previousUserName && teammate.userName === previousUserName;
+
+        if (!matchesMemberKey && !matchesPreviousUserName) {
+          return teammate;
+        }
+
+        return {
+          ...teammate,
+          userName: nextUserName,
+          ...(matchesPreviousUserName && nextMemberKey ? { userId: nextMemberKey } : {}),
+        };
+      });
+
+      return {
+        ...currentState,
+        teammates,
+      };
+    });
+  };
+
   const data = {
-    roomState: roomState,
-    setRoomState: setRoomState,
+    roomState,
+    setRoomState,
+    replaceTeammateName,
   };
 
   return (
