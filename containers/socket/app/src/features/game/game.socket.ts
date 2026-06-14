@@ -1,5 +1,5 @@
 import type { Namespace, Socket } from 'socket.io';
-import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
+import type { ClientToServerGameEvents, ServerToClientGameEvents } from '@contracts/sockets/game/game.schema';
 import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase } from './utils';
 
 const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
@@ -9,7 +9,7 @@ const readyPlayers: string[] = [];
 const activePlayers: string[] = [];
 
 
-function shuffleArray(array) {
+function shuffleArray(array: string[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -19,7 +19,7 @@ function shuffleArray(array) {
 export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>) {
 
   function gsync() {
-    const { tiles, mapBounds, clients, ...send } = gameState;
+    const { clients, ...send } = gameState;
     const activePlayers = roles.filter((r) => !playerIds.includes(r));
     nsp.emit('game:server:globalSync', {
       ...send,
@@ -41,7 +41,11 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       gameState.history = [];
     }
     // WARN: DO NOT CHANGE, else will not render the map 
-    nsp.emit('game:server:globalSync', gameState);
+    nsp.emit('game:server:globalSync', {
+      ...gameState,
+      readyPlayers,
+      activePlayers: roles.filter((r) => !playerIds.includes(r)),
+    });
     const role = playerIds.pop();
     if (!role) {
       console.log('Room full, spectator joined:', socket.id);

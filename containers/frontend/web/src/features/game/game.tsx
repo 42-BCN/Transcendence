@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame } from './store';
+import type { pos as GamePosition } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
@@ -126,7 +127,7 @@ function Reset() {
     <Button
       className="absolute z-10 top-8 left-8"
       variant="primary"
-      w="default"
+      w="auto"
       onPress={() => {
         resetHistory();
       }}
@@ -146,7 +147,7 @@ function EndPlan() {
     <Button
       className="absolute z-10 bottom-8 right-64"
       variant="primary"
-      w="default"
+      w="auto"
       onPress={() => nextPhase()}
     >
       {t('endTurn')}
@@ -180,7 +181,7 @@ function HUD() {
   );
 }
 
-function Tile({ id, pos }: { id: string; pos: pos }) {
+function Tile({ id, pos }: { id: string; pos: GamePosition }) {
   const phase = useGame((state) => state.phase);
   const moveClone = useGame((state) => state.moveClone);
   const isHighlighted = useGame((state) => state.highlights[id]);
@@ -219,7 +220,7 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
-function Enemy({ id, pos }: { id: string; pos: pos }) {
+function Enemy({ id, pos }: { id: string; pos: GamePosition }) {
   const eRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
@@ -258,7 +259,7 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
-function Clone({ id, pos }: { id: string; pos: pos }) {
+function Clone({ id, pos }: { id: string; pos: GamePosition }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
@@ -302,7 +303,7 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
-function Player({ id, pos }: { id: string; pos: pos }) {
+function Player({ id, pos }: { id: string; pos: GamePosition }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);

@@ -92,6 +92,13 @@ export type serverGameState = {
   history: historyAction[];
   vfx: vfx[];
   mapBounds: mapInfo,
+  readyPlayers?: string[];
+  activePlayers?: string[];
+}
+
+export type globalGameState = Omit<serverGameState, 'clients'> & {
+  readyPlayers: string[];
+  activePlayers: string[];
 }
 
 export type clientGameState = {
@@ -126,7 +133,7 @@ export interface ClientToServerGameEvents {
 export type ServerToClientGameEvents = {
   'game:server:join': (assignedRole: string) => void;
   'game:server:init': (state: serverGameState) => void;
-  'game:server:globalSync': (state: serverGameState) => void;
+  'game:server:globalSync': (state: globalGameState) => void;
   'game:server:sync': (state: clientGameState) => void;
 };
 export const GameEventMapInfo = z.object({

@@ -90,6 +90,13 @@ export type serverGameState = {
   history: historyAction[];
   vfx: vfx[];
   mapBounds: mapInfo,
+  readyPlayers?: string[];
+  activePlayers?: string[];
+}
+
+export type globalGameState = Omit<serverGameState, 'clients'> & {
+  readyPlayers: string[];
+  activePlayers: string[];
 }
 
 export type clientGameState = {
@@ -100,4 +107,3 @@ export type clientGameState = {
   selectedEnt: string | null;
   selectedDice: number | null;
 }
-

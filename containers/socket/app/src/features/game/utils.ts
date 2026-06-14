@@ -323,7 +323,7 @@ export function takeAb(id: string, ab: abilityInfo, roll: number) {
   const hadStatus = Boolean(target.status);
   if (ab.effect && ab.effect[STATUS_TYPE] && !target.status) {
     target.status = ab.effect[STATUS_TYPE];
-    gameState.vfx.push(target.status);
+    gameState.vfx.push({ id: target.id, type: target.status, amount: null });
     if (target.status !== 'push' && !hadStatus) {
       target.statusTurns = Number(ab.effect[N_TURNS]);
     }
@@ -387,7 +387,8 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
     const ent = gameState.players[id] || gameState.clones[id];
     if (!ent)
       return console.log('no ent in addHistory!');
-    ent.abilitiesCD[ability] = getAbility(ability)?.cd;
+    if (ability)
+      ent.abilitiesCD[ability] = getAbility(ability).cd;
   }
   const actionNumber = gameState.history.reduce((count, action) => {
     return action.who === who ? count + 1 : count
@@ -702,7 +703,8 @@ function getAoE(who: string, tileid: string, type: string, range: number) {
 }
 
 export function paint(who: string, pos: pos, type: string, range: number, self: boolean) {
-  if (gameState.clients[who] && !gameState.clients[who].selectedEnt)
+  const selectedEnt = gameState.clients[who]?.selectedEnt;
+  if (gameState.clients[who] && !selectedEnt)
     return {};
   let valid: Record<string, boolean>;
   switch (type) {
@@ -724,9 +726,11 @@ export function paint(who: string, pos: pos, type: string, range: number, self: 
     default:
       valid = {};
   }
-  valid[gameState.clients[who].selectedEnt] = false
+  if (!selectedEnt)
+    return valid;
+  valid[selectedEnt] = false;
   if (self)
-    valid[gameState.clients[who].selectedEnt] = true;
+    valid[selectedEnt] = true;
   return (valid);
 }
 
@@ -937,7 +941,7 @@ export function checkEntnc(id: string, x: number, y: number, z: number) {
 }
 
 export function checkEnt(x: number, y: number, z: number) {
-  const finder = (e) => (
+  const finder = (e: enemy | player) => (
     e.position.x === x
     && e.position.y === y
     && e.position.z === z

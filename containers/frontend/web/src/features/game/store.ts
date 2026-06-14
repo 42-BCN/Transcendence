@@ -92,6 +92,8 @@ export type globalGameState = {
   history: historyAction[];
   vfx: vfx[];
   mapBounds: mapInfo,
+  readyPlayers: string[];
+  activePlayers: string[];
 }
 
 export type localGameState = {
@@ -138,9 +140,11 @@ type gameState = {
   getSel: () => entity | undefined;
   movDice: (mov: number) => void;
   selectDice: (dice: number) => void;
+  resetHistory: () => void;
+  addHistoryAbility: (target: string) => void;
   moveClone: (tileId: string) => void;
   selectAbility: (name: string) => void;
-  showMoveRange: (mov: string) => void;
+  showMoveRange: (mov: number) => void;
   showAbRange: (name: string) => void;
   clearHighlights: () => void;
   clearSelectables: () => void;
@@ -255,8 +259,6 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:displayMoveRange');
-    gameSocket.off('game:server:displayAbilityRange');
 
     const handleJoin = (id: string) => {
       console.log('👤 Player joined with ID:', id);
@@ -297,17 +299,6 @@ export const useGame = create<gameState>()((set, get) => ({
       });
     };
 
-    const handleHighlights = (highlights: Record<string, boolean>) => {
-      console.log('✨ Received highlights');
-      set({ highlights: highlights });
-    };
-
-    const handleSelectables = (selectables: Record<string, boolean>) => {
-      console.log('🎯 Received selectables');
-      set({ selectables: selectables });
-    };
-
-
     gameSocket.on('connect', () => {
       console.log('✅ Connected to game socket server');
     });
@@ -319,8 +310,6 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.on('game:server:join', handleJoin);
     gameSocket.on('game:server:globalSync', handleGlobalSync);
     gameSocket.on('game:server:sync', handleSync);
-    gameSocket.on('game:server:displayMoveRange', handleHighlights);
-    gameSocket.on('game:server:displayAbilityRange', handleSelectables);
 
     ensureChatSessionIdentity()
       .finally(() => gameSocket.connect());
@@ -330,13 +319,10 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('connect');
     gameSocket.off('disconnect');
     gameSocket.off('connect_error');
-    gameSocket.off('error');
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:init');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:displayMoveRange');
-    gameSocket.off('game:server:displayAbilityRange');
     // gameSocket.disconnect();
   },
 }));
