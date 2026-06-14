@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { SegmentedControlGroup } from '@/components/composites/segmented-control-group';
 import type { Key } from 'react-aria-components';
+import { useParams } from 'next/navigation';
 
 import { envPublic } from '@/lib/config/env.public';
 import { LOCALE_COOKIE_MAX_AGE } from '@/i18n/constants';
@@ -53,14 +54,26 @@ export function LocaleSwitcher() {
   const t = useTranslations('components.localeSwitcher');
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams<{ userId?: string; username?: string }>();
+
+  const getLocaleTarget = (): Parameters<typeof router.replace>[0] => {
+    if (pathname === '/messages/[userId]' && typeof params.userId === 'string') {
+      return { pathname, params: { userId: params.userId } };
+    }
+
+    if (pathname === '/other/[username]' && typeof params.username === 'string') {
+      return { pathname, params: { username: params.username } };
+    }
+
+    return pathname as Parameters<typeof router.replace>[0];
+  };
 
   const changeLocaleHandler = (key: Key) => {
     const next = String(key) as LocaleKey;
     if (next === locale) return;
     if (next !== 'en' && next !== 'es' && next !== 'ca') return;
     document.cookie = `${envPublic.localeCookieName}=${next};path=/;max-age=${LOCALE_COOKIE_MAX_AGE}`;
-    const target = typeof window !== 'undefined' ? window.location.pathname : pathname;
-    router.replace(target, { locale: next });
+    router.replace(getLocaleTarget(), { locale: next });
   };
 
   const options = [

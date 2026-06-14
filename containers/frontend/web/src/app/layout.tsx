@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { getLocale } from 'next-intl/server';
 
 import { mono, primary } from './fonts';
 import { createAppMetadata } from '@/lib/metadata/metadata.config';
+import { routing } from '@/i18n/routing';
 import './globals.css';
 
 export const metadata = createAppMetadata({
@@ -23,10 +23,12 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const locale = await getLocale();
-
   return (
-    <html lang={locale} className={`${primary.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html
+      lang={routing.defaultLocale}
+      className={`${primary.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{

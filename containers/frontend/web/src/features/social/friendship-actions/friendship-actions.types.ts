@@ -2,6 +2,7 @@ import type {
   FriendPublic,
   FriendshipPublic,
 } from '@/contracts/api/friendships/friendships.contracts';
+import type { InternalLinkProps } from '@components/controls/link';
 
 export type FriendshipStatus = 'friend' | 'received' | 'sent' | 'none';
 
@@ -42,7 +43,7 @@ export type FriendshipAction =
       key: FriendshipActionKey;
       type: 'link';
       label: string;
-      href: string;
+      href: InternalLinkProps['href'];
       badgeCount?: number;
     }
   | {

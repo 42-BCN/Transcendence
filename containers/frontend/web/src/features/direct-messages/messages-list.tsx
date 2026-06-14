@@ -34,7 +34,7 @@ export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
             friends.map((friend) => (
               <UserItem
                 key={friend.id}
-                href={`/messages/${friend.username}`}
+                href={{ pathname: '/messages/[userId]', params: { userId: friend.username } }}
                 className={messagesListStyles.item(selectedUsername === friend.username)}
                 username={friend.username}
                 avatarUrl={friend.avatar}

@@ -22,7 +22,7 @@ export async function PublicProfile({ username }: PublicProfileProps) {
       <Breadcrumb
         items={[
           { label: tBreadcrumb('home'), href: '/' },
-          { label: data.data.username, href: `/other/${username}` },
+          { label: data.data.username, href: { pathname: '/other/[username]', params: { username } } },
         ]}
       />
       <Stack direction="horizontal" gap="regular" align="center">

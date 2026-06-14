@@ -3,8 +3,9 @@ import { useEffect, useRef } from 'react';
 import { MessageBubble, ScrollArea, Stack, Text } from '@components';
 import { chatStyles } from './chat.styles';
 import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
+import type { DirectMessageError } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 
-type ChatMainMessage = ChatMessageUnion & {
+type ChatMainMessage = (ChatMessageUnion | DirectMessageError) & {
   readAt?: number | null;
 };
 

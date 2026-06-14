@@ -38,7 +38,7 @@ type DirectMessageContextValue = {
 
 const DirectMessageContext = createContext<DirectMessageContextValue | null>(null);
 
-type DirectChatMessage = ChatMessageUnion & {
+type DirectChatMessage = (ChatMessageUnion | DirectMessageError) & {
   clientMessageId?: string;
   senderId?: string;
   readAt?: number | null;
@@ -145,6 +145,8 @@ function useDirectMessageState(currentUserId: string) {
         createdAt: error.createdAt,
         senderId: error.senderId,
         username: error.username,
+        readAt: error.readAt,
+        clientMessageId: error.clientMessageId,
         type: 'error',
         content: error.content,
       },
