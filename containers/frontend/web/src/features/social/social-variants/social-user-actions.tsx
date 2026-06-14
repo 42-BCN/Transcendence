@@ -21,7 +21,7 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
   const unreadMessageCount = useSocialStore(
     (state) => state.friends.find((friend) => friend.id === userId)?.unreadMessageCount ?? 0,
   );
-  const messageHref = `/messages/${username}` as const;
+  const messageHref = { pathname: '/messages/[userId]' as const, params: { userId: username } };
 
   return (
     <>

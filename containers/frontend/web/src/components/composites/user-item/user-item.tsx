@@ -5,6 +5,7 @@ import { Avatar } from '@components/primitives/avatar';
 import { cn } from '@/lib/styles/cn';
 import { userItemStyles } from './user-item.styles';
 import { InternalLink } from '../../controls/link';
+import type { InternalLinkProps } from '../../controls/link';
 
 export type UserItemProps = {
   avatarUrl?: string | null;
@@ -13,7 +14,7 @@ export type UserItemProps = {
   subtitleClassName?: string;
   children?: ReactNode;
   className?: string;
-  href?: string;
+  href?: InternalLinkProps['href'];
 };
 
 export function UserItem({
@@ -34,7 +35,7 @@ export function UserItem({
           <span className="!text-inherit font-body-sm font-bold">{username}</span>
         ) : (
           <InternalLink
-            href={`/other/${username}`}
+            href={{ pathname: '/other/[username]', params: { username } }}
             className="no-underline !text-inherit font-body-sm font-bold"
           >
             {username}

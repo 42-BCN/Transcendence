@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'react-aria-components'],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
 
 const withNextIntl = createNextIntlPlugin({
