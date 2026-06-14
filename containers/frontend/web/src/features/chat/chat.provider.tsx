@@ -6,9 +6,11 @@ import {
   useContext,
   useMemo,
   useState,
-  type Dispatch,
-  type SetStateAction,
-  type ReactNode,
+} from 'react';
+import type {
+  Dispatch,
+  SetStateAction,
+  ReactNode,
 } from 'react';
 
 import type {

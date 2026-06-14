@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
 
 import { Button } from '@components/controls/button';
 
@@ -10,7 +10,7 @@ import {
 } from '@/lib/sockets/game-room-socket.manager';
 import { GameRoomTest } from './gameRoomTest';
 import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
-
+import { RoomsStoreContext } from './rooms-provider'
 
 
 const test_ui_style = "fixed top-1/2 left-1/2 z-50";
@@ -18,11 +18,15 @@ const test_ui_style = "fixed top-1/2 left-1/2 z-50";
 export function Rooms() {
   const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState("not connected to socket.");
   const [gameRoomsErrorInfo, setGameRoomsErrorInfo] = useState("not connected to socket.");
-  const [gameRoomStateCtx, setGameRoomStateCtx] = useState<gameRoomState>({
-    id: 0, 
-    isGameRoomFull: false, 
-    teammates: [],
-  });
+  
+  const roomContext = useContext(RoomsStoreContext);
+  let gameRoomStateCtx = roomContext.roomState;
+  let setGameRoomStateCtx = roomContext.setRoomState;
+//  const [gameRoomStateCtx, setGameRoomStateCtx] = useState<gameRoomState>({
+//    id: 0, 
+//    isGameRoomFull: false, 
+//    teammates: [],
+//  });
   const [testUiVisibility, setTestUiVisibility] = useState(true);
 
   useEffect(() => {
