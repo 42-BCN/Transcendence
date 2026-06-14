@@ -1,8 +1,10 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
+
+const ACTIVE_ROOM_STORAGE_KEY = 'transcendence:active-room-id';
 
 export type RoomsStore = {
   roomState: gameRoomState;
@@ -22,8 +24,17 @@ export function RoomsProvider({
 }: {
   children: ReactNode;
 }) {
-  
   const [roomState, setRoomState] = useState(RoomStateEmpty);
+
+  useEffect(() => {
+    if (roomState.id > 0) {
+      window.sessionStorage.setItem(ACTIVE_ROOM_STORAGE_KEY, String(roomState.id));
+      return;
+    }
+
+    window.sessionStorage.removeItem(ACTIVE_ROOM_STORAGE_KEY);
+  }, [roomState.id]);
+
   const data = {
     roomState: roomState,
     setRoomState: setRoomState,

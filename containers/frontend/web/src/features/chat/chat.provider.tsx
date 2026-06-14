@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -24,6 +25,7 @@ import type {
 import { chatSocket } from '@/lib/sockets/socket';
 import { ChatSocketManager } from '@/lib/sockets/socket-manager';
 import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
+import { REALTIME_IDENTITY_CHANGED_EVENT } from '@/lib/sockets/realtime-session-bridge';
 
 type ChatContextValue = {
   messages: ChatHistoryType;
@@ -143,6 +145,19 @@ export function ChatProvider({ children }: ChatProviderProps) {
 
   const sendGameEvent = useCallback((event: string) => {
     setMessages((prev) => [...prev, gameEventMessage(event)]);
+  }, []);
+
+  useEffect(() => {
+    const handleIdentityChanged = () => {
+      setMessages([]);
+      setSelfUsername(null);
+    };
+
+    window.addEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+
+    return () => {
+      window.removeEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+    };
   }, []);
 
   const {

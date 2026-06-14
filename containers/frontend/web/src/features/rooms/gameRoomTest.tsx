@@ -1,22 +1,20 @@
 'use client';
 
-import { useActionState, FormEvent, useState } from 'react';
-import { 
-    Form, 
-    SubmitButton, 
-    TextField, 
-    TextAreaField, 
-    Button
+import type { FormEvent } from 'react';
+import {
+  Form,
+  SubmitButton,
+  TextAreaField,
 } from '@components';
 
-import type { gameRoomState } from '@contracts/sockets/gameRooms.schema';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 import {
   GameRoomSocketJoinAnyRoom,
   GameRoomSocketJoin,
   GameRoomSocketLeaveRoom,
   GameRoomSocketPrintDebug,
-} from "@/lib/sockets/game-room-socket.manager"
+} from '@/lib/sockets/game-room-socket.manager';
 
 
 // helper function
@@ -28,26 +26,33 @@ export function makeGameRoomAction(action: (formData: FormData) => void) {
   };
 }
 
-const room_test_ui_style = "bg-black/60 backdrop-blur-sm p-10 rounded-xl outline h-[95vh] overflow-scroll";
+const room_test_ui_style = 'bg-black/60 backdrop-blur-sm p-10 rounded-xl outline h-[95vh] overflow-scroll';
 
+type GameRoomTestProps = {
+  gameRoomStateCtx: gameRoomState;
+  gameRoomsDebugInfo: string;
+  gameRoomsErrorInfo: string;
+};
 
 export function GameRoomTest({
   gameRoomStateCtx,
   gameRoomsDebugInfo,
-  gameRoomsErrorInfo
-}: {gameRoomState, string, string}) {
+  gameRoomsErrorInfo,
+}: GameRoomTestProps) {
 
-  const teammates = gameRoomStateCtx.teammates.map(user => 
-    <li key={user.userId} >{user.userName} (): {user.userId}</li>
+  const teammates = gameRoomStateCtx.teammates.map((user) => (
+    <li key={user.userId}>{user.userName} (): {user.userId}</li>
+  )
   );
 
-  const inviteUrl = gameRoomStateCtx.id !== 0 ? 
-    window.location.origin + window.location.pathname + "?roomId=" + gameRoomStateCtx.id : "" ;
+  const inviteUrl = gameRoomStateCtx.id !== 0
+    ? `${window.location.origin}${window.location.pathname}?roomId=${gameRoomStateCtx.id}`
+    : '';
 
 
   return (
-  <>
-	  <div className={room_test_ui_style} >
+    <>
+      <div className={room_test_ui_style}>
       <h5 className="text-xl">raw data:</h5>
       <p>{JSON.stringify(gameRoomStateCtx)}</p>
       <p>{gameRoomsDebugInfo}</p>
@@ -64,7 +69,7 @@ export function GameRoomTest({
       <hr className="m-1 w-[4rem]"/>
       
       <p>invite link: </p>
-      <a href={inviteUrl} > {inviteUrl} </a>
+      <a href={inviteUrl}> {inviteUrl} </a>
 
 
 
@@ -102,10 +107,7 @@ export function GameRoomTest({
 
       <hr className="m-2 w-[4rem]"/>
 
-	  </div>
-  </>
+      </div>
+    </>
   );
 }
-
-
-
