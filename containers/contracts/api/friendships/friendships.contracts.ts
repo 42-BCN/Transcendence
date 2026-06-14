@@ -12,12 +12,14 @@ export type FriendshipPublic = {
   createdAt: string;
 };
 
+export type FriendPresence = 'online' | 'away' | 'offline';
+
 /** Accepted friend row for GET /friends (other user only, no session tokens). */
 export type FriendPublic = {
   id: string;
   username: string;
   avatar: string | null;
-  presence: 'online' | 'away' | 'offline';
+  presence: FriendPresence;
   unreadMessageCount?: number;
 };
 

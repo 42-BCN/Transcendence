@@ -19,7 +19,7 @@ export function createFriendshipActions({
         key: 'message',
         type: 'link',
         label: t('message'),
-        href: `/messages/${username ?? userId}`,
+        href: { pathname: '/messages/[userId]', params: { userId: username ?? userId } },
         badgeCount: unreadMessageCount,
       },
       {

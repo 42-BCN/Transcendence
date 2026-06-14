@@ -73,12 +73,7 @@ export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEven
   },
 );
 
-// Immediate error logging
-gameSocket.on('error', (error) => {
-  console.error('🔴 [gameSocket] error event:', error);
-});
-
-gameSocket.on('connect_error', (error) => {
+gameSocket.on('connect_error', (error: unknown) => {
   console.error('🔴 [gameSocket] connect_error:', error);
   if (error instanceof Error) {
     console.error('  Error message:', error.message);
@@ -88,12 +83,7 @@ gameSocket.on('connect_error', (error) => {
 
 console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
 
-// Global error handlers
-gameSocket.on('error', (error) => {
-  console.error('🔴 gameSocket error:', error);
-});
-
-gameSocket.on('connect_error', (error) => {
+gameSocket.on('connect_error', (error: unknown) => {
   console.error('🔴 gameSocket connect_error:', error);
 });
 
