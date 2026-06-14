@@ -1,5 +1,5 @@
 
-import type { gameRoomState } from '../../../contracts/sockets/game/game.schema';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 //	the possbile error that this could return are:\
 //		- error:alredy_joined_another_room

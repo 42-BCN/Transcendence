@@ -9,7 +9,7 @@ import {
   deinitGameRoomSocketHandelers 
 } from '@/lib/sockets/game-room-socket.manager';
 import { GameRoomTest } from './gameRoomTest';
-import type { gameRoomState } from '@contracts/sockets/game/game.schema';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 
 

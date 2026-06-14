@@ -4,9 +4,9 @@ import type { Namespace, Socket } from 'socket.io';
 import type {
   ClientToServerGameRoomsEvents,
   ServerToClientGameRoomsEvents,
-} from '@contracts/sockets/chat/gameRooms.schema';
+} from '@contracts/sockets/rooms/gameRooms.schema';
 import { gameRoomSocket } from '@/lib/sockets/socket';
-import type { gameRoomState } from '@contracts/sockets/game/game.schema';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 export function GameRoomSocketJoinAnyRoom() {
   gameRoomSocket.emit("gameRoom:teammate:joinAny");

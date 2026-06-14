@@ -3,7 +3,7 @@ import { GameRoomsManager } from './GameRoomsManager.ts';
 import type {
   ClientToServerGameRoomsEvents,
   ServerToClientGameRoomsEvents,
-} from '@contracts/sockets/chat/gameRooms.schema';
+} from '@contracts/sockets/rooms/gameRooms.schema';
 
 const gameRoomsManager = new GameRoomsManager();
 

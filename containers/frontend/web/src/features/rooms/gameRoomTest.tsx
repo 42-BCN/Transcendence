@@ -9,7 +9,7 @@ import {
     Button
 } from '@components';
 
-import type { gameRoomState } from '@contracts/sockets/game/game.schema';
+import type { gameRoomState } from '@contracts/sockets/gameRooms.schema';
 
 import {
   GameRoomSocketJoinAnyRoom,

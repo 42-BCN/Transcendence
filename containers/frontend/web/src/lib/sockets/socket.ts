@@ -15,7 +15,7 @@ import type {
 import type {
   ServerToClientGameRoomsEvents,
   ClientToServerGameRoomsEvents
-} from "@/contracts/sockets/gameRooms.schema";
+} from "@/contracts/sockets/rooms/gameRooms.schema";
 
 export type Robot = {
   id: string;
