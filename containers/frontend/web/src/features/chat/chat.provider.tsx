@@ -23,9 +23,12 @@ import type {
 } from '@/contracts/sockets/chat/chat.schema';
 import { chatSocket } from '@/lib/sockets/socket';
 import { ChatSocketManager } from '@/lib/sockets/socket-manager';
+import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
 
 type ChatContextValue = {
   messages: ChatHistoryType;
+  roomId: number | null;
+  participants: string[];
   value: string;
   setValue: (value: string) => void;
   sendMessage: () => void;
@@ -120,6 +123,14 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const [messages, setMessages] = useState<ChatHistoryType>([]);
   const [selfUsername, setSelfUsername] = useState<string | null>(null);
   const [value, setValue] = useState('');
+  const roomsStore = useContext(RoomsStoreContext);
+
+  if (!roomsStore) {
+    throw new Error('ChatProvider must be used within RoomsProvider');
+  }
+
+  const roomId = roomsStore.roomState.id > 0 ? roomsStore.roomState.id : null;
+  const participants = roomsStore.roomState.teammates.map((teammate) => teammate.userName);
 
   const sendMessage = useCallback(() => {
     const text = value.trim();
@@ -146,12 +157,14 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const contextValue = useMemo(
     () => ({
       messages,
+      roomId,
+      participants,
       value,
       setValue,
       sendMessage,
       sendGameEvent,
     }),
-    [messages, value, sendMessage, sendGameEvent],
+    [messages, participants, roomId, value, sendMessage, sendGameEvent],
   );
 
   return (

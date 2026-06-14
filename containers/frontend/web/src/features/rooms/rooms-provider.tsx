@@ -1,14 +1,15 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 export type RoomsStore = {
   roomState: gameRoomState;
   setRoomState: (state: gameRoomState) => void;
 };
 
-export const RoomStateEmpty: RoomsState = {
+export const RoomStateEmpty: gameRoomState = {
   id: 0,
   isGameRoomFull: false,
   teammates: [],
@@ -32,4 +33,3 @@ export function RoomsProvider({
     <RoomsStoreContext.Provider value={data}>{children}</RoomsStoreContext.Provider>
   );
 }
-

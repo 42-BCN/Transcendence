@@ -11,12 +11,36 @@ import type {
   ClientToServerChatEvents,
   ServerToClientChatEvents,
 } from '@contracts/sockets/chat/chat.schema';
+import { getUserGameRoomChannel } from './game-room/gameRooms.shared';
 
 const MAX_HISTORY = 50;
-const chatHistory: ChatHistoryType = [];
-const chatIdentityCounts = new Map<string, number>();
+const roomChatHistory = new Map<string, ChatHistoryType>();
+const roomChatIdentityCounts = new Map<string, Map<string, number>>();
 
-const pushChatHistory = (message: ChatHistoryType[number]) => {
+const getChatHistory = (roomName: string): ChatHistoryType => {
+  const history = roomChatHistory.get(roomName);
+  if (history) {
+    return history;
+  }
+
+  const nextHistory: ChatHistoryType = [];
+  roomChatHistory.set(roomName, nextHistory);
+  return nextHistory;
+};
+
+const getRoomIdentityCounts = (roomName: string) => {
+  const roomCounts = roomChatIdentityCounts.get(roomName);
+  if (roomCounts) {
+    return roomCounts;
+  }
+
+  const nextCounts = new Map<string, number>();
+  roomChatIdentityCounts.set(roomName, nextCounts);
+  return nextCounts;
+};
+
+const pushChatHistory = (roomName: string, message: ChatHistoryType[number]) => {
+  const chatHistory = getChatHistory(roomName);
   chatHistory.push(message);
 
   if (chatHistory.length > MAX_HISTORY) {
@@ -42,7 +66,11 @@ const errorMessage = (error: z.ZodError): ChatError => ({
   },
 });
 
-const systemMessage = (text: 'USER_JOINED' | 'USER_LEFT', username: string): ChatSystemMessage => {
+const systemMessage = (
+  roomName: string,
+  text: 'USER_JOINED' | 'USER_LEFT',
+  username: string,
+): ChatSystemMessage => {
   const message: ChatSystemMessage = {
     ...createBaseMessage(username),
     type: 'system',
@@ -53,11 +81,11 @@ const systemMessage = (text: 'USER_JOINED' | 'USER_LEFT', username: string): Cha
     `[Chat Socket] System message: ${username} ${text === 'USER_JOINED' ? 'joined' : 'left'} the chat.`,
   );
 
-  pushChatHistory(message);
+  pushChatHistory(roomName, message);
   return message;
 };
 
-const chatMessage = (username: string, text: string): ChatMessage => {
+const chatMessage = (roomName: string, username: string, text: string): ChatMessage => {
   const message: ChatMessage = {
     ...createBaseMessage(username),
     type: 'user',
@@ -65,7 +93,7 @@ const chatMessage = (username: string, text: string): ChatMessage => {
     content: { text },
   };
 
-  pushChatHistory(message);
+  pushChatHistory(roomName, message);
   return message;
 };
 
@@ -79,6 +107,7 @@ export function registerChatSocket(
   nsp.on('connection', (socket: Socket<ClientToServerChatEvents, ServerToClientChatEvents>) => {
     const identityKey = socket.data.identityKey;
     const username = socket.data.username;
+    const roomName = getUserGameRoomChannel(socket);
 
     if (typeof identityKey !== 'string' || identityKey.length === 0) {
       socket.disconnect(true);
@@ -90,6 +119,18 @@ export function registerChatSocket(
       return;
     }
 
+    if (!roomName) {
+      socket.emit('chat:error', {
+        ...createBaseMessage(),
+        type: 'error',
+        content: { text: 'INVALID_CHAT_MESSAGE' },
+      });
+      socket.disconnect(true);
+      return;
+    }
+
+    socket.join(roomName);
+
     const identity: ChatIdentity = {
       identityKey,
       username,
@@ -97,21 +138,22 @@ export function registerChatSocket(
       ...(typeof socket.data.userId === 'string' ? { userId: socket.data.userId } : {}),
     };
 
+    const chatIdentityCounts = getRoomIdentityCounts(roomName);
     const previousCount = chatIdentityCounts.get(identityKey) ?? 0;
     chatIdentityCounts.set(identityKey, previousCount + 1);
 
     console.log('[Chat Socket] User connected:', username);
     socket.emit('chat:identity', identity);
-    socket.emit('chat:history', chatHistory.slice(-MAX_HISTORY));
+    socket.emit('chat:history', getChatHistory(roomName).slice(-MAX_HISTORY));
     if (previousCount === 0) {
-      socket.broadcast.emit('chat:system', systemMessage('USER_JOINED', username));
+      socket.to(roomName).emit('chat:system', systemMessage(roomName, 'USER_JOINED', username));
     }
 
     socket.on('chat:send', (payload: unknown) => {
       const res = ChatSendSchema.safeParse(payload);
 
       if (res.success) {
-        socket.broadcast.emit('chat:message', chatMessage(username, res.data.text));
+        socket.to(roomName).emit('chat:message', chatMessage(roomName, username, res.data.text));
         return;
       }
 
@@ -123,7 +165,7 @@ export function registerChatSocket(
 
       if (nextCount <= 0) {
         chatIdentityCounts.delete(identityKey);
-        socket.broadcast.emit('chat:system', systemMessage('USER_LEFT', username));
+        socket.to(roomName).emit('chat:system', systemMessage(roomName, 'USER_LEFT', username));
       } else {
         chatIdentityCounts.set(identityKey, nextCount);
       }

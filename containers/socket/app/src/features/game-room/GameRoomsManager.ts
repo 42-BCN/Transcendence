@@ -1,196 +1,148 @@
-
 import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
-//	the possbile error that this could return are:\
-//		- error:alredy_joined_another_room
-//		- error:invalid_room_id
-//		- error:full_room
-//		- error:no_assigned_room
-//		- error:
+type GameRoomError =
+  | 'error:alredy_joined_another_room'
+  | 'error:invalid_room_id'
+  | 'error:full_room'
+  | 'error:no_assigned_room';
+
+type Teammate = gameRoomState['teammates'][number];
+
+const MAX_TEAMMATES_PER_ROOM = 4;
 
 export class GameRoomsManager {
-  #nextGameRoomId;  //  room are given numbers in acending order of creation. like 0, 1, 2, and so on.
   nextGameRoomId = 1;
-  gameRooms = new Map();
-  joined_users = new Set();
-  
+  gameRooms = new Map<number, gameRoomState>();
+  memberRoomIds = new Map<string, number>();
 
   printInfo() {
-    console.log("[ gameRoom ][ debug ] rooms: ", this.gameRooms);
+    console.log('[ gameRoom ][ debug ] rooms: ', this.gameRooms);
     for (const [key, value] of this.gameRooms) {
-      console.log("[ gameRoom ][ debug ] room", key, ":", value);
+      console.log('[ gameRoom ][ debug ] room', key, ':', value);
     }
-    console.log("")
-    console.log("[ gameRoom ][ debug ] joined users: ", this.joined_users);
+    console.log('');
+    console.log('[ gameRoom ][ debug ] memberRoomIds: ', this.memberRoomIds);
   }
 
-
-
-  getUserCurrentGameRoom(userId: string): gameRoomState 
-    | "error:no_assigned_room" 
-    | "error:" 
-  {
-    console.log("[ gameRoom ][ IMPORTANT ] trying to get the user room:");
-    if (! this.joined_users.has(userId)) {
-      console.log("[ gameRoom ][ error ] no_assigned_room: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:no_assigned_room";
-    }
-    let gameRoomId: number | undefined = undefined;
-    for (const [currentGameRoomId, gameRoom] of this.gameRooms) {
-      if (gameRoom.teammates !== undefined ) {
-        for (const teammate of gameRoom.teammates) {
-          console.log("[ gameRoom ][ IMPORTANT ] the teammate is:", teammate);
-          console.log("[ gameRoom ][ IMPORTANT ] the userid is:", userId);
-          if (teammate.userId == userId) {
-            gameRoomId = gameRoom.id;
-            break ;
-          }
-        }
-      }
-      if (gameRoomId !== undefined ) {
-        break ;
-      }
-    }
+  getUserCurrentGameRoom(memberKey: string): gameRoomState | 'error:no_assigned_room' {
+    const gameRoomId = this.memberRoomIds.get(memberKey);
     if (gameRoomId === undefined) {
-      console.log("[ gameRoom ][ error ] something went wrong not quite shure what: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tuser name:", userName);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:";
+      console.log('[ gameRoom ][ error ] no_assigned_room: ');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\tmemberRoomIds: ', this.memberRoomIds);
+      console.log('\t-->\trooms: ', this.gameRooms);
+      return 'error:no_assigned_room';
     }
-    return this.gameRooms.get(gameRoomId);
+
+    const gameRoom = this.gameRooms.get(gameRoomId);
+    if (!gameRoom) {
+      this.memberRoomIds.delete(memberKey);
+      console.log('[ gameRoom ][ error ] no_assigned_room: room mapping missing');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\troom id:', gameRoomId);
+      return 'error:no_assigned_room';
+    }
+
+    return gameRoom;
   }
-
-
 
   createGameRoom(): gameRoomState {
-  
     const newGameRoomId = this.nextGameRoomId;
     this.nextGameRoomId++;
 
-    let newGameRoom: gameRoomState = {};
-    newGameRoom.id = newGameRoomId;
-    newGameRoom.isGameRoomFull = false;
-    newGameRoom.teammates = [];
+    const newGameRoom: gameRoomState = {
+      id: newGameRoomId,
+      isGameRoomFull: false,
+      teammates: [],
+    };
 
     this.gameRooms.set(newGameRoomId, newGameRoom);
-
-    return (newGameRoom);
+    return newGameRoom;
   }
 
-
-
-  //	in case of not finding a emty room it will return undefined.
-  getFirstNonEmtyGameRoomId(): gameRoomState | undefined 
-  {
-    for (const [key, value] of this.gameRooms) {
-      if (!value.isGameRoomFull) {
-        return this.gameRooms.get(key);
+  getFirstNonEmtyGameRoomId(): gameRoomState | undefined {
+    for (const gameRoom of this.gameRooms.values()) {
+      if (!gameRoom.isGameRoomFull) {
+        return gameRoom;
       }
     }
+
     return undefined;
   }
 
-
-
-  joinUserToAnyGameRoom(userId: string, userName: string): gameRoomState 
-    | "error:alredy_joined_another_room" 
-    | "error:invalid_room_id" 
-    | "error:full_room" 
-  {
-    if (this.joined_users.has(userId)) {
-      console.log("[ gameRoom ][ error ] alredy_joined_another_room: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tuser name:", userName);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:alredy_joined_another_room";
-	  }
-    
-    let gameRoom: gameRoomState | undefined ;
-    gameRoom = this.getFirstNonEmtyGameRoomId();
-    if (gameRoom === undefined) {
-      gameRoom = this.createGameRoom();
+  joinUserToAnyGameRoom(memberKey: string, userName: string): gameRoomState | GameRoomError {
+    if (this.memberRoomIds.has(memberKey)) {
+      console.log('[ gameRoom ][ error ] alredy_joined_another_room: ');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\tuser name:', userName);
+      console.log('\t-->\tmemberRoomIds: ', this.memberRoomIds);
+      console.log('\t-->\trooms: ', this.gameRooms);
+      return 'error:alredy_joined_another_room';
     }
-    gameRoom = this.joinUserToGameRoom(userId, userName, gameRoom.id);
+
+    const gameRoom = this.getFirstNonEmtyGameRoomId() ?? this.createGameRoom();
+    return this.joinUserToGameRoom(memberKey, userName, gameRoom.id);
+  }
+
+  joinUserToGameRoom(memberKey: string, userName: string, gameRoomId: number): gameRoomState | GameRoomError {
+    if (this.memberRoomIds.has(memberKey)) {
+      console.log('[ gameRoom ][ error ] alredy_joined_another_room: ');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\tuser name:', userName);
+      console.log('\t-->\troom id:', gameRoomId);
+      console.log('\t-->\tmemberRoomIds: ', this.memberRoomIds);
+      console.log('\t-->\trooms: ', this.gameRooms);
+      return 'error:alredy_joined_another_room';
+    }
+
+    const gameRoom = this.gameRooms.get(gameRoomId);
+    if (!gameRoom) {
+      console.log('[ gameRoom ][ error ] invalid_room_id: ');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\tuser name:', userName);
+      console.log('\t-->\troom id:', gameRoomId);
+      return 'error:invalid_room_id';
+    }
+
+    if (gameRoom.teammates.length >= MAX_TEAMMATES_PER_ROOM) {
+      console.log('[ gameRoom ][ error ] full_room: ');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\tuser name:', userName);
+      console.log('\t-->\troom id:', gameRoomId);
+      return 'error:full_room';
+    }
+
+    const teammate: Teammate = { userId: memberKey, userName };
+    gameRoom.teammates.push(teammate);
+    gameRoom.isGameRoomFull = gameRoom.teammates.length >= MAX_TEAMMATES_PER_ROOM;
+    this.memberRoomIds.set(memberKey, gameRoomId);
+
     return gameRoom;
   }
-  
 
-
-  //	in case of assignig correcly the user to the room it will return the room, else it returns undefined.
-  joinUserToGameRoom(userId: string, userName: string, gameRoomId: number): gameRoomState 
-    | "error:alredy_joined_another_room" 
-    | "error:invalid_room_id"
-    | "error:full_room"
-  {
-    if (this.joined_users.has(userId)) {
-      console.log("[ gameRoom ][ error ] alredy_joined_another_room: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tuser name:", userName);
-      console.log("\t-->\troom id:", gameRoomId);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:alredy_joined_another_room" ;
-    }
-	  if (this.gameRooms.get(gameRoomId) === undefined) {
-      console.log("[ gameRoom ][ error ] invalid_room_id: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tuser name:", userName);
-      console.log("\t-->\troom id:", gameRoomId);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:invalid_room_id" ;
-  	}
-    if (this.gameRooms.get(gameRoomId).isGameRoomFull === true) {
-      console.log("[ gameRoom ][ error ] full_room: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tuser name:", userName);
-      console.log("\t-->\troom id:", gameRoomId);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:full_room" ;
+  removeUserFromGameRoom(memberKey: string): gameRoomState | 'error:no_assigned_room' {
+    const gameRoomId = this.memberRoomIds.get(memberKey);
+    if (gameRoomId === undefined) {
+      console.log('[ gameRoom ][ error ] no_assigned_room: ');
+      console.log('\t-->\tmember key:', memberKey);
+      console.log('\t-->\tmemberRoomIds: ', this.memberRoomIds);
+      return 'error:no_assigned_room';
     }
 
-  	this.joined_users.add(userId);
-    this.gameRooms.get(gameRoomId).teammates.push({userId, userName});
-    if (this.gameRooms.get(gameRoomId).teammates.length == 4) {
-      this.gameRooms.get(gameRoomId).isGameRoomFull = true;
+    const gameRoom = this.gameRooms.get(gameRoomId);
+    this.memberRoomIds.delete(memberKey);
+
+    if (!gameRoom) {
+      return 'error:no_assigned_room';
     }
-    return this.gameRooms.get(gameRoomId);
+
+    gameRoom.teammates = gameRoom.teammates.filter((item) => item.userId !== memberKey);
+    gameRoom.isGameRoomFull = false;
+
+    if (gameRoom.teammates.length === 0) {
+      this.gameRooms.delete(gameRoomId);
+    }
+
+    return gameRoom;
   }
-
-
-
-  removeUserFromGameRoom(userId: string): gameRoomState
-    | "error:no_assigned_room" 
-    | "error:" 
-  {
-
-    if (! this.joined_users.has(userId)) {
-      console.log("[ gameRoom ][ error ] no_assigned_room: ");
-      console.log("\t-->\tuser id:", userId);
-      console.log("\t-->\tjoined users: ", this.joined_users);
-      console.log("\t-->\trooms: ", this.gameRooms);
-      return "error:no_assigned_room" ;
-    }
-
-    const gameRoom = this.getUserCurrentGameRoom(userId);
-    if (typeof gameRoom === "string") {
-      return gameRoom;
-    }
-    const gameRoomId = gameRoom.id;
-
-    this.gameRooms.get(gameRoomId).teammates = [...this.gameRooms.get(gameRoomId).teammates.filter((item) => item.userId != userId)];
-    this.gameRooms.get(gameRoomId).isGameRoomFull = false;
-    this.joined_users.delete(userId);
-    return this.gameRooms.get(gameRoomId);
-  }
-
-};
-
-
+}

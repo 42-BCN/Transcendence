@@ -5,7 +5,7 @@ import type {
   ClientToServerGameRoomsEvents,
   ServerToClientGameRoomsEvents,
 } from '@contracts/sockets/rooms/gameRooms.schema';
-import { gameRoomSocket } from '@/lib/sockets/socket';
+import { ensureChatSessionIdentity, gameRoomSocket } from '@/lib/sockets/socket';
 import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 export function GameRoomSocketJoinAnyRoom() {
@@ -62,16 +62,21 @@ export function initGameRoomSocketHandelers(
     setDebugMsg("user left: " + username);
   });
 
-  gameRoomSocket.connect();
-  console.log("[ GameRoom ][ IMPORTANND DEBUG ]", window.location.search);
-  const urlParams = new URLSearchParams(window.location.search);
-  console.log("[ GameRoom ][ IMPORTANND DEBUG ]", urlParams);
-  console.log("[ GameRoom ][ IMPORTANND DEBUG ]", urlParams.get("roomId"));
-  gameRoomSocket.emit("gameRoom:teammate:join", Number(urlParams.get("roomId")));
-  console.log("[ GameRoom ] connected.");
+  void ensureChatSessionIdentity()
+    .catch((error) => {
+      console.error('[ GameRoom ] failed to initialize guest session identity', error);
+    })
+    .finally(() => {
+      gameRoomSocket.connect();
+      console.log("[ GameRoom ][ IMPORTANND DEBUG ]", window.location.search);
+      const urlParams = new URLSearchParams(window.location.search);
+      console.log("[ GameRoom ][ IMPORTANND DEBUG ]", urlParams);
+      console.log("[ GameRoom ][ IMPORTANND DEBUG ]", urlParams.get("roomId"));
+      gameRoomSocket.emit("gameRoom:teammate:join", Number(urlParams.get("roomId")));
+      console.log("[ GameRoom ] connected.");
+    });
 }
 
 export function deinitGameRoomSocketHandelers() {
 
 }
-
