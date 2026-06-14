@@ -38,7 +38,7 @@ export function Rooms() {
   return (
     <>
       <Button
-        className="fixed bottom-0 right-0 text-nowrap w-auto z-20"
+        className="fixed bottom-0 right-0 text-nowrap w-auto z-50"
         onPress={() => {setTestUiVisibility(! testUiVisibility)}}
         variant="primary"
       >
