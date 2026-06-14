@@ -318,8 +318,6 @@ export function emitToUser(
   });
 }
 
-export type FriendPresence = 'online' | 'away' | 'offline';
-
 export function getUsersPresence(userIds: string[]): Record<string, FriendPresence> {
   const status: Record<string, FriendPresence> = {};
 
@@ -336,3 +334,4 @@ export function getUsersPresence(userIds: string[]): Record<string, FriendPresen
 
   return status;
 }
+import type { FriendPresence } from '@contracts/api/friendships/friendships.contracts';
