@@ -1,19 +1,32 @@
 import type { Namespace, Socket } from 'socket.io';
-import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
+import type {
+  ClientToServerGameEvents,
+  ServerToClientGameEvents as ContractServerToClientGameEvents,
+} from '@contracts/sockets/game/game.schema';
 import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase, applyPlanningDisplace, applyPlanningStatus, checkEnt, getAoE, nextVfxId } from './utils';
+import type { clientGameState, serverGameState, vfx as VfxPayload } from './types';
 
 const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
 const playerIds: string[] = [...roles].reverse();
 const users: Record<string, string> = {};
 const readyPlayers: string[] = [];
 
+type ServerGlobalSyncPayload = Omit<serverGameState, 'clients' | 'tiles' | 'mapBounds'> & {
+  tiles?: serverGameState['tiles'];
+  mapBounds?: serverGameState['mapBounds'];
+  readyPlayers?: string[];
+  activePlayers?: string[];
+};
 
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
+type ServerToClientGameEvents = Omit<
+  ContractServerToClientGameEvents,
+  'game:server:globalSync'
+> & {
+  'game:server:globalSync': (state: ServerGlobalSyncPayload) => void;
+  'game:server:sync': (state: clientGameState) => void;
+  'game:server:vfx': (effect: VfxPayload) => void;
+};
+
 
 export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>) {
 
@@ -27,7 +40,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     });
   }
 
-  function vfx(effect) {
+  function vfx(effect: VfxPayload) {
     nsp.emit('game:server:vfx', effect);
   }
 
@@ -128,7 +141,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       socket.on('game:client:displayAbilityRange', (who: string, abName: string) => {
         if (!gameState.clients[role] || !role)
           return;
-        const ent = gameState.players[who] || gameState.clones[who];
+        const ent = gameState.players[who] || gameState.clones[who] || gameState.enemies[who];
         if (!ent) return;
         console.log('Received ability range event for character', role);
         if (gameState.clients[role].selectedAb === abName)
@@ -152,7 +165,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         if (!gameState.clients[role] || !role)
           return;
         console.log('Received show ability range event for character', role);
-        const ent = gameState.players[who] || gameState.clones[who];
+        const ent = gameState.players[who] || gameState.clones[who] || gameState.enemies[who];
         if (!ent) return;
         if (gameState.clients[role].selectedAb === abName)
           setClear(role);
