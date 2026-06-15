@@ -1,6 +1,6 @@
 import TinyQueue from 'tinyqueue';
 import { testMap, parseMap } from './maps';
-import type { vfx, pos, player, enemy, serverGameState, node, historyAction, abilityInfo } from './types';
+import type { vfx, pos, player, enemy, entity, serverGameState, node, historyAction, abilityInfo } from './types';
 
 const STATUS_TYPE = 0;
 const N_TURNS = 1;
@@ -60,7 +60,7 @@ export function phaseClean() {
   }
 }
 
-export async function nextPhase(sync: () => void, vfx: (effect) => void) {
+export async function nextPhase(sync: () => void, vfx: (effect: vfx) => void) {
   if (gameState.phase !== 'PLAN')
     return console.log('nextPhase tried to execute with phase', gameState.phase);
   phaseClean();
@@ -69,7 +69,7 @@ export async function nextPhase(sync: () => void, vfx: (effect) => void) {
   try {
     await executionPhase(sync, vfx);
     incrementDoom(vfx);
-    if (gameState.phase === 'LOSE') {
+    if ((gameState.phase as string) === 'LOSE') {
       return;
     }
     await enemyPhase(sync, vfx);
@@ -82,7 +82,7 @@ export async function nextPhase(sync: () => void, vfx: (effect) => void) {
   }
 }
 
-async function executeForcedMov(action: historyAction, vfx: (effect) => void, sync: () => void) {
+async function executeForcedMov(action: historyAction, vfx: (effect: vfx) => void, sync: () => void) {
   const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
   const ent: any = gameState.players[action.who] || gameState.enemies[action.who];
   if (!ent || ent.isDead)
@@ -117,7 +117,7 @@ async function executeForcedMov(action: historyAction, vfx: (effect) => void, sy
   await sleep(300);
 }
 
-export async function executionPhase(sync: () => void, vfx: (effect) => void) {
+export async function executionPhase(sync: () => void, vfx: (effect: vfx) => void) {
   const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
   for (const entityId in gameState.forcedMoveOrigins) {
     const ent: any = gameState.players[entityId] ||
@@ -173,7 +173,7 @@ export async function executionPhase(sync: () => void, vfx: (effect) => void) {
   phaseClean();
 }
 
-export function incrementDoom(vfx: (effect) => void) {
+export function incrementDoom(vfx: (effect: vfx) => void) {
   for (const enemy of Object.values(gameState.enemies)) {
     const name = enemy.id.split('_')[0];
     let doomAmt = 0;
@@ -303,9 +303,9 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
     if (!target)
       continue;
     const validAbs = enemy.abilities
-      .map((name) => ({ name, ab: getAbility(name) }))
-      .filter(({ ab }) => ab.name !== 'error' && ab.range > 0)
-      .sort((a, b) =>
+      .map((name: string) => ({ name, ab: getAbility(name) }))
+      .filter(({ ab }: { name: string; ab: abilityInfo }) => ab.name !== 'error' && ab.range > 0)
+      .sort((a: { name: string; ab: abilityInfo }, b: { name: string; ab: abilityInfo }) =>
         (b.ab.range + (b.ab.AoErange ?? 0)) -
         (a.ab.range + (a.ab.AoErange ?? 0))
       )
@@ -371,7 +371,7 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
   phaseClean();
 }
 
-export async function endTurn(sync: () => void, vfx: (effect) => void) {
+export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
   gameState.phase = 'END';
   sync();
   const entities = { ...gameState.players, ...gameState.enemies }
@@ -457,7 +457,7 @@ export async function moveTo(entId: string, tileId: string, sync: () => void) {
   const path = Astar(ent.position, dest);
   if (!path || path.length === 0)
     return;
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
   for (let i = 0; i < path.length; ++i) {
     await sleep(300);
     const [sx, sy, sz] = path[i].split(',').map(Number);
@@ -759,7 +759,7 @@ export function manageUndo(action: historyAction, deleted: Set<string>) {
   switch (action.type) {
     case "mov": {
       if (action.dice === 0) {
-        const prev = gameState.history.findLast((a) => a.who === who
+        const prev = gameState.history.findLast((a: historyAction) => a.who === who
           && a.type === "mov" && a.id !== action.id && !deleted.has(a.id));
         const ent = gameState.players[who] ?? gameState.clones[`clone_${who}`];
         if (!ent)
@@ -885,7 +885,7 @@ export function calcDmg(actioner: string, id: string, ab: abilityInfo, roll: num
   return dmg;
 }
 
-export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: number, vfx: (effect) => void, cause: string | null = null) {
+export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: number, vfx: (effect: vfx) => void, cause: string | null = null) {
   const target = gameState.enemies[id] || gameState.players[id];
   if (!target)
     return console.log('target not found in takeAb');
@@ -915,7 +915,7 @@ export function takeAb(actioner: string, id: string, ab: abilityInfo, roll: numb
 
 export function restructureHistory(id: string, deleted: Set<string>, until: number = -1, isCascade: boolean = false) {
   if (until === -1)
-    until = gameState.history.findIndex(action => action.who === id);
+    until = gameState.history.findIndex((action: historyAction) => action.who === id);
   if (until === -1)
     return (console.log("restructure history didn't finish"));
   for (let i = gameState.history.length - 1; i >= until; --i) {
@@ -954,7 +954,7 @@ export function addHistory(id: string, type: string, target: string, dice: numbe
       console.log('no ent in addHistory!');
       return undefined;
     }
-    ent.abilitiesCD[ability] = getAbility(ability)?.cd;
+    if (ability) ent.abilitiesCD[ability] = getAbility(ability)?.cd;
   }
   const newAction = {
     id: `${who}_${++_historySeq}`,
@@ -1324,7 +1324,7 @@ export function getAoE(who: string, tileid: string, type: string, range: number 
   }
 }
 
-export function executeAbility(who: string, which: string, target: string, dice: number, vfx: (effect) => void, cause: string | null = null) {
+export function executeAbility(who: string, which: string, target: string, dice: number, vfx: (effect: vfx) => void, cause: string | null = null) {
   if (!which || !who)
     return;
   const ent = gameState.players[who] || gameState.enemies[who] || gameState.clones[who];
@@ -1673,17 +1673,17 @@ export function checkEntnc(id: string, x: number, y: number, z: number) {
   const baseId = id.replace("clone_", "");
   const cloneId = `clone_${baseId}`;
   return (
-    Object.values(gameState.enemies).some(e =>
+    Object.values(gameState.enemies).some((e: entity) =>
       e.position.x === x && e.position.y === y && e.position.z === z)
-    || Object.values(gameState.players).some(p => p.id !== baseId
+    || Object.values(gameState.players).some((p: entity) => p.id !== baseId
       && p.position.x === x && p.position.y === y && p.position.z === z)
-    || Object.values(gameState.clones).some(c => c.id !== cloneId
+    || Object.values(gameState.clones).some((c: entity) => c.id !== cloneId
       && c.position.x === x && c.position.y === y && c.position.z === z)
   );
 }
 
 export function checkEnt(x: number, y: number, z: number) {
-  const finder = (e) => (
+  const finder = (e: entity) => (
     e.position.x === x
     && e.position.y === y
     && e.position.z === z
@@ -1728,7 +1728,7 @@ export function dijkstra(id: string, pos: pos, maxCost: number) {
     [0, -1, 1], [0, -1, -1],
   ];
   const dist: Record<string, number> = { [initial]: 0 };
-  const nodes = new TinyQueue<{ key: string; d: number }>([], (a, b) => a.d - b.d);
+  const nodes = new TinyQueue<{ key: string; d: number }>([], (a: { key: string; d: number }, b: { key: string; d: number }) => a.d - b.d);
   nodes.push({ key: initial, d: 0 });
   while (nodes.length > 0) {
     const { key, d } = nodes.pop()!;

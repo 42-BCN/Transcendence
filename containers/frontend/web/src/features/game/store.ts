@@ -95,8 +95,8 @@ export type globalGameState = {
   history: historyAction[];
   vfx: Record<string, vfx>;
   mapBounds: mapInfo;
-  readyPlayers: string[];
-  activePlayers: string[];
+  readyPlayers?: string[];
+  activePlayers?: string[];
 }
 
 export type localGameState = {
@@ -130,8 +130,11 @@ type gameState = globalGameState & localGameState & {
   selectAbility: (name: string) => void;
   showMoveRange: (mov: number) => void;
   showAbRange: (name: string) => void;
+  resetHistory: () => void;
+  addHistoryAbility: (target: string) => void;
   clearHighlights: () => void;
   clearSelectables: () => void;
+  clearSelectedDice: () => void;
   aoePreview: Record<string, boolean>;
   setAoePreview: (targetId: string) => void;
   clearAoePreview: () => void;
@@ -213,6 +216,7 @@ export const useGame = create<gameState>()((set, get) => ({
   selectedDice: null,
 
   players: {},
+  ghosts: {},
   enemies: {},
   clones: {},
   tiles: {},
@@ -261,7 +265,7 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.emit('game:client:resetHistory');
   },
 
-  addHistoryAbility: (target) => {
+  addHistoryAbility: (target: string) => {
     console.log('history before ability: ', get().history);
     gameSocket.emit('game:client:addHistoryAbility', target);
   },
@@ -320,9 +324,6 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:displayMoveRange');
-    gameSocket.off('game:server:displayAbilityRange');
-
     const handleJoin = (id: string) => {
       console.log('👤 Player joined with ID:', id);
       set({ assignedCharacter: id });
@@ -340,6 +341,7 @@ export const useGame = create<gameState>()((set, get) => ({
         doom: state.doom,
         enemies: state.enemies,
         players: state.players,
+        ghosts: state.ghosts,
         clones: state.clones,
         history: state.history,
         tiles: state.tiles || get().tiles,
@@ -422,9 +424,9 @@ export const useGame = create<gameState>()((set, get) => ({
     });
 
     gameSocket.on('game:server:join', handleJoin);
-    gameSocket.on('game:server:globalSync', handleGlobalSync);
+    (gameSocket as any).on('game:server:globalSync', handleGlobalSync);
     gameSocket.on('game:server:sync', handleSync);
-    gameSocket.on('game:server:vfx', handleVfx);
+    (gameSocket as any).on('game:server:vfx', handleVfx);
 
     ensureChatSessionIdentity()
       .finally(() => gameSocket.connect());
@@ -434,12 +436,11 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('connect');
     gameSocket.off('disconnect');
     gameSocket.off('connect_error');
-    gameSocket.off('error');
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:init');
-    gameSocket.off('game:server:globalSync');
+    (gameSocket as any).off('game:server:globalSync');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:vfx');
+    (gameSocket as any).off('game:server:vfx');
     gameSocket.disconnect();
   },
 }));

@@ -1,9 +1,9 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
-import { useGame } from './store';
+import { useGame, type pos as Position } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
@@ -235,7 +235,7 @@ function Reset() {
     <Button
       className="absolute z-10 top-8 left-8"
       variant="primary"
-      w="default"
+      w="auto"
       onPress={() => {
         resetHistory();
       }}
@@ -255,7 +255,7 @@ function EndPlan() {
     <Button
       className="absolute z-10 bottom-8 right-64"
       variant="primary"
-      w="default"
+      w="auto"
       onPress={() => nextPhase()}
     >
       {t('endTurn')}
@@ -292,7 +292,7 @@ function HUD() {
   );
 }
 
-function Tile({ id, pos }: { id: string; pos: pos }) {
+function Tile({ id, pos }: { id: string; pos: Position }) {
   const phase = useGame((state) => state.phase);
   const moveClone = useGame((state) => state.moveClone);
   const isHighlighted = useGame((state) => state.highlights[id]);
@@ -317,17 +317,17 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}
-      onPointerOver={(event) => {
+      onPointerOver={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(true);
         if (isSelectable && selectedAb) setAoePreview(id);
       }}
-      onPointerOut={(event) => {
+      onPointerOut={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(false);
         if (isSelectable && selectedAb) clearAoePreview();
       }}
-      onClick={(event) => {
+      onClick={(event: ThreeEvent<MouseEvent>) => {
         if (phase !== 'PLAN') return;
         event.stopPropagation();
         if (isSelectable && isHovered) addHistoryAbility(id);
@@ -361,6 +361,8 @@ export function getMesh(id: string) {
       return Mage;
     case 'assassin':
       return Assassin;
+    default:
+      return null;
   }
 }
 
@@ -408,7 +410,7 @@ function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
   );
 }
 
-function Enemy({ id, pos }: { id: string; pos: pos }) {
+function Enemy({ id, pos }: { id: string; pos: Position }) {
   const eRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
@@ -423,22 +425,24 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
   const [isHovered, setHover] = useState(false);
 
   const Model = getMesh(id);
+  if (!Model)
+    return null;
   return (
     <group position={[pos.x, pos.y, pos.z]}>
       <Model
         position={[0, 0, 0]}
         ref={eRef}
-        onPointerOver={(event) => {
+        onPointerOver={(event: ThreeEvent<PointerEvent>) => {
           event.stopPropagation();
           setHover(true);
           if (isTarget && selectedAb) setAoePreview(id);
         }}
-        onPointerOut={(event) => {
+        onPointerOut={(event: ThreeEvent<PointerEvent>) => {
           event.stopPropagation();
           setHover(false);
           if (isTarget && selectedAb) clearAoePreview();
         }}
-        onClick={(event) => {
+        onClick={(event: ThreeEvent<MouseEvent>) => {
           if (phase !== 'PLAN') return;
           event.stopPropagation();
           if (canSelect) selectEntity(id);
@@ -453,7 +457,7 @@ function Enemy({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
-function Clone({ id, pos }: { id: string; pos: pos }) {
+function Clone({ id, pos }: { id: string; pos: Position }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
@@ -469,22 +473,24 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
 
   const meshid = id.replace('clone_', '');
   const Model = getMesh(meshid);
+  if (!Model)
+    return null;
   return (
     <group position={[pos.x, pos.y, pos.z]}>
       <Model
         position={[0, 0, 0]}
         ref={pRef}
-        onPointerOver={(event) => {
+        onPointerOver={(event: ThreeEvent<PointerEvent>) => {
           event.stopPropagation();
           setHover(true);
           if (isTarget && selectedAb) setAoePreview(id);
         }}
-        onPointerOut={(event) => {
+        onPointerOut={(event: ThreeEvent<PointerEvent>) => {
           event.stopPropagation();
           setHover(false);
           if (isTarget && selectedAb) clearAoePreview();
         }}
-        onClick={(event) => {
+        onClick={(event: ThreeEvent<MouseEvent>) => {
           if (phase !== 'PLAN')
             return;
           event.stopPropagation();
@@ -499,7 +505,7 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
-function Player({ id, pos }: { id: string; pos: pos }) {
+function Player({ id, pos }: { id: string; pos: Position }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
@@ -512,22 +518,24 @@ function Player({ id, pos }: { id: string; pos: pos }) {
   const [isHovered, setHover] = useState(false);
 
   const Model = getMesh(id);
+  if (!Model)
+    return null;
   return (
     <group position={[pos.x, pos.y, pos.z]}>
       <Model
         position={[0, 0, 0]}
         ref={pRef}
-        onPointerOver={(event) => {
+        onPointerOver={(event: ThreeEvent<PointerEvent>) => {
           event.stopPropagation();
           setHover(true);
           if (isTarget && selectedAb) setAoePreview(id);
         }}
-        onPointerOut={(event) => {
+        onPointerOut={(event: ThreeEvent<PointerEvent>) => {
           event.stopPropagation();
           setHover(false);
           if (isTarget && selectedAb) clearAoePreview();
         }}
-        onClick={(event) => {
+        onClick={(event: ThreeEvent<MouseEvent>) => {
           if (phase !== 'PLAN')
             return;
           event.stopPropagation();

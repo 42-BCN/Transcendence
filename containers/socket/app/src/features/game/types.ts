@@ -94,7 +94,7 @@ export type serverGameState = {
   history: historyAction[];
   mapBounds: mapInfo;
   forcedMoveOrigins: Record<string, pos>;
-  planningStatusOrigins: Record<string, { status: string | null; statusTurns: number; dice?: number[] }>;
+  planningStatusOrigins: Record<string, { status: string | null; statusTurns: number; dice?: number[]; usedDice?: number[] }>;
 }
 
 export type clientGameState = {

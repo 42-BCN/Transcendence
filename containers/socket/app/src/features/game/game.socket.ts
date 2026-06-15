@@ -1,14 +1,34 @@
 import type { Namespace, Socket } from 'socket.io';
-import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
+import type {
+  ClientToServerGameEvents,
+  ServerToClientGameEvents as ContractServerToClientGameEvents,
+} from '@contracts/sockets/game/game.schema';
 import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase, applyPlanningDisplace, applyPlanningStatus, checkEnt, getAoE, nextVfxId } from './utils';
+import type { clientGameState, serverGameState, vfx as VfxPayload } from './types';
 
 const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
 const playerIds: string[] = [...roles].reverse();
 const users: Record<string, string> = {};
 const readyPlayers: string[] = [];
 
+type ServerGlobalSyncPayload = Omit<serverGameState, 'clients' | 'tiles' | 'mapBounds'> & {
+  tiles?: serverGameState['tiles'];
+  mapBounds?: serverGameState['mapBounds'];
+  readyPlayers?: string[];
+  activePlayers?: string[];
+};
 
-function shuffleArray(array) {
+type ServerToClientGameEvents = Omit<
+  ContractServerToClientGameEvents,
+  'game:server:globalSync'
+> & {
+  'game:server:globalSync': (state: ServerGlobalSyncPayload) => void;
+  'game:server:sync': (state: clientGameState) => void;
+  'game:server:vfx': (effect: VfxPayload) => void;
+};
+
+
+function shuffleArray(array: string[]) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -27,7 +47,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     });
   }
 
-  function vfx(effect) {
+  function vfx(effect: VfxPayload) {
     nsp.emit('game:server:vfx', effect);
   }
 
