@@ -132,7 +132,72 @@ type gameState = globalGameState & localGameState & {
   showAbRange: (name: string) => void;
   clearHighlights: () => void;
   clearSelectables: () => void;
+  aoePreview: Record<string, boolean>;
+  setAoePreview: (targetId: string) => void;
+  clearAoePreview: () => void;
 };
+
+const ABILITY_AOE: Record<string, { type: string; range: number }> = {
+  'Shield Bash':    { type: 'cross',    range: 2 },
+  'Vertical Slash': { type: 'vertical', range: 1 },
+  'Fire Breath':    { type: 'cone',     range: 3 },
+  'Vacuum Flask':   { type: 'cross',    range: 1 },
+  'Bombastic Flask':{ type: 'cross',    range: 1 },
+  'Atomic Bomb':    { type: 'circle',   range: 2 },
+};
+
+function getAoePreviewTiles(
+  targetId: string,
+  aoeType: string,
+  aoeRange: number,
+  tiles: Record<string, boolean>,
+  players: Record<string, entity>,
+  enemies: Record<string, entity>,
+  clones: Record<string, entity>,
+): Record<string, boolean> {
+  let cx: number, cy: number, cz: number;
+  if (targetId.includes(',')) {
+    [cx, cy, cz] = targetId.split(',').map(Number);
+    cy = cy + 1;
+  } else {
+    const ent = players[targetId] || enemies[targetId] || clones[targetId];
+    if (!ent) return {};
+    ({ x: cx, y: cy, z: cz } = ent.position);
+  }
+
+  const result: Record<string, boolean> = {};
+
+  const markTile = (x: number, y: number, z: number) => {
+    const key = `${x},${y - 1},${z}`;
+    if (tiles[key]) result[key] = true;
+  };
+
+  if (aoeType === 'cross') {
+    const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]] as const;
+    for (const [dx, dz] of DIRS) {
+      for (let n = 1; n <= aoeRange; ++n) {
+        const x = cx + n * dx;
+        const z = cz + n * dz;
+        const key = `${x},${cy - 1},${z}`;
+        if (!tiles[key]) break;
+        result[key] = true;
+      }
+    }
+  } else if (aoeType === 'circle') {
+    for (let dx = -aoeRange; dx <= aoeRange; ++dx) {
+      for (let dz = -aoeRange; dz <= aoeRange; ++dz) {
+        if (aoeRange * aoeRange < dx * dx + dz * dz) continue;
+        markTile(cx + dx, cy, cz + dz);
+      }
+    }
+  } else if (aoeType === 'vertical') {
+    markTile(cx, cy, cz);
+    markTile(cx, cy + 1, cz);
+    markTile(cx, cy - 1, cz);
+  }
+
+  return result;
+}
 
 export const useGame = create<gameState>()((set, get) => ({
 
@@ -154,6 +219,7 @@ export const useGame = create<gameState>()((set, get) => ({
   highlights: {},
   entityTints: {},
   selectables: {},
+  aoePreview: {},
   affected: {},
   vfx: {},
   history: [],
@@ -231,6 +297,18 @@ export const useGame = create<gameState>()((set, get) => ({
   clearSelectables: () => {
     gameSocket.emit('game:client:clearSl');
     set({ selectables: {}, canSelect: true });
+  },
+
+  setAoePreview: (targetId) => {
+    const s = get();
+    const ab = s.selectedAb ? ABILITY_AOE[s.selectedAb] : undefined;
+    if (!ab) return;
+    const preview = getAoePreviewTiles(targetId, ab.type, ab.range, s.tiles, s.players, s.enemies, s.clones);
+    set({ aoePreview: preview });
+  },
+
+  clearAoePreview: () => {
+    set({ aoePreview: {} });
   },
 
   initSocketListeners: () => {
