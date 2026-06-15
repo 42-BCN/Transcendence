@@ -317,7 +317,12 @@
     "game": {
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
-      "resetPlan": "Reiniciar plan"
+      "resetPlan": "Reiniciar plan",
+      "room": {
+        "fields": {
+          "gameRoomId": "ID de la sala"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Crear cuenta",

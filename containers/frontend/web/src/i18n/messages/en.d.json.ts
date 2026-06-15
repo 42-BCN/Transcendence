@@ -320,7 +320,12 @@ declare const messages: {
     "game": {
       "endTurn": "End turn",
       "healthLabel": "HP",
-      "resetPlan": "Reset plan"
+      "resetPlan": "Reset plan",
+      "room": {
+        "fields": {
+          "gameRoomId": "Game room ID"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Create account",

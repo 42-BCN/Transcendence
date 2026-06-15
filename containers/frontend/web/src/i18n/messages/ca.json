@@ -318,7 +318,12 @@
     "game": {
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
-      "resetPlan": "Reiniciar pla"
+      "resetPlan": "Reiniciar pla",
+      "room": {
+        "fields": {
+          "gameRoomId": "ID de la sala"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Crear compte",
