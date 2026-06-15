@@ -17,6 +17,18 @@ const MAX_HISTORY = 50;
 const roomChatHistory = new Map<string, ChatHistoryType>();
 const roomChatIdentityCounts = new Map<string, Map<string, number>>();
 
+const CHAT_LEFT_GRACE_MS = 800;
+const pendingUserLeftTimeouts = new Map<string, Map<string, ReturnType<typeof setTimeout>>>();
+
+function getRoomPendingLefts(roomName: string) {
+  let map = pendingUserLeftTimeouts.get(roomName);
+  if (!map) {
+    map = new Map();
+    pendingUserLeftTimeouts.set(roomName, map);
+  }
+  return map;
+}
+
 const getChatHistory = (roomName: string): ChatHistoryType => {
   const history = roomChatHistory.get(roomName);
   if (history) {
@@ -107,6 +119,8 @@ export function registerChatSocket(
   nsp.on('connection', (socket: Socket<ClientToServerChatEvents, ServerToClientChatEvents>) => {
     const identityKey = socket.data.identityKey;
     const username = socket.data.username;
+    const userId = socket.data.userId;
+    const guestId = socket.data.guestId;
     const roomName = getUserGameRoomChannel(socket);
 
     if (typeof identityKey !== 'string' || identityKey.length === 0) {
@@ -131,6 +145,18 @@ export function registerChatSocket(
 
     socket.join(roomName);
 
+    console.log('[Chat Socket] Connection context:', {
+      username,
+      identityKey,
+      userId,
+      guestId,
+      roomName,
+    });
+    console.log('[Chat Socket] Socket rooms after join:', {
+      username,
+      rooms: Array.from(socket.rooms),
+    });
+
     const identity: ChatIdentity = {
       identityKey,
       username,
@@ -142,15 +168,32 @@ export function registerChatSocket(
     const previousCount = chatIdentityCounts.get(identityKey) ?? 0;
     chatIdentityCounts.set(identityKey, previousCount + 1);
 
+    const pendingLefts = getRoomPendingLefts(roomName);
+    const wasPendingLeft = pendingLefts.has(identityKey);
+    if (wasPendingLeft) {
+      clearTimeout(pendingLefts.get(identityKey));
+      pendingLefts.delete(identityKey);
+    }
+
     console.log('[Chat Socket] User connected:', username);
     socket.emit('chat:identity', identity);
     socket.emit('chat:history', getChatHistory(roomName).slice(-MAX_HISTORY));
-    if (previousCount === 0) {
+    if (previousCount === 0 && !wasPendingLeft) {
       socket.to(roomName).emit('chat:system', systemMessage(roomName, 'USER_JOINED', username));
     }
 
     socket.on('chat:send', (payload: unknown) => {
       const res = ChatSendSchema.safeParse(payload);
+      const clientsInRoom = nsp.adapter.rooms.get(roomName)?.size ?? 0;
+
+      console.log('[Chat Socket] chat:send room delivery:', {
+        username,
+        identityKey,
+        userId,
+        guestId,
+        roomName,
+        clientsInRoom,
+      });
 
       if (res.success) {
         socket.to(roomName).emit('chat:message', chatMessage(roomName, username, res.data.text));
@@ -165,7 +208,12 @@ export function registerChatSocket(
 
       if (nextCount <= 0) {
         chatIdentityCounts.delete(identityKey);
-        socket.to(roomName).emit('chat:system', systemMessage(roomName, 'USER_LEFT', username));
+        const pendingLefts = getRoomPendingLefts(roomName);
+        const timeoutId = setTimeout(() => {
+          pendingLefts.delete(identityKey);
+          socket.to(roomName).emit('chat:system', systemMessage(roomName, 'USER_LEFT', username));
+        }, CHAT_LEFT_GRACE_MS);
+        pendingLefts.set(identityKey, timeoutId);
       } else {
         chatIdentityCounts.set(identityKey, nextCount);
       }

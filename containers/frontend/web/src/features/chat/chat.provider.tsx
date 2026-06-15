@@ -6,13 +6,10 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
-import type {
-  Dispatch,
-  SetStateAction,
-  ReactNode,
-} from 'react';
+import type { Dispatch, SetStateAction, ReactNode } from 'react';
 
 import type {
   ChatGameEvent,
@@ -76,10 +73,15 @@ function useChatMessages(
   selfUsername: string | null,
   setSelfUsername: Dispatch<SetStateAction<string | null>>,
 ) {
+  // Use a ref so handlers always read the latest selfUsername without needing
+  // to be recreated (which would cause ChatSocketManager to reconnect).
+  const selfUsernameRef = useRef(selfUsername);
+  selfUsernameRef.current = selfUsername;
+
   const handleChatMessage = useCallback(
     (message: ChatMessage) =>
-      setMessages((prev) => [...prev, formatMessage(message, selfUsername)]),
-    [setMessages, selfUsername],
+      setMessages((prev) => [...prev, formatMessage(message, selfUsernameRef.current)]),
+    [setMessages],
   );
 
   const handleChatSystemMessage = useCallback(
@@ -88,12 +90,13 @@ function useChatMessages(
   );
 
   const handleChatHistory = useCallback(
-    (history: ChatHistoryType) => setMessages(formatHistory(history, selfUsername)),
-    [setMessages, selfUsername],
+    (history: ChatHistoryType) => setMessages(formatHistory(history, selfUsernameRef.current)),
+    [setMessages],
   );
 
   const handleChatIdentity = useCallback(
     (identity: ChatIdentity) => {
+      selfUsernameRef.current = identity.username;
       setSelfUsername(identity.username);
       setMessages((prev) => formatHistory(prev, identity.username));
     },
@@ -204,6 +207,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
   return (
     <ChatContext.Provider value={contextValue}>
       <ChatSocketManager
+        roomId={roomId}
         onChatMessage={handleChatMessage}
         onChatSystemMessage={handleChatSystemMessage}
         onChatHistory={handleChatHistory}

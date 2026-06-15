@@ -15,24 +15,25 @@ const test_ui_style = 'fixed top-1/2 left-1/2 z-50';
 export function Rooms() {
   const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState('not connected to socket.');
   const [gameRoomsErrorInfo, setGameRoomsErrorInfo] = useState('not connected to socket.');
+  const [testUiVisibility, setTestUiVisibility] = useState(true);
   const roomContext = useContext(RoomsStoreContext);
 
-  if (!roomContext) {
-    return null;
-  }
-
-  const gameRoomStateCtx = roomContext.roomState;
-  const setGameRoomStateCtx = roomContext.setRoomState;
-  const [testUiVisibility, setTestUiVisibility] = useState(true);
+  const setGameRoomStateCtx = roomContext?.setRoomState;
 
   useEffect(() => {
-    initGameRoomSocketHandelers(
+    if (!setGameRoomStateCtx) return;
+
+    const cleanup = initGameRoomSocketHandelers(
       setGameRoomStateCtx,
       setGameRoomsDebugInfo,
       setGameRoomsErrorInfo,
     );
-    return () => {};
-  }, []);
+    return cleanup;
+  }, [setGameRoomStateCtx]);
+
+  if (!roomContext) {
+    return null;
+  }
 
 
   return (
@@ -49,7 +50,7 @@ export function Rooms() {
         style={{transform: `translate(-50%, -50%)`}}
       >
         <GameRoomTest
-          gameRoomStateCtx={gameRoomStateCtx}
+          gameRoomStateCtx={roomContext.roomState}
           gameRoomsDebugInfo={gameRoomsDebugInfo}
           gameRoomsErrorInfo={gameRoomsErrorInfo}
         />

@@ -24,53 +24,58 @@ export function initGameRoomSocketHandelers(
   setDebugState: (text: gameRoomState) => void,
   setDebugMsg: (text: string) => void,
   setDebugError: (text: string) => void,
-) {
-  gameRoomSocket.on('gameRoom:room:update', (state: gameRoomState) => {
-    console.log('[ gameRoom ] debug state');
-    console.log('the debug state is: ', state);
+): () => void {
+  const handleRoomUpdate = (state: gameRoomState) => {
+    console.log('[ gameRoom ] room update', state);
     setDebugState(state);
-  });
-  gameRoomSocket.on('gameRoom:debug:msg', (text: string) => {
-    console.log('[ gameRoom ] debug msg');
-    console.log('the debug msg is: ' + text);
+  };
+  const handleDebugMsg = (text: string) => {
+    console.log('[ gameRoom ] debug msg:', text);
     setDebugMsg(`debug msg: ${text}`);
-  });
-  gameRoomSocket.on('gameRoom:error:msg', (text: string) => {
-    console.log('[ gameRoom ] error msg');
-    console.log('the error msg is: ' + text);
+  };
+  const handleErrorMsg = (text: string) => {
+    console.log('[ gameRoom ] error msg:', text);
     setDebugError(`error msg: ${text}`);
-  });
-
-  gameRoomSocket.on('gameRoom:teammate:joinAny:ack', (gameRoom: gameRoomState) => {
-    console.log("[ gameRoom ] connection to room succesfulll.");
-    console.log("[ gameRoom ] state: ", gameRoom);
-    setDebugState(gameRoom);
-  });
-
-  gameRoomSocket.on('gameRoom:room:joined', (username: string) => {
-    console.log("[ gameRoom ] user joining this game room: ", username);
+  };
+  const handleRoomJoined = (username: string) => {
+    console.log('[ gameRoom ] user joined:', username);
     setDebugMsg(`new user joined: ${username}`);
-  });
-  gameRoomSocket.on('gameRoom:room:left', (username: string) => {
-    console.log("[ gameRoom ] user leaving gaem room: ", username);
+  };
+  const handleRoomLeft = (username: string) => {
+    console.log('[ gameRoom ] user left:', username);
     setDebugMsg(`user left: ${username}`);
-  });
+  };
+
+  gameRoomSocket.on('gameRoom:room:update', handleRoomUpdate);
+  gameRoomSocket.on('gameRoom:debug:msg', handleDebugMsg);
+  gameRoomSocket.on('gameRoom:error:msg', handleErrorMsg);
+  gameRoomSocket.on('gameRoom:room:joined', handleRoomJoined);
+  gameRoomSocket.on('gameRoom:room:left', handleRoomLeft);
+
+  let isMounted = true;
 
   void ensureChatSessionIdentity()
     .catch((error) => {
       console.error('[ GameRoom ] failed to initialize guest session identity', error);
     })
     .finally(() => {
+      if (!isMounted) return;
       gameRoomSocket.connect();
-      console.log('[ GameRoom ][ IMPORTANND DEBUG ]', window.location.search);
       const urlParams = new URLSearchParams(window.location.search);
-      console.log('[ GameRoom ][ IMPORTANND DEBUG ]', urlParams);
-      console.log('[ GameRoom ][ IMPORTANND DEBUG ]', urlParams.get('roomId'));
-      gameRoomSocket.emit('gameRoom:teammate:join', Number(urlParams.get('roomId')));
-      console.log('[ GameRoom ] connected.');
+      const roomId = Number(urlParams.get('roomId'));
+      if (roomId > 0) {
+        gameRoomSocket.emit('gameRoom:teammate:join', roomId);
+      }
+      console.log('[ GameRoom ] connected. roomId from URL:', roomId || 'none');
     });
-}
 
-export function deinitGameRoomSocketHandelers() {
-
+  return () => {
+    isMounted = false;
+    gameRoomSocket.off('gameRoom:room:update', handleRoomUpdate);
+    gameRoomSocket.off('gameRoom:debug:msg', handleDebugMsg);
+    gameRoomSocket.off('gameRoom:error:msg', handleErrorMsg);
+    gameRoomSocket.off('gameRoom:room:joined', handleRoomJoined);
+    gameRoomSocket.off('gameRoom:room:left', handleRoomLeft);
+    gameRoomSocket.disconnect();
+  };
 }
