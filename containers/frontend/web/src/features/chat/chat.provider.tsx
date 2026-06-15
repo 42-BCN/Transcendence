@@ -24,6 +24,8 @@ import { ChatSocketManager } from '@/lib/sockets/socket-manager';
 import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
 import { REALTIME_IDENTITY_CHANGED_EVENT } from '@/lib/sockets/realtime-session-bridge';
 
+import type { PlayerState } from "@/contracts/sockets/rooms/gameRooms.schema";
+
 type ChatContextValue = {
   messages: ChatHistoryType;
   roomId: number | null;
@@ -136,7 +138,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
   }
 
   const roomId = roomsStore.roomState.id > 0 ? roomsStore.roomState.id : null;
-  const participants = roomsStore.roomState.teammates.map((teammate) => teammate.userName);
+  const participants = roomsStore.roomState.teammates.map((teammate: PlayerState) => teammate.userName);
 
   const sendMessage = useCallback(() => {
     const text = value.trim();

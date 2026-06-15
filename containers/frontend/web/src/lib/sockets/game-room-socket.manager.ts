@@ -1,7 +1,7 @@
 'use client';
 
 import { ensureChatSessionIdentity, gameRoomSocket } from '@/lib/sockets/socket';
-import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
+import type { gameRoomState } from '@/contracts/sockets/rooms/gameRooms.schema';
 
 export function GameRoomSocketJoinAnyRoom() {
   gameRoomSocket.emit('gameRoom:teammate:joinAny');

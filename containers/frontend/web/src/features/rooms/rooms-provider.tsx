@@ -2,7 +2,8 @@
 
 import type { ReactNode } from 'react';
 import { createContext, useEffect, useState } from 'react';
-import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
+import type { gameRoomState } from '@/contracts/sockets/rooms/gameRooms.schema';
+import type { PlayerState } from "@/contracts/sockets/rooms/gameRooms.schema";
 
 const ACTIVE_ROOM_STORAGE_KEY = 'transcendence:active-room-id';
 

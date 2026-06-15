@@ -3,6 +3,9 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
+import type { Socket } from 'socket.io-client';
+
+
 import { envPublic } from '@/lib/config/env.public';
 import { directMessagesSocket } from './direct-messages-socket.client';
 import { friendsSocket } from './friends-socket.client';
@@ -65,12 +68,7 @@ async function getCurrentSessionIdentity(): Promise<SessionIdentity | null> {
   return body?.ok && body.data ? body.data : null;
 }
 
-function restartSocket(socket: {
-  connected: boolean;
-  connect: () => void;
-  disconnect: () => void;
-  listeners: (event: string) => unknown[];
-}) {
+function restartSocket(socket: Socket) {
   if (socket.connected) {
     socket.disconnect();
     socket.connect();
