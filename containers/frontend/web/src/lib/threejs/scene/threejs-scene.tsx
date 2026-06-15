@@ -16,12 +16,12 @@ function isWebGLAvailable(): boolean {
 
 function WebGLFallback() {
   return (
-    <div className="w-full h-screen h-[100dvh] flex items-center justify-center bg-bg-secondary rounded-xl">
+    <div className="w-full h-[100dvh] flex items-center justify-center bg-bg-secondary rounded-xl">
       <div className="text-center p-8 max-w-md">
         <p className="font-heading-sm text-text-primary mb-2">WebGL not available</p>
         <p className="font-body-sm text-text-secondary">
-          Your browser does not support WebGL or hardware acceleration is disabled.
-          Please enable hardware acceleration in your browser settings or try a different browser.
+          Your browser does not support WebGL or hardware acceleration is disabled. Please enable
+          hardware acceleration in your browser settings or try a different browser.
         </p>
       </div>
     </div>
@@ -38,7 +38,7 @@ export function ThreejsScene({ children }: { children: ReactNode }) {
 
   return (
     <Canvas
-      className="w-full h-screen h-[100dvh]"
+      className="w-full h-[100dvh]"
       camera={{
         position: [8, 8, 8],
         fov: 45,
@@ -61,12 +61,7 @@ export function ThreejsScene({ children }: { children: ReactNode }) {
         maxAzimuthAngle={Math.PI / 4}
       />
 
-      <Grid
-        args={[10, 10]}
-        position={[0, 0, 0]}
-        cellColor="#6b7280"
-        sectionColor="#e5e7eb"
-      />
+      <Grid args={[10, 10]} position={[0, 0, 0]} cellColor="#6b7280" sectionColor="#e5e7eb" />
 
       {children}
     </Canvas>

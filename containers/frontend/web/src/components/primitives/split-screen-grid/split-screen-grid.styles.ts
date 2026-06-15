@@ -13,10 +13,10 @@ export function splitScreenGridStyles({
   mobileSideLayout,
 }: SplitScreenGridStylesArgs) {
   const isMobileSplit = mobileStackMode === 'split';
-  const mobileFullHeight = isMobileSplit ? 'h-[30dvh]' : 'h-screen h-[100dvh]';
-  const mobileSideHeight = isMobileSplit ? 'h-[70dvh]' : 'h-screen h-[100dvh]';
+  const mobileFullHeight = isMobileSplit ? 'h-[30dvh]' : 'h-[100dvh]';
+  const mobileSideHeight = isMobileSplit ? 'h-[70dvh]' : 'h-[100dvh]';
   const mobileSidePosition =
-    mobileSideLayout === 'overlay' ? 'absolute inset-0 h-screen h-[100dvh]' : mobileSideHeight;
+    mobileSideLayout === 'overlay' ? 'absolute inset-0 h-[100dvh]' : mobileSideHeight;
 
   return {
     wrapper:
