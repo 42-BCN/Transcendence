@@ -62,25 +62,25 @@ function broadcastRoomUpdate(socket: Socket, gameRoomId: number, gameRoomState: 
 }
 
 function handleJoinResult(socket: Socket, username: string, gameRoom: ReturnType<typeof gameRoomsManager.joinUserToGameRoom>) {
-  if (gameRoom === 'error:no_assigned_room') {
-    emitGameRoomError(socket, 'not on any room.');
-    emitEmptyGameRoomState(socket);
-    return;
-  }
+  if (typeof gameRoom === 'string') {
+    if (gameRoom === 'error:no_assigned_room') {
+      emitGameRoomError(socket, 'not on any room.');
+      emitEmptyGameRoomState(socket);
+      return;
+    }
 
-  if (gameRoom === 'error:alredy_joined_another_room') {
-    emitGameRoomError(socket, 'alredy in a room.');
-    updateGameRoomState(socket);
-    return;
-  }
+    if (gameRoom === 'error:alredy_joined_another_room') {
+      emitGameRoomError(socket, 'alredy in a room.');
+      updateGameRoomState(socket);
+      return;
+    }
 
-  if (gameRoom === 'error:invalid_room_id') {
-    emitGameRoomError(socket, 'inexistent room');
-    updateGameRoomState(socket);
-    return;
-  }
+    if (gameRoom === 'error:invalid_room_id') {
+      emitGameRoomError(socket, 'inexistent room');
+      updateGameRoomState(socket);
+      return;
+    }
 
-  if (gameRoom === 'error:full_room') {
     emitGameRoomError(socket, 'room is full.');
     updateGameRoomState(socket);
     return;
