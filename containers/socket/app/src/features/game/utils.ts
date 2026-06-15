@@ -200,58 +200,172 @@ export function incrementDoom(vfx: (effect) => void) {
   }
 }
 
-export async function enemyPhase(sync: () => void, vfx: (effect) => void) {
+function canEnemyAttackTarget(
+  fromPos: pos,
+  target: entity,
+  ab: abilityInfo,
+): boolean {
+  if (!ab || ab.name === 'error' || ab.range === 0) return false;
+  const tp = target.position;
+  const dx = tp.x - fromPos.x;
+  const dz = tp.z - fromPos.z;
+
+  switch (ab.type) {
+    case 'cross': {
+      if (tp.y !== fromPos.y || (dx !== 0 && dz !== 0)) return false;
+      const dist = Math.abs(dx) + Math.abs(dz);
+      if (dist === 0 || dist > ab.range) return false;
+      const sx = Math.sign(dx), sz = Math.sign(dz);
+      for (let n = 1; n < dist; n++) {
+        const cx = fromPos.x + n * sx, cz = fromPos.z + n * sz;
+        if (gameState.tiles[`${cx},${fromPos.y},${cz}`]) return false;
+        const blocker = checkEnt(cx, fromPos.y, cz);
+        if (blocker && !blocker.isDead) return false;
+      }
+      return true;
+    }
+    case 'circle': {
+      if (tp.y !== fromPos.y) return false;
+      const d2 = Math.sqrt(dx * dx + dz * dz);
+      if (d2 === 0 || d2 > ab.range) return false;
+      return hasLoS(fromPos, tp.x, tp.y, tp.z) !== -1;
+    }
+    case 'sphere': {
+      const dy = tp.y - fromPos.y;
+      const d3 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      if (d3 === 0 || d3 > ab.range) return false;
+      return hasLoS(fromPos, tp.x, tp.y, tp.z) !== -1;
+    }
+    default:
+      return false;
+  }
+}
+
+function findBestEnemyAttackPos(
+  enemy: entity,
+  target: entity,
+  ab: abilityInfo,
+  maxMoveRange: number,
+): pos | null {
+  if (!ab || ab.name === 'error' || ab.range === 0)
+    return null;
+  const reachable = dijkstra(enemy.id, enemy.position, maxMoveRange);
+  reachable.push(`${enemy.position.x},${enemy.position.y - 1},${enemy.position.z}`);
+
+  let bestPos: pos | null = null;
+  let bestDist = -1;
+  for (const tileId of reachable) {
+    const [tx, ty, tz] = tileId.split(',').map(Number);
+    const cPos: pos = { x: tx, y: ty + 1, z: tz };
+    if (!canEnemyAttackTarget(cPos, target, ab))
+      continue;
+    const dx = cPos.x - target.position.x;
+    const dz = cPos.z - target.position.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+    if (dist > bestDist) { bestDist = dist; bestPos = cPos; }
+  }
+  return bestPos;
+}
+
+export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
   gameState.phase = 'ENEMY';
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  console.log('Enemy turn');
+  const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
   sync();
   await sleep(1000);
+
   for (const enemy of Object.values(gameState.enemies)) {
-    if (enemy.isDead) continue;
-    let closestDistance = Infinity;
-    let path: string[] = [];
-    let targetId = null;
-    for (const player of Object.values(gameState.players)) {
-      if (player.isDead) continue;
-      // INFO: check if can attack the closest player
-      const newPath = Astar(enemy.position, player.position);
-      if (newPath === undefined)
-        continue;
-      const newDist = newPath.length - 1;
-      if (newDist < closestDistance) {
-        closestDistance = newDist;
-        path = newPath;
-        targetId = player.id;
-      }
-    }
+    if (enemy.isDead || !enemy.abilities?.length || !enemy.dice?.length)
+      continue;
+
     if (enemy.status === 'restrain' && enemy.dice.length > 0) {
       enemy.usedDice.push(enemy.dice[0]);
       enemy.dice.splice(0, 1);
     }
-    if (closestDistance === Infinity || !targetId || path.length === 0)
+    if (!enemy.dice.length)
       continue;
-    const reaches = Math.max(...enemy.dice) >= closestDistance ? true : false;
-    let reach = Math.max(...enemy.dice);
-    if (reaches) {
-      for (let i = enemy.dice.length - 1; i >= 0; --i) {
-        if (enemy.dice[i] >= closestDistance)
-          reach = enemy.dice[i];
-      }
+
+    let closestDist = Infinity;
+    let closestPath: string[] = [];
+    let targetId: string | null = null;
+
+    for (const player of Object.values(gameState.players)) {
+      if (player.isDead)
+        continue;
+      const p = Astar(enemy.position, player.position, true);
+      if (!p || p.length === 0)
+        continue;
+      const d = p.length - 1;
+      if (d < closestDist) { closestDist = d; closestPath = p; targetId = player.id; }
     }
-    enemy.dice.splice(enemy.dice.indexOf(reach), 1);
-    enemy.usedDice.push(reach);
-    path.pop(); // INFO: remove so it does not step over the player
-    const steps = Math.min(path.length - 1, reach);
-    for (let i = 1; i <= steps; ++i) {
+    if (!targetId || closestPath.length === 0)
+      continue;
+    const target = gameState.players[targetId];
+    if (!target)
+      continue;
+    const validAbs = enemy.abilities
+      .map((name) => ({ name, ab: getAbility(name) }))
+      .filter(({ ab }) => ab.name !== 'error' && ab.range > 0)
+      .sort((a, b) =>
+        (b.ab.range + (b.ab.AoErange ?? 0)) -
+        (a.ab.range + (a.ab.AoErange ?? 0))
+      )
+    if (!validAbs.length)
+      continue;
+    const { name: chosenName, ab: chosenAb } = validAbs[0];
+    enemy.dice.sort((a, b) => a - b);
+    if (canEnemyAttackTarget(enemy.position, target, chosenAb)) {
+      const attackDie = enemy.dice.pop()!;
+      enemy.usedDice.push(attackDie);
+      executeAbility(enemy.id, chosenName, targetId, attackDie, vfx);
+      sync();
+      await sleep(400);
+      continue;
+    }
+    const maxMoveDie = enemy.dice[enemy.dice.length - 1];
+    const bestAtkPos = findBestEnemyAttackPos(enemy, target, chosenAb, maxMoveDie);
+
+    const samePos = (a: pos, b: pos) =>
+      a.x === b.x && a.y === b.y && a.z === b.z;
+
+    let movePath: string[];
+    let moveDie: number;
+
+    if (bestAtkPos && !samePos(bestAtkPos, enemy.position)) {
+      const atkPath = Astar(enemy.position, bestAtkPos) ?? [];
+      const stepsNeeded = Math.max(atkPath.length - 1, 0);
+      const minIdx = enemy.dice.findIndex((d) => d >= stepsNeeded);
+      moveDie = minIdx !== -1 ? enemy.dice.splice(minIdx, 1)[0] : enemy.dice.pop()!;
+      movePath = atkPath.length > 1 ? atkPath : closestPath.slice(0, -1);
+    }
+    else {
+      const stepsToAdj = Math.max(closestDist - 1, 0);
+      const minIdx = enemy.dice.findIndex((d) => d >= stepsToAdj);
+      moveDie = minIdx !== -1 ? enemy.dice.splice(minIdx, 1)[0] : enemy.dice.pop()!;
+      movePath = closestPath.slice(0, -1); // exclude player tile
+    }
+
+    enemy.usedDice.push(moveDie);
+
+    const steps = Math.min(movePath.length - 1, moveDie);
+    for (let i = 1; i <= steps; i++) {
       await sleep(300);
-      const [sx, sy, sz] = path[i].split(',').map(Number);
-      const stepPos = { x: sx, y: sy, z: sz };
-      gameState.enemies[enemy.id].position = stepPos;
+      const [sx, sy, sz] = movePath[i].split(',').map(Number);
+      gameState.enemies[enemy.id].position = { x: sx, y: sy, z: sz };
       sync();
     }
-    if (reaches) {
-      const idx = Math.floor(Math.random() * enemy.abilities.length);
-      executeAbility(enemy.id, enemy.abilities[idx], targetId, Math.max(...enemy.dice), vfx)
+
+    if (!enemy.dice.length)
+      continue;
+    const movedEnt = gameState.enemies[enemy.id];
+    if (!movedEnt || movedEnt.isDead)
+      continue;
+
+    if (canEnemyAttackTarget(movedEnt.position, target, chosenAb)) {
+      const attackDie = enemy.dice.pop()!;
+      enemy.usedDice.push(attackDie);
+      executeAbility(enemy.id, chosenName, targetId, attackDie, vfx);
+      sync();
+      await sleep(400);
     }
   }
   phaseClean();
@@ -558,13 +672,19 @@ function calcPlanningDisplace(actioner: string, targetId: string, ab: abilityInf
   }
   return { x, y, z };
 }
-
 export function applyPlanningDisplace(actioner: string, targetId: string, ab: abilityInfo, abilityActionId: string, centerPos?: pos) {
-  const newPos = calcPlanningDisplace(actioner, targetId, ab, centerPos);
+  let resolvedId = targetId;
+  if (targetId.includes(',')) {
+    const [tx, ty, tz] = targetId.split(',').map(Number);
+    const entOnTile = checkEnt(tx, ty + 1, tz);
+    if (!entOnTile || entOnTile.isDead) return;
+    resolvedId = entOnTile.id;
+  }
+  const newPos = calcPlanningDisplace(actioner, resolvedId, ab, centerPos);
   if (!newPos)
     return;
-  const entObj: any = gameState.players[targetId] || gameState.enemies[targetId] ||
-    gameState.clones[targetId] || gameState.clones[`clone_${targetId}`];
+  const entObj: any = gameState.players[resolvedId] || gameState.enemies[resolvedId] ||
+    gameState.clones[resolvedId] || gameState.clones[`clone_${resolvedId}`];
   if (!entObj)
     return;
   if (newPos.x === entObj.position.x &&
@@ -576,7 +696,7 @@ export function applyPlanningDisplace(actioner: string, targetId: string, ab: ab
     gameState.forcedMoveOrigins[actualId] = { ...entObj.position };
   }
   entObj.position = { ...newPos };
-  const who = targetId.startsWith("clone_") ? targetId.replace("clone_", "") : targetId;
+  const who = resolvedId.startsWith("clone_") ? resolvedId.replace("clone_", "") : resolvedId;
   addHistory(who, "forcedMov", `${newPos.x},${newPos.y - 1},${newPos.z}`, 0, null, abilityActionId);
 }
 
@@ -1211,6 +1331,9 @@ export function executeAbility(who: string, which: string, target: string, dice:
   if (!ent)
     throw new Error('No entity found!');
   const ab = getAbility(which);
+  if (ab.cd > 0) {
+    ent.abilitiesCD[which] = ab.cd;
+  }
   if (!dice)
     throw new Error('No dice value found when executing ability!');
   const roll = Math.ceil(Math.random() * dice);
@@ -1640,7 +1763,7 @@ export function dijkstra(id: string, pos: pos, maxCost: number) {
   return reachable;
 }
 
-export function Astar(src: pos, dest: pos) {
+export function Astar(src: pos, dest: pos, isEnemy: boolean = false) {
   const MOV = [
     [1, 0, 0], [-1, 0, 0],
     [0, 0, 1], [0, 0, -1],
@@ -1685,11 +1808,12 @@ export function Astar(src: pos, dest: pos) {
       const nx = node?.pos?.x + dx;
       const ny = node?.pos?.y + dy;
       const nz = node?.pos?.z + dz;
-      if (isOOB(nx, ny, nz) || isBlocked(nx, ny, nz) || !hasFloor(nx, ny, nz))
-        continue;
-      const newG = node.g +
-        (dy === 1 ? 2 : 1)
       const Id = `${nx},${ny},${nz}`;
+      const isDest = isEnemy && Id === destKey;
+      const isWall = !!gameState.tiles[Id];
+      if (isOOB(nx, ny, nz) || isWall || (!isDest && isBlocked(nx, ny, nz)) || !hasFloor(nx, ny, nz))
+        continue;
+      const newG = node.g + (dy === 1 ? 2 : 1);
       if (Closed.has(Id))
         continue;
       if (bestG[Id] === undefined || newG < bestG[Id]) {
@@ -1698,10 +1822,9 @@ export function Astar(src: pos, dest: pos) {
           id: Id,
           pos: { x: nx, y: ny, z: nz },
           g: newG,
-          f: newG + heuristic(
-            { x: nx, y: ny, z: nz }, dest)
+          f: newG + heuristic({ x: nx, y: ny, z: nz }, dest)
         };
-        Open.push(newNode)
+        Open.push(newNode);
         History[newNode.id] = node.id;
       }
     }

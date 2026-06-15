@@ -11,7 +11,7 @@ export function Crawler(props) {
   const { nodes, materials } = useGLTF('/models/crawler-transformed.glb')
   return (
     <group {...props} dispose={null}>
-      <group rotation={[0, -0.209, 0]} scale={[0.5, 0.5, 0.5]}>
+      <group position={[.0, -.15, .0]} rotation={[0, -0.209, 0]} scale={[0.5, 0.5, 0.5]}>
         <Center>
           <mesh geometry={nodes.Sphere_1.geometry} material={materials.Material} />
           <mesh geometry={nodes.Sphere_2.geometry} material={materials['Material.001']} />

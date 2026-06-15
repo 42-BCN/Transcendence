@@ -11,7 +11,7 @@ export function Gunner(props) {
   const { nodes, materials } = useGLTF('/models/gunner-transformed.glb')
   return (
     <group {...props} dispose={null}>
-      <group rotation={[0, -0.209, 0]}>
+      <group position={[0, -0.28, 0]} scale={[0.4, 0.4, 0.4]} rotation={[0, -0.209, 0]}>
         <Center>
           <mesh geometry={nodes.Sphere_1.geometry} material={materials['Material.001']} />
           <mesh geometry={nodes.Sphere_2.geometry} material={materials['Material.002']} />

@@ -128,7 +128,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       socket.on('game:client:displayAbilityRange', (who: string, abName: string) => {
         if (!gameState.clients[role] || !role)
           return;
-        const ent = gameState.players[who] || gameState.clones[who];
+        const ent = gameState.players[who] || gameState.clones[who] || gameState.enemies[who];
         if (!ent) return;
         console.log('Received ability range event for character', role);
         if (gameState.clients[role].selectedAb === abName)
@@ -152,7 +152,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         if (!gameState.clients[role] || !role)
           return;
         console.log('Received show ability range event for character', role);
-        const ent = gameState.players[who] || gameState.clones[who];
+        const ent = gameState.players[who] || gameState.clones[who] || gameState.enemies[who];
         if (!ent) return;
         if (gameState.clients[role].selectedAb === abName)
           setClear(role);
