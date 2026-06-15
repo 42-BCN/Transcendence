@@ -239,6 +239,7 @@ function canEnemyAttackTarget(
     default:
       return false;
   }
+  phaseClean();
 }
 
 function findBestEnemyAttackPos(

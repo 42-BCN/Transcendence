@@ -8,6 +8,8 @@ export const chatStyles = {
   },
   main: {
     wrapper: 'px-3 py-4',
+    metaRow: 'flex justify-center',
+    metaText: 'whitespace-pre-wrap text-center opacity-75',
   },
   footer: {
     wrapper:

@@ -786,6 +786,8 @@ export function Game() {
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
+  
+
 
   useEffect(() => {
     initSocketListeners();

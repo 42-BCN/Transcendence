@@ -545,5 +545,3 @@ AI tools were utilized strictly as assistive support, not as an unquestioned sou
   * All AI suggestions were reviewed critically and verified manually before acceptance.
   * System architecture, integration checkpoints, and final implementation choices remained entirely under human control.
   * AI was used to accelerate the iteration and comprehension cycle, never to replace team accountability or the curriculum learning objectives.
-
-

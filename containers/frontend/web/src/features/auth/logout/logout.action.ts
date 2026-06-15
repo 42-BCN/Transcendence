@@ -3,6 +3,7 @@
 import type { LogoutRes } from '@/contracts/api/auth/auth.contract';
 import { fetchClient } from '@/lib/http/fetcher.client';
 import { disconnectFriendsSocket } from '@/lib/sockets/friends-socket.client';
+import { notifyAuthChanged } from '@/lib/sockets/realtime-session-bridge';
 
 export async function logoutAction(): Promise<LogoutRes> {
   try {
@@ -10,6 +11,7 @@ export async function logoutAction(): Promise<LogoutRes> {
       withAuth: true,
     });
 
+    notifyAuthChanged();
     return result.data;
   } finally {
     disconnectFriendsSocket();

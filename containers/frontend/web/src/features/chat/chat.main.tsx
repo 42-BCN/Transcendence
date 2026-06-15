@@ -38,14 +38,26 @@ export function ChatMain({
     <ScrollArea>
       <Stack className={chatStyles.main.wrapper}>
         {messages.map(({ id, username, content, type }) => (
-          <div key={id} id={`message-${id}`}>
+          <div
+            key={id}
+            id={`message-${id}`}
+            className={type === 'system' || type === 'error' ? chatStyles.main.metaRow : undefined}
+          >
             <MessageBubble variant={type}>
               {type === 'user' && (
                 <Text as="h3" variant="caption">
                   {username}
                 </Text>
               )}
-              <Text as="p" variant="body-xs" className="whitespace-pre-wrap">
+              <Text
+                as="p"
+                variant={type === 'system' || type === 'error' ? 'caption' : 'body-xs'}
+                className={
+                  type === 'system' || type === 'error'
+                    ? chatStyles.main.metaText
+                    : 'whitespace-pre-wrap'
+                }
+              >
                 {content.text}
               </Text>
             </MessageBubble>
