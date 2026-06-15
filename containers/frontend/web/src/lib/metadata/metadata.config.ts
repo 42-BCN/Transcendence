@@ -12,7 +12,13 @@ export function getMetadataBase(): URL {
   return new URL(envPublic.appUrl);
 }
 
+function getRobotsMetadata(robots: Metadata['robots']) {
+  return robots && typeof robots === 'object' ? robots : undefined;
+}
+
 export function createAppMetadata(overrides: Metadata = {}): Metadata {
+  const overrideRobots = getRobotsMetadata(overrides.robots);
+
   return {
     metadataBase: getMetadataBase(),
     title: {
@@ -38,18 +44,20 @@ export function createAppMetadata(overrides: Metadata = {}): Metadata {
     robots: {
       index: true,
       follow: true,
-      ...overrides.robots,
+      ...overrideRobots,
     },
   };
 }
 
 export function createNoIndexMetadata(overrides: Metadata = {}): Metadata {
+  const overrideRobots = getRobotsMetadata(overrides.robots);
+
   return createAppMetadata({
     ...overrides,
     robots: {
       index: false,
       follow: false,
-      ...overrides.robots,
+      ...overrideRobots,
     },
   });
 }

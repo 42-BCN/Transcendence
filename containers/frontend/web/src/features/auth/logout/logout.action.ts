@@ -6,7 +6,7 @@ import { disconnectFriendsSocket } from '@/lib/sockets/friends-socket.client';
 
 export async function logoutAction(): Promise<LogoutRes> {
   try {
-    const result = await fetchClient('/api/auth/logout', 'POST', undefined, {
+    const result = await fetchClient<LogoutRes>('/api/auth/logout', 'POST', undefined, {
       withAuth: true,
     });
 

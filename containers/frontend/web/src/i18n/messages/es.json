@@ -2,7 +2,8 @@
   "common": {
     "globalError": {
       "title": "Algo salió mal",
-      "tryAgain": "Inténtalo de nuevo"
+      "tryAgain": "Inténtalo de nuevo",
+      "unexpectedMessage": "Ha ocurrido un error inesperado"
     }
   },
   "components": {
