@@ -15,7 +15,11 @@
     "clean": "rm -rf .next node_modules",
     "component": "node scripts/create-component.mjs",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest run --project storybook:chromium",
+    "test:firefox": "vitest run --project storybook:firefox",
+    "test:webkit": "vitest run --project storybook:webkit",
+    "test:all-browsers": "vitest run"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -70,5 +74,11 @@
   },
   "engines": {
     "node": ">=20.9.0"
-  }
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions"
+  ]
 }

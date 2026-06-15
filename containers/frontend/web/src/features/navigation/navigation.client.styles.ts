@@ -6,7 +6,7 @@ const navigationPositionClassNames = {
   fixed: {
     desktop: 'fixed h-screen',
     mobileTrigger: 'fixed',
-    mobileDrawer: 'h-[100dvh]',
+    mobileDrawer: 'h-screen h-[100dvh]',
   },
   absolute: {
     desktop: 'absolute h-full',
