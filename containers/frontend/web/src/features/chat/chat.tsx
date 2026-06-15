@@ -9,12 +9,12 @@ import { useChat } from './chat.provider';
 import { useTranslations } from 'next-intl';
 
 function ChatContent() {
-  const { messages, value, setValue, sendMessage } = useChat();
+  const { messages, roomId, participants, value, setValue, sendMessage } = useChat();
   const t = useTranslations('features.chat');
 
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
-      <ChatHeader room="chatTest" participants={['capapes', 'cmanica-', 'mfontser', 'joanavar']} />
+      <ChatHeader room={roomId === null ? 'No Room' : `Room ${roomId}`} participants={participants} />
 
       <ChatMain messages={messages} />
 

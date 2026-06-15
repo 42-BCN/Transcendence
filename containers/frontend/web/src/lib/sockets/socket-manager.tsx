@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { chatSocket, ensureChatSessionIdentity, robotsSocket, type Robot } from './socket';
 import type {
@@ -53,6 +53,7 @@ export const RobotsSocketManager = ({ onRobots }: RobotsSocketManagerProps) => {
 };
 
 type ChatSocketManagerProps = {
+  roomId: number | null;
   onChatMessage: (message: ChatMessage) => void;
   onChatSystemMessage: (message: ChatSystemMessage) => void;
   onChatError: (message: ChatError) => void;
@@ -62,6 +63,7 @@ type ChatSocketManagerProps = {
 };
 
 export const ChatSocketManager = ({
+  roomId,
   onChatMessage,
   onChatSystemMessage,
   onChatError,
@@ -69,18 +71,35 @@ export const ChatSocketManager = ({
   onChatIdentity,
   onGameEvent,
 }: ChatSocketManagerProps) => {
+  const onChatMessageRef = useRef(onChatMessage);
+  const onChatSystemMessageRef = useRef(onChatSystemMessage);
+  const onChatErrorRef = useRef(onChatError);
+  const onChatHistoryRef = useRef(onChatHistory);
+  const onChatIdentityRef = useRef(onChatIdentity);
+  const onGameEventRef = useRef(onGameEvent);
+
+  onChatMessageRef.current = onChatMessage;
+  onChatSystemMessageRef.current = onChatSystemMessage;
+  onChatErrorRef.current = onChatError;
+  onChatHistoryRef.current = onChatHistory;
+  onChatIdentityRef.current = onChatIdentity;
+  onGameEventRef.current = onGameEvent;
+
   useEffect(() => {
-    const handleConnect = () => console.log('Connected to chat socket server', chatSocket.id);
+    const handleConnect = () =>
+      console.log('Connected to chat socket server', chatSocket.id, 'roomId=', roomId);
     const handleConnectError = (error: Error) => {
       console.error('Chat socket connect error', error);
     };
-    const handleDisconnect = () => console.log('Disconnected from chat socket server');
-    const handleChatMessage = (payload: ChatMessage) => onChatMessage(payload);
-    const handleChatSystemMessage = (payload: ChatSystemMessage) => onChatSystemMessage(payload);
-    const handleChatError = (payload: ChatError) => onChatError(payload);
-    const handleChatHistory = (payload: ChatHistoryType) => onChatHistory(payload);
-    const handleChatIdentity = (payload: ChatIdentity) => onChatIdentity(payload);
-    const handleGameEvent = (payload: ChatGameEvent) => onGameEvent(payload);
+    const handleDisconnect = () =>
+      console.log('Disconnected from chat socket server', 'roomId=', roomId);
+    const handleChatMessage = (payload: ChatMessage) => onChatMessageRef.current(payload);
+    const handleChatSystemMessage = (payload: ChatSystemMessage) =>
+      onChatSystemMessageRef.current(payload);
+    const handleChatError = (payload: ChatError) => onChatErrorRef.current(payload);
+    const handleChatHistory = (payload: ChatHistoryType) => onChatHistoryRef.current(payload);
+    const handleChatIdentity = (payload: ChatIdentity) => onChatIdentityRef.current(payload);
+    const handleGameEvent = (payload: ChatGameEvent) => onGameEventRef.current(payload);
 
     const reservedListeners = [
       ['connect', handleConnect],
@@ -102,15 +121,19 @@ export const ChatSocketManager = ({
 
     let isMounted = true;
 
-    void ensureChatSessionIdentity()
-      .catch((error) => {
-        console.error('Failed to initialize chat session identity', error);
-      })
-      .finally(() => {
-        if (isMounted) {
-          chatSocket.connect();
-        }
-      });
+    if (roomId !== null) {
+      void ensureChatSessionIdentity()
+        .then(() => {
+          if (isMounted) {
+            chatSocket.connect();
+          }
+        })
+        .catch((error) => {
+          console.error('Failed to initialize chat session identity', error);
+        });
+    } else {
+      chatSocket.disconnect();
+    }
 
     return () => {
       isMounted = false;
@@ -118,7 +141,7 @@ export const ChatSocketManager = ({
       chatListeners.forEach(([event, handler]) => chatSocket.off(event, handler));
       chatSocket.disconnect();
     };
-  }, [onChatMessage, onChatSystemMessage, onChatError, onChatHistory, onChatIdentity, onGameEvent]);
+  }, [roomId]); // only roomId — handler changes must NOT reconnect the socket
 
   return null;
 };

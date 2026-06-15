@@ -56,10 +56,12 @@ export async function postVerifyEmail(
   res: Response<VerifyEmailRes>,
 ): Promise<void> {
   const user = await Service.verifyEmailByToken(req.body.token);
+  const previousGuestId = req.session.guestId;
 
   req.session.regenerate((regenErr) => {
     if (regenErr) return sendError(res, 'AUTH_INTERNAL_ERROR');
     req.session.userId = user.id;
+    req.session.previousGuestId = previousGuestId;
     req.session.guestId = undefined;
     req.session.guestUsername = undefined;
     req.session.save((saveErr) => {

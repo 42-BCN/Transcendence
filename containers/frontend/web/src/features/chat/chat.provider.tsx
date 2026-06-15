@@ -4,12 +4,12 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
-  type Dispatch,
-  type SetStateAction,
-  type ReactNode,
 } from 'react';
+import type { Dispatch, SetStateAction, ReactNode } from 'react';
 
 import type {
   ChatGameEvent,
@@ -21,9 +21,15 @@ import type {
 } from '@/contracts/sockets/chat/chat.schema';
 import { chatSocket } from '@/lib/sockets/socket';
 import { ChatSocketManager } from '@/lib/sockets/socket-manager';
+import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
+import { REALTIME_IDENTITY_CHANGED_EVENT } from '@/lib/sockets/realtime-session-bridge';
+
+import type { PlayerState } from "@/contracts/sockets/rooms/gameRooms.schema";
 
 type ChatContextValue = {
   messages: ChatHistoryType;
+  roomId: number | null;
+  participants: string[];
   value: string;
   setValue: (value: string) => void;
   sendMessage: () => void;
@@ -69,10 +75,15 @@ function useChatMessages(
   selfUsername: string | null,
   setSelfUsername: Dispatch<SetStateAction<string | null>>,
 ) {
+  // Use a ref so handlers always read the latest selfUsername without needing
+  // to be recreated (which would cause ChatSocketManager to reconnect).
+  const selfUsernameRef = useRef(selfUsername);
+  selfUsernameRef.current = selfUsername;
+
   const handleChatMessage = useCallback(
     (message: ChatMessage) =>
-      setMessages((prev) => [...prev, formatMessage(message, selfUsername)]),
-    [setMessages, selfUsername],
+      setMessages((prev) => [...prev, formatMessage(message, selfUsernameRef.current)]),
+    [setMessages],
   );
 
   const handleChatSystemMessage = useCallback(
@@ -81,12 +92,13 @@ function useChatMessages(
   );
 
   const handleChatHistory = useCallback(
-    (history: ChatHistoryType) => setMessages(formatHistory(history, selfUsername)),
-    [setMessages, selfUsername],
+    (history: ChatHistoryType) => setMessages(formatHistory(history, selfUsernameRef.current)),
+    [setMessages],
   );
 
   const handleChatIdentity = useCallback(
     (identity: ChatIdentity) => {
+      selfUsernameRef.current = identity.username;
       setSelfUsername(identity.username);
       setMessages((prev) => formatHistory(prev, identity.username));
     },
@@ -117,7 +129,16 @@ function useChatMessages(
 export function ChatProvider({ children }: ChatProviderProps) {
   const [messages, setMessages] = useState<ChatHistoryType>([]);
   const [selfUsername, setSelfUsername] = useState<string | null>(null);
+  const [previousSelfUsername, setPreviousSelfUsername] = useState<string | null>(null);
   const [value, setValue] = useState('');
+  const roomsStore = useContext(RoomsStoreContext);
+
+  if (!roomsStore) {
+    throw new Error('ChatProvider must be used within RoomsProvider');
+  }
+
+  const roomId = roomsStore.roomState.id > 0 ? roomsStore.roomState.id : null;
+  const participants = roomsStore.roomState.teammates.map((teammate: PlayerState) => teammate.userName);
 
   const sendMessage = useCallback(() => {
     const text = value.trim();
@@ -132,6 +153,20 @@ export function ChatProvider({ children }: ChatProviderProps) {
     setMessages((prev) => [...prev, gameEventMessage(event)]);
   }, []);
 
+  useEffect(() => {
+    const handleIdentityChanged = () => {
+      setMessages([]);
+      setPreviousSelfUsername(selfUsername);
+      setSelfUsername(null);
+    };
+
+    window.addEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+
+    return () => {
+      window.removeEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+    };
+  }, [selfUsername]);
+
   const {
     handleChatMessage,
     handleChatSystemMessage,
@@ -141,24 +176,44 @@ export function ChatProvider({ children }: ChatProviderProps) {
     handleGameEvent,
   } = useChatMessages(setMessages, selfUsername, setSelfUsername);
 
+  const handleChatIdentityWithMemberKey = useCallback(
+    (identity: ChatIdentity) => {
+      const nextMemberKey =
+        typeof identity.userId === 'string' && identity.userId.length > 0
+          ? `user:${identity.userId}`
+          : identity.identityKey;
+
+      handleChatIdentity(identity);
+      roomsStore.replaceTeammateName({
+        nextUserName: identity.username,
+        previousUserName: previousSelfUsername ?? selfUsername,
+        nextMemberKey,
+      });
+    },
+    [handleChatIdentity, previousSelfUsername, roomsStore, selfUsername],
+  );
+
   const contextValue = useMemo(
     () => ({
       messages,
+      roomId,
+      participants,
       value,
       setValue,
       sendMessage,
       sendGameEvent,
     }),
-    [messages, value, sendMessage, sendGameEvent],
+    [messages, participants, roomId, value, sendMessage, sendGameEvent],
   );
 
   return (
     <ChatContext.Provider value={contextValue}>
       <ChatSocketManager
+        roomId={roomId}
         onChatMessage={handleChatMessage}
         onChatSystemMessage={handleChatSystemMessage}
         onChatHistory={handleChatHistory}
-        onChatIdentity={handleChatIdentity}
+        onChatIdentity={handleChatIdentityWithMemberKey}
         onChatError={handleChatError}
         onGameEvent={handleGameEvent}
       />
