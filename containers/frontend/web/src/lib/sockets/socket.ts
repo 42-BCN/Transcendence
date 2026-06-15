@@ -64,7 +64,7 @@ export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEven
   gameSocketUrl,
   {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
     reconnection: true,
     reconnectionDelay: 1000,
@@ -93,7 +93,7 @@ export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobo
   robotsSocketUrl,
   {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
   },
 );
@@ -102,7 +102,7 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
   chatSocketUrl,
   {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
     auth: {},
   },

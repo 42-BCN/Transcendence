@@ -445,8 +445,8 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 * **Subject Requirement**: Full compatibility with at least 2 additional browsers.
 * **Justification**: Consistent rendering, script execution, and visual layouts across multiple web rendering engines.
 * **Implementation Details**:
- * **Target Engines**: Last 2 versions of Google Chrome (Blink), Mozilla Firefox (Gecko), Apple Safari (WebKit), and Microsoft Edge (Chromium).
- * **Visual Fallbacks**: Programmed `@supports` rules for backdrop filters (glassmorphic UI falls back to opaque styling), viewport fallback hierarchies (`100vh` preceding `100dvh` across 7 layout views), and cross-browser CSS animation keyframes replacing `tailwindcss-animate`.
+ * **Target Engines**: Both desctop and movile last 2 versions of Google Chrome (Blink), Mozilla Firefox (Gecko), Apple Safari (WebKit), and Microsoft Edge (Chromium).
+ * **Visual Fallbacks**: Programmed `@supports` rules for backdrop filters (glassmorphic UI falls back to opaque styling), and cross-browser CSS animation keyframes replacing `tailwindcss-animate`.
  * **Functional Fallbacks**: Integrated native WebGL detection in `ThreejsScene` to prompt user-friendly configuration alerts. Configured Socket.IO to support HTTP long-polling transport fallback in all 4 client socket instances if WebSocket protocol connections fail.
  * **Testing & Auditing**: Playwright + Vitest configured to run automated browser component tests in Firefox and WebKit alongside Chromium (`test:firefox`, `test:webkit`, `test:all-browsers`). Comprehensive compatibility charts and manual testing checklists are detailed in [Browser Compatibility Guidelines](containers/frontend/web/docs/BROWSER_COMPATIBILITY.md).
 
