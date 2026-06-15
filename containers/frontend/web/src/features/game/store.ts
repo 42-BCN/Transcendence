@@ -76,22 +76,27 @@ export type abilityInfo = {
 }
 
 export type vfx = {
-  id: string;
+  vfxid: string;
+  eid: string;
   type: string;
-  amount: string | number | null;
+  amount: number | null;
+  label: string;
 }
 
 export type globalGameState = {
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
-  turn: number,
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE';
+  turn: number;
+  doom: number;
   players: Record<string, entity>;
   ghosts: Record<string, entity>;
   clones: Record<string, entity>;
   enemies: Record<string, entity>;
   tiles: Record<string, boolean>;
   history: historyAction[];
-  vfx: vfx[];
-  mapBounds: mapInfo,
+  vfx: Record<string, vfx>;
+  mapBounds: mapInfo;
+  readyPlayers: string[];
+  activePlayers: string[];
 }
 
 export type localGameState = {
@@ -103,31 +108,14 @@ export type localGameState = {
   selectedDice: number | null;
 }
 
-type gameState = {
-
-  assignedCharacter: string;
-
-  //global state
-  turn: number;
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END';
-  players: Record<string, entity>;
-  enemies: Record<string, entity>;
-  clones: Record<string, entity>;
-  tiles: Record<string, boolean>;
-  history: historyAction[];
-  mapBounds: mapInfo;
-  readyPlayers: string[];
-  activePlayers: string[];
+type gameState = globalGameState & localGameState & {
 
   //local state
+  assignedCharacter: string;
   typeEnt: string | null;
-  canSelect: boolean;
-  selectedAb: string | null;
-  selectedEnt: string | null;
-  highlights: Record<string, boolean>;
-  selectables: Record<string, boolean>;
   affected: Record<string, boolean>;
-  selectedDice: number | null;
+  vfx: Record<string, vfx>;
+  entityTints: Record<string, { color: string; expiresAt: number }>;
 
   nextPhase: () => void;
 
@@ -140,7 +128,7 @@ type gameState = {
   selectDice: (dice: number) => void;
   moveClone: (tileId: string) => void;
   selectAbility: (name: string) => void;
-  showMoveRange: (mov: string) => void;
+  showMoveRange: (mov: number) => void;
   showAbRange: (name: string) => void;
   clearHighlights: () => void;
   clearSelectables: () => void;
@@ -151,6 +139,7 @@ export const useGame = create<gameState>()((set, get) => ({
   assignedCharacter: 'spectator',
 
   turn: 1,
+  doom: 0,
   phase: 'PLAN',
   canSelect: true,
   typeEnt: null,
@@ -163,8 +152,10 @@ export const useGame = create<gameState>()((set, get) => ({
   clones: {},
   tiles: {},
   highlights: {},
+  entityTints: {},
   selectables: {},
   affected: {},
+  vfx: {},
   history: [],
   readyPlayers: [],
   activePlayers: [],
@@ -242,10 +233,6 @@ export const useGame = create<gameState>()((set, get) => ({
     set({ selectables: {}, canSelect: true });
   },
 
-  handleRightClick: () => {
-    gameSocket.emit('game:client:rClick');
-  },
-
   initSocketListeners: () => {
     // if (gameSocket.connected)
     //   return;
@@ -272,6 +259,7 @@ export const useGame = create<gameState>()((set, get) => ({
       set({
         phase: state.phase,
         turn: state.turn,
+        doom: state.doom,
         enemies: state.enemies,
         players: state.players,
         clones: state.clones,
@@ -281,6 +269,56 @@ export const useGame = create<gameState>()((set, get) => ({
         readyPlayers: state.readyPlayers || get().readyPlayers,
         activePlayers: state.activePlayers || get().activePlayers,
       });
+    };
+
+    const handleVfx = (effect: vfx) => {
+      if (!effect)
+        return;
+      const label =
+        effect.type === 'damage' ? `-${effect.amount}` :
+          effect.type === 'doom' ? `☠ +${effect.amount ?? 0}` :
+            effect.type === 'burn' ? `🔥 ${effect.type}` :
+              effect.type === 'restrain' ? `⛓ ${effect.type}` :
+                effect.type === 'oxidation' ? `⚗ ${effect.type}` :
+                  effect.type === 'boost' ? `⚡ ${effect.type}` :
+                    effect.type === 'shield' ? `🛡 ${effect.type}` :
+                      effect.type === 'miss' ? `✗ MISS` :
+                        effect.type;
+      set((s) => ({
+        vfx: {
+          ...s.vfx,
+          [effect.vfxid]: {
+            vfxid: effect.vfxid,
+            eid: effect.eid,
+            type: effect.type,
+            amount: effect.amount,
+            label,
+          },
+        },
+      }));
+      setTimeout(() => {
+        set((s) => {
+          const next = { ...s.vfx };
+          delete next[effect.vfxid];
+          return { vfx: next };
+        });
+      }, 1400);
+      if (effect.type === 'damage' || effect.type === 'miss') {
+        const tintColor = effect.type === 'damage' ? '#ff2222' : '#22ff66';
+        const eid = effect.eid;
+        const expiresAt = Date.now() + 500;
+        set((s) => ({
+          entityTints: { ...s.entityTints, [eid]: { color: tintColor, expiresAt } },
+        }));
+        setTimeout(() => {
+          set((s) => {
+            const existing = s.entityTints[eid];
+            if (!existing || existing.expiresAt > Date.now()) return s;
+            const { [eid]: _removed, ...rest } = s.entityTints;
+            return { entityTints: rest };
+          });
+        }, 550);
+      }
     };
 
     const handleSync = (state: localGameState) => {
@@ -297,17 +335,6 @@ export const useGame = create<gameState>()((set, get) => ({
       });
     };
 
-    const handleHighlights = (highlights: Record<string, boolean>) => {
-      console.log('✨ Received highlights');
-      set({ highlights: highlights });
-    };
-
-    const handleSelectables = (selectables: Record<string, boolean>) => {
-      console.log('🎯 Received selectables');
-      set({ selectables: selectables });
-    };
-
-
     gameSocket.on('connect', () => {
       console.log('✅ Connected to game socket server');
     });
@@ -319,8 +346,7 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.on('game:server:join', handleJoin);
     gameSocket.on('game:server:globalSync', handleGlobalSync);
     gameSocket.on('game:server:sync', handleSync);
-    gameSocket.on('game:server:displayMoveRange', handleHighlights);
-    gameSocket.on('game:server:displayAbilityRange', handleSelectables);
+    gameSocket.on('game:server:vfx', handleVfx);
 
     ensureChatSessionIdentity()
       .finally(() => gameSocket.connect());
@@ -335,8 +361,7 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:init');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
-    gameSocket.off('game:server:displayMoveRange');
-    gameSocket.off('game:server:displayAbilityRange');
-    // gameSocket.disconnect();
+    gameSocket.off('game:server:vfx');
+    gameSocket.disconnect();
   },
 }));

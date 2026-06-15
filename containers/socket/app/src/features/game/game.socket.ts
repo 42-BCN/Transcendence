@@ -1,12 +1,11 @@
 import type { Namespace, Socket } from 'socket.io';
 import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
-import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase } from './utils';
+import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase, applyPlanningDisplace, applyPlanningStatus, checkEnt, getAoE, nextVfxId } from './utils';
 
 const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
 const playerIds: string[] = [...roles].reverse();
 const users: Record<string, string> = {};
 const readyPlayers: string[] = [];
-const activePlayers: string[] = [];
 
 
 function shuffleArray(array) {
@@ -28,10 +27,16 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
     });
   }
 
+  function vfx(effect) {
+    nsp.emit('game:server:vfx', effect);
+  }
+
   nsp.on('connection', (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
     if (playerIds.length === 4) {
       console.log('init state happens');
       const initstate = initState();
+      gameState.turn = 1;
+      gameState.doom = 0;
       gameState.players = initstate.players;
       gameState.enemies = initstate.enemies;
       gameState.tiles = initstate.tiles;
@@ -39,6 +44,8 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       gameState.clones = {};
       gameState.ghosts = {};
       gameState.history = [];
+      gameState.forcedMoveOrigins = {};
+      gameState.planningStatusOrigins = {};
     }
     // WARN: DO NOT CHANGE, else will not render the map 
     nsp.emit('game:server:globalSync', gameState);
@@ -60,8 +67,9 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       socket.on('game:client:showMoveRange', (diceValue: number) => {
         if (!gameState.clients[role] || !role || !gameState.clients[role].selectedEnt)
           return;
-        if (gameState.clients[role].selectedEnt.startsWith('clone_')
-          && gameState.clones[`clone_${role}`].hasMoved === true)
+        const selectedEnt = gameState.clients[role].selectedEnt;
+        const playerClone = gameState.clones?.[`clone_${role}`];
+        if (selectedEnt?.startsWith('clone_') && playerClone?.hasMoved === true)
           return (console.log(role, 'has already moved'));
         console.log('Received move range event with dice:',
           diceValue, 'for character', role);
@@ -120,7 +128,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       socket.on('game:client:displayAbilityRange', (who: string, abName: string) => {
         if (!gameState.clients[role] || !role)
           return;
-        const ent = gameState.players[who] || gameState.clones[who];
+        const ent = gameState.players[who] || gameState.clones[who] || gameState.enemies[who];
         if (!ent) return;
         console.log('Received ability range event for character', role);
         if (gameState.clients[role].selectedAb === abName)
@@ -132,6 +140,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           gameState.clients[role].selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
           gameState.clients[role].canSelect = false;
           // WARN: not enough time :( 
+          // INFO: liar above, just lazy
 
           // if (ab.AoE)
           //   gameState.clients[role].selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
@@ -143,7 +152,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         if (!gameState.clients[role] || !role)
           return;
         console.log('Received show ability range event for character', role);
-        const ent = gameState.players[who] || gameState.clones[who];
+        const ent = gameState.players[who] || gameState.clones[who] || gameState.enemies[who];
         if (!ent) return;
         if (gameState.clients[role].selectedAb === abName)
           setClear(role);
@@ -198,9 +207,10 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         console.log('selected ab:', gameState.clients[role].selectedAb);
         const entid = gameState.clients[role].selectedEnt;
         const seldice = gameState.clients[role].selectedDice;
-        if (!entid || !seldice || !gameState.clients[role].selectedAb)
+        const abName = gameState.clients[role].selectedAb;
+        if (!entid || !seldice || !abName)
           return (console.log("couldn't add ability to history!"));
-        addHistory(entid, "ability", target, seldice, gameState.clients[role].selectedAb);
+        const abilityActionId = addHistory(entid, "ability", target, seldice, abName);
         const source = gameState.players[entid] || gameState.clones[entid];
         if (!source)
           return (console.log("couldn't find a valid source in addAbilityHistory!"));
@@ -216,6 +226,74 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
           setClear(role);
           gameState.clones[entid].dice = source.dice.toSpliced(source.dice.indexOf(seldice), 1);
           gameState.clones[entid].usedDice = [...source.usedDice, seldice].sort((a, b) => a - b);
+        }
+        if (abilityActionId) {
+          const ab = getAbility(abName);
+          if (ab.effect && ab.effect[0] === 'move') {
+            if (!ab.displaceFromCenter) {
+              applyPlanningDisplace(entid, target, ab, abilityActionId);
+            }
+            if (ab.AoE) {
+              const aoeTargets = getAoE(entid, target, ab.AoE, ab.AoErange);
+              if (ab.displaceFromCenter) {
+                let centerPos: { x: number; y: number; z: number } | undefined;
+                if (target.includes(',')) {
+                  const [cx, cy, cz] = target.split(',').map(Number);
+                  centerPos = { x: cx, y: cy + 1, z: cz };
+                } else {
+                  const baseId = target.replace('clone_', '');
+                  const centEnt =
+                    gameState.players[baseId] ??
+                    gameState.enemies[baseId] ??
+                    gameState.clones[`clone_${baseId}`] ??
+                    gameState.clones[target];
+                  if (centEnt) centerPos = { ...(centEnt as any).position };
+                }
+                if (ab.collisionRejects && aoeTargets.length >= 2) {
+                  for (const aoeId of aoeTargets) {
+                    vfx({
+                      vfxid: nextVfxId(`plan_col_${aoeId}`),
+                      eid: aoeId,
+                      type: 'damage',
+                      amount: 1,
+                    });
+                  }
+                } else {
+                  for (const aoeId of aoeTargets) {
+                    if (aoeId !== target) {
+                      applyPlanningDisplace(entid, aoeId, ab, abilityActionId, centerPos);
+                    }
+                  }
+                }
+              } else {
+                for (const aoeId of aoeTargets) {
+                  if (aoeId !== target) {
+                    applyPlanningDisplace(entid, aoeId, ab, abilityActionId);
+                  }
+                }
+              }
+            }
+          }
+          else if (ab.effect && ab.effect[0]) {
+            applyPlanningStatus(entid, target, ab, abilityActionId);
+            let vfxEid: string | null = null;
+            if (!target.includes(',')) {
+              vfxEid = target;
+            }
+            else {
+              const [x, y, z] = target.split(',').map(Number);
+              const entOnTile = checkEnt(x, y + 1, z);
+              if (entOnTile && !entOnTile.isDead) vfxEid = entOnTile.id;
+            }
+            if (vfxEid) {
+              vfx({
+                vfxid: nextVfxId(`plan_${ab.effect[0]}_${vfxEid}`),
+                eid: vfxEid,
+                type: ab.effect[0],
+                amount: null,
+              });
+            }
+          }
         }
         setClear(role);
         socket.emit('game:server:sync', gameState.clients[role]);
@@ -241,32 +319,30 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         gsync();
       });
 
-      socket.on('game:client:nextPhase', async () => {
-        if (!gameState.clients[role] || !role)
-          return;
-        console.log('readyPlayers before nextphase', readyPlayers);
-        if (readyPlayers.length === 4 - playerIds.length) {
-          console.log('readyPlayers in nextphase', readyPlayers);
-          readyPlayers.length = 0;
-          await nextPhase(gsync);
-          for (const id in gameState.clients) {
-            setClear(id);
-            nsp.emit('game:server:sync', gameState.clients[id]);
+      socket.on('game:client:nextPhase',
+        async () => {
+          if (!gameState.clients[role] || !role)
+            return;
+          console.log('readyPlayers before nextphase', readyPlayers);
+          if (readyPlayers.length === 4 - playerIds.length) {
+            console.log('readyPlayers in nextphase', readyPlayers);
+            readyPlayers.length = 0;
+            await nextPhase(gsync, vfx);
+            for (const id in gameState.clients) {
+              setClear(id);
+              nsp.emit('game:server:sync', gameState.clients[id]);
+            }
           }
-        }
-      });
-
-      socket.on('game:client:rClick', () => {
-        setClear(role);
-        socket.emit('game:server:sync', gameState.clients[role]);
-      });
+        },
+      );
 
       socket.on('game:client:resetHistory', () => {
         resetHistory(role);
+        setClear(role);
+        gameState.clients[role].selectedEnt = null;
+        socket.emit('game:server:sync', gameState.clients[role]);
         gsync();
       });
-
-      // INFO: helpers/debug
 
       socket.on('game:client:sync', () => {
         socket.emit('game:server:sync', gameState.clients[role]);
@@ -276,11 +352,12 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         gsync();
       });
     }
-
     socket.on('disconnect', () => {
       if (role) {
         playerIds.push(role);
         delete users[socket.id];
+        const ri = readyPlayers.indexOf(role);
+        if (ri !== -1) readyPlayers.splice(ri, 1);
         console.log(role, 'disconnected, role', playerIds[playerIds.length - 1], 'is available again.');
         gsync();
       }

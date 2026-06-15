@@ -18,25 +18,25 @@ wwowwwwoww
 wooowwooow
 ooooooooow
 oooooooooo
-oooowwoooo
-ooooooooow
+ocooooodoo
+oocooodoow
 woooooooow
 wwooooooww
 wwwapmlwww,
 
-wwwwwwwwww
-wwoowwooww
+wwwwgnwwww
+wwowoowoww
 woooooooow
 woooooooow
 oooooooooo
 oooooooooo
-oowwoowwoo
+oooooooooo
 oooooooooo
 owoooooowo
 wwooooooww,
 
 wwwwoowwww
-owooeooowo
+jwoooooowj
 oooooooooo
 oooooooooo
 woooooooow
@@ -150,7 +150,7 @@ export const parseMap = (map: string) => {
           case 'j':
             ++enenum;
             entities.push({
-              id: `jaeger`,
+              id: `jaeger_${enenum}`,
               type: 'jaeger',
               position
             });
@@ -158,8 +158,16 @@ export const parseMap = (map: string) => {
           case 'n':
             ++enenum;
             entities.push({
-              id: `centurion`,
+              id: `centurion_${enenum}`,
               type: 'centurion',
+              position
+            });
+            break;
+          case 'g':
+            ++enenum;
+            entities.push({
+              id: `generator`,
+              type: 'generator',
               position
             });
             break;

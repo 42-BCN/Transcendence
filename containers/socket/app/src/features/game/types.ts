@@ -70,26 +70,31 @@ export type abilityInfo = {
   AoE?: string;
   AoErange?: number;
   effect?: string[];
+  displaceFromCenter?: boolean;
+  collisionRejects?: boolean;
 }
 
 export type vfx = {
-  id: string;
+  vfxid: string;
+  eid: string;
   type: string;
-  amount: string | number | null;
+  amount: number | null;
 }
 
 export type serverGameState = {
-  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END',
-  turn: number,
+  phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE';
+  turn: number;
+  doom: number;
   players: Record<string, entity>;
   ghosts: Record<string, entity>;
   clones: Record<string, entity>;
   enemies: Record<string, entity>;
   tiles: Record<string, boolean>;
-  clients: Record<string, clientGameState>
+  clients: Record<string, clientGameState>;
   history: historyAction[];
-  vfx: vfx[];
-  mapBounds: mapInfo,
+  mapBounds: mapInfo;
+  forcedMoveOrigins: Record<string, pos>;
+  planningStatusOrigins: Record<string, { status: string | null; statusTurns: number; dice?: number[] }>;
 }
 
 export type clientGameState = {

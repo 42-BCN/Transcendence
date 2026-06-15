@@ -2,15 +2,123 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { MapControls, OrthographicCamera } from '@react-three/drei';
+import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { useShallow } from 'zustand/react/shallow';
+import { Crawler } from './meshes/Crawler.jsx';
+import { Drone } from './meshes/Drone.jsx';
+import { Gunner } from './meshes/Gunner.jsx';
+import { Fighter } from './meshes/Fighter.jsx';
+import { Generator } from './meshes/Generator.jsx';
+import { Mage } from './meshes/Mage.jsx';
+import { Alchemist } from './meshes/Alchemist.jsx';
+import { Assassin } from './meshes/Assassin.jsx';
+import { Paladin } from './meshes/Paladin.jsx';
 
 const s = 0.975;
+
+function FloatingVfx({ entityId }: { entityId: string }) {
+  const entries = useGame(
+    useShallow((s) => Object.values(s.vfx).filter((v) => v.eid === entityId))
+  );
+
+  useEffect(() => {
+    const STYLE_ID = 'float-vfx-keyframes';
+    if (!document.getElementById(STYLE_ID)) {
+      const style = document.createElement('style');
+      style.id = STYLE_ID;
+      style.textContent = `
+        @keyframes floatUp {
+          0%   { opacity: 1; transform: translateY(0px);   }
+          70%  { opacity: 1;                               }
+          100% { opacity: 0; transform: translateY(-40px); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+  if (entries.length === 0)
+    return null;
+  return (
+    <>
+      {entries.map((v) => (
+        <Html key={v.vfxid} position={[0, 1.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[100, 0]}>
+          <span
+            style={{
+              display: 'block',
+              animation: 'floatUp 1.4s ease-out forwards',
+              fontWeight: 'bold',
+              fontSize: 18,
+              whiteSpace: 'nowrap',
+              textShadow: '0 0 4px #000',
+              color:
+                v.type === 'damage' ? '#ff4444' :
+                  v.type === 'doom' ? '#ff8800' :
+                    v.type === 'shield' ? '#4488ff' :
+                      v.type === 'boost' ? '#44ff88' :
+                        v.type === 'burn' ? '#ff6600' :
+                          v.type === 'restrain' ? '#cc88ff' :
+                            v.type === 'oxidation' ? '#88ccff' :
+                              v.type === 'miss' ? '#ffffff' :
+                                '#ffcc00',
+            }}
+          >
+            {v.label}
+          </span>
+        </Html>
+      ))}
+    </>
+  );
+}
+
+function EntityEffects({ id, isHovered }: { id: string; isHovered: boolean }) {
+  const isSelected = useGame((s) => s.selectedEnt === id);
+  const entityTint = useGame((s) => (s as any).entityTints?.[id] ?? null);
+  const hasTint = Boolean(entityTint);
+  const tintColor = entityTint?.color ?? null;
+  let lightColor: string | null = tintColor;
+  let lightIntensity = hasTint ? 7 : 0;
+  if (!lightColor) {
+    if (isHovered) {
+      lightColor = 'white';
+      lightIntensity = 2.5;
+    } else if (isSelected) {
+      lightColor = '#99aaff';
+      lightIntensity = 1.2;
+    }
+  }
+  return (
+    <>
+      {lightColor && lightIntensity > 0 && (
+        <pointLight
+          color={lightColor}
+          intensity={lightIntensity}
+          distance={2.5}
+          decay={2}
+          position={[0, 0.8, 0]}
+        />
+      )}
+      {isSelected && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.45, 0]}>
+          <circleGeometry args={[0.55, 32]} />
+          <meshStandardMaterial
+            color="white"
+            emissive="white"
+            emissiveIntensity={hasTint ? 0 : 1.5}
+            transparent
+            opacity={hasTint ? 0 : 0.45}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
+    </>
+  );
+}
 
 function AbButtons() {
   const ent = useGame((state) => state.getSel());
@@ -21,6 +129,7 @@ function AbButtons() {
       return null;
     return state.players[ent.id]?.abilitiesCD
       ?? state.clones[ent.id]?.abilitiesCD
+      ?? state.enemies[ent.id]?.abilitiesCD
       ?? null;
   });
   const assignedCharacter = useGame((state) => state.assignedCharacter);
@@ -120,7 +229,7 @@ function Reset() {
   const history = useGame((state) => state.history);
   const resetHistory = useGame((state) => state.resetHistory);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
-  if (!history.some((h) => h.who === assignedCharacter))
+  if (!history.some((h) => h.who === assignedCharacter && h.type !== 'forcedMov'))
     return null;
   return (
     <Button
@@ -158,8 +267,6 @@ function EndPlan() {
 
 function HUD() {
   const t = useTranslations('features.game');
-  const typeEnt = useGame((state) => state.typeEnt);
-  const canSelect = useGame((state) => state.selectedEnt);
   const ent = useGame((state) => state.getSel());
   return !ent ? null : (
     <>
@@ -174,6 +281,11 @@ function HUD() {
             formatOptions={{ style: 'decimal' }}
           />
         </div>
+        {ent.status && (
+          <div className="text-sm text-yellow-200 bg-black/60 px-2 py-1 rounded w-fit">
+            ⚡ {ent.status}{ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
+          </div>
+        )}
         <DiceButtons />
       </Stack>
     </>
@@ -186,7 +298,12 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   const isHighlighted = useGame((state) => state.highlights[id]);
   const selectedAb = useGame((state) => state.selectedAb);
   const isSelectable = useGame((state) => state.selectables[id]);
+  const isAoePreview = useGame((state) => state.aoePreview[id]);
+  const setAoePreview = useGame((state) => state.setAoePreview);
+  const clearAoePreview = useGame((state) => state.clearAoePreview);
+  const addHistoryAbility = useGame((state) => state.addHistoryAbility);
   const [isHovered, setHover] = useState(false);
+
   let color = 'orange';
   if (id.split(',')[1] === '0') color = 'green';
   else if (id.split(',')[1] === '2') color = 'purple';
@@ -195,22 +312,26 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   else if (isSelectable) color = 'red';
   else if (isHovered) color = 'lightgray';
   if ((color === 'hotpink' || color === 'red') && isHovered) color = 'lightpink';
+  if (isAoePreview) color = '#ffee00';
+
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}
       onPointerOver={(event) => {
         event.stopPropagation();
         setHover(true);
+        if (isSelectable && selectedAb) setAoePreview(id);
       }}
       onPointerOut={(event) => {
         event.stopPropagation();
         setHover(false);
+        if (isSelectable && selectedAb) clearAoePreview();
       }}
       onClick={(event) => {
-        if (phase !== 'PLAN')
-          return;
+        if (phase !== 'PLAN') return;
         event.stopPropagation();
-        moveClone(id);
+        if (isSelectable && isHovered) addHistoryAbility(id);
+        else if (isHighlighted && !selectedAb && isHovered) moveClone(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -219,42 +340,116 @@ function Tile({ id, pos }: { id: string; pos: pos }) {
   );
 }
 
+export function getMesh(id: string) {
+  const name = id.split('_')[0].toLowerCase();
+  switch (name) {
+    case 'crawler':
+      return Crawler;
+    case 'drone':
+      return Drone;
+    case 'centurion':
+      return Fighter;
+    case 'generator':
+      return Generator;
+    case 'jaeger':
+      return Gunner;
+    case 'alchemist':
+      return Alchemist;
+    case 'paladin':
+      return Paladin;
+    case 'mage':
+      return Mage;
+    case 'assassin':
+      return Assassin;
+  }
+}
+
+function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
+  const phase = useGame((s) => s.phase);
+  const enemy = useGame((s) => s.enemies[enemyId]);
+  const players = useGame(useShallow((s) => s.players));
+  const clones = useGame(useShallow((s) => s.clones));
+
+  if (phase !== 'PLAN' || !enemy || (enemy as any).isDead)
+    return null;
+  if (!(enemy as any).abilities?.length || !(enemy as any).dice?.length)
+    return null;
+  const epos = (enemy as any).position;
+  let closestId: string | null = null;
+  let minDist = Infinity;
+  const consider = (id: string, pos: { x: number; y: number; z: number }) => {
+    const d = Math.abs(pos.x - epos.x) + Math.abs(pos.z - epos.z);
+    if (d < minDist) { minDist = d; closestId = id; }
+  };
+  Object.values(players).forEach((p: any) => {
+    if (!p.isDead) consider(p.id, p.position);
+  });
+  Object.values(clones).forEach((c: any) => {
+    if (!c.isDead) consider(c.id.replace('clone_', ''), c.position);
+  });
+  if (!closestId)
+    return null;
+  return (
+    <Html position={[0, 0.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[80, 0]}>
+      <div style={{
+        background: 'rgba(0,0,0,0.82)',
+        color: '#ffaa00',
+        border: '1px solid #ffaa00',
+        borderRadius: 3,
+        fontSize: 10,
+        padding: '1px 5px',
+        whiteSpace: 'nowrap',
+        fontWeight: 'bold',
+        letterSpacing: '0.03em',
+      }}>
+        Target: {closestId}
+      </div>
+    </Html>
+  );
+}
+
 function Enemy({ id, pos }: { id: string; pos: pos }) {
   const eRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
   const selected = useGame((state) => state.selectedEnt);
+  const selectedDice = useGame((state) => state.selectedDice);
+  const selectedAb = useGame((state) => state.selectedAb);
   const canSelect = useGame((state) => state.canSelect);
+  const addHistoryAbility = useGame((state) => state.addHistoryAbility);
   const isTarget = useGame((state) => state.selectables[id]);
+  const setAoePreview = useGame((state) => state.setAoePreview);
+  const clearAoePreview = useGame((state) => state.clearAoePreview);
   const [isHovered, setHover] = useState(false);
-  let color = selected === id ? 'lightpink' : 'violet';
-  if (isTarget) color = 'red';
-  else if (isHovered) color = 'lightgray';
-  if (color === 'red' && isHovered) color = 'lightpink';
 
+  const Model = getMesh(id);
   return (
-    <mesh
-      position={[pos.x, pos.y, pos.z]}
-      ref={eRef}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHover(true);
-      }}
-      onPointerOut={(event) => {
-        event.stopPropagation();
-        setHover(false);
-      }}
-    >
-      {/* onClick={(event) => { */}
-      {/*   if (phase !== "PLAN") */}
-      {/*     return; */}
-      {/*   event.stopPropagation(); */}
-      {/*   if (canSelect) */}
-      {/*     selectEntity(id); */}
-      {/* }} */}
-      <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    <group position={[pos.x, pos.y, pos.z]}>
+      <Model
+        position={[0, 0, 0]}
+        ref={eRef}
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          setHover(true);
+          if (isTarget && selectedAb) setAoePreview(id);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
+          setHover(false);
+          if (isTarget && selectedAb) clearAoePreview();
+        }}
+        onClick={(event) => {
+          if (phase !== 'PLAN') return;
+          event.stopPropagation();
+          if (canSelect) selectEntity(id);
+          else if (isTarget && selected && selectedDice && selectedAb)
+            addHistoryAbility(id);
+        }}
+      />
+      <EntityEffects id={id} isHovered={isHovered} />
+      <FloatingVfx entityId={id} />
+      <EnemyTargetIndicator enemyId={id} />
+    </group>
   );
 }
 
@@ -268,37 +463,39 @@ function Clone({ id, pos }: { id: string; pos: pos }) {
   const canSelect = useGame((state) => state.canSelect);
   const addHistoryAbility = useGame((state) => state.addHistoryAbility);
   const isTarget = useGame((state) => state.selectables[id]);
+  const setAoePreview = useGame((state) => state.setAoePreview);
+  const clearAoePreview = useGame((state) => state.clearAoePreview);
   const [isHovered, setHover] = useState(false);
 
-  let color = selected === id ? 'white' : 'cyan';
-  if (isTarget) color = 'pink';
-  else if (isHovered) color = 'lightblue';
-  if (color === 'pink' && isHovered) color = 'lightpink';
-
+  const meshid = id.replace('clone_', '');
+  const Model = getMesh(meshid);
   return (
-    <mesh
-      position={[pos.x, pos.y, pos.z]}
-      ref={pRef}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHover(true);
-      }}
-      onPointerOut={(event) => {
-        event.stopPropagation();
-        setHover(false);
-      }}
-      onClick={(event) => {
-        if (phase !== 'PLAN') return;
-        event.stopPropagation();
-        if (canSelect) selectEntity(id);
-        else if (isTarget && selected && selectedDice && selectedAb)
-          // ts errors
-          addHistoryAbility(id);
-      }}
-    >
-      <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    <group position={[pos.x, pos.y, pos.z]}>
+      <Model
+        position={[0, 0, 0]}
+        ref={pRef}
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          setHover(true);
+          if (isTarget && selectedAb) setAoePreview(id);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
+          setHover(false);
+          if (isTarget && selectedAb) clearAoePreview();
+        }}
+        onClick={(event) => {
+          if (phase !== 'PLAN')
+            return;
+          event.stopPropagation();
+          if (canSelect) selectEntity(id);
+          else if (isTarget && selected && selectedDice && selectedAb)
+            addHistoryAbility(id);
+        }}
+      />
+      <EntityEffects id={id} isHovered={isHovered} />
+      <FloatingVfx entityId={id} />
+    </group>
   );
 }
 
@@ -306,41 +503,41 @@ function Player({ id, pos }: { id: string; pos: pos }) {
   const pRef = useRef(null);
   const phase = useGame((state) => state.phase);
   const selectEntity = useGame((state) => state.selectEntity);
-  const selected = useGame((state) => state.selectedEnt);
   const canSelect = useGame((state) => state.canSelect);
   const addHistoryAbility = useGame((state) => state.addHistoryAbility);
+  const selectedAb = useGame((state) => state.selectedAb);
   const isTarget = useGame((state) => state.selectables[id]);
+  const setAoePreview = useGame((state) => state.setAoePreview);
+  const clearAoePreview = useGame((state) => state.clearAoePreview);
   const [isHovered, setHover] = useState(false);
 
-  let color = selected === id ? 'white' : 'blue';
-  if (isTarget) color = 'pink';
-  else if (isHovered) color = 'lightblue';
-  if (color === 'pink' && isHovered) color = 'lightpink';
-
+  const Model = getMesh(id);
   return (
-    <mesh
-      position={[pos.x, pos.y, pos.z]}
-      ref={pRef}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHover(true);
-      }}
-      onPointerOut={(event) => {
-        event.stopPropagation();
-        setHover(false);
-      }}
-      onClick={(event) => {
-        if (phase !== 'PLAN') return;
-        event.stopPropagation();
-        if (canSelect) selectEntity(id);
-        else if (isTarget)
-          // ts errors
-          addHistoryAbility(id);
-      }}
-    >
-      <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    <group position={[pos.x, pos.y, pos.z]}>
+      <Model
+        position={[0, 0, 0]}
+        ref={pRef}
+        onPointerOver={(event) => {
+          event.stopPropagation();
+          setHover(true);
+          if (isTarget && selectedAb) setAoePreview(id);
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation();
+          setHover(false);
+          if (isTarget && selectedAb) clearAoePreview();
+        }}
+        onClick={(event) => {
+          if (phase !== 'PLAN')
+            return;
+          event.stopPropagation();
+          if (canSelect) selectEntity(id);
+          else if (isTarget) addHistoryAbility(id);
+        }}
+      />
+      <EntityEffects id={id} isHovered={isHovered} />
+      <FloatingVfx entityId={id} />
+    </group>
   );
 }
 
@@ -354,6 +551,7 @@ function Scene() {
     <>
       <ambientLight intensity={Math.PI / 4} />
       <pointLight position={[7, 6, 7]} decay={0} intensity={2.5} />
+      <Environment preset="city" />
       <OrthographicCamera makeDefault position={[5, 5, 5]} zoom={50} near={-50} far={100} />
       <MapControls makeDefault target={[0, 0, 0]} maxPolarAngle={Math.PI / 2} minPolarAngle={0} />
       {Object.keys(tiles).map((t) => {
@@ -407,6 +605,15 @@ function Scene() {
   );
 }
 
+function DoomCounter() {
+  const percent = useGame((state) => state.doom);
+  return (
+    <div className="z-10 absolute left-32 bottom-8">
+      {percent ?? "ERROR"}
+    </div>
+  )
+}
+
 function name(phase: string) {
   switch (phase) {
     case 'PLAN':
@@ -415,25 +622,164 @@ function name(phase: string) {
       return 'EXECUTION PHASE';
     case 'ENEMY':
       return 'ENEMY PHASE';
-    default:
+    case 'END':
       return 'END PHASE';
+    case 'WIN':
+      return 'WIN PHASE';
+    case 'LOSE':
+      return 'LOSE PHASE';
+    default:
+      return 'ERROR';
+  }
+}
+
+function GamePhase() {
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
+  const phase = useGame((state) => state.phase);
+  return (
+    <div className="absolute top-4 left-32 transform z-20 bg-black text-white px-4 py-2 rounded">
+      {name(phase)}
+      {assignedCharacter}
+    </div>
+  )
+}
+
+const CLASS_COLOR: Record<string, string> = {
+  assassin: '#a855f7',
+  paladin: '#facc15',
+  mage: '#38bdf8',
+  alchemist: '#4ade80',
+  spectator: '#6b7280',
+};
+
+const CLASS_ICON: Record<string, string> = {
+  assassin: '🗡️',
+  paladin: '🛡️',
+  mage: '🔮',
+  alchemist: '⚗️',
+  spectator: '👁️',
+};
+
+function TopBar() {
+  const doom = useGame((s) => s.doom);
+  const phase = useGame((s) => s.phase);
+  const turn = useGame((s) => s.turn);
+  const pct = Math.min(Math.max(doom, 0), 100);
+
+  const fillColor =
+    pct >= 80 ? '#ef4444' :
+      pct >= 50 ? '#f97316' :
+        '#eab308';
+
+  return (
+    <div
+      className="absolute top-0 left-8 right-16 z-30 h-8 flex items-center px-4 gap-4 transition-colors duration-700"
+      style={{
+        background: pct >= 80 ? 'rgba(60,0,0,0.94)' : 'rgba(0,0,0,0.90)',
+        borderBottom: `1px solid ${pct >= 80 ? '#ef444430' : 'rgba(255,255,255,0.07)'}`,
+      }}
+    >
+      <span className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase shrink-0 w-40">
+        {name(phase)}
+      </span>
+
+      <span className="text-[10px] font-mono text-gray-600 shrink-0">
+        Turn {String(turn).padStart(2, '0')}
+      </span>
+
+      <div className="flex flex-1 items-center gap-2">
+        <span className="text-[11px] shrink-0" style={{ color: fillColor }}>☠</span>
+        <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-800">
+          <div
+            className="h-full rounded-full transition-all duration-700 ease-out"
+            style={{
+              width: `${pct}%`,
+              background: `linear-gradient(90deg, ${fillColor}55, ${fillColor})`,
+            }}
+          />
+        </div>
+        <span
+          className="text-[11px] font-mono w-8 text-right shrink-0 tabular-nums"
+          style={{ color: fillColor }}
+        >
+          {pct}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function CharacterCard() {
+  const assignedCharacter = useGame((s) => s.assignedCharacter);
+  const color = CLASS_COLOR[assignedCharacter] ?? CLASS_COLOR.spectator;
+  const icon = CLASS_ICON[assignedCharacter] ?? '?';
+
+  return (
+    <div
+      className="absolute top-10 left-16 z-20 flex items-center gap-2.5 px-3 py-2 rounded select-none"
+      style={{
+        background: 'rgba(0,0,0,0.82)',
+        border: `1px solid ${color}30`,
+        boxShadow: `inset 2px 0 0 ${color}`,
+      }}
+    >
+      <span className="text-base leading-none">{icon}</span>
+      <div className="leading-none">
+        <div className="text-[9px] tracking-[0.18em] text-gray-600 uppercase mb-1">
+          Playing as
+        </div>
+        <div className="text-[13px] font-bold uppercase tracking-wide leading-none" style={{ color }}>
+          {assignedCharacter}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HandlePhaseScreen() {
+  const phase = useGame((state) => state.phase);
+  switch (phase) {
+    case 'WIN':
+      return (
+        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+          <div className="text-center">
+            <h2>YOU WIN!</h2>
+          </div>
+        </div>
+      )
+    case 'LOSE':
+      return (
+        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+          <div className="text-center">
+            <h2>YOU LOSE!</h2>
+          </div>
+        </div>
+      )
+    default:
+      return (
+        <>
+          <TopBar />
+          <CharacterCard />
+          <HUD />
+          <Reset />
+          <EndPlan />
+          <Canvas>
+            <Scene />
+          </Canvas>
+        </>
+      )
   }
 }
 
 export function Game() {
-  const phase = useGame((state) => state.phase);
-  const assignedCharacter = useGame((state) => state.assignedCharacter);
-  const selectedDice = useGame((state) => state.selectedDice);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
-  // const handleRightClick = useGame((state) => state.handleRightClick);
+  const assignedCharacter = useGame((state) => state.assignedCharacter);
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const initRef = useRef(false);
 
   useEffect(() => {
-    // if (!initRef.current) {
-    //   initRef.current = true;
     initSocketListeners();
 
     return () => {
@@ -461,22 +807,5 @@ export function Game() {
         <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
       </div>
     </div>
-  ) : (
-    <>
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 bg-black text-white px-4 py-2 rounded">
-        {name(phase)}
-        {assignedCharacter}
-      </div>
-      {selectedDice && phase === 'PLAN' && (
-        <Text className="absolute z-10 top-[10%] left-[10%] flex gap-4">{`d${selectedDice}`}</Text>
-      )}
-      <HUD />
-      <Reset />
-      <EndPlan />
-      <Canvas
-      >
-        <Scene />
-      </Canvas>
-    </>
-  );
+  ) : <HandlePhaseScreen />
 }
