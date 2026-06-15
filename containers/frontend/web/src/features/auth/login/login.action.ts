@@ -10,8 +10,8 @@ import { type LoginRes } from '@/contracts/api/auth/auth.contract';
 
 export async function loginAction(_prevState: unknown, formData: FormData) {
   const result = await withServerAction(async () => {
-    const identifier = String(formData.get('identifier') ?? '');
-    const password = String(formData.get('password') ?? '');
+    const identifier = String(formData.get('identifier') ?? '').toLowerCase();
+   	const password = String(formData.get('password') ?? '');
 
     const { data, headers } = await fetchServer<LoginRes>('/auth/login', 'POST', {
       identifier,
