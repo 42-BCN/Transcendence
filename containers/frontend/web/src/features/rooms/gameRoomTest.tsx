@@ -4,10 +4,10 @@ import type { FormEvent } from 'react';
 import {
   Form,
   SubmitButton,
-  TextAreaField,
+  TextField,
 } from '@components';
 
-import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
+import type { gameRoomState, PlayerState } from '@/contracts/sockets/rooms/gameRooms.schema';
 
 import {
   GameRoomSocketJoinAnyRoom,
@@ -40,7 +40,7 @@ export function GameRoomTest({
   gameRoomsErrorInfo,
 }: GameRoomTestProps) {
 
-  const teammates = gameRoomStateCtx.teammates.map((user) => (
+  const teammates = gameRoomStateCtx.teammates.map((user: PlayerState) => (
     <li key={user.userId}>{user.userName} (): {user.userId}</li>
   )
   );
@@ -84,7 +84,7 @@ export function GameRoomTest({
 
       <h4>join room by id form.</h4>
       <Form onSubmit={makeGameRoomAction(GameRoomSocketJoin)}>
-        <TextAreaField
+        <TextField
           name="gameRoomId"
           labelKey="features.game.room.fields.gameRoomId"
         />

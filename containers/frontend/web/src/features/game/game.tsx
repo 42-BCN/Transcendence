@@ -840,7 +840,7 @@ export function Game() {
     );
   }
 
-  if (mapBounds.width > 0 && activePlayers.length < 4) {
+  if (mapBounds.width > 0 && (activePlayers?.length ?? 0) < 4) {
     return (
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center max-w-md px-6">

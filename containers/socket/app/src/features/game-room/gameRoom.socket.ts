@@ -62,6 +62,12 @@ function broadcastRoomUpdate(socket: Socket, gameRoomId: number, gameRoomState: 
 }
 
 function handleJoinResult(socket: Socket, username: string, gameRoom: ReturnType<typeof gameRoomsManager.joinUserToGameRoom>) {
+  if (gameRoom === 'error:no_assigned_room') {
+    emitGameRoomError(socket, 'not on any room.');
+    emitEmptyGameRoomState(socket);
+    return;
+  }
+
   if (gameRoom === 'error:alredy_joined_another_room') {
     emitGameRoomError(socket, 'alredy in a room.');
     updateGameRoomState(socket);
