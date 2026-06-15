@@ -14,6 +14,11 @@ export class GameRoomsManager {
   nextGameRoomId = 1;
   gameRooms = new Map<number, gameRoomState>();
   memberRoomIds = new Map<string, number>();
+  onRoomDeleted?: (roomId: number) => void;
+
+  setOnRoomDeleted(callback: ((roomId: number) => void) | undefined) {
+    this.onRoomDeleted = callback;
+  }
 
   printInfo() {
     console.log('[ gameRoom ][ debug ] rooms: ', this.gameRooms);
@@ -141,6 +146,7 @@ export class GameRoomsManager {
 
     if (gameRoom.teammates.length === 0) {
       this.gameRooms.delete(gameRoomId);
+      this.onRoomDeleted?.(gameRoomId);
     }
 
     return gameRoom;

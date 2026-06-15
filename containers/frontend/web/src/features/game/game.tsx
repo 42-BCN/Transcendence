@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame, type pos as Position } from './store';
@@ -10,6 +10,7 @@ import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { useShallow } from 'zustand/react/shallow';
+import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
 import { Crawler } from './meshes/Crawler.jsx';
 import { Drone } from './meshes/Drone.jsx';
 import { Gunner } from './meshes/Gunner.jsx';
@@ -780,22 +781,30 @@ function HandlePhaseScreen() {
 }
 
 export function Game() {
+  const roomsStore = useContext(RoomsStoreContext);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
+  const connectionError = useGame((state) => state.connectionError);
+  const activePlayers = useGame((state) => state.activePlayers);
   const mapBounds = useGame((state) => state.mapBounds);
   const [debugInfo, setDebugInfo] = useState('Initializing...');
-  const initRef = useRef(false);
-  
+  const roomState = roomsStore?.roomState;
+  const isRoomFull = roomState?.isGameRoomFull ?? false;
 
 
   useEffect(() => {
+    if (!isRoomFull) {
+      cleanupSocketListeners();
+      return;
+    }
+
     initSocketListeners();
 
     return () => {
       cleanupSocketListeners();
     };
-  }, []);
+  }, [cleanupSocketListeners, initSocketListeners, isRoomFull]);
 
   useEffect(() => {
     const debugTimer = setInterval(() => {
@@ -808,6 +817,39 @@ export function Game() {
       clearInterval(debugTimer);
     };
   }, [mapBounds]);
+
+  if (connectionError) {
+    return (
+      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+        <div className="text-center max-w-md px-6">
+          <h2>Game unavailable</h2>
+          <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isRoomFull) {
+    return (
+      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+        <div className="text-center max-w-md px-6">
+          <h2>Room not ready</h2>
+          <p className="text-sm text-gray-300 mt-4">The game route is only available when the room has 4 players.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (mapBounds.width > 0 && activePlayers.length < 4) {
+    return (
+      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+        <div className="text-center max-w-md px-6">
+          <h2>Game paused</h2>
+          <p className="text-sm text-gray-300 mt-4">A player disconnected. The game is blocked until the room is full again.</p>
+        </div>
+      </div>
+    );
+  }
 
   return !mapBounds || mapBounds.width === 0 ? (
     <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">

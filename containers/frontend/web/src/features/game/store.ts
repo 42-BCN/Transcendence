@@ -112,6 +112,7 @@ type gameState = globalGameState & localGameState & {
 
   //local state
   assignedCharacter: string;
+  connectionError: string | null;
   typeEnt: string | null;
   affected: Record<string, boolean>;
   vfx: Record<string, vfx>;
@@ -205,6 +206,7 @@ function getAoePreviewTiles(
 export const useGame = create<gameState>()((set, get) => ({
 
   assignedCharacter: 'spectator',
+  connectionError: null,
 
   turn: 1,
   doom: 0,
@@ -324,9 +326,10 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:join');
     gameSocket.off('game:server:globalSync');
     gameSocket.off('game:server:sync');
+    (gameSocket as any).off('game:server:error');
     const handleJoin = (id: string) => {
       console.log('👤 Player joined with ID:', id);
-      set({ assignedCharacter: id });
+      set({ assignedCharacter: id, connectionError: null });
     };
 
     const handleGlobalSync = (state: globalGameState) => {
@@ -415,6 +418,14 @@ export const useGame = create<gameState>()((set, get) => ({
       });
     };
 
+    const handleGameError = (message: string) => {
+      console.error('🎮 game socket error:', message);
+      set({
+        connectionError: message,
+        mapBounds: { width: 0, height: 0, depth: 0 },
+      });
+    };
+
     gameSocket.on('connect', () => {
       console.log('✅ Connected to game socket server');
     });
@@ -427,6 +438,7 @@ export const useGame = create<gameState>()((set, get) => ({
     (gameSocket as any).on('game:server:globalSync', handleGlobalSync);
     gameSocket.on('game:server:sync', handleSync);
     (gameSocket as any).on('game:server:vfx', handleVfx);
+    (gameSocket as any).on('game:server:error', handleGameError);
 
     ensureChatSessionIdentity()
       .finally(() => gameSocket.connect());
@@ -441,6 +453,7 @@ export const useGame = create<gameState>()((set, get) => ({
     (gameSocket as any).off('game:server:globalSync');
     gameSocket.off('game:server:sync');
     (gameSocket as any).off('game:server:vfx');
+    (gameSocket as any).off('game:server:error');
     gameSocket.disconnect();
   },
 }));

@@ -25,6 +25,30 @@ export const gameState: serverGameState = {
   planningStatusOrigins: {}
 };
 
+let stateQueue = Promise.resolve();
+
+function applyState(target: serverGameState, source: serverGameState) {
+  for (const key of Object.keys(target) as Array<keyof serverGameState>) {
+    delete (target as Record<string, unknown>)[key];
+  }
+  Object.assign(target, source);
+}
+
+export async function runWithGameState<T>(state: serverGameState, operation: () => Promise<T> | T): Promise<T> {
+  const run = async () => {
+    applyState(gameState, state);
+    try {
+      return await operation();
+    } finally {
+      applyState(state, gameState);
+    }
+  };
+
+  const result = stateQueue.then(run);
+  stateQueue = result.then(() => undefined, () => undefined);
+  return result;
+}
+
 export function initClientGameState(id: string) {
   return ({
     id: id,
