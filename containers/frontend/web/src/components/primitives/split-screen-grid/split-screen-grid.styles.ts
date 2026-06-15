@@ -20,12 +20,12 @@ export function splitScreenGridStyles({
 
   return {
     wrapper:
-      'relative flex w-full flex-col md:absolute md:inset-0 md:grid md:max-h-dvh md:flex-1 md:grid-cols-[8fr_4fr]',
+      'relative flex w-full flex-col md:absolute md:inset-0 md:grid md:max-h-screen md:max-h-[100dvh] md:flex-1 md:grid-cols-[8fr_4fr]',
     full: cn(
-      `relative order-1 min-w-0 overflow-hidden ${mobileFullHeight} md:order-none md:col-span-2 md:col-start-1 md:row-start-1 md:h-[100dvh]`,
+      `relative order-1 min-w-0 overflow-hidden ${mobileFullHeight} md:order-none md:col-span-2 md:col-start-1 md:row-start-1 md:h-screen md:h-[100dvh]`,
     ),
     side: cn(
-      `z-30 order-2 min-w-0 ${mobileSidePosition} pointer-events-none md:order-none md:relative md:col-start-2 md:row-start-1 md:h-[100dvh] md:inset-auto`,
+      `z-30 order-2 min-w-0 ${mobileSidePosition} pointer-events-none md:order-none md:relative md:col-start-2 md:row-start-1 md:h-screen md:h-[100dvh] md:inset-auto`,
     ),
   };
 }

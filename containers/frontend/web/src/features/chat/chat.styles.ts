@@ -1,6 +1,6 @@
 export const chatStyles = {
   wrapper:
-    'h-full min-h-0 min-w-0 flex-1 backdrop-blur-sm rounded-xl overflow-hidden border-l border-gray-200/20 pointer-events-auto',
+    'h-full min-h-0 min-w-0 flex-1 backdrop-blur-sm glass-fallback rounded-xl overflow-hidden border-l border-gray-200/20 pointer-events-auto',
 
   header: {
     wrapper:
