@@ -309,7 +309,7 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
       .sort((a: { name: string; ab: abilityInfo }, b: { name: string; ab: abilityInfo }) =>
         (b.ab.range + (b.ab.AoErange ?? 0)) -
         (a.ab.range + (a.ab.AoErange ?? 0))
-      )
+      );
     if (!validAbs.length)
       continue;
     const { name: chosenName, ab: chosenAb } = validAbs[0];
