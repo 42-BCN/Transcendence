@@ -223,6 +223,7 @@ function SocialContent() {
   const searchQuery = useSocialStore((state) => state.searchQuery);
   const searchResults = useSocialStore((state) => state.searchResults);
   const errors = useSocialStore((state) => state.errors);
+  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
 
   if (searchQuery.trim() !== '') {
     const isEmpty =
@@ -250,8 +251,6 @@ function SocialContent() {
       </ScrollArea>
     );
   }
-
-  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
 
   return (
     <Tabs defaultSelectedKey="friends" className="flex flex-1 min-h-0 flex-col">
