@@ -80,12 +80,20 @@ function validateFriendshipSeed(seed: FriendshipSeed): void {
   }
 }
 
+const AVATAR_OPTIONS = [
+  '/avatars/avatar-1.png',
+  '/avatars/avatar-2.png',
+  '/avatars/avatar-3.png',
+  '/avatars/avatar-4.png',
+] as const;
+
 async function upsertLocalUser(args: {
   email: string;
   username: string;
   password: string;
+  avatar?: string | null;
 }): Promise<SeedUserRef> {
-  const { email, username, password } = args;
+  const { email, username, password, avatar = null } = args;
   const passwordHash = await hashPassword(password);
 
   return prisma.user.upsert({
@@ -100,6 +108,7 @@ async function upsertLocalUser(args: {
       failedAttempts: 0,
       lockedUntil: null,
       lastLoginAt: null,
+      avatar,
     },
     create: {
       email,
@@ -112,6 +121,7 @@ async function upsertLocalUser(args: {
       failedAttempts: 0,
       lockedUntil: null,
       lastLoginAt: null,
+      avatar,
     },
     select: {
       id: true,
@@ -121,11 +131,12 @@ async function upsertLocalUser(args: {
   });
 }
 
-async function insertSpecificUser(user: string): Promise<void> {
+async function insertSpecificUser(user: string, avatar?: string): Promise<void> {
   await upsertLocalUser({
     email: `${user}@fakemail.com`,
     username: user,
     password: DEFAULT_PASSWORD,
+    avatar,
   });
 }
 
@@ -134,17 +145,22 @@ async function insertLockoutTestUser(): Promise<void> {
     email: LOCKOUT_TEST_EMAIL,
     username: LOCKOUT_TEST_USERNAME,
     password: LOCKOUT_TEST_PASSWORD,
+    avatar: null,
   });
 }
 
 async function seedPokemonUsers(): Promise<UserMap> {
   const users = new Map<string, SeedUserRef>();
 
-  for (const username of POKEMON_USERNAMES) {
+  for (let i = 0; i < POKEMON_USERNAMES.length; i++) {
+    const username = POKEMON_USERNAMES[i];
+    const avatar = AVATAR_OPTIONS[i % AVATAR_OPTIONS.length];
+
     const user = await upsertLocalUser({
       email: `${username}@seed.local`,
       username,
       password: DEFAULT_PASSWORD,
+      avatar,
     });
 
     users.set(username, user);
@@ -224,11 +240,11 @@ export async function seed(): Promise<void> {
   }
 
   try {
-    await insertSpecificUser('capapes');
-    await insertSpecificUser('mfontser');
-    await insertSpecificUser('joanavar');
-    await insertSpecificUser('cmanica');
-    await insertSpecificUser('tatahere');
+    await insertSpecificUser('capapes', '/avatars/avatar-1.png');
+    await insertSpecificUser('mfontser', '/avatars/avatar-2.png');
+    await insertSpecificUser('joanavar', '/avatars/avatar-3.png');
+    await insertSpecificUser('cmanica', '/avatars/avatar-4.png');
+    await insertSpecificUser('tatahere', '/avatars/avatar-3.png');
     await insertLockoutTestUser();
 
     const pokemonUsers = await seedPokemonUsers();
