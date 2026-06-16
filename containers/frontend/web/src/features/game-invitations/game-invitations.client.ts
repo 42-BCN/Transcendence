@@ -2,9 +2,8 @@
 
 import type {
   AcceptGameInvitationResponse,
-  GetActiveGameInvitationSummaryResponse,
-  GetReceivedRoomInvitationsResponse,
-  GetSentRoomInvitationsResponse,
+  DeclineGameInvitationResponse,
+  GetGameInvitationStateResponse,
   SendGameInvitationResponse,
 } from '@/contracts/api/game-invitations/game-invitations.contracts';
 import { envPublic } from '@/lib/config/env.public';
@@ -13,17 +12,15 @@ function createEndpoint(pathname: string) {
   return `${envPublic.apiBaseUrl.replace(/\/$/, '')}${pathname}`;
 }
 
-export async function fetchActiveGameInvitationSummary() {
-  const response = await fetch(createEndpoint('/protected/game-invitations/active'), {
+export async function fetchGameInvitationState() {
+  const response = await fetch(createEndpoint('/protected/game-invitations/state'), {
     method: 'GET',
     credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-    },
+    headers: { Accept: 'application/json' },
     cache: 'no-store',
   });
 
-  return (await response.json()) as GetActiveGameInvitationSummaryResponse;
+  return (await response.json()) as GetGameInvitationStateResponse;
 }
 
 export async function sendGameInvitation(friendUserId: string) {
@@ -39,35 +36,6 @@ export async function sendGameInvitation(friendUserId: string) {
 
   return (await response.json()) as SendGameInvitationResponse;
 }
-
-export async function fetchSentRoomInvitations(roomId: number) {
-  const response = await fetch(
-    createEndpoint(`/protected/game-invitations/sent-by-room?roomId=${roomId}`),
-    {
-      method: 'GET',
-      credentials: 'include',
-      headers: { Accept: 'application/json' },
-      cache: 'no-store',
-    },
-  );
-
-  return (await response.json()) as GetSentRoomInvitationsResponse;
-}
-
-export async function fetchReceivedRoomInvitations(roomId: number) {
-  const response = await fetch(
-    createEndpoint(`/protected/game-invitations/received-by-room?roomId=${roomId}`),
-    {
-      method: 'GET',
-      credentials: 'include',
-      headers: { Accept: 'application/json' },
-      cache: 'no-store',
-    },
-  );
-
-  return (await response.json()) as GetReceivedRoomInvitationsResponse;
-}
-
 export async function acceptGameInvitation(invitationId: string) {
   const response = await fetch(createEndpoint('/protected/game-invitations/accept'), {
     method: 'POST',
@@ -80,4 +48,18 @@ export async function acceptGameInvitation(invitationId: string) {
   });
 
   return (await response.json()) as AcceptGameInvitationResponse;
+}
+
+export async function declineGameInvitation(invitationId: string) {
+  const response = await fetch(createEndpoint('/protected/game-invitations/decline'), {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ invitationId }),
+  });
+
+  return (await response.json()) as DeclineGameInvitationResponse;
 }

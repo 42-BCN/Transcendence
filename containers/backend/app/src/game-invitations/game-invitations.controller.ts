@@ -3,21 +3,20 @@ import { z } from 'zod';
 
 import type {
   AcceptGameInvitationBody,
+  DeclineGameInvitationBody,
   SendGameInvitationBody,
 } from '@contracts/game-invitations/game-invitations.validation';
 import type {
   AcceptGameInvitationResponse,
-  GetActiveGameInvitationSummaryResponse,
-  GetReceivedRoomInvitationsResponse,
-  GetSentRoomInvitationsResponse,
+  DeclineGameInvitationResponse,
+  GetGameInvitationStateResponse,
   SendGameInvitationResponse,
 } from '@contracts/game-invitations/game-invitations.contracts';
 
 import {
   acceptGameInvitation,
-  getActiveGameInvitationSummary,
-  getReceivedRoomInvitations,
-  getSentRoomInvitations,
+  declineGameInvitation,
+  getGameInvitationState,
   markJoinedRoomInvitations,
   notifyPendingInviteesForSender,
   sendGameInvitation,
@@ -38,17 +37,12 @@ function ensureInternalSecret(req: Request, res: Response): boolean {
 
 const NotifyInviteesBodySchema = z.object({ userId: z.string().uuid() });
 
-function parseRoomIdQuery(req: Request): number | null {
-  const roomId = Number(req.query['roomId']);
-  return Number.isInteger(roomId) && roomId > 0 ? roomId : null;
-}
-
-export async function getActiveGameInvitationSummaryController(
+export async function getGameInvitationStateController(
   req: Request,
-  res: Response<GetActiveGameInvitationSummaryResponse>,
+  res: Response<GetGameInvitationStateResponse>,
 ): Promise<void> {
-  const summary = await getActiveGameInvitationSummary(req.session.userId!);
-  res.status(200).json({ ok: true, data: summary });
+  const state = await getGameInvitationState(req.session.userId!);
+  res.status(200).json({ ok: true, data: state });
 }
 
 export async function sendGameInvitationController(
@@ -67,23 +61,11 @@ export async function acceptGameInvitationController(
   res.status(200).json({ ok: true, data: result });
 }
 
-export async function getSentRoomInvitationsController(
-  req: Request,
-  res: Response<GetSentRoomInvitationsResponse>,
+export async function declineGameInvitationController(
+  req: Request<object, object, DeclineGameInvitationBody>,
+  res: Response<DeclineGameInvitationResponse>,
 ): Promise<void> {
-  const roomId = parseRoomIdQuery(req);
-  if (!roomId) { res.status(400).json({ ok: false }); return; }
-  const result = await getSentRoomInvitations(req.session.userId!, roomId);
-  res.status(200).json({ ok: true, data: result });
-}
-
-export async function getReceivedRoomInvitationsController(
-  req: Request,
-  res: Response<GetReceivedRoomInvitationsResponse>,
-): Promise<void> {
-  const roomId = parseRoomIdQuery(req);
-  if (!roomId) { res.status(400).json({ ok: false }); return; }
-  const result = await getReceivedRoomInvitations(req.session.userId!, roomId);
+  const result = await declineGameInvitation(req.session.userId!, req.body.invitationId);
   res.status(200).json({ ok: true, data: result });
 }
 

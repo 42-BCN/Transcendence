@@ -11,3 +11,9 @@ export const AcceptGameInvitationBodySchema = z.strictObject({
 });
 
 export type AcceptGameInvitationBody = z.infer<typeof AcceptGameInvitationBodySchema>;
+
+export const DeclineGameInvitationBodySchema = z.strictObject({
+  invitationId: z.string().uuid(),
+});
+
+export type DeclineGameInvitationBody = z.infer<typeof DeclineGameInvitationBodySchema>;

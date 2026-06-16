@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { SocialSocketManager } from '@/lib/sockets/friends-socket.manager';
 import { useSocialStore } from '@/providers/social-provider';
 import type {
   DirectMessageUnreadUpdatedPayload,
-  GameInvitationReceivedPayload,
   GameInvitationUpdatedPayload,
 } from '@/contracts/sockets/friendships/friendships.schema';
-import { fetchActiveGameInvitationSummary } from '@/features/game-invitations/game-invitations.client';
+import { fetchGameInvitationState } from '@/features/game-invitations/game-invitations.client';
+import { GameInvitationsStoreContext } from '@/features/game-invitations/store/game-invitations.provider';
 
 export function SocialSocketBridge() {
   const currentUserId = useSocialStore((state) => state.currentUserId);
@@ -19,34 +19,35 @@ export function SocialSocketBridge() {
   const receiveFriendAccepted = useSocialStore((state) => state.receiveFriendAccepted);
   const receiveFriendRejected = useSocialStore((state) => state.receiveFriendRejected);
   const setFriendUnreadMessageCount = useSocialStore((state) => state.setFriendUnreadMessageCount);
-  const setActiveGameInvitationSummary = useSocialStore(
-    (state) => state.setActiveGameInvitationSummary,
-  );
-  const receiveGameInvitationMessage = useSocialStore(
-    (state) => state.receiveGameInvitationMessage,
-  );
 
-  useEffect(() => {
-    if (!currentUserId) {
-      return;
-    }
+  const gameInvitationsStore = useContext(GameInvitationsStoreContext);
 
-    void fetchActiveGameInvitationSummary().then((response) => {
+  const loadCanonicalState = () => {
+    void fetchGameInvitationState().then((response) => {
       if (!response.ok) {
-        setActiveGameInvitationSummary({
-          activeInvitationCount: 0,
-          activeInvitationIds: [],
-        });
+        gameInvitationsStore?.getState().resetInvitationState();
         return;
       }
-
-      setActiveGameInvitationSummary(response.data);
+      gameInvitationsStore?.getState().setInvitationState(response.data);
     });
-  }, [currentUserId, setActiveGameInvitationSummary]);
+  };
+
+  useEffect(() => {
+    if (!currentUserId) return;
+    loadCanonicalState();
+  }, [currentUserId]);
 
   if (!currentUserId) {
     return null;
   }
+
+  const handleInvitationUpdated = (_payload: GameInvitationUpdatedPayload) => {
+    loadCanonicalState();
+  };
+
+  const handleInvitationReceived = () => {
+    loadCanonicalState();
+  };
 
   return (
     <SocialSocketManager
@@ -59,12 +60,8 @@ export function SocialSocketBridge() {
       onUnreadUpdated={(payload: DirectMessageUnreadUpdatedPayload) =>
         setFriendUnreadMessageCount(payload.otherUserId, payload.unreadMessageCount)
       }
-      onGameInvitationUpdated={(payload: GameInvitationUpdatedPayload) =>
-        setActiveGameInvitationSummary(payload)
-      }
-      onGameInvitationReceived={(payload: GameInvitationReceivedPayload) =>
-        receiveGameInvitationMessage(payload)
-      }
+      onGameInvitationUpdated={handleInvitationUpdated}
+      onGameInvitationReceived={handleInvitationReceived}
     />
   );
 }

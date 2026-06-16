@@ -24,6 +24,7 @@ export function toDirectMessage(row: DirectMessageRow): DirectMessage {
         createdAt: row.createdAt.toISOString(),
         expiresAt: row.gameInvitationExpiresAt.toISOString(),
         acceptedAt: row.gameInvitationAcceptedAt?.toISOString() ?? null,
+        cancelledAt: row.gameInvitationCancelledAt?.toISOString() ?? null,
       },
     };
   }

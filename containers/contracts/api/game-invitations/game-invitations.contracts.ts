@@ -4,6 +4,42 @@ import type { GameInvitationsErrorName } from './game-invitations.errors';
 import type { DirectMessage } from '../../sockets/direct-messages/direct-messages.schema';
 import type { gameRoomState } from '../../sockets/rooms/gameRooms.schema';
 
+export type GameInvitationStatus =
+  | 'pending'
+  | 'accepted'
+  | 'expired'
+  | 'unavailable'
+  | 'cancelled';
+
+export type GameInvitationDirection = 'sent' | 'received';
+
+export type GameInvitationView = {
+  id: string;
+  roomId: number;
+  direction: GameInvitationDirection;
+  friendUserId: string;
+  friendUsername: string;
+  inviterId: string;
+  invitedUserId: string;
+  inviterUsername: string;
+  createdAt: string;
+  expiresAt: string;
+  acceptedAt: string | null;
+  cancelledAt: string | null;
+  status: GameInvitationStatus;
+  sourceMessageId: string;
+};
+
+export type GetGameInvitationStateOk = {
+  invitations: GameInvitationView[];
+};
+
+export type GetGameInvitationStateResponse = ApiResponse<
+  GetGameInvitationStateOk,
+  GameInvitationsErrorName,
+  ValidationErrorDetails
+>;
+
 export type GameInvitationSummary = {
   activeInvitationCount: number;
   activeInvitationIds: string[];
@@ -33,46 +69,13 @@ export type AcceptGameInvitationResponse = ApiResponse<
   ValidationErrorDetails
 >;
 
-export type GetActiveGameInvitationSummaryOk = GameInvitationSummary;
-
-export type GetActiveGameInvitationSummaryResponse = ApiResponse<
-  GetActiveGameInvitationSummaryOk,
-  GameInvitationsErrorName,
-  ValidationErrorDetails
->;
-
-export type SentRoomInvitation = {
-  id: string;
-  invitedUserId: string;
-  invitedUsername: string;
-  acceptedAt: string | null;
-  expiresAt: string;
-  createdAt: string;
+export type DeclineGameInvitationOk = {
+  invitationId: string;
+  summary: GameInvitationSummary;
 };
 
-export type GetSentRoomInvitationsOk = {
-  invitations: SentRoomInvitation[];
-};
-
-export type GetSentRoomInvitationsResponse = ApiResponse<
-  GetSentRoomInvitationsOk,
-  GameInvitationsErrorName,
-  ValidationErrorDetails
->;
-
-export type ReceivedRoomInvitation = {
-  id: string;
-  senderUserId: string;
-  senderUsername: string;
-  acceptedAt: string | null;
-  expiresAt: string;
-  createdAt: string;
-};
-
-export type GetReceivedRoomInvitationsOk = { invitations: ReceivedRoomInvitation[] };
-
-export type GetReceivedRoomInvitationsResponse = ApiResponse<
-  GetReceivedRoomInvitationsOk,
+export type DeclineGameInvitationResponse = ApiResponse<
+  DeclineGameInvitationOk,
   GameInvitationsErrorName,
   ValidationErrorDetails
 >;

@@ -4,7 +4,6 @@ import type {
 } from '@/contracts/api/friendships/friendships.contracts';
 import type {
   FriendAcceptedNotificationPayload,
-  GameInvitationReceivedPayload,
   FriendRejectedNotificationPayload,
   FriendRequestNotificationPayload,
 } from '@/contracts/sockets/friendships/friendships.schema';
@@ -152,35 +151,6 @@ function setFriendUnreadMessageCountReducer(
       friend.id === userId ? { ...friend, unreadMessageCount: count } : friend,
     ),
   });
-}
-
-function setActiveGameInvitationSummaryReducer(args: {
-  activeInvitationCount: number;
-  activeInvitationIds: string[];
-}): () => Partial<SocialState> {
-  return () => ({
-    activeGameInvitationCount: args.activeInvitationCount,
-    activeGameInvitationIds: args.activeInvitationIds,
-    hasLoadedGameInvitationSummary: true,
-  });
-}
-
-function receiveGameInvitationMessageReducer(
-  payload: GameInvitationReceivedPayload,
-): (state: SocialState) => Partial<SocialState> {
-  return (state) => {
-    const existingMessages = state.pendingInvitationMessagesByFriendId[payload.friendUserId] ?? [];
-    const alreadyStored = existingMessages.some((message) => message.id === payload.message.id);
-
-    return {
-      pendingInvitationMessagesByFriendId: {
-        ...state.pendingInvitationMessagesByFriendId,
-        [payload.friendUserId]: alreadyStored
-          ? existingMessages
-          : [...existingMessages, payload.message],
-      },
-    };
-  };
 }
 
 function receiveFriendRequestReducer(
@@ -445,11 +415,6 @@ export function createSocialActions(set: SetState) {
 
     setCurrentUserId: (currentUserId: string | null) => set({ currentUserId }),
 
-    setActiveGameInvitationSummary: (args: {
-      activeInvitationCount: number;
-      activeInvitationIds: string[];
-    }) => set(setActiveGameInvitationSummaryReducer(args)),
-
     setFriendPresence: (userId: string, presence: 'online' | 'away' | 'offline') =>
       set(setFriendPresenceReducer(userId, presence)),
 
@@ -465,9 +430,6 @@ export function createSocialActions(set: SetState) {
     receiveFriendRejected: (payload: FriendRejectedNotificationPayload) =>
       set(receiveFriendRejectedReducer(payload)),
 
-    receiveGameInvitationMessage: (payload: GameInvitationReceivedPayload) =>
-      set(receiveGameInvitationMessageReducer(payload)),
-
     removePendingById: (list: PendingListKey, id: string) =>
       set(removePendingByIdReducer(list, id)),
     removeFriendById: (id: string) => set(removeFriendByIdReducer(id)),
@@ -476,58 +438,5 @@ export function createSocialActions(set: SetState) {
 
     addPendingRequest: (friendship: FriendshipPublic, wasAutoAccepted?: boolean) =>
       set(addPendingRequestReducer(friendship, wasAutoAccepted)),
-
-    addSentGameInvitation: (friendUserId: string, invitationId: string, username: string) => {
-      set((state) => ({
-        sentGameInvitationsByFriendId: {
-          ...state.sentGameInvitationsByFriendId,
-          [friendUserId]: { invitationId, username },
-        },
-      }));
-    },
-
-    removeSentGameInvitation: (friendUserId: string) => {
-      set((state) => {
-        const next = { ...state.sentGameInvitationsByFriendId };
-        delete next[friendUserId];
-        return { sentGameInvitationsByFriendId: next };
-      });
-    },
-
-    removeGameInvitationMessage: (friendUserId: string, invitationId: string) => {
-      set((state) => {
-        const existing = state.pendingInvitationMessagesByFriendId[friendUserId] ?? [];
-        const filtered = existing.filter((msg) => msg.content.invitationId !== invitationId);
-        const next = { ...state.pendingInvitationMessagesByFriendId };
-
-        if (filtered.length === 0) {
-          delete next[friendUserId];
-        } else {
-          next[friendUserId] = filtered;
-        }
-
-        return { pendingInvitationMessagesByFriendId: next };
-      });
-    },
-
-    consumePendingInvitationMessages: (friendUserId: string) => {
-      let messages = [] as SocialState['pendingInvitationMessagesByFriendId'][string];
-
-      set((state) => {
-        messages = state.pendingInvitationMessagesByFriendId[friendUserId] ?? [];
-        if (messages.length === 0) {
-          return {};
-        }
-
-        const next = { ...state.pendingInvitationMessagesByFriendId };
-        delete next[friendUserId];
-
-        return {
-          pendingInvitationMessagesByFriendId: next,
-        };
-      });
-
-      return messages;
-    },
   };
 }

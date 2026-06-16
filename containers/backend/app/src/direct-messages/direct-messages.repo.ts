@@ -11,6 +11,7 @@ export type DirectMessageRow = {
   gameInvitationInvitedUserId: string | null;
   gameInvitationExpiresAt: Date | null;
   gameInvitationAcceptedAt: Date | null;
+  gameInvitationCancelledAt: Date | null;
   sender: {
     username: string;
   };
@@ -27,6 +28,7 @@ const DIRECT_MESSAGE_SELECT = {
   gameInvitationInvitedUserId: true,
   gameInvitationExpiresAt: true,
   gameInvitationAcceptedAt: true,
+  gameInvitationCancelledAt: true,
   sender: {
     select: {
       username: true,
@@ -147,6 +149,7 @@ export async function findActivePendingInvitationBetweenUsers(args: {
       type: 'game_invitation',
       gameInvitationInvitedUserId: args.invitedUserId,
       gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
       gameInvitationExpiresAt: {
         gt: args.now,
       },
@@ -167,6 +170,7 @@ export async function countActivePendingInvitationsSentByUser(args: {
       senderId: args.senderId,
       type: 'game_invitation',
       gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
       gameInvitationExpiresAt: {
         gt: args.now,
       },
@@ -205,6 +209,7 @@ export async function listPendingGameInvitationsForUser(args: {
       type: 'game_invitation',
       gameInvitationInvitedUserId: args.invitedUserId,
       gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
       gameInvitationExpiresAt: {
         gt: args.now,
       },
@@ -227,6 +232,7 @@ export async function markGameInvitationAccepted(args: {
       type: 'game_invitation',
       gameInvitationInvitedUserId: args.acceptedByUserId,
       gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
       gameInvitationExpiresAt: {
         gt: args.now,
       },
@@ -234,6 +240,31 @@ export async function markGameInvitationAccepted(args: {
     data: {
       gameInvitationAcceptedAt: args.now,
       gameInvitationAcceptedByUserId: args.acceptedByUserId,
+    },
+  });
+
+  return updated.count === 1;
+}
+
+export async function markGameInvitationCancelled(args: {
+  invitationId: string;
+  cancelledByUserId: string;
+  now: Date;
+}): Promise<boolean> {
+  const updated = await prisma.directMessage.updateMany({
+    where: {
+      id: args.invitationId,
+      type: 'game_invitation',
+      gameInvitationInvitedUserId: args.cancelledByUserId,
+      gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    data: {
+      gameInvitationCancelledAt: args.now,
+      gameInvitationCancelledByUserId: args.cancelledByUserId,
     },
   });
 
@@ -251,6 +282,7 @@ export async function markReceivedInvitationsAcceptedByRoom(args: {
       type: 'game_invitation',
       gameInvitationRoomId: args.roomId,
       gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
       gameInvitationExpiresAt: { gt: args.now },
     },
     select: { id: true, senderId: true },
@@ -269,49 +301,85 @@ export async function markReceivedInvitationsAcceptedByRoom(args: {
   return rows.map((r) => r.senderId);
 }
 
-export async function listReceivedInvitationsByRoom(args: {
+export type InvitationForStateRow = {
+  id: string;
+  senderId: string;
+  senderUsername: string;
   invitedUserId: string;
+  invitedUsername: string;
   roomId: number;
-  now: Date;
-}): Promise<ReceivedInvitationRow[]> {
+  createdAt: Date;
+  expiresAt: Date;
+  acceptedAt: Date | null;
+  cancelledAt: Date | null;
+};
+
+export async function listInvitationsForUserState(args: {
+  userId: string;
+}): Promise<InvitationForStateRow[]> {
   const rows = await prisma.directMessage.findMany({
     where: {
-      gameInvitationInvitedUserId: args.invitedUserId,
       type: 'game_invitation',
-      gameInvitationRoomId: args.roomId,
-      gameInvitationExpiresAt: {
-        gt: args.now,
-      },
+      gameInvitationRoomId: { not: null },
+      gameInvitationInvitedUserId: { not: null },
+      gameInvitationExpiresAt: { not: null },
+      OR: [
+        { senderId: args.userId },
+        { gameInvitationInvitedUserId: args.userId },
+      ],
     },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,
       senderId: true,
       createdAt: true,
-      gameInvitationAcceptedAt: true,
+      gameInvitationInvitedUserId: true,
+      gameInvitationRoomId: true,
       gameInvitationExpiresAt: true,
+      gameInvitationAcceptedAt: true,
+      gameInvitationCancelledAt: true,
       sender: { select: { username: true } },
     },
   });
 
-  const seen = new Set<string>();
-  const deduped: ReceivedInvitationRow[] = [];
+  const invitedUserIds = [...new Set(
+    rows
+      .map((r) => r.gameInvitationInvitedUserId)
+      .filter((id): id is string => id !== null),
+  )];
 
-  for (const r of rows) {
-    if (r.gameInvitationExpiresAt === null) continue;
-    if (seen.has(r.senderId)) continue;
-    seen.add(r.senderId);
-    deduped.push({
+  const invitedUsers = invitedUserIds.length > 0
+    ? await prisma.user.findMany({
+        where: { id: { in: invitedUserIds } },
+        select: { id: true, username: true },
+      })
+    : [];
+
+  const usernameById = new Map(invitedUsers.map((u) => [u.id, u.username]));
+
+  return rows
+    .filter(
+      (r): r is typeof r & {
+        gameInvitationInvitedUserId: string;
+        gameInvitationRoomId: number;
+        gameInvitationExpiresAt: Date;
+      } =>
+        r.gameInvitationInvitedUserId !== null &&
+        r.gameInvitationRoomId !== null &&
+        r.gameInvitationExpiresAt !== null,
+    )
+    .map((r) => ({
       id: r.id,
-      senderUserId: r.senderId,
+      senderId: r.senderId,
       senderUsername: r.sender.username,
-      acceptedAt: r.gameInvitationAcceptedAt,
-      expiresAt: r.gameInvitationExpiresAt,
+      invitedUserId: r.gameInvitationInvitedUserId,
+      invitedUsername: usernameById.get(r.gameInvitationInvitedUserId) ?? r.gameInvitationInvitedUserId,
+      roomId: r.gameInvitationRoomId,
       createdAt: r.createdAt,
-    });
-  }
-
-  return deduped;
+      expiresAt: r.gameInvitationExpiresAt,
+      acceptedAt: r.gameInvitationAcceptedAt,
+      cancelledAt: r.gameInvitationCancelledAt,
+    }));
 }
 
 export async function listPendingInviteesForSender(args: {
@@ -323,6 +391,7 @@ export async function listPendingInviteesForSender(args: {
       senderId: args.senderId,
       type: 'game_invitation',
       gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
       gameInvitationExpiresAt: {
         gt: args.now,
       },
@@ -335,79 +404,4 @@ export async function listPendingInviteesForSender(args: {
   return rows
     .map((r) => r.gameInvitationInvitedUserId)
     .filter((id): id is string => id !== null);
-}
-
-export type SentInvitationRow = {
-  id: string;
-  invitedUserId: string;
-  invitedUsername: string;
-  acceptedAt: Date | null;
-  expiresAt: Date;
-  createdAt: Date;
-};
-
-export type ReceivedInvitationRow = {
-  id: string;
-  senderUserId: string;
-  senderUsername: string;
-  acceptedAt: Date | null;
-  expiresAt: Date;
-  createdAt: Date;
-};
-
-export async function listSentInvitationsByRoom(args: {
-  senderId: string;
-  roomId: number;
-  now: Date;
-}): Promise<SentInvitationRow[]> {
-  const rows = await prisma.directMessage.findMany({
-    where: {
-      senderId: args.senderId,
-      type: 'game_invitation',
-      gameInvitationRoomId: args.roomId,
-      gameInvitationExpiresAt: {
-        gt: args.now,
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      createdAt: true,
-      gameInvitationInvitedUserId: true,
-      gameInvitationAcceptedAt: true,
-      gameInvitationExpiresAt: true,
-    },
-  });
-
-  const invitedUserIds = rows
-    .map((r) => r.gameInvitationInvitedUserId)
-    .filter((id): id is string => id !== null);
-
-  if (invitedUserIds.length === 0) return [];
-
-  const users = await prisma.user.findMany({
-    where: { id: { in: invitedUserIds } },
-    select: { id: true, username: true },
-  });
-
-  const usernameById = new Map(users.map((u) => [u.id, u.username]));
-
-  const seen = new Set<string>();
-  const deduped: SentInvitationRow[] = [];
-
-  for (const r of rows) {
-    if (r.gameInvitationInvitedUserId === null || r.gameInvitationExpiresAt === null) continue;
-    if (seen.has(r.gameInvitationInvitedUserId)) continue;
-    seen.add(r.gameInvitationInvitedUserId);
-    deduped.push({
-      id: r.id,
-      invitedUserId: r.gameInvitationInvitedUserId,
-      invitedUsername: usernameById.get(r.gameInvitationInvitedUserId) ?? r.gameInvitationInvitedUserId,
-      acceptedAt: r.gameInvitationAcceptedAt,
-      expiresAt: r.gameInvitationExpiresAt,
-      createdAt: r.createdAt,
-    });
-  }
-
-  return deduped;
 }

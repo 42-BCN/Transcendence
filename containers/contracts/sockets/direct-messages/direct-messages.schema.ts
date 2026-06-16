@@ -73,6 +73,7 @@ export const DirectMessageGameInvitationSchema = DirectMessageBaseSchema.extend(
     createdAt: z.string().datetime(),
     expiresAt: z.string().datetime(),
     acceptedAt: z.string().datetime().nullable().optional(),
+    cancelledAt: z.string().datetime().nullable().optional(),
   }),
 });
 

@@ -3,7 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { CountBadge, Stack, Text, ScrollArea, UserItem } from '@components';
 import type { FriendPublic } from '@/contracts/api/friendships/friendships.contracts';
-import { useSocialStore } from '@/providers/social-provider';
+import { useGameInvitationsStore } from '@/features/game-invitations/store/game-invitations.provider';
+import { selectActiveInvitationCount } from '@/features/game-invitations/store/game-invitations.selectors';
 import { messagesListStyles } from './messages-list.styles';
 
 type MessagesListProps = {
@@ -17,9 +18,18 @@ const presenceSubtitleClassName = {
   offline: 'text-gray-500',
 } as const;
 
+function getPresenceLabel(
+  presence: FriendPublic['presence'],
+  t: ReturnType<typeof useTranslations<'features.directMessages'>>,
+) {
+  if (presence === 'online') return t('presence.online');
+  if (presence === 'away') return t('presence.away');
+  return t('presence.offline');
+}
+
 export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
   const t = useTranslations('features.directMessages');
-  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
+  const activeGameInvitationCount = useGameInvitationsStore(selectActiveInvitationCount);
 
   return (
     <Stack gap="none" className={messagesListStyles.wrapper}>
@@ -44,13 +54,7 @@ export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
                 username={friend.username}
                 avatarUrl={friend.avatar}
                 subtitleClassName={presenceSubtitleClassName[friend.presence]}
-                subtitle={
-                  friend.presence === 'online'
-                    ? t('presence.online')
-                    : friend.presence === 'away'
-                      ? t('presence.away')
-                      : t('presence.offline')
-                }
+                subtitle={getPresenceLabel(friend.presence, t)}
               >
                 <CountBadge count={friend.unreadMessageCount} />
               </UserItem>
