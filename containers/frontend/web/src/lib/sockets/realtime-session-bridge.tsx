@@ -40,16 +40,6 @@ function hasMountedListeners(socket: {
   return socket.listeners('connect').length > 0 || socket.listeners('disconnect').length > 0;
 }
 
-function hasMountedGameRoomListeners() {
-  return (
-    gameRoomSocket.listeners('gameRoom:room:update').length > 0
-    || gameRoomSocket.listeners('gameRoom:debug:msg').length > 0
-    || gameRoomSocket.listeners('gameRoom:error:msg').length > 0
-    || gameRoomSocket.listeners('gameRoom:room:joined').length > 0
-    || gameRoomSocket.listeners('gameRoom:room:left').length > 0
-  );
-}
-
 async function getCurrentSessionIdentity(): Promise<SessionIdentity | null> {
   const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/session/identity`;
 
@@ -97,7 +87,7 @@ function getStoredRoomId() {
 
 async function rejoinStoredRoomIfNeeded() {
   const roomId = getStoredRoomId();
-  if (roomId === null || !hasMountedGameRoomListeners()) {
+  if (roomId === null) {
     return;
   }
 
