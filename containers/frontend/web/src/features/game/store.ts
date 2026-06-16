@@ -119,6 +119,7 @@ type gameState = globalGameState & localGameState & {
   entityTints: Record<string, { color: string; expiresAt: number }>;
 
   nextPhase: () => void;
+  resetGame: () => void;
 
   initSocketListeners: () => void;
   cleanupSocketListeners: () => void;
@@ -142,12 +143,12 @@ type gameState = globalGameState & localGameState & {
 };
 
 const ABILITY_AOE: Record<string, { type: string; range: number }> = {
-  'Shield Bash':    { type: 'cross',    range: 2 },
+  'Shield Bash': { type: 'cross', range: 2 },
   'Vertical Slash': { type: 'vertical', range: 1 },
-  'Fire Breath':    { type: 'cone',     range: 3 },
-  'Vacuum Flask':   { type: 'cross',    range: 1 },
-  'Bombastic Flask':{ type: 'cross',    range: 1 },
-  'Atomic Bomb':    { type: 'circle',   range: 2 },
+  'Fire Breath': { type: 'cone', range: 3 },
+  'Vacuum Flask': { type: 'cross', range: 1 },
+  'Bombastic Flask': { type: 'cross', range: 1 },
+  'Atomic Bomb': { type: 'circle', range: 2 },
 };
 
 function getAoePreviewTiles(
@@ -236,6 +237,10 @@ export const useGame = create<gameState>()((set, get) => ({
   nextPhase: () => {
     gameSocket.emit('game:client:toggleEndTurn');
     gameSocket.emit('game:client:nextPhase');
+  },
+
+  resetGame: () => {
+    gameSocket.emit('game:client:resetGame');
   },
 
   selectEntity: (id) => {
@@ -337,6 +342,9 @@ export const useGame = create<gameState>()((set, get) => ({
       console.log('history after action: ', state.history);
       console.log('activePlayers after action: ', state.activePlayers);
       console.log('readyPLayers after action: ', state.readyPlayers);
+      const prevPhase = get().phase;
+      const isGameReset =
+        (prevPhase === 'WIN' || prevPhase === 'LOSE') && state.phase === 'PLAN';
 
       set({
         phase: state.phase,
@@ -351,6 +359,7 @@ export const useGame = create<gameState>()((set, get) => ({
         mapBounds: state.mapBounds || get().mapBounds,
         readyPlayers: state.readyPlayers || get().readyPlayers,
         activePlayers: state.activePlayers || get().activePlayers,
+        ...(isGameReset ? { vfx: {}, entityTints: {}, aoePreview: {} } : {}),
       });
     };
 

@@ -184,6 +184,7 @@ export async function executionPhase(sync: () => void, vfx: (effect: vfx) => voi
       await sleep(400);
     }
     else if (action.type === 'mov') {
+      sync();
       await moveTo(action.who, action.target, sync);
     }
     else if (action.type === 'forcedMov') {
@@ -1114,7 +1115,7 @@ export function initState() {
         break;
       case "generator":
         enemEnt[entity.id] = {
-          ...base(), ...entity, type: "enemy", hp: 1, maxHp: 50, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 50, maxHp: 50, armor: 0,
           abilities: [],
           dice: [],
         }

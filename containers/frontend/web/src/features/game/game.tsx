@@ -1,6 +1,6 @@
 'use client';
-
-import { useRef, useEffect, useState, useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useRef, useEffect, useState, useContext } from 'react';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame, type pos as Position } from './store';
@@ -234,7 +234,7 @@ function Reset() {
     return null;
   return (
     <Button
-      className="absolute z-10 top-8 left-8"
+      className="absolute z-10 top-16 left-8"
       variant="primary"
       w="auto"
       onPress={() => {
@@ -747,27 +747,52 @@ function CharacterCard() {
 
 function HandlePhaseScreen() {
   const phase = useGame((state) => state.phase);
+  const resetGame = useGame((state) => state.resetGame);
+  const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
+  const router = useRouter();
+
+  const handleExitRoom = useCallback(() => {
+    cleanupSocketListeners();
+    router.push('/');
+  }, [cleanupSocketListeners, router]);
+
   switch (phase) {
     case 'WIN':
       return (
-        <Canvas>
-          <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
-            <div className="text-center">
-              <h2>YOU WIN!</h2>
+        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+          <div className="text-center space-y-8">
+            <h2 className="text-5xl font-bold text-green-400 tracking-widest">
+              YOU WIN!
+            </h2>
+            <div className="flex gap-4 justify-center">
+              <Button variant="primary" w="auto" onPress={resetGame}>
+                Reset
+              </Button>
+              <Button w="auto" onPress={handleExitRoom}>
+                Exit Room
+              </Button>
             </div>
           </div>
-        </Canvas>
-      )
+        </div>
+      );
     case 'LOSE':
       return (
-        <Canvas>
-          <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
-            <div className="text-center">
-              <h2>YOU LOSE!</h2>
+        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
+          <div className="text-center space-y-8">
+            <h2 className="text-5xl font-bold text-red-500 tracking-widest">
+              YOU LOSE!
+            </h2>
+            <div className="flex gap-4 justify-center">
+              <Button variant="primary" w="auto" onPress={resetGame}>
+                Reset
+              </Button>
+              <Button w="auto" onPress={handleExitRoom}>
+                Exit Room
+              </Button>
             </div>
           </div>
-        </Canvas>
-      )
+        </div>
+      );
     default:
       return (
         <>
@@ -780,7 +805,7 @@ function HandlePhaseScreen() {
             <Scene />
           </Canvas>
         </>
-      )
+      );
   }
 }
 
@@ -824,72 +849,80 @@ export function Game() {
 
   if (connectionError) {
     return (
-      <Canvas>
-        <>
-          <color attach="background" args={['#000000']} />
-          <Html fullscreen style={{ pointerEvents: 'none' }}>
-            <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-              <div className="text-center max-w-md px-6">
-                <h2>Game unavailable</h2>
-                <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
+      <div className="fixed inset-0 z-0">
+        <Canvas>
+          <>
+            <color attach="background" args={['#000000']} />
+            <Html fullscreen style={{ pointerEvents: 'none' }}>
+              <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+                <div className="text-center max-w-md px-6">
+                  <h2>Game unavailable</h2>
+                  <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
+                </div>
               </div>
-            </div>
-          </Html>
-        </>
-      </Canvas>
+            </Html>
+          </>
+        </Canvas>
+      </div>
     );
   }
 
   if (!isRoomFull) {
     return (
-      <Canvas>
-        <>
-          <color attach="background" args={['#000000']} />
-          <Html fullscreen style={{ pointerEvents: 'none' }}>
-            <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-              <div className="text-center max-w-md px-6">
-                <h2>Room not ready</h2>
-                <p className="text-sm text-gray-300 mt-4">The game route is only available when the room has 4 players.</p>
+      <div className="fixed inset-0 z-0">
+        <Canvas>
+          <>
+            <color attach="background" args={['#000000']} />
+            <Html fullscreen style={{ pointerEvents: 'none' }}>
+              <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+                <div className="text-center max-w-md px-6">
+                  <h2>Room not ready</h2>
+                  <p className="text-sm text-gray-300 mt-4">The game route is only available when the room has 4 players.</p>
+                </div>
               </div>
-            </div>
-          </Html>
-        </>
-      </Canvas>
+            </Html>
+          </>
+        </Canvas>
+      </div>
     );
   }
 
   if (mapBounds.width > 0 && (activePlayers?.length ?? 0) < 4) {
     return (
+      <div className="fixed inset-0 z-0">
+        <Canvas>
+          <>
+            <color attach="background" args={['#000000']} />
+            <Html fullscreen style={{ pointerEvents: 'none' }}>
+              <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+                <div className="text-center max-w-md px-6">
+                  <h2>Game paused</h2>
+                  <p className="text-sm text-gray-300 mt-4">A player disconnected. The game is blocked until the room is full again.</p>
+                </div>
+              </div>
+            </Html>
+          </>
+        </Canvas>
+      </div>
+    );
+  }
+
+  return !mapBounds || mapBounds.width === 0 ? (
+    <div className="fixed inset-0 z-0">
       <Canvas>
         <>
           <color attach="background" args={['#000000']} />
           <Html fullscreen style={{ pointerEvents: 'none' }}>
             <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-              <div className="text-center max-w-md px-6">
-                <h2>Game paused</h2>
-                <p className="text-sm text-gray-300 mt-4">A player disconnected. The game is blocked until the room is full again.</p>
+              <div className="text-center">
+                <h2>Connecting to Server...</h2>
+                <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
+                <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
               </div>
             </div>
           </Html>
         </>
       </Canvas>
-    );
-  }
-
-  return !mapBounds || mapBounds.width === 0 ? (
-    <Canvas>
-      <>
-        <color attach="background" args={['#000000']} />
-        <Html fullscreen style={{ pointerEvents: 'none' }}>
-          <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-            <div className="text-center">
-              <h2>Connecting to Server...</h2>
-              <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
-              <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
-            </div>
-          </div>
-        </Html>
-      </>
-    </Canvas>
+    </div>
   ) : <HandlePhaseScreen />
 }

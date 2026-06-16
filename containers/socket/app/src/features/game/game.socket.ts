@@ -238,6 +238,33 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       syncClient(socket, session, role, memberKey);
     });
 
+    socket.on('game:client:resetGame', async () => {
+      if (role === 'spectator')
+        return;
+      if (session.state.phase !== 'WIN' && session.state.phase !== 'LOSE')
+        return;
+      gameSessionManager.resetSession(session.roomId);
+      for (const [mk, player] of session.players.entries()) {
+        if (player.status !== 'connected')
+          continue;
+        const clientKey = getClientKey(player.role, mk);
+        session.state.clients[clientKey] = initClientGameState(player.socketId);
+      }
+      for (const player of session.players.values()) {
+        if (player.status !== 'connected')
+          continue;
+        nsp.to(player.socketId).emit('game:server:globalSync' as any, {
+          ...session.state,
+          readyPlayers: [...session.readyPlayers],
+          activePlayers: getActivePlayerRoles(session),
+        });
+        const clientState = getPlayerClientState(session, player.role, player.memberKey);
+        if (clientState) {
+          nsp.to(player.socketId).emit('game:server:sync', clientState);
+        }
+      }
+    });
+
     socket.on('game:client:displayMoveRange', async (diceValue: number) => {
       await withSessionState(session, () => {
         const client = getPlayerClientState(session, role, memberKey);
