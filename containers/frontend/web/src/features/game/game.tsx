@@ -1,5 +1,7 @@
 'use client';
 
+import { envPublic } from '@/lib/config/env.public';
+
 import { useRef, useEffect, useState, useContext } from 'react';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
@@ -148,14 +150,14 @@ function AbButtons() {
             className={cn}
             onMouseEnter={(event) => {
               if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
-                console.log('enter');
+                envPublic.processEnv === 'development' && console.log('enter');
                 event.stopPropagation();
                 showAbRange(ability);
               }
             }}
             onMouseLeave={(event) => {
               if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
-                console.log('exit');
+                envPublic.processEnv === 'development' && console.log('exit');
                 event.stopPropagation();
                 clearSelectables();
               }
@@ -791,7 +793,6 @@ export function Game() {
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const roomState = roomsStore?.roomState;
   const isRoomFull = roomState?.isGameRoomFull ?? false;
-
 
   useEffect(() => {
     if (!isRoomFull) {

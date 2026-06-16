@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { envPublic } from '@/lib/config/env.public';
+
 import {
   directMessageUnreadSocketEvents,
   gameInvitationSocketEvents,
@@ -49,7 +51,7 @@ export const SocialSocketManager = ({
     };
 
     const handleConnect = () => {
-      console.log('Connected to friends socket server', friendsSocket.id);
+      envPublic.processEnv === 'development' && console.log('Connected to friends socket server', friendsSocket.id);
       emitCurrentPresence();
     };
 
@@ -58,7 +60,7 @@ export const SocialSocketManager = ({
     };
 
     const handleDisconnect = () => {
-      console.log('Disconnected from friends socket server');
+      envPublic.processEnv === 'development' && console.log('Disconnected from friends socket server');
     };
 
     const handleFriendOnline = (payload: PresenceOnlinePayload) => {

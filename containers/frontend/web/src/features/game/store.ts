@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { gameSocket, ensureChatSessionIdentity } from '@/lib/sockets/socket';
 
+import { envPublic } from '@/lib/config/env.public';
+
 export type pos = {
   x: number,
   y: number,
@@ -240,7 +242,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
   selectEntity: (id) => {
     gameSocket.emit('game:client:selectEntity', id);
-    console.log('ent id: ', id);
+    envPublic.processEnv === 'development' && console.log('ent id: ', id);
   },
 
   getSel: () => {
@@ -263,17 +265,17 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   resetHistory: () => {
-    console.log('history before reset:', get().history);
+    envPublic.processEnv === 'development' && console.log('history before reset:', get().history);
     gameSocket.emit('game:client:resetHistory');
   },
 
   addHistoryAbility: (target: string) => {
-    console.log('history before ability: ', get().history);
+    envPublic.processEnv === 'development' && console.log('history before ability: ', get().history);
     gameSocket.emit('game:client:addHistoryAbility', target);
   },
 
   moveClone: (tileId) => {
-    console.log('history before move: ', get().history);
+    envPublic.processEnv === 'development' && console.log('history before move: ', get().history);
     gameSocket.emit('game:client:moveClone', tileId);
   },
 
@@ -328,15 +330,15 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:sync');
     (gameSocket as any).off('game:server:error');
     const handleJoin = (id: string) => {
-      console.log('👤 Player joined with ID:', id);
+      envPublic.processEnv === 'development' && console.log('👤 Player joined with ID:', id);
       set({ assignedCharacter: id, connectionError: null });
     };
 
     const handleGlobalSync = (state: globalGameState) => {
-      console.log('📡 Received global sync');
-      console.log('history after action: ', state.history);
-      console.log('activePlayers after action: ', state.activePlayers);
-      console.log('readyPLayers after action: ', state.readyPlayers);
+      envPublic.processEnv === 'development' && console.log('📡 Received global sync');
+      envPublic.processEnv === 'development' && console.log('history after action: ', state.history);
+      envPublic.processEnv === 'development' && console.log('activePlayers after action: ', state.activePlayers);
+      envPublic.processEnv === 'development' && console.log('readyPLayers after action: ', state.readyPlayers);
 
       set({
         phase: state.phase,
@@ -407,7 +409,7 @@ export const useGame = create<gameState>()((set, get) => ({
     const handleSync = (state: localGameState) => {
       if (!state)
         return;
-      console.log('🔄 Received sync event');
+      envPublic.processEnv === 'development' && console.log('🔄 Received sync event');
       set({
         highlights: state.highlights,
         selectables: state.selectables,
@@ -427,11 +429,11 @@ export const useGame = create<gameState>()((set, get) => ({
     };
 
     gameSocket.on('connect', () => {
-      console.log('✅ Connected to game socket server');
+      envPublic.processEnv === 'development' && console.log('✅ Connected to game socket server');
     });
 
     gameSocket.on('disconnect', () => {
-      console.log('❌ Disconnected from game socket:');
+      envPublic.processEnv === 'development' && console.log('❌ Disconnected from game socket:');
     });
 
     gameSocket.on('game:server:join', handleJoin);

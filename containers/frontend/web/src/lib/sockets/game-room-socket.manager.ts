@@ -3,6 +3,8 @@
 import { ensureChatSessionIdentity, gameRoomSocket } from '@/lib/sockets/socket';
 import type { gameRoomState } from '@/contracts/sockets/rooms/gameRooms.schema';
 
+import { envPublic } from '@/lib/config/env.public';
+
 export function GameRoomSocketJoinAnyRoom() {
   gameRoomSocket.emit('gameRoom:teammate:joinAny');
 }
@@ -26,23 +28,23 @@ export function initGameRoomSocketHandelers(
   setDebugError: (text: string) => void,
 ): () => void {
   const handleRoomUpdate = (state: gameRoomState) => {
-    console.log('[ gameRoom ] room update', state);
+    envPublic.processEnv === 'development' && console.log('[ gameRoom ] room update', state);
     setDebugState(state);
   };
   const handleDebugMsg = (text: string) => {
-    console.log('[ gameRoom ] debug msg:', text);
+    envPublic.processEnv === 'development' && console.log('[ gameRoom ] debug msg:', text);
     setDebugMsg(`debug msg: ${text}`);
   };
   const handleErrorMsg = (text: string) => {
-    console.log('[ gameRoom ] error msg:', text);
+    envPublic.processEnv === 'development' && console.log('[ gameRoom ] error msg:', text);
     setDebugError(`error msg: ${text}`);
   };
   const handleRoomJoined = (username: string) => {
-    console.log('[ gameRoom ] user joined:', username);
+    envPublic.processEnv === 'development' && console.log('[ gameRoom ] user joined:', username);
     setDebugMsg(`new user joined: ${username}`);
   };
   const handleRoomLeft = (username: string) => {
-    console.log('[ gameRoom ] user left:', username);
+    envPublic.processEnv === 'development' && console.log('[ gameRoom ] user left:', username);
     setDebugMsg(`user left: ${username}`);
   };
 
@@ -66,7 +68,7 @@ export function initGameRoomSocketHandelers(
       if (roomId > 0) {
         gameRoomSocket.emit('gameRoom:teammate:join', roomId);
       }
-      console.log('[ GameRoom ] connected. roomId from URL:', roomId || 'none');
+      envPublic.processEnv === 'development' && console.log('[ GameRoom ] connected. roomId from URL:', roomId || 'none');
     });
 
   return () => {

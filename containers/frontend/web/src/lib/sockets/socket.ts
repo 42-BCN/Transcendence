@@ -92,7 +92,7 @@ gameSocket.on('connect_error', (error: unknown) => {
   }
 });
 
-console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
+envPublic.processEnv === 'development' && console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
