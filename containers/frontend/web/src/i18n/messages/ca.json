@@ -321,7 +321,7 @@
       "resetPlan": "Reiniciar pla",
       "room": {
         "fields": {
-          "gameRoomId": "Game Room ID"
+          "gameRoomId": "ID de la sala"
         }
       }
     },
