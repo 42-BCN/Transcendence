@@ -10,6 +10,7 @@ import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { useShallow } from 'zustand/react/shallow';
+import { useTheme } from '@/providers/theme-provider';
 import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
 import { Crawler } from './meshes/Crawler.jsx';
 import { Drone } from './meshes/Drone.jsx';
@@ -292,7 +293,7 @@ function HUD() {
         />
       </div>
       {ent.status && (
-        <div className="text-sm text-yellow-200 bg-black/60 px-2 py-1 rounded w-fit">
+        <div className="text-sm px-2 py-1 rounded w-fit border border-yellow-200/50 bg-yellow-50 text-yellow-800 dark:bg-black/60 dark:text-yellow-200 dark:border-transparent">
           ⚡ {ent.status}{ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
         </div>
       )}
@@ -326,6 +327,8 @@ function Tile({ id, pos }: { id: string; pos: Position }) {
   if ((color === 'hotpink' || color === 'red') && isHovered) color = 'lightpink';
   if (isAoePreview) color = '#ffee00';
 
+  const isTranslucent = color === 'slategray';
+
   return (
     <mesh
       position={[pos.x, pos.y, pos.z]}
@@ -347,7 +350,14 @@ function Tile({ id, pos }: { id: string; pos: Position }) {
       }}
     >
       <boxGeometry args={[s, s, s]} />
-      <meshStandardMaterial color={color} wireframe={false} />
+      <meshStandardMaterial
+        color={color}
+        wireframe={false}
+        transparent={isTranslucent}
+        opacity={isTranslucent ? 0.65 : 1.0}
+        roughness={isTranslucent ? 0.1 : 1.0}
+        metalness={isTranslucent ? 0.1 : 0.0}
+      />
     </mesh>
   );
 }
@@ -691,6 +701,7 @@ const CLASS_ICON: Record<string, string> = {
 };
 
 function TopBar() {
+  const { theme } = useTheme();
   const doom = useGame((s) => s.doom);
   const phase = useGame((s) => s.phase);
   const turn = useGame((s) => s.turn);
@@ -701,25 +712,33 @@ function TopBar() {
       pct >= 50 ? '#f97316' :
         '#eab308';
 
+  const isDark = theme === 'dark';
+
   return (
     <div
       className="absolute top-0 left-8 right-16 z-30 h-8 flex items-center px-4 gap-4 transition-colors duration-700"
       style={{
-        background: pct >= 80 ? 'rgba(60,0,0,0.94)' : 'rgba(0,0,0,0.90)',
-        borderBottom: `1px solid ${pct >= 80 ? '#ef444430' : 'rgba(255,255,255,0.07)'}`,
+        background: pct >= 80
+          ? (isDark ? 'rgba(60,0,0,0.94)' : 'rgba(254,242,242,0.95)')
+          : (isDark ? 'rgba(0,0,0,0.90)' : 'rgba(255,255,255,0.92)'),
+        borderBottom: `1px solid ${
+          pct >= 80
+            ? (isDark ? '#ef444430' : '#fca5a5')
+            : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)')
+        }`,
       }}
     >
-      <span className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase shrink-0 w-40">
+      <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase shrink-0 w-40">
         {name(phase)}
       </span>
 
-      <span className="text-[10px] font-mono text-gray-600 shrink-0">
+      <span className="text-[10px] font-mono text-gray-500 dark:text-gray-400 shrink-0">
         Turn {String(turn).padStart(2, '0')}
       </span>
 
       <div className="flex flex-1 items-center gap-2">
         <span className="text-[11px] shrink-0" style={{ color: fillColor }}>☠</span>
-        <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-800">
+        <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800">
           <div
             className="h-full rounded-full transition-all duration-700 ease-out"
             style={{
@@ -740,22 +759,24 @@ function TopBar() {
 }
 
 function CharacterCard() {
+  const { theme } = useTheme();
   const assignedCharacter = useGame((s) => s.assignedCharacter);
   const color = CLASS_COLOR[assignedCharacter] ?? CLASS_COLOR.spectator;
   const icon = CLASS_ICON[assignedCharacter] ?? '?';
+  const isDark = theme === 'dark';
 
   return (
     <div
-      className="absolute top-10 left-16 z-20 flex items-center gap-2.5 px-3 py-2 rounded select-none"
+      className="absolute top-10 left-16 z-20 flex items-center gap-2.5 px-3 py-2 rounded select-none backdrop-blur-sm transition-colors duration-700"
       style={{
-        background: 'rgba(0,0,0,0.82)',
-        border: `1px solid ${color}30`,
+        background: isDark ? 'rgba(0,0,0,0.82)' : 'rgba(255,255,255,0.90)',
+        border: `1px solid ${color}${isDark ? '30' : '60'}`,
         boxShadow: `inset 2px 0 0 ${color}`,
       }}
     >
       <span className="text-base leading-none">{icon}</span>
       <div className="leading-none">
-        <div className="text-[9px] tracking-[0.18em] text-gray-600 uppercase mb-1">
+        <div className="text-[9px] tracking-[0.18em] text-gray-500 dark:text-gray-400 uppercase mb-1">
           Playing as
         </div>
         <div className="text-[13px] font-bold uppercase tracking-wide leading-none" style={{ color }}>
