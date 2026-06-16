@@ -152,7 +152,7 @@ export async function recordFailedPasswordAttempt(userId: string, userHash: stri
 }
 
 export async function login(input: LoginReq): Promise<AuthUser> {
-  const identifier = input.identifier;
+  const identifier = input.identifier.toLowerCase();
   const isEmailIdentifier = identifier.includes('@');
   const idHash = fingerprint(identifier);
 
