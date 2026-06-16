@@ -58,9 +58,9 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
           </Text>
           <div className="flex flex-wrap gap-4">
             {filteredSent.map((inv) => (
-              <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
+              <div key={inv.id} className="flex w-9 min-w-0 flex-col items-center gap-1 opacity-50">
                 <Avatar size="lg" alt={inv.friendUsername} />
-                <Text variant="body-xs" color="secondary">{inv.friendUsername}</Text>
+                <Text variant="body-xs" color="secondary" className="w-full truncate text-center" title={inv.friendUsername}>{inv.friendUsername}</Text>
               </div>
             ))}
           </div>
@@ -74,9 +74,9 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
           </Text>
           <div className="flex flex-wrap gap-4">
             {filteredReceived.map((inv) => (
-              <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
+              <div key={inv.id} className="flex w-9 min-w-0 flex-col items-center gap-1 opacity-50">
                 <Avatar size="lg" alt={inv.friendUsername} />
-                <Text variant="body-xs" color="secondary">{inv.friendUsername}</Text>
+                <Text variant="body-xs" color="secondary" className="w-full truncate text-center" title={inv.friendUsername}>{inv.friendUsername}</Text>
               </div>
             ))}
           </div>

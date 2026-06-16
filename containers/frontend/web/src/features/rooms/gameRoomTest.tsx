@@ -57,9 +57,9 @@ export function GameRoomTest({
                   </Text>
                   <div className="flex flex-wrap gap-4">
                     {gameRoomStateCtx.teammates.map((user: PlayerState) => (
-                      <div key={user.userId} className="flex flex-col items-center gap-1">
+                      <div key={user.userId} className="flex w-9 min-w-0 flex-col items-center gap-1">
                         <Avatar size="lg" alt={user.userName} />
-                        <Text variant="body-xs" color="secondary">{user.userName}</Text>
+                        <Text variant="body-xs" color="secondary" className="w-full truncate text-center" title={user.userName}>{user.userName}</Text>
                       </div>
                     ))}
                   </div>
