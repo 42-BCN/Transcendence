@@ -11,6 +11,7 @@ import { type LoginReq } from '@/contracts/api/auth/auth.validation';
 import { loginAction } from './login.action';
 import { useAutoFocus } from '@/hooks/useAutoFocus';
 import { createSubmitHandler } from '@/lib/http/submitHandler';
+import { notifyAuthChanged } from '@/lib/sockets/realtime-session-bridge';
 
 export function LoginForm() {
   const t = useTranslations('features.auth');
@@ -18,8 +19,13 @@ export function LoginForm() {
   const [state, formAction] = useActionState(loginAction, null);
   const identifierRef = useAutoFocus<HTMLInputElement>();
 
+  const handleSubmit = createSubmitHandler(form, (formData) => {
+    notifyAuthChanged();
+    formAction(formData);
+  });
+
   return (
-    <Form onSubmit={createSubmitHandler(form, formAction)}>
+    <Form onSubmit={handleSubmit}>
       <TextField
         value={form.values.identifier}
         errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { createContext, useEffect, useState } from 'react';
 import type { gameRoomState } from '@/contracts/sockets/rooms/gameRooms.schema';
 import type { PlayerState } from "@/contracts/sockets/rooms/gameRooms.schema";
+import { REALTIME_IDENTITY_CHANGED_EVENT } from '@/lib/sockets/realtime-session-bridge';
 
 const ACTIVE_ROOM_STORAGE_KEY = 'transcendence:active-room-id';
 
@@ -40,6 +41,17 @@ export function RoomsProvider({
 
     window.sessionStorage.removeItem(ACTIVE_ROOM_STORAGE_KEY);
   }, [roomState.id]);
+
+  useEffect(() => {
+    const handleIdentityChanged = () => {
+      setRoomState(RoomStateEmpty);
+    };
+
+    window.addEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+    return () => {
+      window.removeEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+    };
+  }, []);
 
   const replaceTeammateName: RoomsStore['replaceTeammateName'] = ({
     nextUserName,

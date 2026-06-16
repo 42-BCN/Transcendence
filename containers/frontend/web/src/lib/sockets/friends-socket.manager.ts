@@ -19,6 +19,7 @@ import {
 } from '@/contracts/sockets/friendships/friendships.schema';
 
 import { friendsSocket } from './friends-socket.client';
+import { isSessionSyncedAsUser } from './realtime-session-bridge';
 
 type SocialSocketManagerProps = {
   onFriendOnline: (payload: PresenceOnlinePayload) => void;
@@ -132,7 +133,9 @@ export const SocialSocketManager = ({
 
     document.addEventListener('visibilitychange', emitCurrentPresence);
 
-    friendsSocket.connect();
+    if (isSessionSyncedAsUser() && !friendsSocket.connected) {
+      friendsSocket.connect();
+    }
 
     return () => {
       reservedListeners.forEach(([event, handler]) => {
