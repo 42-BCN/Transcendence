@@ -174,11 +174,17 @@ function SearchResults() {
 
 function SocialHeader() {
   const t = useTranslations('features.social');
+  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
   return (
     <Stack gap="md" className="p-3">
-      <Text as="h1" variant="heading-md" className="font-bold">
-        {t('title')}
-      </Text>
+      <div className="flex items-center gap-2">
+        <Text as="h1" variant="heading-md" className="font-bold">
+          {t('title')}
+        </Text>
+        <Text variant="caption" color="secondary">
+          {t('gameInvitations')} {activeGameInvitationCount}
+        </Text>
+      </div>
       <UserSearch />
     </Stack>
   );

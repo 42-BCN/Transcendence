@@ -65,6 +65,10 @@ export class GameRoomsManager {
     return newGameRoom;
   }
 
+  getGameRoomById(gameRoomId: number): gameRoomState | null {
+    return this.gameRooms.get(gameRoomId) ?? null;
+  }
+
   getFirstNonEmtyGameRoomId(): gameRoomState | undefined {
     for (const gameRoom of this.gameRooms.values()) {
       if (!gameRoom.isGameRoomFull) {
@@ -123,6 +127,30 @@ export class GameRoomsManager {
     this.memberRoomIds.set(memberKey, gameRoomId);
 
     return gameRoom;
+  }
+
+  ensureUserGameRoom(memberKey: string, userName: string): gameRoomState | 'error:full_room' {
+    const existingRoom = this.getExistingRoomForMember(memberKey);
+    if (existingRoom) {
+      const teammate = existingRoom.teammates.find((item) => item.userId === memberKey);
+      if (teammate) {
+        teammate.userName = userName;
+      }
+
+      if (existingRoom.isGameRoomFull) {
+        return 'error:full_room';
+      }
+
+      return existingRoom;
+    }
+
+    const room = this.createGameRoom();
+    const result = this.joinUserToGameRoom(memberKey, userName, room.id);
+    if (typeof result === 'string') {
+      return 'error:full_room';
+    }
+
+    return result;
   }
 
   removeUserFromGameRoom(memberKey: string): gameRoomState | 'error:no_assigned_room' {

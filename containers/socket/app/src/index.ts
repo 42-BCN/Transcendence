@@ -4,6 +4,13 @@ import { createServer as createHttpsServer } from 'https';
 import { join } from 'path';
 import { Server } from 'socket.io';
 
+import { handleInternalDirectMessageDispatch } from './internal/direct-messages.routes';
+import {
+  handleAcceptInvitationRoom,
+  handleInvitationStatus,
+  handlePrepareInvitationRoom,
+  handleValidateInvitationReceiver,
+} from './internal/game-invitations.routes';
 import { handleInternalNotify, handlePresenceCheck } from './internal/notify.routes';
 import { registerSockets } from './sockets/socket.register';
 import { logEvents } from './socket.logs';
@@ -48,8 +55,6 @@ const allowedOrigins = (process.env.SOCKET_CORS_ORIGINS ?? '')
   .split(',')
   .map((origin: string) => origin.trim())
   .filter(Boolean);
-  
-//  .push("http://localhost");
 
 const io = new Server(httpServer, {
   cors: {
@@ -61,6 +66,11 @@ registerSockets(io);
 
 app.post('/internal/notify', handleInternalNotify);
 app.post('/internal/presence', handlePresenceCheck);
+app.post('/internal/direct-messages/dispatch', handleInternalDirectMessageDispatch);
+app.post('/internal/game-invitations/prepare-room', handlePrepareInvitationRoom);
+app.post('/internal/game-invitations/validate-receiver', handleValidateInvitationReceiver);
+app.post('/internal/game-invitations/accept-room', handleAcceptInvitationRoom);
+app.post('/internal/game-invitations/status', handleInvitationStatus);
 
 httpServer.listen(3100, () => {
   console.log('Socket.IO server + internal notify on :3100 over HTTPS');

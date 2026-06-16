@@ -320,7 +320,12 @@ declare const messages: {
     "game": {
       "endTurn": "End turn",
       "healthLabel": "HP",
-      "resetPlan": "Reset plan"
+      "resetPlan": "Reset plan",
+      "room": {
+        "fields": {
+          "gameRoomId": "Game Room ID"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Create account",
@@ -374,10 +379,22 @@ declare const messages: {
         "addFriend": "Add friend",
         "cancel": "Cancel",
         "cancelRequest": "Cancel Request",
+        "inviteSent": "You sent an invitation to {username}",
         "inviteToGame": "Invite to Game",
         "message": "Message",
         "reject": "Reject",
-        "unfriend": "Remove Friend"
+        "unfriend": "Remove Friend",
+        "inviteErrors": {
+          "GAME_INVITATION_ROOM_REQUIRED": "Connect to the game room first",
+          "GAME_INVITATION_ROOM_UNAVAILABLE": "Game room is no longer available",
+          "GAME_INVITATION_DUPLICATE_PENDING": "Invitation already pending",
+          "GAME_INVITATION_RECENT_DUPLICATE": "You just sent an invitation, wait a moment",
+          "GAME_INVITATION_PENDING_LIMIT": "Too many pending invitations",
+          "GAME_INVITATION_RATE_LIMITED": "Too many invitations sent, try later",
+          "GAME_INVITATION_NOT_FRIEND": "You are not friends with this user",
+          "GAME_INVITATION_ALREADY_IN_ROOM": "This user is already in a game room",
+          "default": "Could not send invitation"
+        }
       },
       "emptyStates": {
         "offline": "No friends offline",
@@ -406,7 +423,8 @@ declare const messages: {
       },
       "searchLabel": "Search",
       "searchPlaceholder": "Search users",
-      "title": "Social"
+      "title": "Social",
+      "gameInvitations": "Game invitations"
     }
   },
   "validation": {

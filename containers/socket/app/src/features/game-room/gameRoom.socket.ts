@@ -1,4 +1,5 @@
 import type { Namespace, Socket } from 'socket.io';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 import {
   cancelPendingGameRoomRemoval,
@@ -9,6 +10,23 @@ import {
   incrementGameRoomConnection,
   scheduleGameRoomRemoval,
 } from './gameRooms.shared';
+
+const processEnv = globalThis as typeof globalThis & {
+  process?: { env?: Record<string, string | undefined> };
+};
+const BACKEND_URL = processEnv.process?.env?.BACKEND_URL ?? 'https://backend:4000';
+
+function notifyPendingInvitees(userId: string): void {
+  const secret = processEnv.process?.env?.SOCKET_INTERNAL_SECRET;
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (secret) headers['x-internal-secret'] = secret;
+
+  void fetch(`${BACKEND_URL}/internal/game-invitations/notify-invitees`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ userId }),
+  }).catch(() => undefined);
+}
 
 type EmptyGameRoomState = {
   id: 0;
@@ -22,8 +40,14 @@ const EMPTY_GAME_ROOM_STATE: EmptyGameRoomState = {
   teammates: [],
 };
 
-function getGameRoomChannel(gameRoomId: number) {
+let gameRoomNamespace: Namespace | null = null;
+
+export function getGameRoomChannel(gameRoomId: number) {
   return `GameRoom-${gameRoomId}`;
+}
+
+function getGameRoomMemberChannel(memberKey: string) {
+  return `GameRoomMember-${memberKey}`;
 }
 
 function emitEmptyGameRoomState(socket: Socket) {
@@ -32,6 +56,28 @@ function emitEmptyGameRoomState(socket: Socket) {
 
 function emitGameRoomError(socket: Socket, message: string) {
   socket.nsp.to(socket.id).emit('gameRoom:error:msg', message);
+}
+
+export function emitGameRoomStateToMember(memberKey: string, gameRoom: gameRoomState) {
+  gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:room:update', gameRoom);
+}
+
+export function emitGameRoomErrorToMember(memberKey: string, message: string) {
+  gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:error:msg', message);
+}
+
+export function broadcastGameRoomState(gameRoomId: number, gameRoom: gameRoomState) {
+  gameRoomNamespace?.to(getGameRoomChannel(gameRoomId)).emit('gameRoom:room:update', gameRoom);
+}
+
+export function emitGameRoomJoined(gameRoomId: number, username: string) {
+  gameRoomNamespace?.to(getGameRoomChannel(gameRoomId)).emit('gameRoom:room:joined', username);
+}
+
+export function subscribeMemberToGameRoomChannel(memberKey: string, gameRoomId: number) {
+  void gameRoomNamespace
+    ?.in(getGameRoomMemberChannel(memberKey))
+    .socketsJoin(getGameRoomChannel(gameRoomId));
 }
 
 function updateGameRoomState(socket: Socket) {
@@ -141,6 +187,7 @@ function migrateGuestRoomIfNeeded(
 }
 
 export function registerGameRoomSocket(nsp: Namespace) {
+  gameRoomNamespace = nsp;
   nsp.on('connection', (socket: Socket) => {
     const roomMemberKey = incrementGameRoomConnection(socket);
     const previousRoomMemberKey = getPreviousRoomMemberKey(socket);
@@ -152,6 +199,7 @@ export function registerGameRoomSocket(nsp: Namespace) {
     }
 
     migrateGuestRoomIfNeeded(socket, roomMemberKey, previousRoomMemberKey, username);
+    void socket.join(getGameRoomMemberChannel(roomMemberKey));
     updateGameRoomState(socket);
     socket.nsp.to(socket.id).emit('gameRoom:debug:msg', 'first connection');
     socket.nsp.to(socket.id).emit('gameRoom:error:msg', 'none');
@@ -170,6 +218,9 @@ export function registerGameRoomSocket(nsp: Namespace) {
     socket.on('gameRoom:teammate:leave', () => {
       const gameRoom = gameRoomsManager.removeUserFromGameRoom(roomMemberKey);
       handleLeaveResult(socket, username, gameRoom);
+      if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
+        notifyPendingInvitees(socket.data.userId as string);
+      }
     });
 
     socket.on('gameRoom:teammate:printDebug', () => {
@@ -192,6 +243,9 @@ export function registerGameRoomSocket(nsp: Namespace) {
         const gameRoomChannel = getGameRoomChannel(gameRoom.id);
         socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
         socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
+        if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
+          notifyPendingInvitees(socket.data.userId as string);
+        }
       });
     });
   });

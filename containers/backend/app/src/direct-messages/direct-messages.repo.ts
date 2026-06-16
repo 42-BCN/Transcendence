@@ -4,12 +4,35 @@ export type DirectMessageRow = {
   id: string;
   senderId: string;
   body: string;
+  type: 'user' | 'game_invitation';
   readAt: Date | null;
   createdAt: Date;
+  gameInvitationRoomId: number | null;
+  gameInvitationInvitedUserId: string | null;
+  gameInvitationExpiresAt: Date | null;
+  gameInvitationAcceptedAt: Date | null;
   sender: {
     username: string;
   };
 };
+
+const DIRECT_MESSAGE_SELECT = {
+  id: true,
+  senderId: true,
+  body: true,
+  type: true,
+  readAt: true,
+  createdAt: true,
+  gameInvitationRoomId: true,
+  gameInvitationInvitedUserId: true,
+  gameInvitationExpiresAt: true,
+  gameInvitationAcceptedAt: true,
+  sender: {
+    select: {
+      username: true,
+    },
+  },
+} as const;
 
 export async function listDirectMessagesForFriendship(
   friendshipId: string,
@@ -17,18 +40,7 @@ export async function listDirectMessagesForFriendship(
   return prisma.directMessage.findMany({
     where: { friendshipId },
     orderBy: { createdAt: 'asc' },
-    select: {
-      id: true,
-      senderId: true,
-      body: true,
-      readAt: true,
-      createdAt: true,
-      sender: {
-        select: {
-          username: true,
-        },
-      },
-    },
+    select: DIRECT_MESSAGE_SELECT,
   });
 }
 
@@ -42,19 +54,31 @@ export async function createDirectMessage(args: {
       friendshipId: args.friendshipId,
       senderId: args.senderId,
       body: args.body,
+      type: 'user',
     },
-    select: {
-      id: true,
-      senderId: true,
-      body: true,
-      readAt: true,
-      createdAt: true,
-      sender: {
-        select: {
-          username: true,
-        },
-      },
+    select: DIRECT_MESSAGE_SELECT,
+  });
+}
+
+export async function createGameInvitationDirectMessage(args: {
+  friendshipId: string;
+  senderId: string;
+  body: string;
+  roomId: number;
+  invitedUserId: string;
+  expiresAt: Date;
+}): Promise<DirectMessageRow> {
+  return prisma.directMessage.create({
+    data: {
+      friendshipId: args.friendshipId,
+      senderId: args.senderId,
+      body: args.body,
+      type: 'game_invitation',
+      gameInvitationRoomId: args.roomId,
+      gameInvitationInvitedUserId: args.invitedUserId,
+      gameInvitationExpiresAt: args.expiresAt,
     },
+    select: DIRECT_MESSAGE_SELECT,
   });
 }
 
@@ -110,4 +134,131 @@ export async function markDirectMessagesAsRead(args: {
   });
 
   return countUnreadDirectMessagesForFriendship(args);
+}
+
+export async function findActivePendingInvitationBetweenUsers(args: {
+  senderId: string;
+  invitedUserId: string;
+  now: Date;
+}): Promise<DirectMessageRow | null> {
+  return prisma.directMessage.findFirst({
+    where: {
+      senderId: args.senderId,
+      type: 'game_invitation',
+      gameInvitationInvitedUserId: args.invitedUserId,
+      gameInvitationAcceptedAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    select: DIRECT_MESSAGE_SELECT,
+  });
+}
+
+export async function countActivePendingInvitationsSentByUser(args: {
+  senderId: string;
+  now: Date;
+}): Promise<number> {
+  return prisma.directMessage.count({
+    where: {
+      senderId: args.senderId,
+      type: 'game_invitation',
+      gameInvitationAcceptedAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+  });
+}
+
+export async function countRecentGameInvitationsSentByUser(args: {
+  senderId: string;
+  since: Date;
+}): Promise<number> {
+  return prisma.directMessage.count({
+    where: {
+      senderId: args.senderId,
+      type: 'game_invitation',
+      createdAt: {
+        gte: args.since,
+      },
+    },
+  });
+}
+
+export async function findGameInvitationById(invitationId: string): Promise<DirectMessageRow | null> {
+  return prisma.directMessage.findUnique({
+    where: { id: invitationId },
+    select: DIRECT_MESSAGE_SELECT,
+  });
+}
+
+export async function listPendingGameInvitationsForUser(args: {
+  invitedUserId: string;
+  now: Date;
+}): Promise<DirectMessageRow[]> {
+  return prisma.directMessage.findMany({
+    where: {
+      type: 'game_invitation',
+      gameInvitationInvitedUserId: args.invitedUserId,
+      gameInvitationAcceptedAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    select: DIRECT_MESSAGE_SELECT,
+  });
+}
+
+export async function markGameInvitationAccepted(args: {
+  invitationId: string;
+  acceptedByUserId: string;
+  now: Date;
+}): Promise<boolean> {
+  const updated = await prisma.directMessage.updateMany({
+    where: {
+      id: args.invitationId,
+      type: 'game_invitation',
+      gameInvitationInvitedUserId: args.acceptedByUserId,
+      gameInvitationAcceptedAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    data: {
+      gameInvitationAcceptedAt: args.now,
+      gameInvitationAcceptedByUserId: args.acceptedByUserId,
+    },
+  });
+
+  return updated.count === 1;
+}
+
+export async function listPendingInviteesForSender(args: {
+  senderId: string;
+  now: Date;
+}): Promise<string[]> {
+  const rows = await prisma.directMessage.findMany({
+    where: {
+      senderId: args.senderId,
+      type: 'game_invitation',
+      gameInvitationAcceptedAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    select: {
+      gameInvitationInvitedUserId: true,
+    },
+  });
+
+  return rows
+    .map((r) => r.gameInvitationInvitedUserId)
+    .filter((id): id is string => id !== null);
 }

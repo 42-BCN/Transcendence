@@ -317,7 +317,12 @@
     "game": {
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
-      "resetPlan": "Reiniciar plan"
+      "resetPlan": "Reiniciar plan",
+      "room": {
+        "fields": {
+          "gameRoomId": "Game Room ID"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Crear cuenta",
@@ -371,10 +376,22 @@
         "addFriend": "Añadir amigo",
         "cancel": "Cancelar",
         "cancelRequest": "Cancelar solicitud",
+        "inviteSent": "Has enviado una invitacion a {username}",
         "inviteToGame": "Invitar a partida",
         "message": "Mensaje",
         "reject": "Rechazar",
-        "unfriend": "Eliminar amigo"
+        "unfriend": "Eliminar amigo",
+        "inviteErrors": {
+          "GAME_INVITATION_ROOM_REQUIRED": "Conéctate a la sala de juego primero",
+          "GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de juego ya no está disponible",
+          "GAME_INVITATION_DUPLICATE_PENDING": "Invitación ya pendiente",
+          "GAME_INVITATION_RECENT_DUPLICATE": "Acabas de enviar una invitación, espera un momento",
+          "GAME_INVITATION_PENDING_LIMIT": "Demasiadas invitaciones pendientes",
+          "GAME_INVITATION_RATE_LIMITED": "Demasiadas invitaciones enviadas, inténtalo más tarde",
+          "GAME_INVITATION_NOT_FRIEND": "No eres amigo de este usuario",
+          "GAME_INVITATION_ALREADY_IN_ROOM": "Este usuario ya está en una sala de juego",
+          "default": "No se pudo enviar la invitación"
+        }
       },
       "emptyStates": {
         "offline": "No hay amigos desconectados",
@@ -403,7 +420,8 @@
       },
       "searchLabel": "Buscador",
       "searchPlaceholder": "Buscar usuarios",
-      "title": "Social"
+      "title": "Social",
+      "gameInvitations": "Invitaciones a juego"
     }
   },
   "validation": {

@@ -8,7 +8,9 @@ import type {
   FriendAcceptedNotificationPayload,
   FriendRejectedNotificationPayload,
   FriendRequestNotificationPayload,
+  GameInvitationReceivedPayload,
 } from '@/contracts/sockets/friendships/friendships.schema';
+import type { DirectMessage } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 
 export type PendingListKey = 'pendingReceived' | 'pendingSent';
 
@@ -39,6 +41,10 @@ export interface SocialState {
   pendingReceived: FriendshipPublic[];
   pendingSent: FriendshipPublic[];
   currentUserId: string | null;
+  activeGameInvitationCount: number;
+  activeGameInvitationIds: string[];
+  hasLoadedGameInvitationSummary: boolean;
+  pendingInvitationMessagesByFriendId: Record<string, Extract<DirectMessage, { type: 'game_invitation' }>[]>; 
   searchResults: GroupedSearchResults;
   searchQuery: string;
   errors: {
@@ -53,6 +59,10 @@ export interface SocialState {
   setSearchResults: (results: GroupedSearchResults) => void;
   setSearchQuery: (query: string) => void;
   setCurrentUserId: (id: string | null) => void;
+  setActiveGameInvitationSummary: (args: {
+    activeInvitationCount: number;
+    activeInvitationIds: string[];
+  }) => void;
   removePendingById: (list: PendingListKey, id: string) => void;
   removeFriendById: (id: string) => void;
   acceptPendingById: (id: string) => void;
@@ -64,4 +74,8 @@ export interface SocialState {
   receiveFriendRequest: (payload: FriendRequestNotificationPayload) => void;
   receiveFriendAccepted: (payload: FriendAcceptedNotificationPayload) => void;
   receiveFriendRejected: (payload: FriendRejectedNotificationPayload) => void;
+  receiveGameInvitationMessage: (payload: GameInvitationReceivedPayload) => void;
+  consumePendingInvitationMessages: (
+    friendUserId: string,
+  ) => Extract<DirectMessage, { type: 'game_invitation' }>[];
 }

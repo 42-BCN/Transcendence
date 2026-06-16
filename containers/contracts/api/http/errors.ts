@@ -1,6 +1,7 @@
 import { AUTH_ERRORS } from '../auth/auth.errors';
 import { USERS_ERRORS } from '../users/users.errors';
 import { FRIENDSHIPS_ERROR_STATUS } from '../friendships/friendships.errors';
+import { GAME_INVITATIONS_ERROR_STATUS } from '../game-invitations/game-invitations.errors';
 import { HttpStatus } from './status';
 import { VALIDATION_ERROR } from './validation';
 
@@ -9,6 +10,7 @@ export const RES_ERRORS = {
   ...AUTH_ERRORS,
   ...USERS_ERRORS,
   ...FRIENDSHIPS_ERROR_STATUS,
+  ...GAME_INVITATIONS_ERROR_STATUS,
   INTERNAL_ERROR: HttpStatus.INTERNAL_SERVER_ERROR,
   // Global errors
   ...VALIDATION_ERROR,

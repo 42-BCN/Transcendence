@@ -45,6 +45,11 @@ enum FriendshipStatus {
   accepted
 }
 
+enum DirectMessageType {
+  user
+  game_invitation
+}
+
 model Friendship {
   id        String           @id @default(uuid()) @db.Uuid
   userId1   String           @map("user_id_1") @db.Uuid
@@ -66,18 +71,26 @@ model Friendship {
 }
 
 model DirectMessage {
-  id           String     @id @default(uuid()) @db.Uuid
-  friendshipId String     @map("friendship_id") @db.Uuid
-  senderId     String     @map("sender_id") @db.Uuid
-  body         String     @db.VarChar(300)
-  readAt       DateTime?  @map("read_at") @db.Timestamptz(6)
-  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  id                           String            @id @default(uuid()) @db.Uuid
+  friendshipId                 String            @map("friendship_id") @db.Uuid
+  senderId                     String            @map("sender_id") @db.Uuid
+  body                         String            @db.VarChar(300)
+  type                         DirectMessageType @default(user)
+  gameInvitationRoomId         Int?              @map("game_invitation_room_id")
+  gameInvitationInvitedUserId  String?           @map("game_invitation_invited_user_id") @db.Uuid
+  gameInvitationExpiresAt      DateTime?         @map("game_invitation_expires_at") @db.Timestamptz(6)
+  gameInvitationAcceptedAt     DateTime?         @map("game_invitation_accepted_at") @db.Timestamptz(6)
+  gameInvitationAcceptedByUserId String?         @map("game_invitation_accepted_by_user_id") @db.Uuid
+  readAt                       DateTime?         @map("read_at") @db.Timestamptz(6)
+  createdAt                    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
 
   friendship Friendship @relation(fields: [friendshipId], references: [id], onDelete: Cascade)
   sender     User       @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([friendshipId, createdAt], name: "direct_messages_friendship_created_idx")
   @@index([senderId, createdAt], name: "direct_messages_sender_created_idx")
+  @@index([gameInvitationInvitedUserId, gameInvitationExpiresAt], name: "direct_messages_invited_user_expires_idx")
+  @@index([senderId, type, createdAt], name: "direct_messages_sender_type_created_idx")
   @@map("direct_messages")
 }
 

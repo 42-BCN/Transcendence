@@ -318,7 +318,12 @@
     "game": {
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
-      "resetPlan": "Reiniciar pla"
+      "resetPlan": "Reiniciar pla",
+      "room": {
+        "fields": {
+          "gameRoomId": "Game Room ID"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Crear compte",
@@ -372,10 +377,22 @@
         "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
         "cancelRequest": "Cancel·lar sol·licitud",
+        "inviteSent": "Has enviat una invitacio a {username}",
         "inviteToGame": "Convidar a partida",
         "message": "Missatge",
         "reject": "Rebutjar",
-        "unfriend": "Eliminar amic"
+        "unfriend": "Eliminar amic",
+        "inviteErrors": {
+          "GAME_INVITATION_ROOM_REQUIRED": "Connecta't a la sala de joc primer",
+          "GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de joc ja no està disponible",
+          "GAME_INVITATION_DUPLICATE_PENDING": "Invitació ja pendent",
+          "GAME_INVITATION_RECENT_DUPLICATE": "Acabes d'enviar una invitació, espera un moment",
+          "GAME_INVITATION_PENDING_LIMIT": "Massa invitacions pendents",
+          "GAME_INVITATION_RATE_LIMITED": "Massa invitacions enviades, torna-ho a intentar més tard",
+          "GAME_INVITATION_NOT_FRIEND": "No ets amic d'aquest usuari",
+          "GAME_INVITATION_ALREADY_IN_ROOM": "Aquest usuari ja és en una sala de joc",
+          "default": "No s'ha pogut enviar la invitació"
+        }
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",
@@ -404,7 +421,8 @@
       },
       "searchLabel": "Cercador",
       "searchPlaceholder": "Cerca usuaris",
-      "title": "Social"
+      "title": "Social",
+      "gameInvitations": "Invitacions de joc"
     }
   },
   "validation": {

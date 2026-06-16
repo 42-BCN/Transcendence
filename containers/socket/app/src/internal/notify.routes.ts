@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import {
   FriendshipInternalNotifyBodySchema,
   FriendshipPresenceCheckBodySchema,
+  gameInvitationSocketEvents,
   friendshipSocketEvents,
 } from '@contracts/sockets/friendships/friendships.schema';
 import {
@@ -76,6 +77,14 @@ export function handleInternalNotify(req: Request, res: Response): void {
       break;
 
     case friendshipSocketEvents.rejected:
+      emitToUser(body.userId, body.event, body.payload);
+      break;
+
+    case gameInvitationSocketEvents.updated:
+      emitToUser(body.userId, body.event, body.payload);
+      break;
+
+    case gameInvitationSocketEvents.received:
       emitToUser(body.userId, body.event, body.payload);
       break;
   }
