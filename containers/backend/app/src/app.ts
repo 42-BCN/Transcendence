@@ -20,7 +20,10 @@ import { authIpRateLimit } from './auth/auth.rate-limit';
 import { getAuthCookieSameSite } from './auth/auth.cookies';
 import { publicApiRouter } from './public-api/public-api.routes';
 import { gameInvitationsRouter } from './game-invitations/game-invitations.routes';
-import { handleInternalNotifyInvitees } from './game-invitations/game-invitations.controller';
+import {
+  handleInternalMarkJoinedRoom,
+  handleInternalNotifyInvitees,
+} from './game-invitations/game-invitations.controller';
 
 // Ensure required environment variables are set
 // TODO manage like in frontend with a env schema validator
@@ -83,6 +86,7 @@ app.post('/internal/direct-messages/history', handleInternalDirectMessageHistory
 app.post('/internal/direct-messages/read', handleInternalDirectMessageRead);
 app.post('/internal/direct-messages/send', handleInternalDirectMessageSend);
 app.post('/internal/game-invitations/notify-invitees', handleInternalNotifyInvitees);
+app.post('/internal/game-invitations/mark-joined', handleInternalMarkJoinedRoom);
 
 app.use(errorMiddleware);
 

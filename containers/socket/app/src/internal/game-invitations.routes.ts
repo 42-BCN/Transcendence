@@ -56,23 +56,23 @@ function toMemberKey(userId: string) {
   return `user:${userId}`;
 }
 
+function isRoomJoinable(roomId: number) {
+  const room = gameRoomsManager.getGameRoomById(roomId);
+  if (!room) return { ok: false as const, reason: 'room_missing' };
+  if (room.isGameRoomFull) return { ok: false as const, reason: 'room_full' };
+  return { ok: true as const, room };
+}
+
 function canUserReceiveInvitation(invitedUserId: string, roomId: number) {
   const invitedMemberKey = toMemberKey(invitedUserId);
   const inviteeCurrentRoom = gameRoomsManager.getUserCurrentGameRoom(invitedMemberKey);
+  if (typeof inviteeCurrentRoom !== 'string' && inviteeCurrentRoom.id === roomId) {
+    return { ok: false as const, reason: 'already_in_room' };
+  }
   if (typeof inviteeCurrentRoom !== 'string' && inviteeCurrentRoom.isGameRoomFull) {
     return { ok: false as const, reason: 'already_in_room' };
   }
-
-  const room = gameRoomsManager.getGameRoomById(roomId);
-  if (!room) {
-    return { ok: false as const, reason: 'room_missing' };
-  }
-
-  if (room.isGameRoomFull) {
-    return { ok: false as const, reason: 'room_full' };
-  }
-
-  return { ok: true as const, room };
+  return isRoomJoinable(roomId);
 }
 
 export function handlePrepareInvitationRoom(req: Request, res: Response): void {
@@ -181,7 +181,7 @@ export function handleInvitationStatus(req: Request, res: Response): void {
   }
 
   const activeInvitationIds = parsed.data.invitations
-    .filter((invitation) => canUserReceiveInvitation(parsed.data.userId, invitation.roomId).ok)
+    .filter((invitation) => isRoomJoinable(invitation.roomId).ok)
     .map((invitation) => invitation.invitationId);
 
   res.json({

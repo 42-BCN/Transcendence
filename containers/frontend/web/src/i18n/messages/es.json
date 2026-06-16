@@ -43,8 +43,23 @@
   },
   "pages": {
     "home": {
-      "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan.",
-      "title": "Hola desde Next en Docker 👋"
+      "title": "Salas de juego",
+      "subtitle": "Unéte a una sala para empezar a jugar con otros usuarios.",
+      "room": {
+        "label": "Sala #{id}",
+        "statusFull": "La sala está llena.",
+        "statusWaiting": "Esperando jugadores…",
+        "playersHeading": "Jugadores en la sala",
+        "invitationsHeading": "Invitaciones enviadas",
+        "invitationsEmpty": "Aún no se han enviado invitaciones desde esta sala.",
+        "invitationAccepted": "Aceptada",
+        "invitationPending": "Pendiente",
+        "receivedInvitationsHeading": "Invitaciones recibidas"
+      },
+      "actions": {
+        "join": "Unirse a cualquier sala disponible",
+        "leave": "Salir de la sala"
+      }
     },
     "game": {
       "description": "Juega a Transcendence y gestiona tus turnos.",
@@ -398,7 +413,8 @@
         "online": "No hay amigos conectados",
         "pending": "No has enviado solicitudes",
         "request": "No tienes solicitudes pendientes",
-        "search": "No se han encontrado usuarios"
+        "search": "No se han encontrado usuarios",
+        "gameInvitations": "Aún no hay invitaciones de juego"
       },
       "friends": {
         "offline": "Amigos desconectados",
@@ -421,7 +437,8 @@
       "searchLabel": "Buscador",
       "searchPlaceholder": "Buscar usuarios",
       "title": "Social",
-      "gameInvitations": "Invitaciones a juego"
+      "gameInvitations": "Invitaciones a juego",
+      "gameInvitationSubtitle": "Invitado a la sala {roomId}"
     }
   },
   "validation": {

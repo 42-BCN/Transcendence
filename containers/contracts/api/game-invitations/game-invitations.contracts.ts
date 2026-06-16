@@ -40,3 +40,39 @@ export type GetActiveGameInvitationSummaryResponse = ApiResponse<
   GameInvitationsErrorName,
   ValidationErrorDetails
 >;
+
+export type SentRoomInvitation = {
+  id: string;
+  invitedUserId: string;
+  invitedUsername: string;
+  acceptedAt: string | null;
+  expiresAt: string;
+  createdAt: string;
+};
+
+export type GetSentRoomInvitationsOk = {
+  invitations: SentRoomInvitation[];
+};
+
+export type GetSentRoomInvitationsResponse = ApiResponse<
+  GetSentRoomInvitationsOk,
+  GameInvitationsErrorName,
+  ValidationErrorDetails
+>;
+
+export type ReceivedRoomInvitation = {
+  id: string;
+  senderUserId: string;
+  senderUsername: string;
+  acceptedAt: string | null;
+  expiresAt: string;
+  createdAt: string;
+};
+
+export type GetReceivedRoomInvitationsOk = { invitations: ReceivedRoomInvitation[] };
+
+export type GetReceivedRoomInvitationsResponse = ApiResponse<
+  GetReceivedRoomInvitationsOk,
+  GameInvitationsErrorName,
+  ValidationErrorDetails
+>;

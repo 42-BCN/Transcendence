@@ -1,1 +1,2 @@
-export { Rooms } from "./rooms"
+export { Rooms } from './rooms';
+export { GameRoomsPanel } from './game-rooms-panel';

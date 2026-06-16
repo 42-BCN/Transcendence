@@ -232,9 +232,15 @@ erDiagram
       uuid id PK
       uuid friendshipId FK
       uuid senderId FK
+      string type
       string body
       datetime readAt
       datetime createdAt
+      int gameInvitationRoomId
+      uuid gameInvitationInvitedUserId
+      datetime gameInvitationExpiresAt
+      datetime gameInvitationAcceptedAt
+      uuid gameInvitationAcceptedByUserId
     }
 
     PasswordReset {
@@ -258,7 +264,7 @@ erDiagram
 
 ### Schema Notes
 - **Social Graph**: The `Friendship` table stores both pending requests and accepted relationships, tracking who initiated the request via `senderId`.
-- **Direct Messages**: The DirectMessage table stores persistent one-to-one messages between accepted friends, linked through friendshipId and enriched in the application layer with unread counters and real-time delivery.
+- **Direct Messages**: Stores persistent one-to-one messages between friends. The `type` field distinguishes chat messages (`user`) from game room invitations (`game_invitation`), with invitation metadata (`roomId`, `invitedUserId`, `expiresAt`, `acceptedAt`) stored on the same row.
 - **Security**: Sensitive tokens (for password resets and email verification) are stored in a hashed format, and emails/usernames are enforced as unique (UK).
 - **Authentication**: The `User` model supports both local login (tracking failed attempts and temporary lockouts) and OAuth integration via `googleId`.
 
@@ -338,7 +344,7 @@ This section outlines the core functionalities implemented in the platform, deta
 ### 3. Social System
 - **Team Members**: capapes, joanavar, mfontser
 - **Description**: A central pillar of the web application that organizes user interactions and supports the project's social dimension.
-- **Functionality**: Includes user search, online/offline friend tabs, sent and received friend requests, live presence indicators, unread counters, direct social actions, and one-to-one direct messaging.
+- **Functionality**: User search, online/offline friend tabs, friend requests, live presence, unread counters, direct messaging, and game room invitations with real-time status tracking.
 
 ### 4. Real-Time Interactions
 - **Team Members**: joanavar, capapes, tatahere
@@ -355,7 +361,12 @@ This section outlines the core functionalities implemented in the platform, deta
 - **Description**: Reduces visual inconsistencies, facilitates scalability, and allows the team to develop new screens more coherently.
 - **Functionality**: A comprehensive library of reusable components and shared composites, rigorously styled and documented using Storybook.
 
-### 7. Internationalization (i18n)
+### 7. Game Room Invitations
+- **Team Members**: capapes
+- **Description**: Friends can invite each other into game rooms from the social dashboard, with real-time status tracking on both sides.
+- **Functionality**: Invitations are sent to online friends, delivered via WebSocket, and stored persistently. The game rooms panel shows pending sent/received invitations for the current room. Joining a room by any method marks matching received invitations as accepted and notifies all parties. Leaving a room invalidates pending invitations in real-time.
+
+### 8. Internationalization (i18n)
 - **Team Members**: capapes, mfontser
 - **Description**: Treated as a core architectural feature rather than a superficial add-on.
 - **Functionality**: Full localized navigation and namespaced translations supporting English, Spanish, and Catalan.

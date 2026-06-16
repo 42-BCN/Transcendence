@@ -28,6 +28,18 @@ function notifyPendingInvitees(userId: string): void {
   }).catch(() => undefined);
 }
 
+function markJoinedRoom(userId: string, roomId: number): void {
+  const secret = processEnv.process?.env?.SOCKET_INTERNAL_SECRET;
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (secret) headers['x-internal-secret'] = secret;
+
+  void fetch(`${BACKEND_URL}/internal/game-invitations/mark-joined`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ userId, roomId }),
+  }).catch(() => undefined);
+}
+
 type EmptyGameRoomState = {
   id: 0;
   isGameRoomFull: false;
@@ -208,11 +220,17 @@ export function registerGameRoomSocket(nsp: Namespace) {
     socket.on('gameRoom:teammate:joinAny', () => {
       const gameRoom = gameRoomsManager.joinUserToAnyGameRoom(roomMemberKey, username);
       handleJoinResult(socket, username, gameRoom);
+      if (typeof gameRoom !== 'string' && typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
+        markJoinedRoom(socket.data.userId as string, gameRoom.id);
+      }
     });
 
     socket.on('gameRoom:teammate:join', (gameRoomId: number) => {
       const gameRoom = gameRoomsManager.joinUserToGameRoom(roomMemberKey, username, gameRoomId);
       handleJoinResult(socket, username, gameRoom);
+      if (typeof gameRoom !== 'string' && typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
+        markJoinedRoom(socket.data.userId as string, gameRoom.id);
+      }
     });
 
     socket.on('gameRoom:teammate:leave', () => {

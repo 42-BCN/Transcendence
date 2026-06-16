@@ -8,6 +8,7 @@ import {
   ScrollArea,
   Stack,
   Text,
+  UserItem,
   Tabs,
   TabList,
   Tab,
@@ -172,19 +173,46 @@ function SearchResults() {
   );
 }
 
+function GameInvitationsList() {
+  const t = useTranslations('features.social');
+  const pendingInvitationMessagesByFriendId = useSocialStore(
+    (state) => state.pendingInvitationMessagesByFriendId,
+  );
+
+  const invitations = Object.values(pendingInvitationMessagesByFriendId)
+    .flat()
+    .filter((msg) => msg.type === 'game_invitation');
+
+  if (invitations.length === 0) {
+    return (
+      <Stack align="center" justify="center" className="px-3 py-3 text-center">
+        <Text variant="caption" color="tertiary">
+          {t('emptyStates.gameInvitations')}
+        </Text>
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack gap="none" className="w-full">
+      {invitations.map((msg) => (
+        <UserItem
+          key={msg.id}
+          username={msg.content.inviterUsername}
+          subtitle={t('gameInvitationSubtitle', { roomId: msg.content.roomId })}
+        />
+      ))}
+    </Stack>
+  );
+}
+
 function SocialHeader() {
   const t = useTranslations('features.social');
-  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
   return (
     <Stack gap="md" className="p-3">
-      <div className="flex items-center gap-2">
-        <Text as="h1" variant="heading-md" className="font-bold">
-          {t('title')}
-        </Text>
-        <Text variant="caption" color="secondary">
-          {t('gameInvitations')} {activeGameInvitationCount}
-        </Text>
-      </div>
+      <Text as="h1" variant="heading-md" className="font-bold">
+        {t('title')}
+      </Text>
       <UserSearch />
     </Stack>
   );
@@ -223,11 +251,17 @@ function SocialContent() {
     );
   }
 
+  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
+
   return (
     <Tabs defaultSelectedKey="friends" className="flex flex-1 min-h-0 flex-col">
       <TabList className="px-3">
         <Tab id="friends">{t('friends.title')}</Tab>
         <Tab id="requests">{t('requests.title')}</Tab>
+        <Tab id="invitations">
+          {t('gameInvitations')}
+          {activeGameInvitationCount > 0 && ` (${activeGameInvitationCount})`}
+        </Tab>
       </TabList>
 
       <ScrollArea>
@@ -237,6 +271,10 @@ function SocialContent() {
 
         <TabPanel id="requests" className="outline-none">
           <RequestsList />
+        </TabPanel>
+
+        <TabPanel id="invitations" className="outline-none">
+          <GameInvitationsList />
         </TabPanel>
       </ScrollArea>
     </Tabs>

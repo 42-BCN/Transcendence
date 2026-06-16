@@ -46,8 +46,23 @@ declare const messages: {
   },
   "pages": {
     "home": {
-      "subtitle": "If you can see this, routing + dev server work.",
-      "title": "Hello from Next in Docker 👋"
+      "title": "Game Rooms",
+      "subtitle": "Join a room to start playing with other users.",
+      "room": {
+        "label": "Room #{id}",
+        "statusFull": "Room is full.",
+        "statusWaiting": "Waiting for players…",
+        "playersHeading": "Players in room",
+        "invitationsHeading": "Invitations sent",
+        "invitationsEmpty": "No invitations sent from this room yet.",
+        "invitationAccepted": "Accepted",
+        "invitationPending": "Pending",
+        "receivedInvitationsHeading": "Invitations received"
+      },
+      "actions": {
+        "join": "Join any available room",
+        "leave": "Leave room"
+      }
     },
     "game": {
       "description": "Play the Transcendence game and manage your turns.",
@@ -401,7 +416,8 @@ declare const messages: {
         "online": "No friends online right now",
         "pending": "No sent requests pending",
         "request": "No pending friend requests",
-        "search": "No users found"
+        "search": "No users found",
+        "gameInvitations": "No game invitations yet"
       },
       "friends": {
         "offline": "Friends offline",
@@ -424,7 +440,8 @@ declare const messages: {
       "searchLabel": "Search",
       "searchPlaceholder": "Search users",
       "title": "Social",
-      "gameInvitations": "Game invitations"
+      "gameInvitations": "Game invitations",
+      "gameInvitationSubtitle": "Invited to room {roomId}"
     }
   },
   "validation": {

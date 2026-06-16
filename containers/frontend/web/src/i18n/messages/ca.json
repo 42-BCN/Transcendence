@@ -43,8 +43,23 @@
   },
   "pages": {
     "home": {
-      "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen.",
-      "title": "Hola des de Next en Docker 👋"
+      "title": "Sales de joc",
+      "subtitle": "Uneix-te a una sala per començar a jugar amb altres usuaris.",
+      "room": {
+        "label": "Sala #{id}",
+        "statusFull": "La sala està plena.",
+        "statusWaiting": "Esperant jugadors…",
+        "playersHeading": "Jugadors a la sala",
+        "invitationsHeading": "Invitacions enviades",
+        "invitationsEmpty": "Encara no s’han enviat invitacions des d’aquesta sala.",
+        "invitationAccepted": "Acceptada",
+        "invitationPending": "Pending",
+        "receivedInvitationsHeading": "Invitacions rebudes"
+      },
+      "actions": {
+        "join": "Unir-se a qualsevol sala disponible",
+        "leave": "Sortir de la sala"
+      }
     },
     "game": {
       "description": "Juga a Transcendence i gestiona els teus torns.",
@@ -399,7 +414,8 @@
         "online": "No hi ha amics connectats",
         "pending": "No has enviat sol·licituds",
         "request": "No tens sol·licituds pendents",
-        "search": "No s’han trobat usuaris"
+        "search": "No s’han trobat usuaris",
+        "gameInvitations": "Encara no hi ha invitacions de joc"
       },
       "friends": {
         "offline": "Amics desconnectats",
@@ -422,7 +438,8 @@
       "searchLabel": "Cercador",
       "searchPlaceholder": "Cerca usuaris",
       "title": "Social",
-      "gameInvitations": "Invitacions de joc"
+      "gameInvitations": "Invitacions de joc",
+      "gameInvitationSubtitle": "Convidat a la sala {roomId}"
     }
   },
   "validation": {
