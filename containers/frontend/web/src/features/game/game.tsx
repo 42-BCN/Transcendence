@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState, useContext } from 'react';
+import { useRef, useEffect, useState, useContext, type ReactNode } from 'react';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame, type pos as Position } from './store';
@@ -9,6 +9,7 @@ import { Button } from '@components/controls/button';
 import { Meter } from '@components/composites/meter';
 import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
+import { GlassCard } from '@components/primitives/glass-card';
 import { useShallow } from 'zustand/react/shallow';
 import { useTheme } from '@/providers/theme-provider';
 import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
@@ -26,7 +27,7 @@ const s = 0.975;
 
 function FloatingVfx({ entityId }: { entityId: string }) {
   const entries = useGame(
-    useShallow((s) => Object.values(s.vfx).filter((v) => v.eid === entityId))
+    useShallow((s) => Object.values(s.vfx).filter((v) => v.eid === entityId)),
   );
 
   useEffect(() => {
@@ -44,12 +45,17 @@ function FloatingVfx({ entityId }: { entityId: string }) {
       document.head.appendChild(style);
     }
   }, []);
-  if (entries.length === 0)
-    return null;
+  if (entries.length === 0) return null;
   return (
     <>
       {entries.map((v) => (
-        <Html key={v.vfxid} position={[0, 1.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[20, 0]}>
+        <Html
+          key={v.vfxid}
+          position={[0, 1.5, 0]}
+          center
+          style={{ pointerEvents: 'none' }}
+          zIndexRange={[20, 0]}
+        >
           <span
             style={{
               display: 'block',
@@ -59,15 +65,23 @@ function FloatingVfx({ entityId }: { entityId: string }) {
               whiteSpace: 'nowrap',
               textShadow: '0 0 4px #000',
               color:
-                v.type === 'damage' ? '#ff4444' :
-                  v.type === 'doom' ? '#ff8800' :
-                    v.type === 'shield' ? '#4488ff' :
-                      v.type === 'boost' ? '#44ff88' :
-                        v.type === 'burn' ? '#ff6600' :
-                          v.type === 'restrain' ? '#cc88ff' :
-                            v.type === 'oxidation' ? '#88ccff' :
-                              v.type === 'miss' ? '#ffffff' :
-                                '#ffcc00',
+                v.type === 'damage'
+                  ? '#ff4444'
+                  : v.type === 'doom'
+                    ? '#ff8800'
+                    : v.type === 'shield'
+                      ? '#4488ff'
+                      : v.type === 'boost'
+                        ? '#44ff88'
+                        : v.type === 'burn'
+                          ? '#ff6600'
+                          : v.type === 'restrain'
+                            ? '#cc88ff'
+                            : v.type === 'oxidation'
+                              ? '#88ccff'
+                              : v.type === 'miss'
+                                ? '#ffffff'
+                                : '#ffcc00',
             }}
           >
             {v.label}
@@ -127,12 +141,13 @@ function AbButtons() {
   const selectAbility = useGame((state) => state.selectAbility);
   const selectedAb = useGame((state) => state.selectedAb);
   const abilityCD = useGame((state) => {
-    if (!ent?.id)
-      return null;
-    return state.players[ent.id]?.abilitiesCD
-      ?? state.clones[ent.id]?.abilitiesCD
-      ?? state.enemies[ent.id]?.abilitiesCD
-      ?? null;
+    if (!ent?.id) return null;
+    return (
+      state.players[ent.id]?.abilitiesCD ??
+      state.clones[ent.id]?.abilitiesCD ??
+      state.enemies[ent.id]?.abilitiesCD ??
+      null
+    );
   });
   const assignedCharacter = useGame((state) => state.assignedCharacter);
   const clearHighlights = useGame((state) => state.clearHighlights);
@@ -142,21 +157,29 @@ function AbButtons() {
     <div className="flex flex-wrap gap-2 md:gap-4">
       {ent?.abilities.map((ability) => {
         const cd = abilityCD?.[ability] || 0;
-        const cn = cd === 0 ? "bg-red-600 text-white" : "bg-gray-600 text-white"
+        const cn = cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white';
         return (
           <Button
             key={ability}
             w="auto"
             className={cn}
             onMouseEnter={(event) => {
-              if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
+              if (
+                cd === 0 &&
+                !selectedAb &&
+                Object.keys(useGame.getState().highlights).length === 0
+              ) {
                 console.log('enter');
                 event.stopPropagation();
                 showAbRange(ability);
               }
             }}
             onMouseLeave={(event) => {
-              if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
+              if (
+                cd === 0 &&
+                !selectedAb &&
+                Object.keys(useGame.getState().highlights).length === 0
+              ) {
                 console.log('exit');
                 event.stopPropagation();
                 clearSelectables();
@@ -164,15 +187,14 @@ function AbButtons() {
             }}
             onPress={() => {
               if (cd === 0 && assignedCharacter === ent.id.replace('clone_', '')) {
-                if (Object.keys(useGame.getState().highlights).length === 0)
-                  clearHighlights();
+                if (Object.keys(useGame.getState().highlights).length === 0) clearHighlights();
                 selectAbility(ability);
               }
             }}
           >
-            {ability} {cd > 0 ? `(${cd})` : ""}
+            {ability} {cd > 0 ? `(${cd})` : ''}
           </Button>
-        )
+        );
       })}
     </div>
   );
@@ -192,7 +214,11 @@ function DiceButtons() {
   return (
     <div className="flex flex-wrap gap-2 md:gap-4">
       {ent?.usedDice.map((diceNum, i) => (
-        <Button key={i} w="auto" className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}>
+        <Button
+          key={i}
+          w="auto"
+          className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}
+        >
           {`d${diceNum}`}
         </Button>
       ))}
@@ -202,8 +228,7 @@ function DiceButtons() {
           w="auto"
           onMouseEnter={(event) => {
             event.stopPropagation();
-            if (!ability)
-              showMoveRange(diceNum);
+            if (!ability) showMoveRange(diceNum);
           }}
           onMouseLeave={(event) => {
             if (!selectedDice) {
@@ -213,7 +238,7 @@ function DiceButtons() {
           }}
           onPress={() => {
             if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
-              (canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
+              canSelect || Boolean(ability) ? selectDice(diceNum) : movDice(diceNum);
             }
           }}
           className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -231,8 +256,7 @@ function Reset() {
   const history = useGame((state) => state.history);
   const resetHistory = useGame((state) => state.resetHistory);
   const assignedCharacter = useGame((state) => state.assignedCharacter);
-  if (!history.some((h) => h.who === assignedCharacter && h.type !== 'forcedMov'))
-    return null;
+  if (!history.some((h) => h.who === assignedCharacter && h.type !== 'forcedMov')) return null;
   return (
     <Button
       className="absolute z-10 top-8 left-8"
@@ -253,12 +277,12 @@ function EndPlan({ isStandalone = false }: { isStandalone?: boolean }) {
   const phase = useGame((state) => state.phase);
   const activePlayers = useGame((state) => state.activePlayers);
   const readyPlayers = useGame((state) => state.readyPlayers);
-  
+
   if (phase !== 'PLAN') return null;
 
   return (
     <Button
-      className={isStandalone ? "absolute z-20 bottom-4 left-16" : "shrink-0 h-fit"}
+      className={isStandalone ? 'absolute z-20 bottom-4 left-16' : 'shrink-0 h-fit'}
       variant="primary"
       w="auto"
       onPress={() => nextPhase()}
@@ -294,7 +318,8 @@ function HUD() {
       </div>
       {ent.status && (
         <div className="text-sm px-2 py-1 rounded w-fit border border-yellow-200/50 bg-yellow-50 text-yellow-800 dark:bg-black/60 dark:text-yellow-200 dark:border-transparent">
-          ⚡ {ent.status}{ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
+          ⚡ {ent.status}
+          {ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
         </div>
       )}
       <div className="flex flex-wrap items-center gap-2 md:gap-4">
@@ -394,16 +419,17 @@ function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
   const players = useGame(useShallow((s) => s.players));
   const clones = useGame(useShallow((s) => s.clones));
 
-  if (phase !== 'PLAN' || !enemy || (enemy as any).isDead)
-    return null;
-  if (!(enemy as any).abilities?.length || !(enemy as any).dice?.length)
-    return null;
+  if (phase !== 'PLAN' || !enemy || (enemy as any).isDead) return null;
+  if (!(enemy as any).abilities?.length || !(enemy as any).dice?.length) return null;
   const epos = (enemy as any).position;
   let closestId: string | null = null;
   let minDist = Infinity;
   const consider = (id: string, pos: { x: number; y: number; z: number }) => {
     const d = Math.abs(pos.x - epos.x) + Math.abs(pos.z - epos.z);
-    if (d < minDist) { minDist = d; closestId = id; }
+    if (d < minDist) {
+      minDist = d;
+      closestId = id;
+    }
   };
   Object.values(players).forEach((p: any) => {
     if (!p.isDead) consider(p.id, p.position);
@@ -411,32 +437,31 @@ function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
   Object.values(clones).forEach((c: any) => {
     if (!c.isDead) consider(c.id.replace('clone_', ''), c.position);
   });
-  if (!closestId)
-    return null;
+  if (!closestId) return null;
   const targetId = closestId as string;
   const color = CLASS_COLOR[targetId] ?? '#ffffff';
   const icon = CLASS_ICON[targetId] ?? '🎯';
 
   return (
     <Html position={[0, 0.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[20, 0]}>
-      <div style={{
-        background: 'rgba(0,0,0,0.82)',
-        color: '#ffffff',
-        border: `1px solid ${color}`,
-        borderRadius: 3,
-        fontSize: 10,
-        padding: '1px 5px',
-        whiteSpace: 'nowrap',
-        fontWeight: 'bold',
-        letterSpacing: '0.03em',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '4px',
-      }}>
+      <div
+        style={{
+          background: 'rgba(0,0,0,0.82)',
+          color: '#ffffff',
+          border: `1px solid ${color}`,
+          borderRadius: 3,
+          fontSize: 10,
+          padding: '1px 5px',
+          whiteSpace: 'nowrap',
+          fontWeight: 'bold',
+          letterSpacing: '0.03em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+        }}
+      >
         <span style={{ fontSize: '11px', lineHeight: 1 }}>{icon}</span>
-        <span style={{ color: color }}>
-          {targetId.charAt(0).toUpperCase() + targetId.slice(1)}
-        </span>
+        <span style={{ color: color }}>{targetId.charAt(0).toUpperCase() + targetId.slice(1)}</span>
       </div>
     </Html>
   );
@@ -457,8 +482,7 @@ function Enemy({ id, pos }: { id: string; pos: Position }) {
   const [isHovered, setHover] = useState(false);
 
   const Model = getMesh(id);
-  if (!Model)
-    return null;
+  if (!Model) return null;
   return (
     <group position={[pos.x, pos.y, pos.z]}>
       <Model
@@ -478,8 +502,7 @@ function Enemy({ id, pos }: { id: string; pos: Position }) {
           if (phase !== 'PLAN') return;
           event.stopPropagation();
           if (canSelect) selectEntity(id);
-          else if (isTarget && selected && selectedDice && selectedAb)
-            addHistoryAbility(id);
+          else if (isTarget && selected && selectedDice && selectedAb) addHistoryAbility(id);
         }}
       />
       <EntityEffects id={id} isHovered={isHovered} />
@@ -505,8 +528,7 @@ function Clone({ id, pos }: { id: string; pos: Position }) {
 
   const meshid = id.replace('clone_', '');
   const Model = getMesh(meshid);
-  if (!Model)
-    return null;
+  if (!Model) return null;
   return (
     <group position={[pos.x, pos.y, pos.z]}>
       <Model
@@ -523,12 +545,10 @@ function Clone({ id, pos }: { id: string; pos: Position }) {
           if (isTarget && selectedAb) clearAoePreview();
         }}
         onClick={(event: ThreeEvent<MouseEvent>) => {
-          if (phase !== 'PLAN')
-            return;
+          if (phase !== 'PLAN') return;
           event.stopPropagation();
           if (canSelect) selectEntity(id);
-          else if (isTarget && selected && selectedDice && selectedAb)
-            addHistoryAbility(id);
+          else if (isTarget && selected && selectedDice && selectedAb) addHistoryAbility(id);
         }}
       />
       <EntityEffects id={id} isHovered={isHovered} />
@@ -550,8 +570,7 @@ function Player({ id, pos }: { id: string; pos: Position }) {
   const [isHovered, setHover] = useState(false);
 
   const Model = getMesh(id);
-  if (!Model)
-    return null;
+  if (!Model) return null;
   return (
     <group position={[pos.x, pos.y, pos.z]}>
       <Model
@@ -568,8 +587,7 @@ function Player({ id, pos }: { id: string; pos: Position }) {
           if (isTarget && selectedAb) clearAoePreview();
         }}
         onClick={(event: ThreeEvent<MouseEvent>) => {
-          if (phase !== 'PLAN')
-            return;
+          if (phase !== 'PLAN') return;
           event.stopPropagation();
           if (canSelect) selectEntity(id);
           else if (isTarget) addHistoryAbility(id);
@@ -647,11 +665,7 @@ function Scene() {
 
 function DoomCounter() {
   const percent = useGame((state) => state.doom);
-  return (
-    <div className="z-10 absolute left-32 bottom-8">
-      {percent ?? "ERROR"}
-    </div>
-  )
+  return <div className="z-10 absolute left-32 bottom-8">{percent ?? 'ERROR'}</div>;
 }
 
 function name(phase: string) {
@@ -681,7 +695,7 @@ function GamePhase() {
       {name(phase)}
       {assignedCharacter}
     </div>
-  )
+  );
 }
 
 const CLASS_COLOR: Record<string, string> = {
@@ -707,10 +721,7 @@ function TopBar() {
   const turn = useGame((s) => s.turn);
   const pct = Math.min(Math.max(doom, 0), 100);
 
-  const fillColor =
-    pct >= 80 ? '#ef4444' :
-      pct >= 50 ? '#f97316' :
-        '#eab308';
+  const fillColor = pct >= 80 ? '#ef4444' : pct >= 50 ? '#f97316' : '#eab308';
 
   const isDark = theme === 'dark';
 
@@ -718,13 +729,22 @@ function TopBar() {
     <div
       className="absolute top-0 left-8 right-16 z-30 h-8 flex items-center px-4 gap-4 transition-colors duration-700"
       style={{
-        background: pct >= 80
-          ? (isDark ? 'rgba(60,0,0,0.94)' : 'rgba(254,242,242,0.95)')
-          : (isDark ? 'rgba(0,0,0,0.90)' : 'rgba(255,255,255,0.92)'),
+        background:
+          pct >= 80
+            ? isDark
+              ? 'rgba(60,0,0,0.94)'
+              : 'rgba(254,242,242,0.95)'
+            : isDark
+              ? 'rgba(0,0,0,0.90)'
+              : 'rgba(255,255,255,0.92)',
         borderBottom: `1px solid ${
           pct >= 80
-            ? (isDark ? '#ef444430' : '#fca5a5')
-            : (isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)')
+            ? isDark
+              ? '#ef444430'
+              : '#fca5a5'
+            : isDark
+              ? 'rgba(255,255,255,0.07)'
+              : 'rgba(0,0,0,0.08)'
         }`,
       }}
     >
@@ -737,7 +757,9 @@ function TopBar() {
       </span>
 
       <div className="flex flex-1 items-center gap-2">
-        <span className="text-[11px] shrink-0" style={{ color: fillColor }}>☠</span>
+        <span className="text-[11px] shrink-0" style={{ color: fillColor }}>
+          ☠
+        </span>
         <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800">
           <div
             className="h-full rounded-full transition-all duration-700 ease-out"
@@ -779,7 +801,10 @@ function CharacterCard() {
         <div className="text-[9px] tracking-[0.18em] text-gray-500 dark:text-gray-400 uppercase mb-1">
           Playing as
         </div>
-        <div className="text-[13px] font-bold uppercase tracking-wide leading-none" style={{ color }}>
+        <div
+          className="text-[13px] font-bold uppercase tracking-wide leading-none"
+          style={{ color }}
+        >
           {assignedCharacter}
         </div>
       </div>
@@ -787,26 +812,62 @@ function CharacterCard() {
   );
 }
 
+function GameScreenOverlay({
+  icon,
+  title,
+  description,
+  accentColor,
+  extra,
+}: {
+  icon: string | ReactNode;
+  title: string;
+  description?: string | ReactNode;
+  accentColor?: string;
+  extra?: ReactNode;
+}) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center z-0 backdrop-blur-md bg-slate-900/15 dark:bg-black/60 transition-colors duration-300">
+      <GlassCard className="w-full max-w-sm mx-4 p-8 text-center flex flex-col items-center gap-4 bg-white/95 dark:bg-slate-900/80 shadow-2xl border border-slate-200/50 dark:border-slate-800/50">
+        <div className="text-5xl select-none mb-1">{icon}</div>
+        <Text
+          as="h2"
+          variant="heading-md"
+          className={`font-bold uppercase tracking-wider ${accentColor || 'text-slate-800 dark:text-slate-100'}`}
+        >
+          {title}
+        </Text>
+        {description && (
+          <Text as="p" variant="body-sm" color="secondary" className="max-w-xs leading-relaxed">
+            {description}
+          </Text>
+        )}
+        {extra}
+      </GlassCard>
+    </div>
+  );
+}
+
 function HandlePhaseScreen() {
   const t = useTranslations('features.game');
   const phase = useGame((state) => state.phase);
+
   switch (phase) {
     case 'WIN':
       return (
-        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
-          <div className="text-center">
-            <h2>{t('winScreen')}</h2>
-          </div>
-        </div>
-      )
+        <GameScreenOverlay
+          icon="🏆"
+          title={t('winScreen')}
+          accentColor="text-emerald-600 dark:text-emerald-400"
+        />
+      );
     case 'LOSE':
       return (
-        <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
-          <div className="text-center">
-            <h2>{t('loseScreen')}</h2>
-          </div>
-        </div>
-      )
+        <GameScreenOverlay
+          icon="💀"
+          title={t('loseScreen')}
+          accentColor="text-rose-600 dark:text-rose-400"
+        />
+      );
     default:
       return (
         <>
@@ -818,7 +879,7 @@ function HandlePhaseScreen() {
             <Scene />
           </Canvas>
         </>
-      )
+      );
   }
 }
 
@@ -834,7 +895,6 @@ export function Game() {
   const [debugInfo, setDebugInfo] = useState('Initializing...');
   const roomState = roomsStore?.roomState;
   const isRoomFull = roomState?.isGameRoomFull ?? false;
-
 
   useEffect(() => {
     if (!isRoomFull) {
@@ -863,44 +923,50 @@ export function Game() {
 
   if (connectionError) {
     return (
-      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-        <div className="text-center max-w-md px-6">
-          <h2>{t('unavailable')}</h2>
-          <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
-        </div>
-      </div>
+      <GameScreenOverlay
+        icon="🔌"
+        title={t('unavailable')}
+        description={connectionError}
+        accentColor="text-rose-600 dark:text-rose-400"
+      />
     );
   }
 
   if (!isRoomFull) {
     return (
-      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-        <div className="text-center max-w-md px-6">
-          <h2>{t('roomNotReady')}</h2>
-          <p className="text-sm text-gray-300 mt-4">{t('roomNotReadyDesc')}</p>
-        </div>
-      </div>
+      <GameScreenOverlay icon="⏳" title={t('roomNotReady')} description={t('roomNotReadyDesc')} />
     );
   }
 
   if (mapBounds.width > 0 && (activePlayers?.length ?? 0) < 4) {
     return (
-      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-        <div className="text-center max-w-md px-6">
-          <h2>{t('paused')}</h2>
-          <p className="text-sm text-gray-300 mt-4">{t('pausedDesc')}</p>
-        </div>
-      </div>
+      <GameScreenOverlay
+        icon="⏸️"
+        title={t('paused')}
+        description={t('pausedDesc')}
+        accentColor="text-amber-500 dark:text-amber-400"
+      />
     );
   }
 
-  return !mapBounds || mapBounds.width === 0 ? (
-    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-      <div className="text-center">
-        <h2>{t('connecting')}</h2>
-        <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
-        <p className="text-xs text-gray-500 mt-2">{t('debugHint')}</p>
-      </div>
-    </div>
-  ) : <HandlePhaseScreen />
+  if (!mapBounds || mapBounds.width === 0) {
+    return (
+      <GameScreenOverlay
+        icon={
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-slate-300 border-t-slate-800 dark:border-slate-700 dark:border-t-slate-200"></div>
+        }
+        title={t('connecting')}
+        description={
+          <span className="flex flex-col gap-2 mt-1">
+            <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+              {debugInfo}
+            </span>
+            <span className="text-[11px] text-slate-400 dark:text-slate-500">{t('debugHint')}</span>
+          </span>
+        }
+      />
+    );
+  }
+
+  return <HandlePhaseScreen />;
 }
