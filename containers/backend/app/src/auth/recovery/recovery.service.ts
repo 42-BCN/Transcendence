@@ -38,8 +38,8 @@ async function dispatchPasswordResetMailByIdentifier(
   locale: EmailLocale,
 ): Promise<void> {
   const user = identifier.includes('@')
-    ? await SharedRepo.findUserByEmail(identifier)
-    : await SharedRepo.findUserByUsername(identifier);
+    ? await SharedRepo.findUserByEmail(identifier.toLowerCase())
+    : await SharedRepo.findUserByUsername(identifier.toLowerCase());
 
   if (!user) return;
   if (!isMailServiceConfigured()) {
@@ -72,7 +72,7 @@ export async function recover(
   input: RecoverReq,
   locale: EmailLocale = 'en',
 ): Promise<{ identifier: string }> {
-  const identifier = input.identifier;
+  const identifier = input.identifier.toLowerCase();
   await dispatchPasswordResetMailByIdentifier(identifier, locale);
   return { identifier };
 }
