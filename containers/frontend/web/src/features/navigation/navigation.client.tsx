@@ -135,7 +135,7 @@ export function NavigationClient({
   position = 'fixed',
   ...args
 }: NavigationClientProps) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   if (mode === 'desktop') return <DesktopNavigation {...args} position={position} />;
   if (mode === 'mobile') return <MobileNavigation {...args} position={position} />;

@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Text, Avatar } from '@components';
 import { useGameInvitationsStore } from '@/features/game-invitations/store/game-invitations.provider';
+import { gameRoomTestStyles } from './game-room-test.styles';
 
 const AVATAR_COUNT = 4;
 function guestAvatarSrc(username: string): string {
@@ -56,24 +57,21 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
   if (!hasSent && !hasReceived) return null;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={gameRoomTestStyles.sections}>
       {hasSent && (
-        <section className="min-w-0 px-4 py-3 md:px-6" aria-labelledby="sent-invitations-heading">
+        <section className={gameRoomTestStyles.avatarSection} aria-labelledby="sent-invitations-heading">
           <Text as="h2" variant="caption" color="secondary" id="sent-invitations-heading">
             {t('invitationsHeading')}
           </Text>
-          <div className="min-w-0 overflow-x-auto overflow-y-hidden">
-            <div className="flex w-max min-w-full gap-4 py-1">
+          <div className={gameRoomTestStyles.avatarScroll}>
+            <div className={gameRoomTestStyles.avatarRow}>
               {filteredSent.map((inv) => (
-                <div
-                  key={inv.id}
-                  className="flex w-20 min-w-20 shrink-0 flex-col items-center gap-1 opacity-50"
-                >
+                <div key={inv.id} className={gameRoomTestStyles.invitationAvatarItem}>
                   <Avatar size="lg" src={guestAvatarSrc(inv.friendUsername)} alt={inv.friendUsername} />
                   <Text
                     variant="body-xs"
                     color="secondary"
-                    className="block w-full min-w-0 truncate text-center"
+                    className={gameRoomTestStyles.avatarName}
                     title={inv.friendUsername}
                   >
                     {inv.friendUsername}
@@ -86,25 +84,19 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
       )}
 
       {hasReceived && (
-        <section
-          className="min-w-0 px-4 py-3 md:px-6"
-          aria-labelledby="received-invitations-heading"
-        >
+        <section className={gameRoomTestStyles.avatarSection} aria-labelledby="received-invitations-heading">
           <Text as="h2" variant="caption" color="secondary" id="received-invitations-heading">
             {t('receivedInvitationsHeading')}
           </Text>
-          <div className="min-w-0 overflow-x-auto overflow-y-hidden">
-            <div className="flex w-max min-w-full gap-4 py-1">
+          <div className={gameRoomTestStyles.avatarScroll}>
+            <div className={gameRoomTestStyles.avatarRow}>
               {filteredReceived.map((inv) => (
-                <div
-                  key={inv.id}
-                  className="flex w-20 min-w-20 shrink-0 flex-col items-center gap-1 opacity-50"
-                >
+                <div key={inv.id} className={gameRoomTestStyles.invitationAvatarItem}>
                   <Avatar size="lg" src={guestAvatarSrc(inv.friendUsername)} alt={inv.friendUsername} />
                   <Text
                     variant="body-xs"
                     color="secondary"
-                    className="block w-full min-w-0 truncate text-center"
+                    className={gameRoomTestStyles.avatarName}
                     title={inv.friendUsername}
                   >
                     {inv.friendUsername}

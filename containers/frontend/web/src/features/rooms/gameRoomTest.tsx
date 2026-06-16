@@ -12,6 +12,7 @@ import {
 } from '@/lib/sockets/game-room-socket.manager';
 
 import { SentRoomInvitations } from './sent-room-invitations';
+import { gameRoomTestStyles } from './game-room-test.styles';
 
 const AVATAR_COUNT = 4;
 function guestAvatarSrc(username: string): string {
@@ -38,10 +39,10 @@ export function GameRoomTest({ gameRoomStateCtx, gameRoomsErrorInfo }: GameRoomT
   const teammateUsernames = new Set(gameRoomStateCtx.teammates.map((u: PlayerState) => u.userName));
 
   return (
-    <Stack gap="none" className="h-full min-h-0">
+    <Stack gap="none" className={gameRoomTestStyles.wrapper}>
       {isInRoom ? (
         <>
-          <Stack gap="xs" className="px-4 pb-4 pt-14 md:px-6 md:pt-8">
+          <Stack gap="xs" className={gameRoomTestStyles.header}>
             <Text as="p" variant="caption" color="tertiary">
               {t('room.label', { id: gameRoomStateCtx.id })}
             </Text>
@@ -50,37 +51,39 @@ export function GameRoomTest({ gameRoomStateCtx, gameRoomsErrorInfo }: GameRoomT
             </Text>
           </Stack>
 
-          {gameRoomStateCtx.teammates.length > 0 && (
-            <section className="min-w-0 px-4 py-3 md:px-6" aria-labelledby="players-heading">
-              <Text as="h2" variant="caption" color="secondary" id="players-heading">
-                {t('room.playersHeading')}
-              </Text>
-              <div className="min-w-0 overflow-x-auto overflow-y-hidden">
-                <div className="flex w-max min-w-full gap-4 py-1">
-                  {gameRoomStateCtx.teammates.map((user: PlayerState) => (
-                    <div
-                      key={user.userId}
-                      className="flex w-20 min-w-20 shrink-0 flex-col items-center gap-1"
-                    >
-                      <Avatar size="lg" src={guestAvatarSrc(user.userName)} alt={user.userName} />
-                      <Text
-                        variant="body-xs"
-                        color="secondary"
-                        className="block w-full min-w-0 truncate text-center"
-                        title={user.userName}
-                      >
-                        {user.userName}
-                      </Text>
-                    </div>
-                  ))}
+          <Stack gap="md" className={gameRoomTestStyles.content}>
+            {gameRoomStateCtx.teammates.length > 0 && (
+              <section className={gameRoomTestStyles.avatarSection} aria-labelledby="players-heading">
+                <Text as="h2" variant="caption" color="secondary" id="players-heading">
+                  {t('room.playersHeading')}
+                </Text>
+                <div className={gameRoomTestStyles.avatarScroll}>
+                  <div className={gameRoomTestStyles.avatarRow}>
+                    {gameRoomStateCtx.teammates.map((user: PlayerState) => (
+                      <div key={user.userId} className={gameRoomTestStyles.avatarItem}>
+                        <Avatar size="lg" src={guestAvatarSrc(user.userName)} alt={user.userName} />
+                        <Text
+                          variant="body-xs"
+                          color="secondary"
+                          className={gameRoomTestStyles.avatarName}
+                          title={user.userName}
+                        >
+                          {user.userName}
+                        </Text>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </section>
-          )}
+              </section>
+            )}
 
-          <SentRoomInvitations roomId={gameRoomStateCtx.id} teammateUsernames={teammateUsernames} />
+            <SentRoomInvitations
+              roomId={gameRoomStateCtx.id}
+              teammateUsernames={teammateUsernames}
+            />
+          </Stack>
 
-          <Stack gap="xs" className="px-4 pb-6 pt-2 md:px-6">
+          <Stack gap="xs" className={gameRoomTestStyles.footer}>
             {gameRoomsErrorInfo && (
               <Text variant="caption" color="danger">
                 {gameRoomsErrorInfo}
@@ -93,7 +96,7 @@ export function GameRoomTest({ gameRoomStateCtx, gameRoomsErrorInfo }: GameRoomT
         </>
       ) : (
         <>
-          <Stack gap="xs" className="px-4 pb-4 pt-14 md:px-6 md:pt-8">
+          <Stack gap="xs" className={gameRoomTestStyles.header}>
             <Text as="h1" variant="heading-xl">
               {t('title')}
             </Text>
@@ -102,7 +105,7 @@ export function GameRoomTest({ gameRoomStateCtx, gameRoomsErrorInfo }: GameRoomT
             </Text>
           </Stack>
 
-          <Stack gap="xs" className="px-4 pb-6 pt-2 md:px-6">
+          <Stack gap="xs" className={gameRoomTestStyles.footer}>
             {gameRoomsErrorInfo && (
               <Text variant="caption" color="danger">
                 {gameRoomsErrorInfo}
