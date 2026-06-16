@@ -18,7 +18,7 @@ export async function PublicProfile({ username }: PublicProfileProps) {
   }
 
   return (
-    <Stack className="p-5 pt-3 h-full" gap="md">
+    <Stack className="p-5 pt-3 h-full overflow-y-auto" gap="md">
       <Breadcrumb
         items={[
           { label: tBreadcrumb('home'), href: '/' },
