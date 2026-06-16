@@ -335,7 +335,7 @@
       "resetPlan": "Reiniciar plan",
       "room": {
         "fields": {
-          "gameRoomId": "Game Room ID"
+          "gameRoomId": "ID de la sala"
         }
       }
     },

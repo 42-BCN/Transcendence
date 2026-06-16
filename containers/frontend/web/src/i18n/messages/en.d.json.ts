@@ -338,7 +338,7 @@ declare const messages: {
       "resetPlan": "Reset plan",
       "room": {
         "fields": {
-          "gameRoomId": "Game Room ID"
+          "gameRoomId": "Game room ID"
         }
       }
     },
