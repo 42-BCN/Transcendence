@@ -81,6 +81,8 @@ model DirectMessage {
   gameInvitationExpiresAt      DateTime?         @map("game_invitation_expires_at") @db.Timestamptz(6)
   gameInvitationAcceptedAt     DateTime?         @map("game_invitation_accepted_at") @db.Timestamptz(6)
   gameInvitationAcceptedByUserId String?         @map("game_invitation_accepted_by_user_id") @db.Uuid
+  gameInvitationCancelledAt    DateTime?         @map("game_invitation_cancelled_at") @db.Timestamptz(6)
+  gameInvitationCancelledByUserId String?        @map("game_invitation_cancelled_by_user_id") @db.Uuid
   readAt                       DateTime?         @map("read_at") @db.Timestamptz(6)
   createdAt                    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
 

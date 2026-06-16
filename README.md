@@ -241,6 +241,8 @@ erDiagram
       datetime gameInvitationExpiresAt
       datetime gameInvitationAcceptedAt
       uuid gameInvitationAcceptedByUserId
+      datetime gameInvitationCancelledAt
+      uuid gameInvitationCancelledByUserId
     }
 
     PasswordReset {
@@ -264,7 +266,7 @@ erDiagram
 
 ### Schema Notes
 - **Social Graph**: The `Friendship` table stores both pending requests and accepted relationships, tracking who initiated the request via `senderId`.
-- **Direct Messages**: Stores persistent one-to-one messages between friends. The `type` field distinguishes chat messages (`user`) from game room invitations (`game_invitation`), with invitation metadata (`roomId`, `invitedUserId`, `expiresAt`, `acceptedAt`) stored on the same row.
+- **Direct Messages**: Stores persistent one-to-one messages between friends. The `type` field distinguishes chat messages (`user`) from game room invitations (`game_invitation`), with invitation metadata (`roomId`, `invitedUserId`, `expiresAt`, `acceptedAt`, `cancelledAt`) stored on the same row.
 - **Security**: Sensitive tokens (for password resets and email verification) are stored in a hashed format, and emails/usernames are enforced as unique (UK).
 - **Authentication**: The `User` model supports both local login (tracking failed attempts and temporary lockouts) and OAuth integration via `googleId`.
 
@@ -363,8 +365,8 @@ This section outlines the core functionalities implemented in the platform, deta
 
 ### 7. Game Room Invitations
 - **Team Members**: capapes
-- **Description**: Friends can invite each other into game rooms from the social dashboard, with real-time status tracking on both sides.
-- **Functionality**: Invitations are sent to online friends, delivered via WebSocket, and stored persistently. The game rooms panel shows pending sent/received invitations for the current room. Joining a room by any method marks matching received invitations as accepted and notifies all parties. Leaving a room invalidates pending invitations in real-time.
+- **Description**: Friends can invite each other into game rooms from the social dashboard, with canonical real-time status tracking across chat, social, and room surfaces.
+- **Functionality**: Invitations are sent to online friends, delivered via WebSocket, and stored persistently as special direct messages. A canonical invitation-state store drives the DM invitation cards, the social dashboard invitation tab/badge, and the room panel. Invitations can be accepted or declined, joining a room by any method marks matching received invitations as accepted, and leaving a room invalidates pending invitations in real-time.
 
 ### 8. Internationalization (i18n)
 - **Team Members**: capapes, mfontser

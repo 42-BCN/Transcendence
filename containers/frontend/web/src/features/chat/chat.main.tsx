@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { Button, MessageBubble, ScrollArea, Stack, Text } from '@components';
 import { chatStyles } from './chat.styles';
 import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
+import type { GameInvitationView } from '@/features/game-invitations/store/game-invitations.types';
 import type {
   DirectMessage,
   DirectMessageError,
@@ -14,66 +15,195 @@ type ChatMainMessage = (ChatMessageUnion | DirectMessage | DirectMessageError) &
   senderId?: string;
 };
 
-function renderInvitationCard(args: {
+type InvitationCardState = {
+  isInvitee: boolean;
+  isAccepted: boolean;
+  isCancelled: boolean;
+  isExpired: boolean;
+  isJoining: boolean;
+  isDeclining: boolean;
+  isUnavailable: boolean;
+};
+
+function getInvitationCardState(args: {
   message: Extract<ChatMainMessage, { type: 'game_invitation' }>;
   currentUserId?: string | null;
-  activeInvitationIds?: string[];
-  hasLoadedInvitationSummary?: boolean;
+  invitation?: GameInvitationView;
+  hasLoadedInvitations?: boolean;
   joiningInvitationId?: string | null;
-  joiningError?: string | null;
-  hasActiveGameRoom?: boolean;
-  onAcceptInvitation?: (invitationId: string) => void;
-}) {
+  decliningInvitationId?: string | null;
+}): InvitationCardState {
   const {
     message,
     currentUserId,
-    activeInvitationIds = [],
-    hasLoadedInvitationSummary,
+    invitation,
+    hasLoadedInvitations,
     joiningInvitationId,
-    joiningError,
-    hasActiveGameRoom,
-    onAcceptInvitation,
+    decliningInvitationId,
   } = args;
-  const isInvitee = currentUserId === message.content.invitedUserId;
+  const status = invitation?.status;
   const isExpired = new Date(message.content.expiresAt).getTime() <= Date.now();
-  const isAccepted = typeof message.content.acceptedAt === 'string';
-  const isActive = activeInvitationIds.includes(message.id);
-  const isJoining = joiningInvitationId === message.id;
-  const isUnavailable = !!hasLoadedInvitationSummary && !isExpired && !isAccepted && !isActive;
+  const isAccepted = status === 'accepted' || typeof message.content.acceptedAt === 'string';
+  const isCancelled = status === 'cancelled';
 
-  let label = `${message.content.inviterUsername} invited you to a game`;
-  let action: ReactNode = null;
+  return {
+    isInvitee: currentUserId === message.content.invitedUserId,
+    isAccepted,
+    isCancelled,
+    isExpired,
+    isJoining: joiningInvitationId === message.id,
+    isDeclining: decliningInvitationId === message.id,
+    isUnavailable:
+      Boolean(hasLoadedInvitations) &&
+      !isExpired &&
+      !isAccepted &&
+      !isCancelled &&
+      status === 'unavailable',
+  };
+}
 
-  if (!isInvitee) {
-    label = 'Game invitation sent';
-  } else if (isAccepted) {
-    label = 'Game invitation accepted';
-  } else if (isExpired) {
-    label = 'Game invitation expired';
-  } else if (hasActiveGameRoom) {
-    label = 'You have already joined a game room.';
-  } else if (isUnavailable) {
-    label = 'Game room is no longer available';
-  } else if (isInvitee && onAcceptInvitation) {
-    const errorForThis = joiningError && joiningInvitationId === message.id ? joiningError : null;
-    action = (
-      <Stack gap="xs" align="start">
+function getInvitationLabel(args: {
+  state: InvitationCardState;
+  inviterUsername: string;
+  hasActiveGameRoom?: boolean;
+}): string {
+  const { state, inviterUsername, hasActiveGameRoom } = args;
+
+  if (state.isAccepted) return 'Game invitation accepted';
+  if (state.isCancelled) return 'Game invitation declined';
+  if (state.isExpired) return 'Game invitation expired';
+  if (!state.isInvitee) return 'Game invitation sent';
+  if (hasActiveGameRoom) return 'You have already joined a game room.';
+  if (state.isUnavailable) return 'Game room is no longer available';
+
+  return `${inviterUsername} invited you to a game`;
+}
+
+function shouldShowAcceptAction(args: {
+  state: InvitationCardState;
+  hasActiveGameRoom?: boolean;
+  onAcceptInvitation?: (invitationId: string) => void;
+}): boolean {
+  const { state, hasActiveGameRoom, onAcceptInvitation } = args;
+
+  return (
+    state.isInvitee &&
+    !state.isAccepted &&
+    !state.isCancelled &&
+    !state.isExpired &&
+    !hasActiveGameRoom &&
+    !state.isUnavailable &&
+    typeof onAcceptInvitation === 'function'
+  );
+}
+
+function getMessageBubbleVariant(
+  message: ChatMainMessage,
+  currentUserId?: string | null,
+): 'user' | 'me' | 'system' | 'error' | 'game-event' {
+  if (message.type === 'game_invitation') {
+    return message.senderId === currentUserId ? 'me' : 'user';
+  }
+
+  return message.type;
+}
+
+function renderInvitationActions(args: {
+  invitationId: string;
+  isJoining: boolean;
+  isDeclining: boolean;
+  joiningError?: string | null;
+  decliningError?: string | null;
+  onAcceptInvitation?: (invitationId: string) => void;
+  onDeclineInvitation?: (invitationId: string) => void;
+}): ReactNode {
+  const {
+    invitationId,
+    isJoining,
+    isDeclining,
+    joiningError,
+    decliningError,
+    onAcceptInvitation,
+    onDeclineInvitation,
+  } = args;
+
+  return (
+    <Stack gap="xs" align="start">
+      <Stack direction="horizontal" gap="xs">
+        <Button
+          variant="secondary"
+          w="auto"
+          onPress={() => onDeclineInvitation?.(invitationId)}
+          isDisabled={isJoining || isDeclining}
+        >
+          {isDeclining ? 'Declining...' : 'Decline'}
+        </Button>
         <Button
           variant="primary"
           w="auto"
-          onPress={() => onAcceptInvitation(message.id)}
-          isDisabled={isJoining}
+          onPress={() => onAcceptInvitation?.(invitationId)}
+          isDisabled={isJoining || isDeclining}
         >
           {isJoining ? 'Joining...' : 'Join game'}
         </Button>
-        {errorForThis && (
-          <Text variant="caption" color="danger">
-            {errorForThis}
-          </Text>
-        )}
       </Stack>
-    );
-  }
+      {joiningError && (
+        <Text variant="caption" color="danger">
+          {joiningError}
+        </Text>
+      )}
+      {decliningError && (
+        <Text variant="caption" color="danger">
+          {decliningError}
+        </Text>
+      )}
+    </Stack>
+  );
+}
+
+function renderInvitationCard(args: {
+  message: Extract<ChatMainMessage, { type: 'game_invitation' }>;
+  currentUserId?: string | null;
+  invitation?: GameInvitationView;
+  hasLoadedInvitations?: boolean;
+  joiningInvitationId?: string | null;
+  joiningError?: string | null;
+  decliningInvitationId?: string | null;
+  decliningError?: string | null;
+  hasActiveGameRoom?: boolean;
+  onAcceptInvitation?: (invitationId: string) => void;
+  onDeclineInvitation?: (invitationId: string) => void;
+}) {
+  const {
+    message,
+    currentUserId: _currentUserId,
+    invitation: _invitation,
+    hasLoadedInvitations: _hasLoadedInvitations,
+    joiningInvitationId,
+    joiningError,
+    decliningInvitationId: _decliningInvitationId,
+    decliningError,
+    hasActiveGameRoom,
+    onAcceptInvitation,
+    onDeclineInvitation,
+  } = args;
+  const state = getInvitationCardState(args);
+  const label = getInvitationLabel({
+    state,
+    inviterUsername: message.content.inviterUsername,
+    hasActiveGameRoom,
+  });
+  const action = shouldShowAcceptAction({ state, hasActiveGameRoom, onAcceptInvitation })
+    ? renderInvitationActions({
+        invitationId: message.id,
+        isJoining: state.isJoining,
+        isDeclining: state.isDeclining,
+        joiningError: joiningError && joiningInvitationId === message.id ? joiningError : null,
+        decliningError: decliningError && state.isDeclining ? decliningError : null,
+        onAcceptInvitation,
+        onDeclineInvitation,
+      })
+    : null;
 
   return (
     <Stack gap="sm" align="start">
@@ -89,22 +219,28 @@ export function ChatMain({
   messages,
   initialUnreadMessageId,
   currentUserId,
-  activeInvitationIds,
-  hasLoadedInvitationSummary,
+  invitationsByMessageId,
+  hasLoadedInvitations,
   joiningInvitationId,
   joiningError,
+  decliningInvitationId,
+  decliningError,
   hasActiveGameRoom,
   onAcceptInvitation,
+  onDeclineInvitation,
 }: {
   messages: ChatMainMessage[];
   initialUnreadMessageId?: string | null;
   currentUserId?: string | null;
-  activeInvitationIds?: string[];
-  hasLoadedInvitationSummary?: boolean;
+  invitationsByMessageId?: Record<string, GameInvitationView>;
+  hasLoadedInvitations?: boolean;
   joiningInvitationId?: string | null;
   joiningError?: string | null;
+  decliningInvitationId?: string | null;
+  decliningError?: string | null;
   hasActiveGameRoom?: boolean;
   onAcceptInvitation?: (invitationId: string) => void;
+  onDeclineInvitation?: (invitationId: string) => void;
 }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const didScrollToUnreadRef = useRef(false);
@@ -128,20 +264,18 @@ export function ChatMain({
     <ScrollArea>
       <Stack className={chatStyles.main.wrapper}>
         {messages.map((message) => {
-          const { id, username, content, type, senderId } = message;
-          const variant =
-            type === 'game_invitation'
-              ? senderId === currentUserId
-                ? 'me'
-                : 'user'
-              : type;
+          const { id, username, content, type } = message;
+          const variant = getMessageBubbleVariant(message, currentUserId);
+          const messageClassName =
+            type === 'system' || type === 'error' ? chatStyles.main.metaRow : undefined;
+          const textVariant = type === 'system' || type === 'error' ? 'caption' : 'body-xs';
+          const textClassName =
+            type === 'system' || type === 'error'
+              ? chatStyles.main.metaText
+              : 'whitespace-pre-wrap';
 
           return (
-            <div
-              key={id}
-              id={`message-${id}`}
-              className={type === 'system' || type === 'error' ? chatStyles.main.metaRow : undefined}
-            >
+            <div key={id} id={`message-${id}`} className={messageClassName}>
               <MessageBubble variant={variant}>
                 {type === 'user' && (
                   <Text as="h3" variant="caption">
@@ -152,22 +286,21 @@ export function ChatMain({
                   renderInvitationCard({
                     message,
                     currentUserId,
-                    activeInvitationIds,
-                    hasLoadedInvitationSummary,
+                    invitation: invitationsByMessageId?.[message.id],
+                    hasLoadedInvitations,
                     joiningInvitationId,
                     joiningError,
+                    decliningInvitationId,
+                    decliningError,
                     hasActiveGameRoom,
                     onAcceptInvitation,
+                    onDeclineInvitation,
                   })
                 ) : (
                   <Text
                     as="p"
-                    variant={type === 'system' || type === 'error' ? 'caption' : 'body-xs'}
-                    className={
-                      type === 'system' || type === 'error'
-                        ? chatStyles.main.metaText
-                        : 'whitespace-pre-wrap'
-                    }
+                    variant={textVariant}
+                    className={textClassName}
                   >
                     {content.text}
                   </Text>

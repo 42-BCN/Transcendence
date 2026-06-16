@@ -1,20 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Text, Avatar } from '@components';
-import type {
-  ReceivedRoomInvitation,
-  SentRoomInvitation,
-} from '@/contracts/api/game-invitations/game-invitations.contracts';
-import {
-  fetchReceivedRoomInvitations,
-  fetchSentRoomInvitations,
-} from '@/features/game-invitations/game-invitations.client';
-import {
-  gameInvitationSocketEvents,
-} from '@/contracts/sockets/friendships/friendships.schema';
-import { friendsSocket } from '@/lib/sockets/friends-socket.client';
+import { useGameInvitationsStore } from '@/features/game-invitations/store/game-invitations.provider';
 
 type RoomInvitationsProps = {
   roomId: number;
@@ -23,36 +12,36 @@ type RoomInvitationsProps = {
 
 export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitationsProps) {
   const t = useTranslations('pages.home.room');
-  const [sent, setSent] = useState<SentRoomInvitation[]>([]);
-  const [received, setReceived] = useState<ReceivedRoomInvitation[]>([]);
+  const invitationsById = useGameInvitationsStore((state) => state.invitationsById);
 
-  const refresh = useCallback(() => {
-    void fetchSentRoomInvitations(roomId).then((res) => {
-      if (res.ok) setSent(res.data.invitations);
-    });
-    void fetchReceivedRoomInvitations(roomId).then((res) => {
-      if (res.ok) setReceived(res.data.invitations);
-    });
-  }, [roomId]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  useEffect(() => {
-    friendsSocket.on(gameInvitationSocketEvents.updated, refresh);
-    friendsSocket.on(gameInvitationSocketEvents.received, refresh);
-    return () => {
-      friendsSocket.off(gameInvitationSocketEvents.updated, refresh);
-      friendsSocket.off(gameInvitationSocketEvents.received, refresh);
-    };
-  }, [refresh]);
-
-  const filteredSent = sent.filter(
-    (inv) => !teammateUsernames.has(inv.invitedUsername) && !inv.acceptedAt,
+  const sentInvitations = useMemo(
+    () =>
+      Object.values(invitationsById).filter(
+        (inv) => inv.direction === 'sent' && inv.roomId === roomId,
+      ),
+    [invitationsById, roomId],
   );
-  const filteredReceived = received.filter(
-    (inv) => !teammateUsernames.has(inv.senderUsername) && !inv.acceptedAt,
+  const receivedInvitations = useMemo(
+    () =>
+      Object.values(invitationsById).filter(
+        (inv) => inv.direction === 'received' && inv.roomId === roomId,
+      ),
+    [invitationsById, roomId],
+  );
+
+  const filteredSent = useMemo(
+    () =>
+      sentInvitations.filter(
+        (inv) => !teammateUsernames.has(inv.friendUsername) && inv.status === 'pending',
+      ),
+    [sentInvitations, teammateUsernames],
+  );
+  const filteredReceived = useMemo(
+    () =>
+      receivedInvitations.filter(
+        (inv) => !teammateUsernames.has(inv.friendUsername) && inv.status === 'pending',
+      ),
+    [receivedInvitations, teammateUsernames],
   );
 
   const hasSent = filteredSent.length > 0;
@@ -70,8 +59,8 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
           <div className="flex flex-wrap gap-4">
             {filteredSent.map((inv) => (
               <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
-                <Avatar size="lg" alt={inv.invitedUsername} />
-                <Text variant="body-xs" color="secondary">{inv.invitedUsername}</Text>
+                <Avatar size="lg" alt={inv.friendUsername} />
+                <Text variant="body-xs" color="secondary">{inv.friendUsername}</Text>
               </div>
             ))}
           </div>
@@ -86,8 +75,8 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
           <div className="flex flex-wrap gap-4">
             {filteredReceived.map((inv) => (
               <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
-                <Avatar size="lg" alt={inv.senderUsername} />
-                <Text variant="body-xs" color="secondary">{inv.senderUsername}</Text>
+                <Avatar size="lg" alt={inv.friendUsername} />
+                <Text variant="body-xs" color="secondary">{inv.friendUsername}</Text>
               </div>
             ))}
           </div>

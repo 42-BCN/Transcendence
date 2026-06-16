@@ -4,7 +4,7 @@ Feature that lets friends invite each other to join a game room via direct messa
 
 ## Overview
 
-A user sends a game invitation from the social sidebar or from within a DM thread. The invitation appears as a special card in the chat history. The recipient can accept it to join the sender's game room directly. Invitations expire after 5 minutes.
+A user sends a game invitation from the social sidebar. The invitation is persisted as a special direct-message card and is also exposed through a canonical invitation-state API used by the social dashboard, the DM thread, and the room panel. The recipient can accept or decline it. Invitations expire after 5 minutes.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ Frontend → Backend (REST) → Socket Service (internal HTTP) → Frontend (soc
 
 - **Backend** owns persistence (Prisma), business rules, rate limiting, and socket notifications.
 - **Socket Service** owns in-memory room state (`GameRoomsManager`) and validates room availability at accept time via internal HTTP endpoints.
-- **Frontend** renders invitation cards in the DM chat, shows real-time status via the social Zustand store, and navigates to `/game` on successful accept.
+- **Frontend** renders invitation cards in the DM chat, the social dashboard invitations tab, and the room panel from one canonical Zustand invitation store. It navigates to `/game` on successful accept.
 
 ## Flow
 
@@ -27,7 +27,7 @@ Frontend → Backend (REST) → Socket Service (internal HTTP) → Frontend (soc
 3. Backend calls socket service `POST /internal/game-invitations/prepare-room` — creates or retrieves the sender's game room. Requires the sender to have an active `/game-room` socket connection.
 4. Backend calls socket service `POST /internal/game-invitations/validate-receiver` — blocks only if the invitee's current room is already full.
 5. Backend saves a `game_invitation` direct message record in the DB.
-6. Backend pushes the invitation card to the recipient's DM socket (`dm:message`) and updates both users' invitation summaries via the friends socket (`game:invitation:updated`).
+6. Backend pushes the invitation card to the recipient's DM socket (`dm:message`) and invalidates both users' invitation state via the friends socket (`game:invitations:updated`).
 
 ### Accepting an invitation
 
@@ -35,38 +35,58 @@ Frontend → Backend (REST) → Socket Service (internal HTTP) → Frontend (soc
 2. Backend validates the invitation is not expired, not already accepted, and has a room assigned.
 3. Backend calls socket service `POST /internal/game-invitations/accept-room` — moves the invitee into the inviter's room (removes them from any previous room first, broadcasts room state changes).
 4. Backend marks the invitation as accepted in the DB.
-5. Backend notifies the accepting user's invitation summary and also notifies all users who hold pending invitations *from* the acceptor (their invitation cards become stale because the acceptor's own room is now gone).
-6. Frontend receives the updated room state, sets it in `RoomsStoreContext`, updates the social store summary, and navigates to `/game`.
+5. Backend pushes canonical invitation-state invalidations to the accepting user, the original sender, and any users affected by the acceptor's room change.
+6. Frontend receives the updated room state, refreshes canonical invitation state, and navigates to `/game`.
+
+### Declining an invitation
+
+1. Frontend calls `POST /protected/game-invitations/decline` with `{ invitationId }`.
+2. Backend validates the invitation belongs to the current user, is still pending, and is not expired.
+3. Backend marks the invitation as cancelled in the DB.
+4. Backend notifies both the invitee and inviter so all invitation surfaces refresh from canonical state.
 
 ### Leaving a room
 
-When a user explicitly leaves a room or disconnects (after a grace period), the socket service calls `POST /internal/game-invitations/notify-invitees` on the backend. The backend looks up all users who have a pending invitation from that user and pushes them an updated summary, causing their "Join game" buttons to update to "Game room is no longer available".
+When a user explicitly leaves a room or disconnects (after a grace period), the socket service calls `POST /internal/game-invitations/notify-invitees` on the backend. The backend looks up all users who have a pending invitation from that user and pushes them an invalidation event, causing all invitation surfaces to refresh and render those invitations as unavailable.
+
+## Canonical Invitation State
+
+The backend is authoritative for invitation status. Frontend surfaces read from `GET /protected/game-invitations/state`, which returns normalized `GameInvitationView` items with a canonical `status`:
+
+- `pending`
+- `accepted`
+- `expired`
+- `unavailable`
+- `cancelled`
+
+The frontend `game-invitations` store is the single source of truth for:
+
+- direct-message invitation cards
+- the social dashboard invitation tab and badge
+- the room invitation panel
 
 ## Invitation Card States
 
-Cards are rendered in `ChatMain` (`chat.main.tsx`) with the following precedence:
+Cards are rendered in `ChatMain` (`chat.main.tsx`) from canonical status with the following precedence:
 
 | Condition | Sender sees | Recipient sees |
 |---|---|---|
 | Invitation sent, pending | "Game invitation sent" | "Join game" button |
+| Invitation cancelled / declined | "Game invitation declined" | "Game invitation declined" |
 | Recipient is already in any room | — | "You have already joined a game room." |
-| Invitation accepted | — | "Game invitation accepted" |
-| Invitation expired (past `expiresAt`) | — | "Game invitation expired" |
-| Room gone or inviter left (`isUnavailable`) | — | "Game room is no longer available" |
-| Accept failed (race / already accepted) | — | Inline error below button |
-
-`isUnavailable` is derived from the `activeGameInvitationIds` list in the social store. An invitation ID is active only if the socket service confirms the room still exists and has space (`handleInvitationStatus`).
+| Invitation accepted | "Game invitation accepted" | "Game invitation accepted" |
+| Invitation expired (past `expiresAt`) | "Game invitation expired" | "Game invitation expired" |
+| Room gone or inviter left (`unavailable`) | "Game room is no longer available" | "Game room is no longer available" |
+| Accept / decline failed (race / stale state) | — | Inline error below button |
 
 ## Real-time Updates
 
-The social store (`social-store.ts`) holds:
+Realtime updates on the `/friends` namespace are now invalidation-driven:
 
-- `activeGameInvitationCount` — badge shown in the social header and DM list.
-- `activeGameInvitationIds` — set of invitation IDs the current user can still act on.
+- `game:invitations:updated`
+- `game:invitations:received`
 
-Both are populated at mount by `GET /protected/game-invitations/active` and kept live via the `game:invitation:updated` socket event on the `/friends` namespace. The event carries a `GameInvitationUpdatedPayload` (`{ activeInvitationCount, activeInvitationIds }`) pushed by the backend whenever the invitation landscape changes.
-
-Invitation messages received while the DM socket is not yet connected are buffered in `pendingInvitationMessagesByFriendId` in the social store and flushed when the DM feature mounts.
+The frontend does not maintain separate local invitation buffers or summary-only state anymore. On mount and after invitation invalidation events, `SocialSocketBridge` refreshes the full canonical invitation state via `GET /protected/game-invitations/state`.
 
 ## Rate Limits
 
@@ -90,6 +110,7 @@ Defined in `contracts/api/game-invitations/game-invitations.errors.ts`:
 | `GAME_INVITATION_NOT_FOUND` | 404 | Invitation ID does not exist or belongs to another user |
 | `GAME_INVITATION_ALREADY_IN_ROOM` | 409 | Invitee's current room is full |
 | `GAME_INVITATION_ALREADY_ACCEPTED` | 409 | Invitation was already accepted (race condition guard) |
+| `GAME_INVITATION_ALREADY_CANCELLED` | 409 | Invitation was already declined/cancelled |
 | `GAME_INVITATION_DUPLICATE_PENDING` | 409 | A pending invitation to this person already exists |
 | `GAME_INVITATION_EXPIRED` | 409 | Invitation past its 5-minute TTL |
 | `GAME_INVITATION_NOT_JOINABLE` | 409 | Room was valid but accept failed at the socket layer |
@@ -114,14 +135,14 @@ All require the `x-internal-secret` header.
 
 | Method | Path | Purpose |
 |---|---|---|
-| POST | `/internal/game-invitations/notify-invitees` | Push updated summaries to users holding pending invitations from a given sender (called by socket service on room leave) |
+| POST | `/internal/game-invitations/notify-invitees` | Push invitation-state invalidations to users holding pending invitations from a given sender (called by socket service on room leave) |
 
 ## Cross-Invitation Edge Cases
 
 - **A invites B, B invites A simultaneously** — both invitations are valid. First to accept wins; the other gets `GAME_INVITATION_NOT_JOINABLE` at accept time because the room changed.
-- **Acceptor had their own pending invitations** — on accept, the backend pushes updated summaries to all users who had received invitations from the acceptor, immediately invalidating their cards.
-- **Inviter leaves their room after sending** — socket service calls the backend notify endpoint, which pushes updated summaries to the invitee. Their card switches from "Join game" to "Game room is no longer available".
-- **Invitee is already in a room** — the "Join game" button is hidden (`hasActiveGameRoom`). If they leave their room, the button reappears (driven by `RoomsStoreContext.roomState.id`).
+- **Acceptor had their own pending invitations** — on accept, the backend pushes invitation-state invalidations to all users who had received invitations from the acceptor, immediately invalidating their cards.
+- **Inviter leaves their room after sending** — socket service calls the backend notify endpoint, which pushes an invitation-state invalidation to the invitee. Their card switches from "Join game" to "Game room is no longer available".
+- **Invitee is already in a room** — the "Join game" button is hidden (`hasActiveGameRoom`). If they leave their room, the button reappears if the canonical invitation status is still `pending`.
 
 ## Database Schema
 
@@ -133,6 +154,8 @@ gameInvitationInvitedUserId   String?   — recipient UUID
 gameInvitationExpiresAt       DateTime? — TTL timestamp
 gameInvitationAcceptedAt      DateTime? — set on accept (null = still pending)
 gameInvitationAcceptedByUserId String?  — who accepted
+gameInvitationCancelledAt     DateTime? — set on decline/cancel
+gameInvitationCancelledByUserId String? — who declined/cancelled
 ```
 
 Indexes on `(gameInvitationInvitedUserId, gameInvitationExpiresAt)` support the hot path of listing actionable invitations for a user.
@@ -147,8 +170,9 @@ Indexes on `(gameInvitationInvitedUserId, gameInvitationExpiresAt)` support the 
 | `containers/socket/app/src/internal/game-invitations.routes.ts` | Socket service internal endpoints |
 | `containers/socket/app/src/features/game-room/gameRoom.socket.ts` | Room leave hooks that trigger invitee notifications |
 | `containers/contracts/api/game-invitations/` | Shared types, error codes, validation schemas |
-| `containers/frontend/web/src/features/game-invitations/game-invitations.client.ts` | Frontend API client (send, accept, fetch summary) |
+| `containers/frontend/web/src/features/game-invitations/game-invitations.client.ts` | Frontend API client (send, accept, decline, fetch canonical state) |
+| `containers/frontend/web/src/features/game-invitations/store/` | Canonical frontend invitation store |
 | `containers/frontend/web/src/features/chat/chat.main.tsx` | Invitation card rendering logic |
-| `containers/frontend/web/src/features/direct-messages/direct-messages.tsx` | Accept handler, joining state, error surfacing |
-| `containers/frontend/web/src/features/social/store/social-store.bridge.tsx` | Socket bridge for real-time summary updates |
+| `containers/frontend/web/src/features/direct-messages/direct-messages.tsx` | Accept/decline handlers, joining state, error surfacing |
+| `containers/frontend/web/src/features/social/store/social-store.bridge.tsx` | Socket bridge for invitation-state invalidation and refetch |
 | `containers/frontend/web/src/features/social/social-variants/social-user-actions.tsx` | "Invite to game" button with feedback pill |

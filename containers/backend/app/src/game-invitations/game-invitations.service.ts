@@ -2,9 +2,10 @@ import { ApiError } from '@shared';
 import type { DirectMessage } from '@contracts/sockets/direct-messages/direct-messages.schema';
 import type {
   AcceptGameInvitationOk,
+  DeclineGameInvitationOk,
   GameInvitationSummary,
-  GetReceivedRoomInvitationsOk,
-  GetSentRoomInvitationsOk,
+  GameInvitationView,
+  GetGameInvitationStateOk,
   SendGameInvitationOk,
 } from '@contracts/game-invitations/game-invitations.contracts';
 
@@ -15,11 +16,11 @@ import {
   createGameInvitationDirectMessage,
   findActivePendingInvitationBetweenUsers,
   findGameInvitationById,
+  listInvitationsForUserState,
   listPendingGameInvitationsForUser,
   listPendingInviteesForSender,
-  listReceivedInvitationsByRoom,
-  listSentInvitationsByRoom,
   markGameInvitationAccepted,
+  markGameInvitationCancelled,
   markReceivedInvitationsAcceptedByRoom,
 } from '../direct-messages/direct-messages.repo';
 import { toDirectMessage } from '../direct-messages/direct-messages.mapper';
@@ -77,45 +78,62 @@ function assertGameInvitationRow(message: DirectMessage): asserts message is Ext
   }
 }
 
-export async function getActiveGameInvitationSummary(
+export async function getGameInvitationState(
   userId: string,
-): Promise<GameInvitationSummary> {
-  return buildGameInvitationSummary(userId);
-}
-
-export async function getSentRoomInvitations(
-  senderId: string,
-  roomId: number,
-): Promise<GetSentRoomInvitationsOk> {
+): Promise<GetGameInvitationStateOk> {
   const now = new Date();
-  const rows = await listSentInvitationsByRoom({ senderId, roomId, now });
-  return {
-    invitations: rows.map((r) => ({
-      id: r.id,
-      invitedUserId: r.invitedUserId,
-      invitedUsername: r.invitedUsername,
-      acceptedAt: r.acceptedAt?.toISOString() ?? null,
-      expiresAt: r.expiresAt.toISOString(),
-      createdAt: r.createdAt.toISOString(),
-    })),
-  };
-}
+  const rows = await listInvitationsForUserState({ userId });
 
-export async function getReceivedRoomInvitations(
-  invitedUserId: string,
-  roomId: number,
-): Promise<GetReceivedRoomInvitationsOk> {
-  const now = new Date();
-  const rows = await listReceivedInvitationsByRoom({ invitedUserId, roomId, now });
+  const actionable = rows.map((row) => ({
+    invitationId: row.id,
+    roomId: row.roomId,
+  }));
+
+  const activeInvitationIds = await resolveActiveInvitationIds({
+    userId,
+    invitations: actionable,
+  });
+
+  const activeIdSet = new Set(activeInvitationIds);
+
+  const invitations: GameInvitationView[] = rows.map((row): GameInvitationView => {
+    const isSender = row.senderId === userId;
+    const friendUserId = isSender ? row.invitedUserId : row.senderId;
+    const friendUsername = isSender ? row.invitedUsername : row.senderUsername;
+
+    let status: GameInvitationView['status'];
+    if (row.acceptedAt) {
+      status = 'accepted';
+    } else if (row.cancelledAt) {
+      status = 'cancelled';
+    } else if (row.expiresAt.getTime() <= now.getTime()) {
+      status = 'expired';
+    } else if (!activeIdSet.has(row.id)) {
+      status = 'unavailable';
+    } else {
+      status = 'pending';
+    }
+
+    return {
+      id: row.id,
+      roomId: row.roomId,
+      direction: isSender ? 'sent' : 'received',
+      friendUserId,
+      friendUsername,
+      inviterId: row.senderId,
+      invitedUserId: row.invitedUserId,
+      inviterUsername: row.senderUsername,
+      createdAt: row.createdAt.toISOString(),
+      expiresAt: row.expiresAt.toISOString(),
+      acceptedAt: row.acceptedAt?.toISOString() ?? null,
+      cancelledAt: row.cancelledAt?.toISOString() ?? null,
+      status,
+      sourceMessageId: row.id,
+    };
+  });
+
   return {
-    invitations: rows.map((r) => ({
-      id: r.id,
-      senderUserId: r.senderUserId,
-      senderUsername: r.senderUsername,
-      acceptedAt: r.acceptedAt?.toISOString() ?? null,
-      expiresAt: r.expiresAt.toISOString(),
-      createdAt: r.createdAt.toISOString(),
-    })),
+    invitations,
   };
 }
 
@@ -284,6 +302,10 @@ export async function acceptGameInvitation(
     throw new ApiError('GAME_INVITATION_ALREADY_ACCEPTED');
   }
 
+  if (invitation.gameInvitationCancelledAt) {
+    throw new ApiError('GAME_INVITATION_ALREADY_CANCELLED');
+  }
+
   if (
     !invitation.gameInvitationExpiresAt
     || invitation.gameInvitationExpiresAt.getTime() <= Date.now()
@@ -339,13 +361,67 @@ export async function acceptGameInvitation(
     ...pendingInviteesOfSender,
   ]);
 
-  const [summary] = await Promise.all(
-    [...allToNotify].map((id) => notifyInvitationSummary(id)),
+  const summaries = await Promise.all(
+    [...allToNotify].map(async (id) => [id, await notifyInvitationSummary(id)] as const),
   );
+  const summary = summaries.find(([id]) => id === currentUserId)?.[1];
+
+  if (!summary) {
+    throw new ApiError('INTERNAL_ERROR');
+  }
 
   return {
     invitationId,
     room: room.room,
+    summary,
+  };
+}
+
+export async function declineGameInvitation(
+  currentUserId: string,
+  invitationId: string,
+): Promise<DeclineGameInvitationOk> {
+  const invitation = await findGameInvitationById(invitationId);
+
+  if (
+    !invitation
+    || invitation.type !== 'game_invitation'
+    || invitation.gameInvitationInvitedUserId !== currentUserId
+  ) {
+    throw new ApiError('GAME_INVITATION_NOT_FOUND');
+  }
+
+  if (invitation.gameInvitationAcceptedAt) {
+    throw new ApiError('GAME_INVITATION_ALREADY_ACCEPTED');
+  }
+
+  if (invitation.gameInvitationCancelledAt) {
+    throw new ApiError('GAME_INVITATION_ALREADY_CANCELLED');
+  }
+
+  if (
+    !invitation.gameInvitationExpiresAt
+    || invitation.gameInvitationExpiresAt.getTime() <= Date.now()
+  ) {
+    throw new ApiError('GAME_INVITATION_EXPIRED');
+  }
+
+  const now = new Date();
+  const cancelled = await markGameInvitationCancelled({
+    invitationId,
+    cancelledByUserId: currentUserId,
+    now,
+  });
+
+  if (!cancelled) {
+    throw new ApiError('GAME_INVITATION_ALREADY_CANCELLED');
+  }
+
+  const summary = await notifyInvitationSummary(currentUserId);
+  await notifyInvitationSummary(invitation.senderId);
+
+  return {
+    invitationId,
     summary,
   };
 }
