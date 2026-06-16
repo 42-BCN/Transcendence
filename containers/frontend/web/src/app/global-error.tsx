@@ -1,5 +1,6 @@
 'use client';
 
+import { envPublic } from '@/lib/config/env.public';
 export default function GlobalError({
   error,
   reset,
@@ -7,7 +8,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  console.error(error);
+  envPublic.processEnv === 'development' && console.error(error);
 
   return (
     <html lang="en">

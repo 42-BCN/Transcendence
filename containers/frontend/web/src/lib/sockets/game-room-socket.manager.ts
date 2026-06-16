@@ -21,7 +21,6 @@ export function GameRoomSocketPrintDebug() {
   gameRoomSocket.emit('gameRoom:teammate:printDebug');
 }
 
-
 export function initGameRoomSocketHandelers(
   setDebugState: (text: gameRoomState) => void,
   setDebugMsg: (text: string) => void,
@@ -58,7 +57,8 @@ export function initGameRoomSocketHandelers(
 
   void ensureChatSessionIdentity()
     .catch((error) => {
-      console.error('[ GameRoom ] failed to initialize guest session identity', error);
+      envPublic.processEnv === 'development' &&
+        console.error('[ GameRoom ] failed to initialize guest session identity', error);
     })
     .finally(() => {
       if (!isMounted) return;
@@ -68,7 +68,8 @@ export function initGameRoomSocketHandelers(
       if (roomId > 0) {
         gameRoomSocket.emit('gameRoom:teammate:join', roomId);
       }
-      envPublic.processEnv === 'development' && console.log('[ GameRoom ] connected. roomId from URL:', roomId || 'none');
+      envPublic.processEnv === 'development' &&
+        console.log('[ GameRoom ] connected. roomId from URL:', roomId || 'none');
     });
 
   return () => {

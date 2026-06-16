@@ -51,16 +51,19 @@ export const SocialSocketManager = ({
     };
 
     const handleConnect = () => {
-      envPublic.processEnv === 'development' && console.log('Connected to friends socket server', friendsSocket.id);
+      envPublic.processEnv === 'development' &&
+        console.log('Connected to friends socket server', friendsSocket.id);
       emitCurrentPresence();
     };
 
     const handleConnectError = (error: Error) => {
-      console.error('Friends socket connect error', error);
+      envPublic.processEnv === 'development' &&
+        console.error('Friends socket connect error', error);
     };
 
     const handleDisconnect = () => {
-      envPublic.processEnv === 'development' && console.log('Disconnected from friends socket server');
+      envPublic.processEnv === 'development' &&
+        console.log('Disconnected from friends socket server');
     };
 
     const handleFriendOnline = (payload: PresenceOnlinePayload) => {
