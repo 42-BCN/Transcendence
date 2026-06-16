@@ -83,14 +83,16 @@ export async function notifyFriendRequest(
   }
 }
 
-export async function notifyFriendAccepted(userA: UserBrief, userB: UserBrief): Promise<void> {
+export async function notifyFriendAccepted(userA: UserBrief, userB: UserBrief, friendshipId: string): Promise<void> {
   const payloadForUserA: FriendAcceptedNotificationPayload = {
     friendUserId: userB.userId,
     friendUsername: userB.username,
+    friendshipId,
   };
   const payloadForUserB: FriendAcceptedNotificationPayload = {
     friendUserId: userA.userId,
     friendUsername: userA.username,
+    friendshipId,
   };
 
   try {

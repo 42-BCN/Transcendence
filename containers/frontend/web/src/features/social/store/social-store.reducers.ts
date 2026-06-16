@@ -215,6 +215,7 @@ function receiveFriendAcceptedReducer(
       username: payload.friendUsername,
       avatar: pendingSent?.avatar ?? pendingReceived?.avatar ?? existingSearchUser?.avatar ?? null,
       presence: existingFriend?.presence ?? 'offline',
+      friendshipId: payload.friendshipId,
     };
 
     return {
@@ -247,6 +248,7 @@ function receiveFriendRejectedReducer(
   return (state) => ({
     pendingSent: removePendingByFriendshipId(state.pendingSent, payload.friendshipId),
     pendingReceived: removePendingByFriendshipId(state.pendingReceived, payload.friendshipId),
+    friends: state.friends.filter((friend) => friend.friendshipId !== payload.friendshipId),
     searchResults: replaceSearchResultByUserId(
       state.searchResults,
       payload.rejectedByUserId,
@@ -287,17 +289,20 @@ function createFriendFromPendingRequest(request: FriendshipPublic): FriendPublic
     username: request.username,
     avatar: request.avatar,
     presence: 'offline',
+    friendshipId: request.id,
   };
 }
 
 function createFriendFromSearchItem(
   searchItem: GroupedSearchResults['requests'][number],
-): FriendPublic {
+): FriendPublic | null {
+  if (!searchItem.friendshipId) return null;
   return {
     id: searchItem.id,
     username: searchItem.username,
     avatar: searchItem.avatar,
     presence: 'offline',
+    friendshipId: searchItem.friendshipId,
   };
 }
 
@@ -349,6 +354,7 @@ function addPendingRequestReducer(
         username: friendship.username,
         avatar: friendship.avatar,
         presence: 'offline',
+        friendshipId: friendship.id,
       };
 
       return {
