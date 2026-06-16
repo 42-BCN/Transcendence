@@ -21,6 +21,7 @@ export type FriendPublic = {
   avatar: string | null;
   presence: FriendPresence;
   unreadMessageCount?: number;
+  friendshipId: string;
 };
 
 export type GetFriendsListOk = { friends: FriendPublic[] };

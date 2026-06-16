@@ -47,6 +47,7 @@ export type FriendRequestNotificationPayload = z.infer<
 export const FriendAcceptedNotificationPayloadSchema = z.strictObject({
   friendUserId: z.string().uuid(),
   friendUsername: z.string().min(1),
+  friendshipId: z.string().uuid(),
 });
 
 export type FriendAcceptedNotificationPayload = z.infer<

@@ -33,7 +33,7 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
           className={cn(
             glassBackgroundStyles({ intensity: 'medium', blur: 'sm' }),
             glassBorderStyles(),
-            'h-full w-full overflow-hidden rounded-none pointer-events-auto md:rounded-s-md md:border-r-0',
+            'flex flex-col h-full w-full overflow-hidden rounded-none pointer-events-auto md:rounded-s-md md:border-r-0',
           )}
         >
           {userId ? (
