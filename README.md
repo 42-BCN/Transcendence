@@ -1,5 +1,7 @@
 _This project has been created as part of the 42 curriculum by cmanica-, [capapes](https://github.com/carolinapapes), mfontser, joanavar, tatahere._
 
+![DancingRaccon](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDAwdW4wYzhkeTVicHZidHl4ZThqNXJ5NDdva2pwZHRibzZzd3J2NiZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/aQwvKKi4Lv3t63nZl9/giphy.gif)
+
 # Transcendence
 ### A full-stack web platform combining social interaction, real-time systems, and 
 browser-based multiplayer gameplay
