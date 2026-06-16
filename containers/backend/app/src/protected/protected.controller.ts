@@ -45,9 +45,10 @@ export async function putMeProfile(
 ): Promise<void> {
   const userId = req.session.userId as string; // guaranteed by requireAuth
 
-  const profile = await Service.updateBioForMe({
+  const profile = await Service.updateProfileForMe({
     userId,
     bio: req.body.bio,
+    avatar: req.body.avatar ?? null,
   });
 
   res.status(200).json({

@@ -61,6 +61,7 @@ export async function sendFriendRequest(
       await notifyFriendAccepted(
         { userId: senderId, username: senderBrief.username },
         { userId: targetId, username: targetBrief.username },
+        accepted.id,
       );
     }
 
@@ -100,6 +101,7 @@ export async function sendFriendRequest(
       await notifyFriendAccepted(
         { userId: senderId, username: senderBrief.username },
         { userId: targetId, username: targetBrief.username },
+        accepted.id,
       );
     }
 
@@ -129,6 +131,7 @@ export async function getFriendsList(userId: string): Promise<FriendPublic[]> {
     avatar: friend.avatar,
     presence: presenceByUserId[friend.id] ?? 'offline',
     unreadMessageCount: unreadById.get(friend.friendshipId) ?? 0,
+    friendshipId: friend.friendshipId,
   }));
 }
 
@@ -171,6 +174,7 @@ export async function respondToFriendRequest(
       await notifyFriendAccepted(
         { userId: currentUserId, username: receiverBrief.username },
         { userId: row.senderId, username: senderBrief.username },
+        friendship.id,
       );
     }
 
@@ -189,7 +193,14 @@ export async function respondToFriendRequest(
 }
 
 export async function removeFriendship(friendshipId: string, currentUserId: string): Promise<void> {
-  const outcome = await deleteFriendship(friendshipId, currentUserId);
-  if (outcome === 'not_found') throw new ApiError('FRIENDSHIP_NOT_FOUND');
-  if (outcome === 'forbidden') throw new ApiError('UNAUTHORIZED_ACTION');
+  const result = await deleteFriendship(friendshipId, currentUserId);
+  if (result.outcome === 'not_found') throw new ApiError('FRIENDSHIP_NOT_FOUND');
+  if (result.outcome === 'forbidden') throw new ApiError('UNAUTHORIZED_ACTION');
+
+  const { friendship } = result;
+  const otherUserId = friendship.userId1 === currentUserId ? friendship.userId2 : friendship.userId1;
+  await notifyFriendRejected(otherUserId, {
+    rejectedByUserId: currentUserId,
+    friendshipId,
+  });
 }

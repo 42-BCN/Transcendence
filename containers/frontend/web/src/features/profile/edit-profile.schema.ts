@@ -3,14 +3,15 @@ import { UpdateMeProfileReqSchema } from '@/contracts/api/users/users.validation
 
 export const BIO_MAX_LENGTH = 600;
 
-const fieldNames = ['bio'] as const satisfies readonly (keyof UpdateMeProfileReq)[];
+const fieldNames = ['bio', 'avatar'] as const satisfies readonly (keyof UpdateMeProfileReq)[];
 
-export function createEditProfileForm(initialBio: string) {
+export function createEditProfileForm(initialBio: string, initialAvatar: UpdateMeProfileReq['avatar']) {
   return {
     schema: UpdateMeProfileReqSchema,
     fieldNames,
     defaultValues: {
       bio: initialBio,
+      avatar: initialAvatar,
     } satisfies UpdateMeProfileReq,
   } as const;
 }

@@ -367,7 +367,9 @@
         "title": "Eliminar compte?"
       },
       "edit": {
-        "placeholder": "Explica als altres jugadors una mica sobre tu",
+        "avatarAlt": "Seleccionar avatar {name}",
+        "chooseAvatar": "Tria el teu avatar",
+        "placeholder": "Explica'ls a la resta de jugadors una mica sobre tu",
         "submit": "Desar canvis",
         "title": "Editar perfil"
       },

@@ -20,6 +20,14 @@ function getConfiguredGoogleOauthOrigin(): string | null {
   }
 }
 
+function getCurrentRequestOrigin(req: Request): string {
+  const forwardedProto = req.get('x-forwarded-proto')?.split(',')[0]?.trim();
+  const forwardedHost = req.get('x-forwarded-host')?.split(',')[0]?.trim();
+  const host = forwardedHost || req.get('host') || '';
+
+  return `${forwardedProto || req.protocol}://${host}`;
+}
+
 function ensureGoogleOauthStartsOnCallbackHost(
   req: Request,
   res: Response,
@@ -32,7 +40,7 @@ function ensureGoogleOauthStartsOnCallbackHost(
     return;
   }
 
-  const currentOrigin = `${req.protocol}://${req.get('host')}`;
+  const currentOrigin = getCurrentRequestOrigin(req);
 
   if (currentOrigin === publicOrigin) {
     next();
