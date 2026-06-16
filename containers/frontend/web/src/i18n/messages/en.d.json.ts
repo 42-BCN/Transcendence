@@ -5,7 +5,8 @@ declare const messages: {
   "common": {
     "globalError": {
       "title": "Something went wrong",
-      "tryAgain": "Try again"
+      "tryAgain": "Try again",
+      "unexpectedMessage": "An unexpected error occurred"
     }
   },
   "components": {
@@ -45,8 +46,23 @@ declare const messages: {
   },
   "pages": {
     "home": {
-      "subtitle": "If you can see this, routing + dev server work.",
-      "title": "Hello from Next in Docker 👋"
+      "title": "Game Rooms",
+      "subtitle": "Join a room to start playing with other users.",
+      "room": {
+        "label": "Room #{id}",
+        "statusFull": "Room is full.",
+        "statusWaiting": "Waiting for players…",
+        "playersHeading": "Players in room",
+        "invitationsHeading": "Invitations sent",
+        "invitationsEmpty": "No invitations sent from this room yet.",
+        "invitationAccepted": "Accepted",
+        "invitationPending": "Pending",
+        "receivedInvitationsHeading": "Invitations received"
+      },
+      "actions": {
+        "join": "Join any available room",
+        "leave": "Leave room"
+      }
     },
     "game": {
       "description": "Play the Transcendence game and manage your turns.",
@@ -319,7 +335,12 @@ declare const messages: {
     "game": {
       "endTurn": "End turn",
       "healthLabel": "HP",
-      "resetPlan": "Reset plan"
+      "resetPlan": "Reset plan",
+      "room": {
+        "fields": {
+          "gameRoomId": "Game room ID"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Create account",
@@ -375,17 +396,31 @@ declare const messages: {
         "addFriend": "Add friend",
         "cancel": "Cancel",
         "cancelRequest": "Cancel Request",
+        "inviteSent": "You sent an invitation to {username}",
         "inviteToGame": "Invite to Game",
         "message": "Message",
+        "decline": "Decline",
         "reject": "Reject",
-        "unfriend": "Remove Friend"
+        "unfriend": "Remove Friend",
+        "inviteErrors": {
+          "GAME_INVITATION_ROOM_REQUIRED": "Connect to the game room first",
+          "GAME_INVITATION_ROOM_UNAVAILABLE": "Game room is no longer available",
+          "GAME_INVITATION_DUPLICATE_PENDING": "Invitation already pending",
+          "GAME_INVITATION_RECENT_DUPLICATE": "You just sent an invitation, wait a moment",
+          "GAME_INVITATION_PENDING_LIMIT": "Too many pending invitations",
+          "GAME_INVITATION_RATE_LIMITED": "Too many invitations sent, try later",
+          "GAME_INVITATION_NOT_FRIEND": "You are not friends with this user",
+          "GAME_INVITATION_ALREADY_IN_ROOM": "This user is already in a game room",
+          "default": "Could not send invitation"
+        }
       },
       "emptyStates": {
         "offline": "No friends offline",
         "online": "No friends online right now",
         "pending": "No sent requests pending",
         "request": "No pending friend requests",
-        "search": "No users found"
+        "search": "No users found",
+        "gameInvitations": "No game invitations yet"
       },
       "friends": {
         "offline": "Friends offline",
@@ -407,7 +442,10 @@ declare const messages: {
       },
       "searchLabel": "Search",
       "searchPlaceholder": "Search users",
-      "title": "Social"
+      "title": "Social",
+      "gameInvitations": "Game invitations",
+      "gameInvitationSubtitle": "Invited to room {roomId}",
+      "gameInvitationSentSubtitle": "Invitation pending"
     }
   },
   "validation": {

@@ -10,7 +10,6 @@
       "@contracts/*": ["src/contracts/*", "../../contracts/*"]
     },
     "strict": true,
-    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "sourceMap": true

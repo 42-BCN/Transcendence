@@ -17,6 +17,6 @@ export const messagesLayoutStyles = {
       'md:pointer-events-auto',
     ),
   panelInner:
-    'flex min-h-0 w-full overflow-hidden rounded-e-2xl border-r border-border-primary bg-bg-primary/95 shadow-xl backdrop-blur-md md:rounded-none md:border-none md:bg-transparent md:shadow-none md:backdrop-blur-none',
+    'flex min-h-0 w-full overflow-hidden rounded-e-2xl border-r border-border-primary bg-bg-primary/95 shadow-xl backdrop-blur-md glass-fallback md:rounded-none md:border-none md:bg-transparent md:shadow-none md:backdrop-blur-none',
   content: 'flex min-h-0 min-w-0 flex-1 overflow-hidden',
 };

@@ -9,6 +9,11 @@ import { NavigationServer } from '@/features/navigation';
 import { SocialProvider } from '@/providers/social-provider';
 import { initializeSocialData } from '@/providers/social-initializer';
 import { SocialSocketBridge } from '@/features/social/store/social-store.bridge';
+import { Rooms } from '@/features/rooms';
+import {
+  RoomsProvider,
+} from '@/features/rooms/rooms-provider';
+import { GameInvitationsProvider } from '@/features/game-invitations/store/game-invitations.provider';
 
 export async function generateMetadata({
   params,
@@ -72,14 +77,19 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale}>
       <Providers locale={locale}>
-        <SocialProvider initialData={socialInitialData}>
-          <SocialSocketBridge />
-          <HtmlLangSync />
+        <GameInvitationsProvider>
+          <RoomsProvider >
+            <Rooms />
+            <SocialProvider initialData={socialInitialData}>
+              <SocialSocketBridge />
+              <HtmlLangSync />
 
-          <NavigationServer locale={locale} />
+              <NavigationServer locale={locale} />
 
-          {children}
-        </SocialProvider>
+              {children}
+            </SocialProvider>
+          </RoomsProvider>
+        </GameInvitationsProvider>
       </Providers>
     </NextIntlClientProvider>
   );

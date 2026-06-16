@@ -55,12 +55,32 @@ export const DirectMessageReadSchema = z.strictObject({
 
 export type DirectMessageRead = z.infer<typeof DirectMessageReadSchema>;
 
-export const DirectMessageSchema = DirectMessageBaseSchema.extend({
+export const DirectMessageUserSchema = DirectMessageBaseSchema.extend({
   type: z.literal('user'),
   content: z.strictObject({
     text: z.string(),
   }),
 });
+
+export const DirectMessageGameInvitationSchema = DirectMessageBaseSchema.extend({
+  type: z.literal('game_invitation'),
+  content: z.strictObject({
+    invitationId: z.string().uuid(),
+    roomId: z.string(),
+    inviterId: z.string().uuid(),
+    invitedUserId: z.string().uuid(),
+    inviterUsername: z.string().min(1),
+    createdAt: z.string().datetime(),
+    expiresAt: z.string().datetime(),
+    acceptedAt: z.string().datetime().nullable().optional(),
+    cancelledAt: z.string().datetime().nullable().optional(),
+  }),
+});
+
+export const DirectMessageSchema = z.discriminatedUnion('type', [
+  DirectMessageUserSchema,
+  DirectMessageGameInvitationSchema,
+]);
 
 export type DirectMessage = z.infer<typeof DirectMessageSchema>;
 

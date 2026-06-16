@@ -1,30 +1,44 @@
 /* eslint-disable local/no-literal-ui-strings */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import {
   ScrollArea,
   Stack,
   Text,
+  UserItem,
   Tabs,
   TabList,
   Tab,
   TabPanel,
   DisclosureGroup,
   DisclosureFull,
+  Button,
 } from '@/components';
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode } from './store/social-store.types';
 import { useSocialStore } from '@/providers/social-provider';
 import {
+  acceptGameInvitation,
+  declineGameInvitation,
+  fetchGameInvitationState,
+} from '@/features/game-invitations/game-invitations.client';
+import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
+import {
   formatRequestAge,
   mapFriendshipToListItem,
   mapFriendToListItem,
   mapSearchResultToListItem,
 } from './social-variants/social-list-items';
+import {
+  useGameInvitationsStore,
+  GameInvitationsStoreContext,
+} from '@/features/game-invitations/store/game-invitations.provider';
+import { selectActiveInvitationCount } from '@/features/game-invitations/store/game-invitations.selectors';
+import type { GameInvitationView } from '@/features/game-invitations/store/game-invitations.types';
 
 const MINUTE_IN_MS = 60_000;
 
@@ -172,6 +186,100 @@ function SearchResults() {
   );
 }
 
+function GameInvitationActions({ invitation }: { invitation: GameInvitationView }) {
+  const t = useTranslations('features.social.actions');
+  const roomsStore = useContext(RoomsStoreContext);
+  const gameInvitationsStore = useContext(GameInvitationsStoreContext);
+  const [isPending, startTransition] = useTransition();
+
+  const handleAccept = () => {
+    startTransition(() => {
+      void acceptGameInvitation(invitation.id).then((response) => {
+        if (response.ok) {
+          roomsStore?.setRoomState(response.data.room);
+        }
+        void fetchGameInvitationState().then((stateResponse) => {
+          if (stateResponse.ok) {
+            gameInvitationsStore?.getState().setInvitationState(stateResponse.data);
+          }
+        });
+      });
+    });
+  };
+
+  const handleDecline = () => {
+    startTransition(() => {
+      void declineGameInvitation(invitation.id).then(() => {
+        void fetchGameInvitationState().then((stateResponse) => {
+          if (stateResponse.ok) {
+            gameInvitationsStore?.getState().setInvitationState(stateResponse.data);
+          }
+        });
+      });
+    });
+  };
+
+  return (
+    <Stack direction="horizontal" gap="xs">
+      <Button variant="secondary" size="sm" w="auto" onPress={handleDecline} isDisabled={isPending}>
+        {t('decline')}
+      </Button>
+      <Button variant="primary" size="sm" w="auto" onPress={handleAccept} isDisabled={isPending}>
+        {t('accept')}
+      </Button>
+    </Stack>
+  );
+}
+
+function GameInvitationsList() {
+  const t = useTranslations('features.social');
+  const allInvitations = useGameInvitationsStore((s) => s.invitationsById);
+  const received = useMemo(
+    () =>
+      Object.values(allInvitations).filter(
+        (inv) => inv.direction === 'received' && inv.status === 'pending',
+      ),
+    [allInvitations],
+  );
+
+  const sent = useMemo(
+    () =>
+      Object.values(allInvitations).filter(
+        (inv) => inv.direction === 'sent' && inv.status === 'pending',
+      ),
+    [allInvitations],
+  );
+
+  if (received.length === 0 && sent.length === 0) {
+    return (
+      <Stack align="center" justify="center" className="px-3 py-3 text-center">
+        <Text variant="caption" color="tertiary">
+          {t('emptyStates.gameInvitations')}
+        </Text>
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack gap="none" className="w-full">
+      {received.map((inv) => (
+        <UserItem
+          key={inv.id}
+          username={inv.inviterUsername}
+          subtitle={t('gameInvitationSubtitle', { roomId: String(inv.roomId) })}
+        >
+          <GameInvitationActions invitation={inv} />
+        </UserItem>
+      ))}
+      {sent.map((inv) => (
+        <Stack key={inv.id} gap="none">
+          <UserItem username={inv.friendUsername} subtitle={t('gameInvitationSentSubtitle')} />
+        </Stack>
+      ))}
+    </Stack>
+  );
+}
+
 function SocialHeader() {
   const t = useTranslations('features.social');
   return (
@@ -189,6 +297,7 @@ function SocialContent() {
   const searchQuery = useSocialStore((state) => state.searchQuery);
   const searchResults = useSocialStore((state) => state.searchResults);
   const errors = useSocialStore((state) => state.errors);
+  const activeGameInvitationCount = useGameInvitationsStore(selectActiveInvitationCount);
 
   if (searchQuery.trim() !== '') {
     const isEmpty =
@@ -222,6 +331,10 @@ function SocialContent() {
       <TabList className="px-3">
         <Tab id="friends">{t('friends.title')}</Tab>
         <Tab id="requests">{t('requests.title')}</Tab>
+        <Tab id="invitations">
+          {t('gameInvitations')}
+          {activeGameInvitationCount > 0 && ` (${activeGameInvitationCount})`}
+        </Tab>
       </TabList>
 
       <ScrollArea>
@@ -231,6 +344,10 @@ function SocialContent() {
 
         <TabPanel id="requests" className="outline-none">
           <RequestsList />
+        </TabPanel>
+
+        <TabPanel id="invitations" className="outline-none">
+          <GameInvitationsList />
         </TabPanel>
       </ScrollArea>
     </Tabs>

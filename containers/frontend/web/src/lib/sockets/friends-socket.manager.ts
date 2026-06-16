@@ -4,12 +4,15 @@ import { useEffect } from 'react';
 
 import {
   directMessageUnreadSocketEvents,
+  gameInvitationSocketEvents,
   type DirectMessageUnreadUpdatedPayload,
   friendshipSocketEvents,
   presenceSocketEvents,
   type FriendAcceptedNotificationPayload,
   type FriendRejectedNotificationPayload,
   type FriendRequestNotificationPayload,
+  type GameInvitationReceivedPayload,
+  type GameInvitationUpdatedPayload,
   type PresenceAwayPayload,
   type PresenceOfflinePayload,
   type PresenceOnlinePayload,
@@ -25,6 +28,8 @@ type SocialSocketManagerProps = {
   onFriendAccepted: (payload: FriendAcceptedNotificationPayload) => void;
   onFriendRejected: (payload: FriendRejectedNotificationPayload) => void;
   onUnreadUpdated: (payload: DirectMessageUnreadUpdatedPayload) => void;
+  onGameInvitationUpdated: (payload: GameInvitationUpdatedPayload) => void;
+  onGameInvitationReceived: (payload: GameInvitationReceivedPayload) => void;
 };
 
 export const SocialSocketManager = ({
@@ -35,6 +40,8 @@ export const SocialSocketManager = ({
   onFriendAccepted,
   onFriendRejected,
   onUnreadUpdated,
+  onGameInvitationUpdated,
+  onGameInvitationReceived,
 }: SocialSocketManagerProps) => {
   useEffect(() => {
     const emitCurrentPresence = () => {
@@ -82,6 +89,14 @@ export const SocialSocketManager = ({
       onUnreadUpdated(payload);
     };
 
+    const handleGameInvitationUpdated = (payload: GameInvitationUpdatedPayload) => {
+      onGameInvitationUpdated(payload);
+    };
+
+    const handleGameInvitationReceived = (payload: GameInvitationReceivedPayload) => {
+      onGameInvitationReceived(payload);
+    };
+
     const reservedListeners = [
       ['connect', handleConnect],
       ['connect_error', handleConnectError],
@@ -99,6 +114,8 @@ export const SocialSocketManager = ({
       [friendshipSocketEvents.accepted, handleFriendAccepted],
       [friendshipSocketEvents.rejected, handleFriendRejected],
       [directMessageUnreadSocketEvents.updated, handleUnreadUpdated],
+      [gameInvitationSocketEvents.updated, handleGameInvitationUpdated],
+      [gameInvitationSocketEvents.received, handleGameInvitationReceived],
     ] as const;
 
     reservedListeners.forEach(([event, handler]) => {
@@ -142,6 +159,8 @@ export const SocialSocketManager = ({
     onFriendAccepted,
     onFriendRejected,
     onUnreadUpdated,
+    onGameInvitationUpdated,
+    onGameInvitationReceived,
   ]);
 
   return null;

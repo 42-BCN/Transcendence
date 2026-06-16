@@ -1,289 +1,541 @@
 import type { Namespace, Socket } from 'socket.io';
-import type { ClientToServerGameEvents, ServerToClientGameEvents } from '../../../contracts/sockets/game/game.schema';
-import { initState, gameState, dijkstra, getAbility, initClientGameState, setClear, paint, addHistory, resetHistory, moveClone, nextPhase } from './utils';
+import type {
+  ClientToServerGameEvents,
+  ServerToClientGameEvents as ContractServerToClientGameEvents,
+} from '@contracts/sockets/game/game.schema';
 
-const roles: string[] = ['assassin', 'paladin', 'mage', 'alchemist'];
-const playerIds: string[] = [...roles].reverse();
-const users: Record<string, string> = {};
-const readyPlayers: string[] = [];
-const activePlayers: string[] = [];
+import { gameSessionManager } from './GameSessionManager';
+import type { GameSession, PlayerRole } from './game-session.types';
+import {
+  addHistory,
+  applyPlanningDisplace,
+  applyPlanningStatus,
+  checkEnt,
+  dijkstra,
+  getAbility,
+  getAoE,
+  initClientGameState,
+  moveClone,
+  nextPhase,
+  nextVfxId,
+  paint,
+  resetHistory,
+  runWithGameState,
+  setClear,
+} from './utils';
+import {
+  gameRoomsManager,
+  getRoomMemberKey,
+  getUserGameRoom,
+} from '../game-room/gameRooms.shared';
+import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
+import type { clientGameState, serverGameState, vfx as VfxPayload } from './types';
 
+type ServerGlobalSyncPayload = Omit<serverGameState, 'clients' | 'tiles' | 'mapBounds'> & {
+  tiles?: serverGameState['tiles'];
+  mapBounds?: serverGameState['mapBounds'];
+  readyPlayers?: string[];
+  activePlayers?: string[];
+};
 
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+type ServerToClientGameEvents = Omit<
+  ContractServerToClientGameEvents,
+  'game:server:globalSync'
+> & {
+  'game:server:globalSync': (state: ServerGlobalSyncPayload) => void;
+  'game:server:sync': (state: clientGameState) => void;
+  'game:server:vfx': (effect: VfxPayload) => void;
+  'game:server:error': (message: string) => void;
+};
+
+function getSessionPlayerRoleCount(session: GameSession) {
+  return [...session.players.values()].filter((player) => player.role !== 'spectator').length;
+}
+
+function getActivePlayerRoles(session: GameSession) {
+  return [...session.players.values()]
+    .filter((player) => player.role !== 'spectator' && player.status === 'connected')
+    .map((player) => player.role as PlayerRole);
+}
+
+function getClientKey(role: PlayerRole | 'spectator', memberKey: string) {
+  return role === 'spectator' ? `spectator:${memberKey}` : role;
+}
+
+function getPlayerClientState(session: GameSession, role: PlayerRole | 'spectator', memberKey: string) {
+  return session.state.clients[getClientKey(role, memberKey)];
+}
+
+function gsync(
+  nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>,
+  session: GameSession,
+) {
+  const { tiles, mapBounds, clients, ...send } = session.state;
+  nsp.to(session.channel).emit('game:server:globalSync', {
+    ...send,
+    readyPlayers: [...session.readyPlayers],
+    activePlayers: getActivePlayerRoles(session),
+  });
+}
+
+function syncFullGlobalState(
+  socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>,
+  session: GameSession,
+) {
+  socket.emit('game:server:globalSync', {
+    ...session.state,
+    readyPlayers: [...session.readyPlayers],
+    activePlayers: getActivePlayerRoles(session),
+  });
+}
+
+function vfx(
+  nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>,
+  session: GameSession,
+  effect: VfxPayload,
+) {
+  nsp.to(session.channel).emit('game:server:vfx', effect);
+}
+
+function syncClient(
+  socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>,
+  session: GameSession,
+  role: PlayerRole | 'spectator',
+  memberKey: string,
+) {
+  const clientState = getPlayerClientState(session, role, memberKey);
+  if (clientState) {
+    socket.emit('game:server:sync', clientState);
   }
 }
 
-export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>) {
+function syncAllClients(
+  nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>,
+  session: GameSession,
+) {
+  for (const player of session.players.values()) {
+    if (player.status !== 'connected') {
+      continue;
+    }
+    const clientState = getPlayerClientState(session, player.role, player.memberKey);
+    if (clientState) {
+      nsp.to(player.socketId).emit('game:server:sync', clientState);
+    }
+  }
+}
 
-  function gsync() {
-    const { tiles, mapBounds, clients, ...send } = gameState;
-    const activePlayers = roles.filter((r) => !playerIds.includes(r));
-    nsp.emit('game:server:globalSync', {
-      ...send,
-      readyPlayers,
-      activePlayers,
-    });
+function attachPlayerToSession(
+  session: GameSession,
+  memberKey: string,
+  socketId: string,
+) {
+  const existing = session.players.get(memberKey);
+  if (existing) {
+    existing.socketId = socketId;
+    existing.status = existing.role === 'spectator' ? 'spectator' : 'connected';
+    const clientKey = getClientKey(existing.role, memberKey);
+    session.state.clients[clientKey] ??= initClientGameState(socketId);
+    return existing;
   }
 
-  nsp.on('connection', (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
-    if (playerIds.length === 4) {
-      console.log('init state happens');
-      const initstate = initState();
-      gameState.players = initstate.players;
-      gameState.enemies = initstate.enemies;
-      gameState.tiles = initstate.tiles;
-      gameState.mapBounds = initstate.mapBounds;
-      gameState.clones = {};
-      gameState.ghosts = {};
-      gameState.history = [];
-    }
-    // WARN: DO NOT CHANGE, else will not render the map 
-    nsp.emit('game:server:globalSync', gameState);
-    const role = playerIds.pop();
-    if (!role) {
-      console.log('Room full, spectator joined:', socket.id);
-      gameState.clients['spectator'] = initClientGameState(socket.id);
-      gsync();
-      socket.emit('game:server:join', 'spectator');
-    }
-    else {
-      users[socket.id] = role;
-      gameState.clients[role] = initClientGameState(socket.id);
-      socket.emit('game:server:join', role);
-      gsync();
-      if (gameState.clients[role])
-        socket.emit('game:server:sync', gameState.clients[role]);
+  const role = session.availableRoles.pop() ?? 'spectator';
+  const player = {
+    memberKey,
+    role,
+    socketId,
+    status: role === 'spectator' ? 'spectator' : 'connected',
+  } as const;
 
-      socket.on('game:client:showMoveRange', (diceValue: number) => {
-        if (!gameState.clients[role] || !role || !gameState.clients[role].selectedEnt)
+  session.players.set(memberKey, { ...player });
+  const clientKey = getClientKey(role, memberKey);
+  session.state.clients[clientKey] = initClientGameState(socketId);
+  return session.players.get(memberKey)!;
+}
+
+function releasePlayerRole(session: GameSession, memberKey: string) {
+  const player = session.players.get(memberKey);
+  if (!player) {
+    return;
+  }
+
+  session.players.delete(memberKey);
+
+  if (player.role !== 'spectator') {
+    session.readyPlayers.delete(player.role);
+    if (!session.availableRoles.includes(player.role)) {
+      session.availableRoles.push(player.role);
+    }
+  }
+
+  delete session.state.clients[getClientKey(player.role, memberKey)];
+}
+
+function reconcileSessionWithRoom(session: GameSession, gameRoom: gameRoomState) {
+  const currentMemberKeys = new Set(gameRoom.teammates.map((teammate) => teammate.userId));
+
+  for (const memberKey of [...session.players.keys()]) {
+    if (!currentMemberKeys.has(memberKey)) {
+      releasePlayerRole(session, memberKey);
+    }
+  }
+}
+
+async function withSessionState<T>(session: GameSession, operation: () => Promise<T> | T) {
+  return runWithGameState(session.state, operation);
+}
+
+gameRoomsManager.setOnRoomDeleted((roomId) => {
+  gameSessionManager.deleteSession(roomId);
+});
+
+export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, ServerToClientGameEvents>) {
+  nsp.on('connection', async (socket: Socket<ClientToServerGameEvents, ServerToClientGameEvents>) => {
+    const memberKey = getRoomMemberKey(socket);
+    const gameRoom = getUserGameRoom(socket);
+
+    if (!memberKey || !gameRoom) {
+      (socket as any).emit('game:server:error', 'No active game room for this socket.');
+      socket.disconnect(true);
+      return;
+    }
+
+    if (!gameRoom.isGameRoomFull) {
+      (socket as any).emit('game:server:error', 'Game is only available when the room is full.');
+      socket.disconnect(true);
+      return;
+    }
+
+    const session = gameSessionManager.getOrCreateSession(gameRoom);
+    reconcileSessionWithRoom(session, gameRoom);
+    const sessionPlayer = attachPlayerToSession(session, memberKey, socket.id);
+    const role = sessionPlayer.role;
+
+    await socket.join(session.channel);
+    socket.emit('game:server:join', role);
+    syncFullGlobalState(socket, session);
+    gsync(nsp, session);
+    syncClient(socket, session, role, memberKey);
+
+    socket.on('game:client:showMoveRange', async (diceValue: number) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client || role === 'spectator' || !client.selectedEnt)
           return;
-        if (gameState.clients[role].selectedEnt.startsWith('clone_')
-          && gameState.clones[`clone_${role}`].hasMoved === true)
-          return (console.log(role, 'has already moved'));
-        console.log('Received move range event with dice:',
-          diceValue, 'for character', role);
-        const selEnt = gameState.clients[role].selectedEnt;
-        if (!selEnt)
+        const selectedEnt = client.selectedEnt;
+        const playerClone = session.state.clones?.[`clone_${role}`];
+        if (selectedEnt.startsWith('clone_') && playerClone?.hasMoved === true)
           return;
-        const ent = gameState.players[selEnt] || gameState.ghosts[selEnt]
-          || gameState.enemies[selEnt] || gameState.clones[selEnt];
+        const ent = session.state.players[selectedEnt] || session.state.ghosts[selectedEnt]
+          || session.state.enemies[selectedEnt] || session.state.clones[selectedEnt];
         if (!ent)
           return;
-        const hlId = dijkstra(selEnt, ent.position, diceValue)
+        const hlId = dijkstra(selectedEnt, ent.position, diceValue);
         const hlTiles: Record<string, boolean> = {};
         hlId.forEach((id: string) => (hlTiles[id] = true));
-        setClear(role);
-        gameState.clients[role].highlights = hlTiles;
-        socket.emit('game:server:sync', gameState.clients[role]);
+        setClear(getClientKey(role, memberKey));
+        client.highlights = hlTiles;
       });
+      syncClient(socket, session, role, memberKey);
+    });
 
-      socket.on('game:client:displayMoveRange', (diceValue: number) => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:displayMoveRange', async (diceValue: number) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client || role === 'spectator')
           return;
-        if (gameState.clones[`clone_${role}`]?.hasMoved === true)
-          return (console.log(role, 'has already moved'));
-        console.log('Received move range event with dice:',
-          diceValue, 'for character', role);
-        const selEnt = gameState.clients[role].selectedEnt;
-        if (selEnt?.replace("clone_", "") !== role)
+        if (session.state.clones[`clone_${role}`]?.hasMoved === true)
           return;
-        const ent = gameState.players[role] || gameState.clones[selEnt];
+        const selEnt = client.selectedEnt;
+        if (selEnt?.replace('clone_', '') !== role)
+          return;
+        const ent = session.state.players[role] || session.state.clones[selEnt];
         if (!ent)
           return;
         const hlId = dijkstra(selEnt, ent.position, diceValue);
         const hlTiles: Record<string, boolean> = {};
         hlId.forEach((id: string) => (hlTiles[id] = true));
-        gameState.clients[role].highlights = hlTiles;
-        gameState.clients[role].selectedDice = diceValue;
-        socket.emit('game:server:sync', gameState.clients[role])
+        client.highlights = hlTiles;
+        client.selectedDice = diceValue;
       });
+      syncClient(socket, session, role, memberKey);
+    });
 
-      socket.on('game:client:selectEntity', (id: string) => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:selectEntity', async (id: string) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
           return;
-        setClear(role);
-        gameState.clients[role].selectedEnt =
-          (id === gameState.clients[role].selectedEnt) ? null : id;
-        socket.emit('game:server:sync', gameState.clients[role])
-      })
-
-      socket.on('game:client:selectDice', (diceValue: number) => {
-        gameState.clients[role].selectedDice =
-          (gameState.clients[role].selectedDice === diceValue
-            || !gameState.clients[role].selectedEnt) ? null : diceValue;
-        socket.emit('game:server:sync', gameState.clients[role])
+        setClear(getClientKey(role, memberKey));
+        client.selectedEnt = id === client.selectedEnt ? null : id;
       });
+      syncClient(socket, session, role, memberKey);
+    });
 
-      socket.on('game:client:displayAbilityRange', (who: string, abName: string) => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:selectDice', async (diceValue: number) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
           return;
-        const ent = gameState.players[who] || gameState.clones[who];
-        if (!ent) return;
-        console.log('Received ability range event for character', role);
-        if (gameState.clients[role].selectedAb === abName)
-          setClear(role);
-        else {
+        client.selectedDice = (client.selectedDice === diceValue || !client.selectedEnt) ? null : diceValue;
+      });
+      syncClient(socket, session, role, memberKey);
+    });
+
+    socket.on('game:client:displayAbilityRange', async (who: string, abName: string) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
+          return;
+        const ent = session.state.players[who] || session.state.clones[who] || session.state.enemies[who];
+        if (!ent)
+          return;
+        if (client.selectedAb === abName) {
+          setClear(getClientKey(role, memberKey));
+        } else {
           const ab = getAbility(abName);
-          setClear(role);
-          gameState.clients[role].selectedAb = abName;
-          gameState.clients[role].selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
-          gameState.clients[role].canSelect = false;
-          // WARN: not enough time :( 
-
-          // if (ab.AoE)
-          //   gameState.clients[role].selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
+          setClear(getClientKey(role, memberKey));
+          client.selectedAb = abName;
+          client.selectables = paint(role, ent.position, ab.type, ab.range, ab.self);
+          client.canSelect = false;
         }
-        socket.emit('game:server:sync', gameState.clients[role])
       });
+      syncClient(socket, session, role, memberKey);
+    });
 
-      socket.on('game:client:showAbilityRange', (who: string, abName: string) => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:showAbilityRange', async (who: string, abName: string) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
           return;
-        console.log('Received show ability range event for character', role);
-        const ent = gameState.players[who] || gameState.clones[who];
-        if (!ent) return;
-        if (gameState.clients[role].selectedAb === abName)
-          setClear(role);
-        else {
+        const ent = session.state.players[who] || session.state.clones[who] || session.state.enemies[who];
+        if (!ent)
+          return;
+        if (client.selectedAb === abName) {
+          setClear(getClientKey(role, memberKey));
+        } else {
           const { type, range, self } = getAbility(abName);
-          gameState.clients[role].selectables = paint(role, ent.position, type, range, self);
+          client.selectables = paint(role, ent.position, type, range, self);
         }
-        socket.emit('game:server:sync', gameState.clients[role])
       });
+      syncClient(socket, session, role, memberKey);
+    });
 
-      socket.on('game:client:clearHl', () => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:clearHl', async () => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
           return;
-        console.log('Received highlight clear event for character', users[socket.id]);
-        gameState.clients[role].highlights = {};
-        gameState.clients[role].selectedDice = null;
+        client.highlights = {};
+        client.selectedDice = null;
       });
+    });
 
-      socket.on('game:client:clearSl', () => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:clearSl', async () => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
           return;
-        console.log('Received selectables clear event for character', users[socket.id]);
-        gameState.clients[role].selectables = {};
-        gameState.clients[role].selectedDice = null;
-        gameState.clients[role].canSelect = true;
+        client.selectables = {};
+        client.selectedDice = null;
+        client.canSelect = true;
       });
+    });
 
-      socket.on('game:client:clearSelDice', () => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:clearSelDice', async () => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
           return;
-        console.log('Received selected dice clear event for character', users[socket.id]);
-        gameState.clients[role].selectedDice = null;
+        client.selectedDice = null;
       });
+    });
 
-      socket.on('game:client:moveClone', (tileId: string) => {
-        console.log('Received move clone event for character', users[socket.id]);
-        const client = gameState.clients[role];
-        if (!client || !role || !tileId)
+    socket.on('game:client:moveClone', async (tileId: string) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client || role === 'spectator' || !tileId)
           return;
         if (!client.highlights[tileId] || !client.selectedEnt || !client.selectedDice)
           return;
         moveClone(role, tileId, client.selectedDice);
-        gameState.clients[role].selectedEnt = `clone_${role}`;
-        setClear(role);
-        socket.emit('game:server:sync', gameState.clients[role]);
-        gsync();
+        client.selectedEnt = `clone_${role}`;
+        setClear(getClientKey(role, memberKey));
       });
+      syncClient(socket, session, role, memberKey);
+      gsync(nsp, session);
+    });
 
-      socket.on('game:client:addHistoryAbility', (target: string) => {
-        console.log('selected ent:', gameState.clients[role].selectedEnt);
-        console.log('selected dice:', gameState.clients[role].selectedDice);
-        console.log('selected ab:', gameState.clients[role].selectedAb);
-        const entid = gameState.clients[role].selectedEnt;
-        const seldice = gameState.clients[role].selectedDice;
-        if (!entid || !seldice || !gameState.clients[role].selectedAb)
-          return (console.log("couldn't add ability to history!"));
-        addHistory(entid, "ability", target, seldice, gameState.clients[role].selectedAb);
-        const source = gameState.players[entid] || gameState.clones[entid];
+    socket.on('game:client:addHistoryAbility', async (target: string) => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client)
+          return;
+        const entid = client.selectedEnt;
+        const seldice = client.selectedDice;
+        const abName = client.selectedAb;
+        if (!entid || !seldice || !abName)
+          return;
+        const abilityActionId = addHistory(entid, 'ability', target, seldice, abName);
+        const source = session.state.players[entid] || session.state.clones[entid];
         if (!source)
-          return (console.log("couldn't find a valid source in addAbilityHistory!"));
-        if (source.type === "player") {
-          setClear(role);
-          gameState.players[entid] = {
-            ...gameState.players[entid],
+          return;
+        if (source.type === 'player') {
+          setClear(getClientKey(role, memberKey));
+          session.state.players[entid] = {
+            ...session.state.players[entid],
             dice: source.dice.toSpliced(source.dice.indexOf(seldice), 1),
             usedDice: [...source.usedDice, seldice].sort((a, b) => a - b),
+          };
+        } else if (source.type === 'clone') {
+          setClear(getClientKey(role, memberKey));
+          session.state.clones[entid].dice = source.dice.toSpliced(source.dice.indexOf(seldice), 1);
+          session.state.clones[entid].usedDice = [...source.usedDice, seldice].sort((a, b) => a - b);
+        }
+        if (abilityActionId) {
+          const ab = getAbility(abName);
+          if (ab.effect && ab.effect[0] === 'move') {
+            if (!ab.displaceFromCenter) {
+              applyPlanningDisplace(entid, target, ab, abilityActionId);
+            }
+            if (ab.AoE) {
+              const aoeTargets = getAoE(entid, target, ab.AoE, ab.AoErange);
+              if (ab.displaceFromCenter) {
+                let centerPos: { x: number; y: number; z: number } | undefined;
+                if (target.includes(',')) {
+                  const [cx, cy, cz] = target.split(',').map(Number);
+                  centerPos = { x: cx, y: cy + 1, z: cz };
+                } else {
+                  const baseId = target.replace('clone_', '');
+                  const centEnt =
+                    session.state.players[baseId] ??
+                    session.state.enemies[baseId] ??
+                    session.state.clones[`clone_${baseId}`] ??
+                    session.state.clones[target];
+                  if (centEnt) centerPos = { ...(centEnt as any).position };
+                }
+                if (ab.collisionRejects && aoeTargets.length >= 2) {
+                  for (const aoeId of aoeTargets) {
+                    vfx(nsp, session, {
+                      vfxid: nextVfxId(`plan_col_${aoeId}`),
+                      eid: aoeId,
+                      type: 'damage',
+                      amount: 1,
+                    });
+                  }
+                } else {
+                  for (const aoeId of aoeTargets) {
+                    if (aoeId !== target) {
+                      applyPlanningDisplace(entid, aoeId, ab, abilityActionId, centerPos);
+                    }
+                  }
+                }
+              } else {
+                for (const aoeId of aoeTargets) {
+                  if (aoeId !== target) {
+                    applyPlanningDisplace(entid, aoeId, ab, abilityActionId);
+                  }
+                }
+              }
+            }
+          } else if (ab.effect && ab.effect[0]) {
+            applyPlanningStatus(entid, target, ab, abilityActionId);
+            let vfxEid: string | null = null;
+            if (!target.includes(',')) {
+              vfxEid = target;
+            } else {
+              const [x, y, z] = target.split(',').map(Number);
+              const entOnTile = checkEnt(x, y + 1, z);
+              if (entOnTile && !entOnTile.isDead) vfxEid = entOnTile.id;
+            }
+            if (vfxEid) {
+              vfx(nsp, session, {
+                vfxid: nextVfxId(`plan_${ab.effect[0]}_${vfxEid}`),
+                eid: vfxEid,
+                type: ab.effect[0],
+                amount: null,
+              });
+            }
           }
         }
-        else if (source.type === "clone") {
-          setClear(role);
-          gameState.clones[entid].dice = source.dice.toSpliced(source.dice.indexOf(seldice), 1);
-          gameState.clones[entid].usedDice = [...source.usedDice, seldice].sort((a, b) => a - b);
-        }
-        setClear(role);
-        socket.emit('game:server:sync', gameState.clients[role]);
-        gsync();
+        setClear(getClientKey(role, memberKey));
       });
+      syncClient(socket, session, role, memberKey);
+      gsync(nsp, session);
+    });
 
-      socket.on('game:client:toggleEndTurn', () => {
-        if (!gameState.clients[role] || !role)
+    socket.on('game:client:toggleEndTurn', async () => {
+      await withSessionState(session, () => {
+        const client = getPlayerClientState(session, role, memberKey);
+        if (!client || role === 'spectator')
           return;
-        if (readyPlayers.includes(role)) {
-          setClear(role);
-          readyPlayers.splice(readyPlayers.indexOf(role), 1);
-          console.log('readyPlayers', readyPlayers);
-        }
-        else {
-          readyPlayers.push(role);
-          setClear(role);
-          gameState.clients[role].selectedEnt = null;
-          gameState.clients[role].canSelect = false;
-          console.log('readyPlayers', readyPlayers);
-        }
-        socket.emit('game:server:sync', gameState.clients[role]);
-        gsync();
-      });
-
-      socket.on('game:client:nextPhase', async () => {
-        if (!gameState.clients[role] || !role)
-          return;
-        console.log('readyPlayers before nextphase', readyPlayers);
-        if (readyPlayers.length === 4 - playerIds.length) {
-          console.log('readyPlayers in nextphase', readyPlayers);
-          readyPlayers.length = 0;
-          await nextPhase(gsync);
-          for (const id in gameState.clients) {
-            setClear(id);
-            nsp.emit('game:server:sync', gameState.clients[id]);
-          }
+        if (session.readyPlayers.has(role)) {
+          setClear(getClientKey(role, memberKey));
+          session.readyPlayers.delete(role);
+        } else {
+          session.readyPlayers.add(role);
+          setClear(getClientKey(role, memberKey));
+          client.selectedEnt = null;
+          client.canSelect = false;
         }
       });
+      syncClient(socket, session, role, memberKey);
+      gsync(nsp, session);
+    });
 
-      socket.on('game:client:rClick', () => {
-        setClear(role);
-        socket.emit('game:server:sync', gameState.clients[role]);
+    socket.on('game:client:nextPhase', async () => {
+      if (role === 'spectator')
+        return;
+      const assignedPlayers = getSessionPlayerRoleCount(session);
+      if (session.readyPlayers.size !== assignedPlayers)
+        return;
+
+      session.readyPlayers.clear();
+      await withSessionState(session, async () => {
+        await nextPhase(
+          () => gsync(nsp, session),
+          (effect) => vfx(nsp, session, effect),
+        );
+        for (const key in session.state.clients) {
+          setClear(key);
+        }
       });
+      syncAllClients(nsp, session);
+      gsync(nsp, session);
+    });
 
-      socket.on('game:client:resetHistory', () => {
+    socket.on('game:client:resetHistory', async () => {
+      if (role === 'spectator')
+        return;
+      await withSessionState(session, () => {
         resetHistory(role);
-        gsync();
+        setClear(getClientKey(role, memberKey));
+        const client = getPlayerClientState(session, role, memberKey);
+        if (client) {
+          client.selectedEnt = null;
+        }
       });
+      syncClient(socket, session, role, memberKey);
+      gsync(nsp, session);
+    });
 
-      // INFO: helpers/debug
+    socket.on('game:client:sync', () => {
+      syncClient(socket, session, role, memberKey);
+    });
 
-      socket.on('game:client:sync', () => {
-        socket.emit('game:server:sync', gameState.clients[role]);
-      });
-
-      socket.on('game:client:globalSync', () => {
-        gsync();
-      });
-    }
+    socket.on('game:client:globalSync', () => {
+      syncFullGlobalState(socket, session);
+    });
 
     socket.on('disconnect', () => {
-      if (role) {
-        playerIds.push(role);
-        delete users[socket.id];
-        console.log(role, 'disconnected, role', playerIds[playerIds.length - 1], 'is available again.');
-        gsync();
+      const player = session.players.get(memberKey);
+      if (!player) {
+        return;
       }
+      player.status = player.role === 'spectator' ? 'spectator' : 'disconnected';
+      if (player.role !== 'spectator') {
+        session.readyPlayers.delete(player.role);
+      }
+      gsync(nsp, session);
     });
-  })
+  });
 }

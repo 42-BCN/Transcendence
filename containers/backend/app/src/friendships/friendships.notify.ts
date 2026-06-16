@@ -1,10 +1,13 @@
 import {
   FriendshipInternalNotifyBodySchema,
+  gameInvitationSocketEvents,
   friendshipSocketEvents,
   type FriendshipInternalNotifyBody,
+  type GameInvitationReceivedPayload,
   type FriendAcceptedNotificationPayload,
   type FriendRejectedNotificationPayload,
   type FriendRequestNotificationPayload,
+  type GameInvitationUpdatedPayload,
 } from '@contracts/sockets/friendships/friendships.schema';
 import { logEvents } from './friendships.logs';
 
@@ -130,6 +133,46 @@ export async function notifyFriendRejected(
       event: 'friendship_socket_notify_request_error',
       socketEvent: friendshipSocketEvents.rejected,
       userId: senderId,
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
+
+export async function notifyGameInvitationSummary(
+  userId: string,
+  payload: GameInvitationUpdatedPayload,
+): Promise<void> {
+  try {
+    await postNotify({
+      event: gameInvitationSocketEvents.updated,
+      userId,
+      payload,
+    });
+  } catch (e) {
+    logEvents.error({
+      event: 'friendship_socket_notify_request_error',
+      socketEvent: gameInvitationSocketEvents.updated,
+      userId,
+      error: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
+
+export async function notifyGameInvitationReceived(
+  userId: string,
+  payload: GameInvitationReceivedPayload,
+): Promise<void> {
+  try {
+    await postNotify({
+      event: gameInvitationSocketEvents.received,
+      userId,
+      payload,
+    });
+  } catch (e) {
+    logEvents.error({
+      event: 'friendship_socket_notify_request_error',
+      socketEvent: gameInvitationSocketEvents.received,
+      userId,
       error: e instanceof Error ? e.message : String(e),
     });
   }

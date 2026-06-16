@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GAME_INVITATIONS_ERROR_STATUS = void 0;
+const status_1 = require("../http/status");
+exports.GAME_INVITATIONS_ERROR_STATUS = {
+    GAME_INVITATION_ALREADY_IN_ROOM: status_1.HttpStatus.CONFLICT,
+    GAME_INVITATION_ALREADY_ACCEPTED: status_1.HttpStatus.CONFLICT,
+    GAME_INVITATION_DUPLICATE_PENDING: status_1.HttpStatus.CONFLICT,
+    GAME_INVITATION_EXPIRED: status_1.HttpStatus.CONFLICT,
+    GAME_INVITATION_NOT_FOUND: status_1.HttpStatus.NOT_FOUND,
+    GAME_INVITATION_NOT_JOINABLE: status_1.HttpStatus.CONFLICT,
+    GAME_INVITATION_NOT_FRIEND: status_1.HttpStatus.FORBIDDEN,
+    GAME_INVITATION_PENDING_LIMIT: status_1.HttpStatus.TOO_MANY_REQUESTS,
+    GAME_INVITATION_RATE_LIMITED: status_1.HttpStatus.TOO_MANY_REQUESTS,
+    GAME_INVITATION_RECENT_DUPLICATE: status_1.HttpStatus.TOO_MANY_REQUESTS,
+    GAME_INVITATION_ROOM_REQUIRED: status_1.HttpStatus.CONFLICT,
+    GAME_INVITATION_ROOM_UNAVAILABLE: status_1.HttpStatus.CONFLICT,
+};

@@ -18,6 +18,7 @@ type DynamicInternalLinkStyleProps = InteractiveControlStyleProps & {
 };
 
 type LinkBaseProps = Omit<ComponentPropsWithoutRef<typeof Link>, 'children' | 'className' | 'href'>;
+type DynamicInternalHref = ComponentPropsWithoutRef<typeof Link>['href'];
 
 function getLinkClassName({
   as,
@@ -40,12 +41,11 @@ function getLinkClassName({
 
 export type DynamicInternalLinkProps = DynamicInternalLinkStyleProps &
   LinkBaseProps & {
-    href: string;
+    href: DynamicInternalHref;
   };
 
 /**
- * Component for dynamic internal routes that don't fit the strict InternalLink typing.
- * Suitable for routes like /messages/{slug} or /other/{username}
+ * Component for internal routes that may be passed as typed route objects.
  */
 export function DynamicInternalLink(args: DynamicInternalLinkProps) {
   const {

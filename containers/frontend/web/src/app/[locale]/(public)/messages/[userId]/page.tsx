@@ -2,14 +2,14 @@ import { DirectMessagesAccess, DirectMessagesFeature } from '@/features/direct-m
 import { MessagesLayout } from '@/features/direct-messages/messages-layout';
 import { getTranslations } from 'next-intl/server';
 import { getCurrentUserIdOrNull } from '@/features/auth/me/get-current-user-id-or-null';
-import { protectedMeAction } from '@/features/auth/me/protected.action';
 import { getFriendsList } from '@/features/social/actions/social.server.actions';
+import { protectedMeProfileAction } from '@/features/profile/profile.action';
 
 export default async function MessagesPage({ params }: { params: Promise<{ userId: string }> }) {
   const [{ userId: friendIdentifier }, currentUserId, me, friendsResult] = await Promise.all([
     params,
     getCurrentUserIdOrNull(),
-    protectedMeAction().catch(() => null),
+    protectedMeProfileAction().catch(() => null),
     getFriendsList(),
   ]);
 

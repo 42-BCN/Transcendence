@@ -2,7 +2,8 @@ import type { Request, Response } from 'express';
 import { randomUUID } from 'crypto';
 
 import type { LoginRes, SignupRes } from '@contracts/auth/auth.contract';
-import { AUTH_ERRORS, type AuthErrorName } from '@contracts/auth/auth.errors';
+import { AUTH_ERRORS } from '@contracts/auth/auth.errors';
+import type { AuthErrorName } from '@contracts/auth/auth.errors';
 import type { SignupReq, LoginReq } from '@contracts/auth/auth.validation';
 import type { HttpStatusCode } from '@contracts/http';
 import { HttpStatus } from '@contracts/http';
@@ -40,6 +41,7 @@ type SessionIdentityData = {
   isGuest: boolean;
   userId?: string;
   guestId?: string;
+  previousGuestId?: string;
 };
 
 type SessionIdentityRes = {
@@ -79,10 +81,12 @@ export async function postLogin(
   res: Response<LoginRes>,
 ): Promise<void> {
   const result = await Service.login(req.body);
+  const previousGuestId = req.session.guestId;
 
   req.session.regenerate((err) => {
     if (err) return sendError(res, 'AUTH_INTERNAL_ERROR');
     req.session.userId = result.id;
+    req.session.previousGuestId = previousGuestId;
     req.session.guestId = undefined;
     req.session.guestUsername = undefined;
     req.session.save((saveErr) => {
@@ -110,6 +114,9 @@ export async function postGuestSession(
         username: user.username,
         isGuest: false,
         userId: user.id,
+        ...(typeof req.session.previousGuestId === 'string'
+          ? { previousGuestId: req.session.previousGuestId }
+          : {}),
       },
       200,
     );
@@ -150,6 +157,9 @@ export async function getSessionIdentity(
         username: user.username,
         isGuest: false,
         userId: user.id,
+        ...(typeof req.session.previousGuestId === 'string'
+          ? { previousGuestId: req.session.previousGuestId }
+          : {}),
       },
       200,
     );

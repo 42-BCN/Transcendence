@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { DirectMessageGameInvitationSchema } from '../direct-messages/direct-messages.schema';
 
 export const friendshipSocketEvents = {
   request: 'friends:request',
@@ -8,6 +9,11 @@ export const friendshipSocketEvents = {
 
 export const directMessageUnreadSocketEvents = {
   updated: 'dm:unread-updated',
+} as const;
+
+export const gameInvitationSocketEvents = {
+  updated: 'game:invitations:updated',
+  received: 'game:invitations:received',
 } as const;
 
 export const presenceSocketEvents = {
@@ -22,6 +28,9 @@ export type FriendshipSocketEvent =
 
 export type DirectMessageUnreadSocketEvent =
   (typeof directMessageUnreadSocketEvents)[keyof typeof directMessageUnreadSocketEvents];
+
+export type GameInvitationSocketEvent =
+  (typeof gameInvitationSocketEvents)[keyof typeof gameInvitationSocketEvents];
 
 export const friendshipSocketUserIdSchema = z.string().uuid();
 
@@ -73,6 +82,25 @@ export const directMessageUnreadSocketPayloadSchemas = {
   [directMessageUnreadSocketEvents.updated]: DirectMessageUnreadUpdatedPayloadSchema,
 } as const satisfies Record<DirectMessageUnreadSocketEvent, z.ZodTypeAny>;
 
+export const GameInvitationUpdatedPayloadSchema = z.strictObject({
+  activeInvitationCount: z.number().int().nonnegative(),
+  activeInvitationIds: z.array(z.string().uuid()),
+});
+
+export type GameInvitationUpdatedPayload = z.infer<typeof GameInvitationUpdatedPayloadSchema>;
+
+export const gameInvitationSocketPayloadSchemas = {
+  [gameInvitationSocketEvents.updated]: GameInvitationUpdatedPayloadSchema,
+  [gameInvitationSocketEvents.received]: z.strictObject({
+    friendUserId: z.string().uuid(),
+    message: DirectMessageGameInvitationSchema,
+  }),
+} as const satisfies Record<GameInvitationSocketEvent, z.ZodTypeAny>;
+
+export type GameInvitationReceivedPayload = z.infer<
+  (typeof gameInvitationSocketPayloadSchemas)[typeof gameInvitationSocketEvents.received]
+>;
+
 export type FriendshipSocketPayloadByEvent = {
   [K in keyof typeof friendshipSocketPayloadSchemas]: z.infer<
     (typeof friendshipSocketPayloadSchemas)[K]
@@ -115,6 +143,15 @@ type DirectMessageUnreadEventHandlers = Record<
   (payload: DirectMessageUnreadUpdatedPayload) => void
 >;
 
+type GameInvitationEventHandlers = Record<
+  typeof gameInvitationSocketEvents.updated,
+  (payload: GameInvitationUpdatedPayload) => void
+> &
+  Record<
+    typeof gameInvitationSocketEvents.received,
+    (payload: GameInvitationReceivedPayload) => void
+  >;
+
 type PresenceEventHandlers = {
   'user:online': (payload: PresenceOnlinePayload) => void;
   'user:away': (payload: PresenceAwayPayload) => void;
@@ -123,6 +160,7 @@ type PresenceEventHandlers = {
 
 export type ServerToClientFriendshipEvents = FriendshipEventHandlers &
   DirectMessageUnreadEventHandlers &
+  GameInvitationEventHandlers &
   PresenceEventHandlers;
 
 // ---------------------------------------------------------------------------
@@ -152,10 +190,24 @@ const FriendRejectedNotifyBodySchema = z.strictObject({
   payload: FriendRejectedNotificationPayloadSchema,
 });
 
+const GameInvitationUpdatedNotifyBodySchema = z.strictObject({
+  event: z.literal(gameInvitationSocketEvents.updated),
+  userId: friendshipSocketUserIdSchema,
+  payload: GameInvitationUpdatedPayloadSchema,
+});
+
+const GameInvitationReceivedNotifyBodySchema = z.strictObject({
+  event: z.literal(gameInvitationSocketEvents.received),
+  userId: friendshipSocketUserIdSchema,
+  payload: gameInvitationSocketPayloadSchemas[gameInvitationSocketEvents.received],
+});
+
 export const FriendshipInternalNotifyBodySchema = z.discriminatedUnion('event', [
   FriendRequestNotifyBodySchema,
   FriendAcceptedNotifyBodySchema,
   FriendRejectedNotifyBodySchema,
+  GameInvitationUpdatedNotifyBodySchema,
+  GameInvitationReceivedNotifyBodySchema,
 ]);
 
 export type FriendshipInternalNotifyBody = z.infer<typeof FriendshipInternalNotifyBodySchema>;

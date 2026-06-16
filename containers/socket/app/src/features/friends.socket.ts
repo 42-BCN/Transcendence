@@ -1,4 +1,5 @@
 import type { Namespace, Socket } from 'socket.io';
+import type { FriendPresence } from '@contracts/api/friendships/friendships.contracts';
 
 import {
   DirectMessageUnreadUpdatedPayloadSchema,
@@ -6,6 +7,10 @@ import {
   FriendRejectedNotificationPayloadSchema,
   FriendRequestNotificationPayloadSchema,
   directMessageUnreadSocketEvents,
+  gameInvitationSocketEvents,
+  gameInvitationSocketPayloadSchemas,
+  type GameInvitationReceivedPayload,
+  GameInvitationUpdatedPayloadSchema,
   friendshipSocketEvents,
   friendshipSocketUserIdSchema,
   presenceSocketEvents,
@@ -13,6 +18,7 @@ import {
   type DirectMessageUnreadUpdatedPayload,
   type FriendshipSocketEvent,
   type FriendshipSocketPayloadByEvent,
+  type GameInvitationUpdatedPayload,
   type ServerToClientFriendshipEvents,
 } from '@contracts/sockets/friendships/friendships.schema';
 import { logEvents } from '../socket.logs';
@@ -212,10 +218,26 @@ export function emitToUser(
 ): void;
 export function emitToUser(
   userId: string,
-  event: FriendshipSocketEvent | typeof directMessageUnreadSocketEvents.updated,
+  event: typeof gameInvitationSocketEvents.updated,
+  payload: GameInvitationUpdatedPayload,
+): void;
+export function emitToUser(
+  userId: string,
+  event: typeof gameInvitationSocketEvents.received,
+  payload: GameInvitationReceivedPayload,
+): void;
+export function emitToUser(
+  userId: string,
+  event:
+    | FriendshipSocketEvent
+    | typeof directMessageUnreadSocketEvents.updated
+    | typeof gameInvitationSocketEvents.updated
+    | typeof gameInvitationSocketEvents.received,
   payload:
     | FriendshipSocketPayloadByEvent[FriendshipSocketEvent]
-    | DirectMessageUnreadUpdatedPayload,
+    | DirectMessageUnreadUpdatedPayload
+    | GameInvitationUpdatedPayload
+    | GameInvitationReceivedPayload,
 ): void {
   const parsedUserId = friendshipSocketUserIdSchema.safeParse(userId);
 
@@ -309,6 +331,48 @@ export function emitToUser(
         .emit(directMessageUnreadSocketEvents.updated, parsedPayload.data);
       break;
     }
+
+    case gameInvitationSocketEvents.updated: {
+      const parsedPayload = GameInvitationUpdatedPayloadSchema.safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(gameInvitationSocketEvents.updated, parsedPayload.data);
+      break;
+    }
+
+    case gameInvitationSocketEvents.received: {
+      const parsedPayload = gameInvitationSocketPayloadSchemas[
+        gameInvitationSocketEvents.received
+      ].safeParse(payload);
+
+      if (!parsedPayload.success) {
+        logEvents.error({
+          event: 'friends_socket_emit_validation_failed',
+          socketEvent: event,
+          userId: parsedUserId.data,
+          reason: 'invalid_payload',
+          errors: parsedPayload.error.flatten(),
+        });
+        return;
+      }
+
+      friendsNsp
+        ?.to(`user:${parsedUserId.data}`)
+        .emit(gameInvitationSocketEvents.received, parsedPayload.data);
+      break;
+    }
   }
 
   logEvents.info({
@@ -317,8 +381,6 @@ export function emitToUser(
     userId: parsedUserId.data,
   });
 }
-
-export type FriendPresence = 'online' | 'away' | 'offline';
 
 export function getUsersPresence(userIds: string[]): Record<string, FriendPresence> {
   const status: Record<string, FriendPresence> = {};

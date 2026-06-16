@@ -1,4 +1,5 @@
-import { io, type Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 
 import { envPublic } from '@/lib/config/env.public';
 import type {
@@ -10,6 +11,11 @@ import type {
   ServerToClientGameEvents,
   ClientToServerGameEvents,
 } from '@/contracts/sockets/game/game.schema';
+
+import type {
+  ServerToClientGameRoomsEvents,
+  ClientToServerGameRoomsEvents,
+} from '@/contracts/sockets/rooms/gameRooms.schema';
 
 export type Robot = {
   id: string;
@@ -51,6 +57,10 @@ export async function ensureChatSessionIdentity(): Promise<void> {
   return sessionPromise;
 }
 
+export function resetChatSessionIdentity(): void {
+  sessionPromise = null;
+}
+
 function createSocketUrl(pathname: string): string {
   const baseUrl = typeof window === 'undefined' ? envPublic.socketUrl : window.location.origin;
   return new URL(pathname, baseUrl).toString();
@@ -58,13 +68,14 @@ function createSocketUrl(pathname: string): string {
 
 const robotsSocketUrl = createSocketUrl('/robots');
 const chatSocketUrl = createSocketUrl('/chat');
+const gameRoomSocketUrl = createSocketUrl('/game-room');
 const gameSocketUrl = createSocketUrl('/game');
 
 export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEvents> = io(
   gameSocketUrl,
   {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
     reconnection: true,
     reconnectionDelay: 1000,
@@ -73,12 +84,7 @@ export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEven
   },
 );
 
-// Immediate error logging
-gameSocket.on('error', (error) => {
-  console.error('🔴 [gameSocket] error event:', error);
-});
-
-gameSocket.on('connect_error', (error) => {
+gameSocket.on('connect_error', (error: unknown) => {
   console.error('🔴 [gameSocket] connect_error:', error);
   if (error instanceof Error) {
     console.error('  Error message:', error.message);
@@ -88,22 +94,11 @@ gameSocket.on('connect_error', (error) => {
 
 console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
 
-// Global error handlers
-gameSocket.on('error', (error) => {
-  console.error('🔴 gameSocket error:', error);
-});
-
-gameSocket.on('connect_error', (error) => {
-  console.error('🔴 gameSocket connect_error:', error);
-});
-
-console.log('📋 gameSocket configured for URL:', gameSocketUrl);
-
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
   {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
   },
 );
@@ -112,8 +107,17 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
   chatSocketUrl,
   {
     autoConnect: false,
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
     auth: {},
   },
 );
+
+export const gameRoomSocket: Socket<
+  ServerToClientGameRoomsEvents,
+  ClientToServerGameRoomsEvents
+> = io(gameRoomSocketUrl, {
+  autoConnect: false,
+  transports: ['websocket'],
+  withCredentials: true,
+});

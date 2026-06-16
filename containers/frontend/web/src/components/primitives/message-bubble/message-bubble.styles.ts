@@ -5,8 +5,8 @@ const messageBubbleBase = 'p-3 rounded-xl gap-2 flex flex-col max-w-[90%] md:max
 const messageVariant = {
   me: 'rounded-br-none bg-bg-secondary ms-auto',
   user: 'rounded-bl-none bg-bg-primary border border-border-primary',
-  system: 'bg-yellow-400',
-  error: 'bg-red-400 text-white',
+  system: 'max-w-full rounded-md bg-transparent px-2 py-1 text-center text-foreground-secondary shadow-none',
+  error: 'max-w-full rounded-md bg-transparent px-2 py-1 text-center text-status-danger shadow-none',
   'game-event': 'bg-green-400 text-white',
 };
 

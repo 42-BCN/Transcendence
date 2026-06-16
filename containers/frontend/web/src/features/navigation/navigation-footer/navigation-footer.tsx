@@ -29,7 +29,6 @@ export function NavigationFooter() {
             className: navLinkClassName,
           })}
           aria-label={settingsLabel}
-          title={!isExpanded ? settingsLabel : undefined}
         >
           <RenderNavLinkContent icon="settings" label={settingsLabel} isExpanded={isExpanded} />
         </Button>

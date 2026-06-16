@@ -8,8 +8,11 @@ type SessionIdentityResponse = {
     isGuest?: boolean;
     userId?: string;
     guestId?: string;
+    previousGuestId?: string;
   };
 };
+
+type RawSessionIdentity = NonNullable<SessionIdentityResponse['data']>;
 
 export type SocketIdentity = {
   identityKey: string;
@@ -17,6 +20,7 @@ export type SocketIdentity = {
   isGuest: boolean;
   userId?: string;
   guestId?: string;
+  previousGuestId?: string;
 };
 
 const BACKEND_SESSION_IDENTITY_URL =
@@ -40,23 +44,85 @@ async function resolveIdentityFromSessionCookie(
   if (!res.ok) return null;
 
   const body = (await res.json().catch(() => null)) as SessionIdentityResponse | null;
-  const identityKey = body?.data?.identityKey;
-  const username = body?.data?.username;
-  const isGuest = body?.data?.isGuest;
-  const userId = body?.data?.userId;
-  const guestId = body?.data?.guestId;
+  return toSocketIdentity(body?.data);
+}
 
-  if (typeof identityKey !== 'string' || identityKey.length === 0) return null;
-  if (typeof username !== 'string' || username.length === 0) return null;
-  if (typeof isGuest !== 'boolean') return null;
+function toOptionalString(value: unknown) {
+  return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
 
+function toRequiredString(value: unknown) {
+  const nextValue = toOptionalString(value);
+  return nextValue ?? null;
+}
+
+function getIdentityKeyAndUsername(identity: RawSessionIdentity | undefined) {
+  const identityKey = toRequiredString(identity?.identityKey);
+  const username = toRequiredString(identity?.username);
+
+  if (!identityKey || !username) {
+    return null;
+  }
+
+  return { identityKey, username };
+}
+
+function getRequiredIdentityFields(identity: RawSessionIdentity | undefined) {
+  const baseIdentity = getIdentityKeyAndUsername(identity);
+  const isGuest = identity?.isGuest;
+
+  if (!baseIdentity || typeof isGuest !== 'boolean') {
+    return null;
+  }
+
+  return { ...baseIdentity, isGuest };
+}
+
+function getOptionalIdentityFields(identity: RawSessionIdentity) {
+  const userId = toOptionalString(identity.userId);
+  const guestId = toOptionalString(identity.guestId);
+  const previousGuestId = toOptionalString(identity.previousGuestId);
+
+  return { userId, guestId, previousGuestId };
+}
+
+function buildSocketIdentity(
+  requiredFields: NonNullable<ReturnType<typeof getRequiredIdentityFields>>,
+  optionalFields: ReturnType<typeof getOptionalIdentityFields>,
+): SocketIdentity {
   return {
-    identityKey,
-    username,
-    isGuest,
-    ...(typeof userId === 'string' ? { userId } : {}),
-    ...(typeof guestId === 'string' ? { guestId } : {}),
+    identityKey: requiredFields.identityKey,
+    username: requiredFields.username,
+    isGuest: requiredFields.isGuest,
+    ...(optionalFields.userId ? { userId: optionalFields.userId } : {}),
+    ...(optionalFields.guestId ? { guestId: optionalFields.guestId } : {}),
+    ...(optionalFields.previousGuestId
+      ? { previousGuestId: optionalFields.previousGuestId }
+      : {}),
   };
+}
+
+function toSocketIdentity(identity: RawSessionIdentity | undefined): SocketIdentity | null {
+  const requiredFields = getRequiredIdentityFields(identity);
+  if (!requiredFields || !identity) {
+    return null;
+  }
+
+  const optionalFields = getOptionalIdentityFields(identity);
+  return buildSocketIdentity(requiredFields, optionalFields);
+}
+
+function applySocketIdentity(socket: Socket, identity: SocketIdentity) {
+  socket.data.userId = identity.userId;
+  socket.data.username = identity.username;
+  socket.data.identityKey = identity.identityKey;
+  socket.data.guestId = identity.guestId;
+  socket.data.previousGuestId = identity.previousGuestId;
+  socket.data.isGuest = identity.isGuest;
+}
+
+function isAuthenticatedSocketIdentity(identity: SocketIdentity | null): identity is SocketIdentity & { userId: string } {
+  return Boolean(identity && identity.isGuest === false && identity.userId);
 }
 
 export async function requireSessionSocketAuth(
@@ -72,21 +138,17 @@ export async function requireSessionSocketAuth(
 
   try {
     const identity = await resolveIdentityFromSessionCookie(cookieHeader);
-
-    if (!identity || identity.isGuest || !identity.userId) {
-      next(new Error('AUTH_UNAUTHORIZED'));
-      return;
+    if (!isAuthenticatedSocketIdentity(identity)) {
+      return next(new Error('AUTH_UNAUTHORIZED'));
     }
 
-    socket.data.userId = identity.userId;
-    socket.data.username = identity.username;
-    socket.data.identityKey = identity.identityKey;
+    applySocketIdentity(socket, identity);
     socket.data.guestId = undefined;
     socket.data.isGuest = false;
-    next();
+    return next();
   } catch (error) {
     console.error('[socket.auth] failed to validate session cookie', error);
-    next(new Error('AUTH_UNAUTHORIZED'));
+    return next(new Error('AUTH_UNAUTHORIZED'));
   }
 }
 
@@ -109,11 +171,7 @@ export async function attachOptionalChatIdentity(
       return;
     }
 
-    socket.data.userId = identity.userId;
-    socket.data.username = identity.username;
-    socket.data.identityKey = identity.identityKey;
-    socket.data.guestId = identity.guestId;
-    socket.data.isGuest = identity.isGuest;
+    applySocketIdentity(socket, identity);
     next();
   } catch (error) {
     console.error('[socket.auth] optional identity resolution failed', error);

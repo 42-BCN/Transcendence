@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { getLocale } from 'next-intl/server';
 
 import { mono, primary } from './fonts';
 import { createAppMetadata } from '@/lib/metadata/metadata.config';
+import { routing } from '@/i18n/routing';
 import './globals.css';
 
 export const metadata = createAppMetadata({
@@ -23,10 +23,12 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const locale = await getLocale();
-
   return (
-    <html lang={locale} className={`${primary.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html
+      lang={routing.defaultLocale}
+      className={`${primary.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -45,8 +47,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
 
-      <body className="min-h-[100-dvh] flex text-text-primary bg-bg-primary transition-colors duration-300">
+      <body className="min-h-[100dvh] flex text-text-primary bg-bg-primary transition-colors duration-300">
         <div
+          id="tahatahere"
           className="fixed inset-0 -z-10 bg-[linear-gradient(var(--color-grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-grid-line)_1px,transparent_1px)] bg-[size:30px_30px]"
           aria-hidden="true"
         />

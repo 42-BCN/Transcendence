@@ -2,7 +2,8 @@
   "common": {
     "globalError": {
       "title": "Algo salió mal",
-      "tryAgain": "Inténtalo de nuevo"
+      "tryAgain": "Inténtalo de nuevo",
+      "unexpectedMessage": "Ha ocurrido un error inesperado"
     }
   },
   "components": {
@@ -42,8 +43,23 @@
   },
   "pages": {
     "home": {
-      "subtitle": "Si ves esto, el routing y el servidor de desarrollo funcionan.",
-      "title": "Hola desde Next en Docker 👋"
+      "title": "Salas de juego",
+      "subtitle": "Unéte a una sala para empezar a jugar con otros usuarios.",
+      "room": {
+        "label": "Sala #{id}",
+        "statusFull": "La sala está llena.",
+        "statusWaiting": "Esperando jugadores…",
+        "playersHeading": "Jugadores en la sala",
+        "invitationsHeading": "Invitaciones enviadas",
+        "invitationsEmpty": "Aún no se han enviado invitaciones desde esta sala.",
+        "invitationAccepted": "Aceptada",
+        "invitationPending": "Pendiente",
+        "receivedInvitationsHeading": "Invitaciones recibidas"
+      },
+      "actions": {
+        "join": "Unirse a cualquier sala disponible",
+        "leave": "Salir de la sala"
+      }
     },
     "game": {
       "description": "Juega a Transcendence y gestiona tus turnos.",
@@ -316,7 +332,12 @@
     "game": {
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
-      "resetPlan": "Reiniciar plan"
+      "resetPlan": "Reiniciar plan",
+      "room": {
+        "fields": {
+          "gameRoomId": "ID de la sala"
+        }
+      }
     },
     "navigation": {
       "createAccount": "Crear cuenta",
@@ -372,17 +393,31 @@
         "addFriend": "Añadir amigo",
         "cancel": "Cancelar",
         "cancelRequest": "Cancelar solicitud",
+        "inviteSent": "Has enviado una invitacion a {username}",
         "inviteToGame": "Invitar a partida",
         "message": "Mensaje",
+        "decline": "Rechazar invitación",
         "reject": "Rechazar",
-        "unfriend": "Eliminar amigo"
+        "unfriend": "Eliminar amigo",
+        "inviteErrors": {
+          "GAME_INVITATION_ROOM_REQUIRED": "Conéctate a la sala de juego primero",
+          "GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de juego ya no está disponible",
+          "GAME_INVITATION_DUPLICATE_PENDING": "Invitación ya pendiente",
+          "GAME_INVITATION_RECENT_DUPLICATE": "Acabas de enviar una invitación, espera un momento",
+          "GAME_INVITATION_PENDING_LIMIT": "Demasiadas invitaciones pendientes",
+          "GAME_INVITATION_RATE_LIMITED": "Demasiadas invitaciones enviadas, inténtalo más tarde",
+          "GAME_INVITATION_NOT_FRIEND": "No eres amigo de este usuario",
+          "GAME_INVITATION_ALREADY_IN_ROOM": "Este usuario ya está en una sala de juego",
+          "default": "No se pudo enviar la invitación"
+        }
       },
       "emptyStates": {
         "offline": "No hay amigos desconectados",
         "online": "No hay amigos conectados",
         "pending": "No has enviado solicitudes",
         "request": "No tienes solicitudes pendientes",
-        "search": "No se han encontrado usuarios"
+        "search": "No se han encontrado usuarios",
+        "gameInvitations": "Aún no hay invitaciones de juego"
       },
       "friends": {
         "offline": "Amigos desconectados",
@@ -404,7 +439,10 @@
       },
       "searchLabel": "Buscador",
       "searchPlaceholder": "Buscar usuarios",
-      "title": "Social"
+      "title": "Social",
+      "gameInvitations": "Invitaciones a juego",
+      "gameInvitationSubtitle": "Invitado a la sala {roomId}",
+      "gameInvitationSentSubtitle": "Invitación pendiente"
     }
   },
   "validation": {

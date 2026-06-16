@@ -53,6 +53,7 @@ export type GlassCardStylesOpts = GlassBackgroundStylesOpts &
 
 export function glassBackgroundStyles(opts: GlassBackgroundStylesOpts = {}) {
   return cn(
+    'glass-fallback',
     blur[opts.blur ?? 'sm2'],
     intensity[opts.intensity ?? 'medium'],
     opts.saturate !== false && 'backdrop-saturate-[150%]',

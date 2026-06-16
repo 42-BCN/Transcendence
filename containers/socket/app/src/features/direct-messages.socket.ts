@@ -5,11 +5,15 @@ import type { Namespace, Socket } from 'socket.io';
 import {
   DirectMessageSendSchema,
   directMessageFriendUserIdSchema,
-  directMessageSocketEvents,
-  type DirectMessageRead,
-  type ClientToServerDirectMessageEvents,
-  type DirectMessageError,
-  type ServerToClientDirectMessageEvents,
+  directMessageSocketEvents
+} from '@contracts/sockets/direct-messages/direct-messages.schema';
+
+import type {
+  DirectMessageRead,
+  ClientToServerDirectMessageEvents,
+  DirectMessage,
+  DirectMessageError,
+  ServerToClientDirectMessageEvents,
 } from '@contracts/sockets/direct-messages/direct-messages.schema';
 import { directMessageUnreadSocketEvents } from '@contracts/sockets/friendships/friendships.schema';
 
@@ -28,6 +32,24 @@ function sortedPair(userId1: string, userId2: string): [string, string] {
 function roomIdForPair(userId1: string, userId2: string): string {
   const [smaller, larger] = sortedPair(userId1, userId2);
   return `dm:${smaller}:${larger}`;
+}
+
+let directMessagesNamespace: Namespace<
+  ClientToServerDirectMessageEvents,
+  ServerToClientDirectMessageEvents
+> | null = null;
+
+export function emitDirectMessageToPair(args: {
+  currentUserId: string;
+  friendUserId: string;
+  message: DirectMessage;
+  clientMessageId?: string;
+}) {
+  const roomId = roomIdForPair(args.currentUserId, args.friendUserId);
+  directMessagesNamespace?.to(roomId).emit(directMessageSocketEvents.message, {
+    ...args.message,
+    ...(args.clientMessageId ? { clientMessageId: args.clientMessageId } : {}),
+  });
 }
 
 function errorMessage(): DirectMessageError {
@@ -69,6 +91,7 @@ async function emitReadState(
 export function registerDirectMessagesSocket(
   nsp: Namespace<ClientToServerDirectMessageEvents, ServerToClientDirectMessageEvents>,
 ) {
+  directMessagesNamespace = nsp;
   nsp.on(
     'connection',
     async (
