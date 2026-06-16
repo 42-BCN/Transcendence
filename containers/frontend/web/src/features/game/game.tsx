@@ -257,7 +257,7 @@ function EndPlan({ isStandalone = false }: { isStandalone?: boolean }) {
 
   return (
     <Button
-      className={isStandalone ? "absolute z-20 bottom-4 left-4 md:left-8" : "shrink-0 h-fit"}
+      className={isStandalone ? "absolute z-20 bottom-4 left-16" : "shrink-0 h-fit"}
       variant="primary"
       w="auto"
       onPress={() => nextPhase()}
@@ -280,7 +280,7 @@ function HUD() {
   }
 
   return (
-    <Stack className="z-20 absolute left-4 md:left-8 bottom-4 max-w-[calc(100vw-2rem)] md:max-w-[calc(66.66vw-4rem)]">
+    <Stack className="z-20 absolute left-16 bottom-4 max-w-[calc(100vw-5rem)] md:max-w-[calc(66.66vw-5rem)]">
       <AbButtons />
       <div className="w-full">
         <Meter
