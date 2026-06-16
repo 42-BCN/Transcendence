@@ -48,7 +48,7 @@ function FloatingVfx({ entityId }: { entityId: string }) {
   return (
     <>
       {entries.map((v) => (
-        <Html key={v.vfxid} position={[0, 1.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[100, 0]}>
+        <Html key={v.vfxid} position={[0, 1.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[20, 0]}>
           <span
             style={{
               display: 'block',
@@ -138,13 +138,14 @@ function AbButtons() {
   const clearSelectables = useGame((state) => state.clearSelectables);
   const showAbRange = useGame((state) => state.showAbRange);
   return (
-    <div className="z-10 bottom-[10%] left-[20%] flex gap-4">
+    <div className="flex flex-wrap gap-2 md:gap-4">
       {ent?.abilities.map((ability) => {
         const cd = abilityCD?.[ability] || 0;
         const cn = cd === 0 ? "bg-red-600 text-white" : "bg-gray-600 text-white"
         return (
           <Button
             key={ability}
+            w="auto"
             className={cn}
             onMouseEnter={(event) => {
               if (cd === 0 && !selectedAb && Object.keys(useGame.getState().highlights).length === 0) {
@@ -188,39 +189,38 @@ function DiceButtons() {
   const clearHighlights = useGame((state) => state.clearHighlights);
 
   return (
-    <div className="z-10 bottom-[10%] left-[20%] flex flex-col gap-3">
-      <div className="flex gap-4">
-        {ent?.usedDice.map((diceNum, i) => (
-          <Button key={i} className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}>
-            {`d${diceNum}`}
-          </Button>
-        ))}
-        {ent?.dice.map((diceNum, i) => (
-          <Button
-            key={i}
-            onMouseEnter={(event) => {
+    <div className="flex flex-wrap gap-2 md:gap-4">
+      {ent?.usedDice.map((diceNum, i) => (
+        <Button key={i} w="auto" className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}>
+          {`d${diceNum}`}
+        </Button>
+      ))}
+      {ent?.dice.map((diceNum, i) => (
+        <Button
+          key={i}
+          w="auto"
+          onMouseEnter={(event) => {
+            event.stopPropagation();
+            if (!ability)
+              showMoveRange(diceNum);
+          }}
+          onMouseLeave={(event) => {
+            if (!selectedDice) {
               event.stopPropagation();
-              if (!ability)
-                showMoveRange(diceNum);
-            }}
-            onMouseLeave={(event) => {
-              if (!selectedDice) {
-                event.stopPropagation();
-                clearHighlights();
-              }
-            }}
-            onPress={() => {
-              if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
-                (canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
-              }
-            }}
-            className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
-              ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
-          >
-            {`d${diceNum}`}
-          </Button>
-        ))}
-      </div>
+              clearHighlights();
+            }
+          }}
+          onPress={() => {
+            if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
+              (canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
+            }
+          }}
+          className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
+            ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
+        >
+          {`d${diceNum}`}
+        </Button>
+      ))}
     </div>
   );
 }
@@ -246,15 +246,18 @@ function Reset() {
   );
 }
 
-function EndPlan() {
+function EndPlan({ isStandalone = false }: { isStandalone?: boolean }) {
   const t = useTranslations('features.game');
   const nextPhase = useGame((state) => state.nextPhase);
   const phase = useGame((state) => state.phase);
   const activePlayers = useGame((state) => state.activePlayers);
   const readyPlayers = useGame((state) => state.readyPlayers);
-  return phase === 'PLAN' ? (
+  
+  if (phase !== 'PLAN') return null;
+
+  return (
     <Button
-      className="absolute z-10 bottom-8 right-64"
+      className={isStandalone ? "absolute z-20 bottom-4 left-4 md:left-8" : "shrink-0 h-fit"}
       variant="primary"
       w="auto"
       onPress={() => nextPhase()}
@@ -263,33 +266,41 @@ function EndPlan() {
       <br />
       {readyPlayers?.length} / {activePlayers?.length}
     </Button>
-  ) : null;
+  );
 }
 
 function HUD() {
   const t = useTranslations('features.game');
   const ent = useGame((state) => state.getSel());
-  return !ent ? null : (
-    <>
-      <Stack className="z-10 absolute left-8 bottom-4">
-        <AbButtons />
-        <div>
-          <Meter
-            label={t('healthLabel')}
-            value={ent.hp}
-            maxValue={ent.maxHp}
-            max={ent.maxHp}
-            formatOptions={{ style: 'decimal' }}
-          />
+  const phase = useGame((state) => state.phase);
+  const showEndPlan = phase === 'PLAN';
+
+  if (!ent) {
+    return showEndPlan ? <EndPlan isStandalone /> : null;
+  }
+
+  return (
+    <Stack className="z-20 absolute left-4 md:left-8 bottom-4 max-w-[calc(100vw-2rem)] md:max-w-[calc(66.66vw-4rem)]">
+      <AbButtons />
+      <div className="w-full">
+        <Meter
+          label={t('healthLabel')}
+          value={ent.hp}
+          maxValue={ent.maxHp}
+          max={ent.maxHp}
+          formatOptions={{ style: 'decimal' }}
+        />
+      </div>
+      {ent.status && (
+        <div className="text-sm text-yellow-200 bg-black/60 px-2 py-1 rounded w-fit">
+          ⚡ {ent.status}{ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
         </div>
-        {ent.status && (
-          <div className="text-sm text-yellow-200 bg-black/60 px-2 py-1 rounded w-fit">
-            ⚡ {ent.status}{ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
-          </div>
-        )}
+      )}
+      <div className="flex flex-wrap items-center gap-2 md:gap-4">
         <DiceButtons />
-      </Stack>
-    </>
+        {showEndPlan && <EndPlan />}
+      </div>
+    </Stack>
   );
 }
 
@@ -392,20 +403,30 @@ function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
   });
   if (!closestId)
     return null;
+  const targetId = closestId as string;
+  const color = CLASS_COLOR[targetId] ?? '#ffffff';
+  const icon = CLASS_ICON[targetId] ?? '🎯';
+
   return (
-    <Html position={[0, 0.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[80, 0]}>
+    <Html position={[0, 0.5, 0]} center style={{ pointerEvents: 'none' }} zIndexRange={[20, 0]}>
       <div style={{
         background: 'rgba(0,0,0,0.82)',
-        color: '#ffaa00',
-        border: '1px solid #ffaa00',
+        color: '#ffffff',
+        border: `1px solid ${color}`,
         borderRadius: 3,
         fontSize: 10,
         padding: '1px 5px',
         whiteSpace: 'nowrap',
         fontWeight: 'bold',
         letterSpacing: '0.03em',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
       }}>
-        Target: {closestId}
+        <span style={{ fontSize: '11px', lineHeight: 1 }}>{icon}</span>
+        <span style={{ color: color }}>
+          {targetId.charAt(0).toUpperCase() + targetId.slice(1)}
+        </span>
       </div>
     </Html>
   );
@@ -771,7 +792,6 @@ function HandlePhaseScreen() {
           <CharacterCard />
           <HUD />
           <Reset />
-          <EndPlan />
           <Canvas>
             <Scene />
           </Canvas>
