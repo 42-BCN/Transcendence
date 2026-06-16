@@ -16,6 +16,7 @@ export const createInitialState = (initialData: SocialInitialData) => ({
   activeGameInvitationIds: [],
   hasLoadedGameInvitationSummary: false,
   pendingInvitationMessagesByFriendId: {},
+  sentGameInvitationsByFriendId: {},
   searchResults: emptyGroupedSearchResults(),
   searchQuery: '',
   errors: initialData.errors,

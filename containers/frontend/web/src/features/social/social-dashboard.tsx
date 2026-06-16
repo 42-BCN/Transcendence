@@ -1,7 +1,7 @@
 /* eslint-disable local/no-literal-ui-strings */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import {
@@ -15,11 +15,14 @@ import {
   TabPanel,
   DisclosureGroup,
   DisclosureFull,
+  Button,
 } from '@/components';
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode } from './store/social-store.types';
 import { useSocialStore } from '@/providers/social-provider';
+import { acceptGameInvitation } from '@/features/game-invitations/game-invitations.client';
+import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
 import {
   formatRequestAge,
   mapFriendshipToListItem,
@@ -173,17 +176,81 @@ function SearchResults() {
   );
 }
 
+function GameInvitationActions({
+  friendUserId,
+  invitationId,
+}: {
+  friendUserId: string;
+  invitationId: string;
+}) {
+  const t = useTranslations('features.social.actions');
+  const roomsStore = useContext(RoomsStoreContext);
+  const setActiveGameInvitationSummary = useSocialStore((s) => s.setActiveGameInvitationSummary);
+  const removeGameInvitationMessage = useSocialStore((s) => s.removeGameInvitationMessage);
+  const [isPending, startTransition] = useTransition();
+
+  const handleAccept = () => {
+    startTransition(() => {
+      void acceptGameInvitation(invitationId).then((response) => {
+        if (response.ok) {
+          roomsStore?.setRoomState(response.data.room);
+          setActiveGameInvitationSummary(response.data.summary);
+        }
+        removeGameInvitationMessage(friendUserId, invitationId);
+      });
+    });
+  };
+
+  const handleDecline = () => {
+    removeGameInvitationMessage(friendUserId, invitationId);
+  };
+
+  return (
+    <Stack direction="row" gap="xs">
+      <Button variant="secondary" size="sm" w="auto" onPress={handleDecline} isDisabled={isPending}>
+        {t('decline')}
+      </Button>
+      <Button variant="primary" size="sm" w="auto" onPress={handleAccept} isDisabled={isPending}>
+        {t('accept')}
+      </Button>
+    </Stack>
+  );
+}
+
 function GameInvitationsList() {
   const t = useTranslations('features.social');
   const pendingInvitationMessagesByFriendId = useSocialStore(
     (state) => state.pendingInvitationMessagesByFriendId,
   );
+  const sentGameInvitationsByFriendId = useSocialStore(
+    (state) => state.sentGameInvitationsByFriendId,
+  );
+  const activeGameInvitationIds = useSocialStore((state) => state.activeGameInvitationIds);
+  const removeSentGameInvitation = useSocialStore((state) => state.removeSentGameInvitation);
 
-  const invitations = Object.values(pendingInvitationMessagesByFriendId)
-    .flat()
-    .filter((msg) => msg.type === 'game_invitation');
+  const activeSentInvitationIdSet = new Set(activeGameInvitationIds);
 
-  if (invitations.length === 0) {
+  useEffect(() => {
+    Object.entries(sentGameInvitationsByFriendId).forEach(([friendUserId, inv]) => {
+      if (!activeSentInvitationIdSet.has(inv.invitationId)) {
+        removeSentGameInvitation(friendUserId);
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeGameInvitationIds]);
+
+  const received = Object.entries(pendingInvitationMessagesByFriendId).flatMap(
+    ([friendUserId, messages]) =>
+      messages
+        .filter((msg) => msg.type === 'game_invitation')
+        .map((msg) => ({ friendUserId, msg })),
+  );
+
+  const sent = Object.entries(sentGameInvitationsByFriendId).filter(([, inv]) =>
+    activeSentInvitationIdSet.has(inv.invitationId),
+  );
+
+  if (received.length === 0 && sent.length === 0) {
     return (
       <Stack align="center" justify="center" className="px-3 py-3 text-center">
         <Text variant="caption" color="tertiary">
@@ -195,12 +262,22 @@ function GameInvitationsList() {
 
   return (
     <Stack gap="none" className="w-full">
-      {invitations.map((msg) => (
+      {received.map(({ friendUserId, msg }) => (
         <UserItem
           key={msg.id}
           username={msg.content.inviterUsername}
           subtitle={t('gameInvitationSubtitle', { roomId: msg.content.roomId })}
-        />
+        >
+          <GameInvitationActions
+            friendUserId={friendUserId}
+            invitationId={msg.content.invitationId}
+          />
+        </UserItem>
+      ))}
+      {sent.map(([, inv]) => (
+        <Stack key={inv.invitationId} gap="none">
+          <UserItem username={inv.username} subtitle={t('gameInvitationSentSubtitle')} />
+        </Stack>
       ))}
     </Stack>
   );

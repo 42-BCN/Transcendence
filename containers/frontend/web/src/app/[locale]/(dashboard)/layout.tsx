@@ -20,7 +20,7 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
   return (
     <SplitScreenGrid
       full={
-        <section className="flex h-full flex-col px-6 pb-10 pt-24 md:p-20" aria-labelledby="game-rooms-heading">
+        <section className="flex h-full flex-col md:p-20" aria-labelledby="game-rooms-heading">
           <h2 id="game-rooms-heading" className="sr-only">
             Game Rooms
           </h2>

@@ -53,7 +53,7 @@
         "invitationsHeading": "Invitacions enviades",
         "invitationsEmpty": "Encara no s’han enviat invitacions des d’aquesta sala.",
         "invitationAccepted": "Acceptada",
-        "invitationPending": "Pending",
+        "invitationPending": "Pendent",
         "receivedInvitationsHeading": "Invitacions rebudes"
       },
       "actions": {
@@ -395,6 +395,7 @@
         "inviteSent": "Has enviat una invitacio a {username}",
         "inviteToGame": "Convidar a partida",
         "message": "Missatge",
+        "decline": "Rebutjar invitació",
         "reject": "Rebutjar",
         "unfriend": "Eliminar amic",
         "inviteErrors": {
@@ -439,7 +440,8 @@
       "searchPlaceholder": "Cerca usuaris",
       "title": "Social",
       "gameInvitations": "Invitacions de joc",
-      "gameInvitationSubtitle": "Convidat a la sala {roomId}"
+      "gameInvitationSubtitle": "Convidat a la sala {roomId}",
+      "gameInvitationSentSubtitle": "Invitació pending"
     }
   },
   "validation": {

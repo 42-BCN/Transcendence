@@ -37,7 +37,7 @@ export function GameRoomTest({
     <Stack gap="none" className="h-full min-h-0">
       {isInRoom ? (
         <>
-          <div className="px-4 pt-6 pb-4 md:px-6 md:pt-8">
+          <div className="px-4 pt-14 pb-4 md:px-6 md:pt-8">
             <Stack gap="xs">
               <Text as="p" variant="caption" color="tertiary">
                 {t('room.label', { id: gameRoomStateCtx.id })}
@@ -86,7 +86,7 @@ export function GameRoomTest({
         </>
       ) : (
         <>
-          <div className="px-4 pt-6 pb-4 md:px-6 md:pt-8">
+          <div className="px-4 pt-14 pb-4 md:px-6 md:pt-8">
             <Stack gap="xs">
               <Text as="h1" variant="heading-xl">
                 {t('title')}

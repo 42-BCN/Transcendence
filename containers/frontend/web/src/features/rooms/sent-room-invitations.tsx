@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Stack, Text, UserItem } from '@components';
+import { Stack, Text, Avatar } from '@components';
 import type {
   ReceivedRoomInvitation,
   SentRoomInvitation,
@@ -64,35 +64,33 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
     <Stack gap="md">
       {hasSent && (
         <Stack gap="sm" as="section" aria-labelledby="sent-invitations-heading">
-          <Text as="h3" variant="caption" color="secondary" id="sent-invitations-heading">
+          <Text as="h2" variant="caption" color="secondary" id="sent-invitations-heading">
             {t('invitationsHeading')}
           </Text>
-          <Stack gap="none">
+          <div className="flex flex-wrap gap-4">
             {filteredSent.map((inv) => (
-              <UserItem
-                key={inv.id}
-                username={inv.invitedUsername}
-                subtitle={inv.acceptedAt ? t('invitationAccepted') : t('invitationPending')}
-              />
+              <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
+                <Avatar size="lg" alt={inv.invitedUsername} />
+                <Text variant="body-xs" color="secondary">{inv.invitedUsername}</Text>
+              </div>
             ))}
-          </Stack>
+          </div>
         </Stack>
       )}
 
       {hasReceived && (
         <Stack gap="sm" as="section" aria-labelledby="received-invitations-heading">
-          <Text as="h3" variant="caption" color="secondary" id="received-invitations-heading">
+          <Text as="h2" variant="caption" color="secondary" id="received-invitations-heading">
             {t('receivedInvitationsHeading')}
           </Text>
-          <Stack gap="none">
+          <div className="flex flex-wrap gap-4">
             {filteredReceived.map((inv) => (
-              <UserItem
-                key={inv.id}
-                username={inv.senderUsername}
-                subtitle={inv.acceptedAt ? t('invitationAccepted') : t('invitationPending')}
-              />
+              <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
+                <Avatar size="lg" alt={inv.senderUsername} />
+                <Text variant="body-xs" color="secondary">{inv.senderUsername}</Text>
+              </div>
             ))}
-          </Stack>
+          </div>
         </Stack>
       )}
     </Stack>

@@ -51,6 +51,8 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
   const unreadMessageCount = useSocialStore(
     (state) => state.friends.find((friend) => friend.id === userId)?.unreadMessageCount ?? 0,
   );
+  const addSentGameInvitation = useSocialStore((state) => state.addSentGameInvitation);
+  const setActiveGameInvitationSummary = useSocialStore((state) => state.setActiveGameInvitationSummary);
   const [isSendingInvite, startSendingInvite] = useTransition();
   const [inviteStatus, setInviteStatus] = useState<'idle' | 'sent' | 'error'>('idle');
   const [inviteError, setInviteError] = useState<string | null>(null);
@@ -100,6 +102,8 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
           setInviteStatus('sent');
           setInviteError(null);
           roomsStore?.setRoomState(response.data.room);
+          setActiveGameInvitationSummary(response.data.summary);
+          addSentGameInvitation(userId, response.data.message.content.invitationId, username);
         })
         .catch(() => {
           showError(t('inviteErrors.default'));

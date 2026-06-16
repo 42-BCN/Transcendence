@@ -397,6 +397,7 @@ declare const messages: {
         "inviteSent": "You sent an invitation to {username}",
         "inviteToGame": "Invite to Game",
         "message": "Message",
+        "decline": "Decline",
         "reject": "Reject",
         "unfriend": "Remove Friend",
         "inviteErrors": {
@@ -441,7 +442,8 @@ declare const messages: {
       "searchPlaceholder": "Search users",
       "title": "Social",
       "gameInvitations": "Game invitations",
-      "gameInvitationSubtitle": "Invited to room {roomId}"
+      "gameInvitationSubtitle": "Invited to room {roomId}",
+      "gameInvitationSentSubtitle": "Invitation pending"
     }
   },
   "validation": {

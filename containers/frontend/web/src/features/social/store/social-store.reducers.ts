@@ -477,6 +477,39 @@ export function createSocialActions(set: SetState) {
     addPendingRequest: (friendship: FriendshipPublic, wasAutoAccepted?: boolean) =>
       set(addPendingRequestReducer(friendship, wasAutoAccepted)),
 
+    addSentGameInvitation: (friendUserId: string, invitationId: string, username: string) => {
+      set((state) => ({
+        sentGameInvitationsByFriendId: {
+          ...state.sentGameInvitationsByFriendId,
+          [friendUserId]: { invitationId, username },
+        },
+      }));
+    },
+
+    removeSentGameInvitation: (friendUserId: string) => {
+      set((state) => {
+        const next = { ...state.sentGameInvitationsByFriendId };
+        delete next[friendUserId];
+        return { sentGameInvitationsByFriendId: next };
+      });
+    },
+
+    removeGameInvitationMessage: (friendUserId: string, invitationId: string) => {
+      set((state) => {
+        const existing = state.pendingInvitationMessagesByFriendId[friendUserId] ?? [];
+        const filtered = existing.filter((msg) => msg.content.invitationId !== invitationId);
+        const next = { ...state.pendingInvitationMessagesByFriendId };
+
+        if (filtered.length === 0) {
+          delete next[friendUserId];
+        } else {
+          next[friendUserId] = filtered;
+        }
+
+        return { pendingInvitationMessagesByFriendId: next };
+      });
+    },
+
     consumePendingInvitationMessages: (friendUserId: string) => {
       let messages = [] as SocialState['pendingInvitationMessagesByFriendId'][string];
 

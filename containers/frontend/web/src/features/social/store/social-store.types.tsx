@@ -44,7 +44,8 @@ export interface SocialState {
   activeGameInvitationCount: number;
   activeGameInvitationIds: string[];
   hasLoadedGameInvitationSummary: boolean;
-  pendingInvitationMessagesByFriendId: Record<string, Extract<DirectMessage, { type: 'game_invitation' }>[]>; 
+  pendingInvitationMessagesByFriendId: Record<string, Extract<DirectMessage, { type: 'game_invitation' }>[]>;
+  sentGameInvitationsByFriendId: Record<string, { invitationId: string; username: string }>;
   searchResults: GroupedSearchResults;
   searchQuery: string;
   errors: {
@@ -78,4 +79,7 @@ export interface SocialState {
   consumePendingInvitationMessages: (
     friendUserId: string,
   ) => Extract<DirectMessage, { type: 'game_invitation' }>[];
+  removeGameInvitationMessage: (friendUserId: string, invitationId: string) => void;
+  addSentGameInvitation: (friendUserId: string, invitationId: string, username: string) => void;
+  removeSentGameInvitation: (friendUserId: string) => void;
 }
