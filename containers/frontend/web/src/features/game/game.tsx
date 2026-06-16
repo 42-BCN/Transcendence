@@ -788,13 +788,14 @@ function CharacterCard() {
 }
 
 function HandlePhaseScreen() {
+  const t = useTranslations('features.game');
   const phase = useGame((state) => state.phase);
   switch (phase) {
     case 'WIN':
       return (
         <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
           <div className="text-center">
-            <h2>YOU WIN!</h2>
+            <h2>{t('winScreen')}</h2>
           </div>
         </div>
       )
@@ -802,7 +803,7 @@ function HandlePhaseScreen() {
       return (
         <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-50">
           <div className="text-center">
-            <h2>YOU LOSE!</h2>
+            <h2>{t('loseScreen')}</h2>
           </div>
         </div>
       )
@@ -822,6 +823,7 @@ function HandlePhaseScreen() {
 }
 
 export function Game() {
+  const t = useTranslations('features.game');
   const roomsStore = useContext(RoomsStoreContext);
   const initSocketListeners = useGame((state) => state.initSocketListeners);
   const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
@@ -863,7 +865,7 @@ export function Game() {
     return (
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center max-w-md px-6">
-          <h2>Game unavailable</h2>
+          <h2>{t('unavailable')}</h2>
           <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
         </div>
       </div>
@@ -874,8 +876,8 @@ export function Game() {
     return (
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center max-w-md px-6">
-          <h2>Room not ready</h2>
-          <p className="text-sm text-gray-300 mt-4">The game route is only available when the room has 4 players.</p>
+          <h2>{t('roomNotReady')}</h2>
+          <p className="text-sm text-gray-300 mt-4">{t('roomNotReadyDesc')}</p>
         </div>
       </div>
     );
@@ -885,8 +887,8 @@ export function Game() {
     return (
       <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
         <div className="text-center max-w-md px-6">
-          <h2>Game paused</h2>
-          <p className="text-sm text-gray-300 mt-4">A player disconnected. The game is blocked until the room is full again.</p>
+          <h2>{t('paused')}</h2>
+          <p className="text-sm text-gray-300 mt-4">{t('pausedDesc')}</p>
         </div>
       </div>
     );
@@ -895,9 +897,9 @@ export function Game() {
   return !mapBounds || mapBounds.width === 0 ? (
     <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
       <div className="text-center">
-        <h2>Connecting to Server...</h2>
+        <h2>{t('connecting')}</h2>
         <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
-        <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
+        <p className="text-xs text-gray-500 mt-2">{t('debugHint')}</p>
       </div>
     </div>
   ) : <HandlePhaseScreen />

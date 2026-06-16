@@ -336,6 +336,15 @@ declare const messages: {
       "endTurn": "End turn",
       "healthLabel": "HP",
       "resetPlan": "Reset plan",
+      "winScreen": "YOU WIN!",
+      "loseScreen": "YOU LOSE!",
+      "unavailable": "Game unavailable",
+      "roomNotReady": "Room not ready",
+      "roomNotReadyDesc": "The game route is only available when the room has 4 players.",
+      "paused": "Game paused",
+      "pausedDesc": "A player disconnected. The game is blocked until the room is full again.",
+      "connecting": "Connecting to Server...",
+      "debugHint": "Check browser console for detailed logs",
       "room": {
         "fields": {
           "gameRoomId": "Game room ID"

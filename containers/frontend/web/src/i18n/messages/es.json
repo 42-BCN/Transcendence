@@ -333,6 +333,15 @@
       "endTurn": "Terminar turno",
       "healthLabel": "HP",
       "resetPlan": "Reiniciar plan",
+      "winScreen": "¡HAS GANADO!",
+      "loseScreen": "HAS PERDIDO",
+      "unavailable": "Juego no disponible",
+      "roomNotReady": "La sala no está lista",
+      "roomNotReadyDesc": "Solo puedes acceder al juego cuando la sala tiene 4 jugadores.",
+      "paused": "Juego en pausa",
+      "pausedDesc": "Un jugador se ha desconectado. El juego queda bloqueado hasta que la sala vuelva a estar completa.",
+      "connecting": "Conectando con el servidor...",
+      "debugHint": "Consulta la consola del navegador para ver los registros detallados",
       "room": {
         "fields": {
           "gameRoomId": "ID de la sala"

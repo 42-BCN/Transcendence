@@ -334,6 +334,15 @@
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
       "resetPlan": "Reiniciar pla",
+      "winScreen": "HAS GUANYAT!",
+      "loseScreen": "HAS PERDUT",
+      "unavailable": "Joc no disponible",
+      "roomNotReady": "La sala no està preparada",
+      "roomNotReadyDesc": "Només pots accedir al joc quan la sala té 4 jugadors.",
+      "paused": "Joc en pausa",
+      "pausedDesc": "Un jugador s'ha desconnectat. El joc queda bloquejat fins que la sala torni a estar completa.",
+      "connecting": "Connectant amb el servidor...",
+      "debugHint": "Consulta la consola del navegador per veure els registres detallats",
       "room": {
         "fields": {
           "gameRoomId": "ID de la sala"
