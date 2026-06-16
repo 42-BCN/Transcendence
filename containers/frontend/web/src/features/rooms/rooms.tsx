@@ -1,23 +1,13 @@
 'use client';
-import { useEffect, useState, useContext } from 'react';
-
-import { Button } from '@components/controls/button';
+import { useEffect, useContext } from 'react';
 
 import {
   initGameRoomSocketHandelers,
 } from '@/lib/sockets/game-room-socket.manager';
-import { GameRoomTest } from './gameRoomTest';
 import { RoomsStoreContext } from './rooms-provider';
 
-
-const test_ui_style = 'fixed top-1/2 left-1/2 z-50';
-
 export function Rooms() {
-  const [gameRoomsDebugInfo, setGameRoomsDebugInfo] = useState('not connected to socket.');
-  const [gameRoomsErrorInfo, setGameRoomsErrorInfo] = useState('not connected to socket.');
-  const [testUiVisibility, setTestUiVisibility] = useState(true);
   const roomContext = useContext(RoomsStoreContext);
-
   const setGameRoomStateCtx = roomContext?.setRoomState;
 
   useEffect(() => {
@@ -25,37 +15,11 @@ export function Rooms() {
 
     const cleanup = initGameRoomSocketHandelers(
       setGameRoomStateCtx,
-      setGameRoomsDebugInfo,
-      setGameRoomsErrorInfo,
+      () => {},
+      () => {},
     );
     return cleanup;
   }, [setGameRoomStateCtx]);
 
-  if (!roomContext) {
-    return null;
-  }
-
-
-  return (
-    <>
-      <Button
-        className="fixed bottom-0 right-0 text-nowrap w-auto z-50"
-        onPress={() => { setTestUiVisibility(!testUiVisibility); }}
-        variant="primary"
-      >
-        togle test rooms ui visibility
-      </Button>
-      <div
-        className={test_ui_style + (testUiVisibility === true ? '' : ' hidden')}
-        style={{transform: `translate(-50%, -50%)`}}
-      >
-        <GameRoomTest
-          gameRoomStateCtx={roomContext.roomState}
-          gameRoomsDebugInfo={gameRoomsDebugInfo}
-          gameRoomsErrorInfo={gameRoomsErrorInfo}
-        />
-      </div>
-    </>
-  );
+  return null;
 }
-

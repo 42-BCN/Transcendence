@@ -2,11 +2,11 @@ import type { ReactNode } from 'react';
 
 import { CurrentUserProvider } from '@/features/auth/me/current-user.provider';
 import { glassBackgroundStyles, glassBorderStyles, SplitScreenGrid } from '@components';
-import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/styles/cn';
 import { getCurrentUserIdOrNull } from '@/features/auth/me/get-current-user-id-or-null';
 import { SocialGuestView } from '@/features/social/social-variants';
 import { createNoIndexMetadata } from '@/lib/metadata/metadata.config';
+import { GameRoomsPanel } from '@/features/rooms';
 
 export const metadata = createNoIndexMetadata();
 
@@ -15,15 +15,16 @@ type SocialLayoutProps = {
 };
 
 export default async function SocialLayout({ children }: SocialLayoutProps) {
-  const t = await getTranslations('pages.home');
   const userId = await getCurrentUserIdOrNull();
 
   return (
     <SplitScreenGrid
       full={
-        <section className="flex h-full max-w-3xl flex-col justify-end gap-3 px-6 pb-10 pt-24 md:justify-start md:p-20">
-          <h1>{t('title')}</h1>
-          <p>{t('subtitle')}</p>
+        <section className="flex h-full flex-col md:p-20" aria-labelledby="game-rooms-heading">
+          <h2 id="game-rooms-heading" className="sr-only">
+            Game Rooms
+          </h2>
+          <GameRoomsPanel />
         </section>
       }
       mobileStackMode="split"

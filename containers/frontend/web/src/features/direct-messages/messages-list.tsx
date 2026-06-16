@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { CountBadge, Stack, Text, ScrollArea, UserItem } from '@components';
 import type { FriendPublic } from '@/contracts/api/friendships/friendships.contracts';
+import { useSocialStore } from '@/providers/social-provider';
 import { messagesListStyles } from './messages-list.styles';
 
 type MessagesListProps = {
@@ -18,12 +19,16 @@ const presenceSubtitleClassName = {
 
 export function MessagesList({ friends, selectedUsername }: MessagesListProps) {
   const t = useTranslations('features.directMessages');
+  const activeGameInvitationCount = useSocialStore((state) => state.activeGameInvitationCount);
 
   return (
     <Stack gap="none" className={messagesListStyles.wrapper}>
-      <Text as="h1" variant="heading-md" className={messagesListStyles.title}>
-        {t('listTitle')}
-      </Text>
+      <div className="flex items-center gap-2 px-3 pt-3">
+        <Text as="h1" variant="heading-md" className={messagesListStyles.title}>
+          {t('listTitle')}
+        </Text>
+        <CountBadge count={activeGameInvitationCount} />
+      </div>
       <ScrollArea className={messagesListStyles.scroll}>
         <Stack gap="none">
           {friends.length === 0 ? (

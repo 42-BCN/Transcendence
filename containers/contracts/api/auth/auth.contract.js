@@ -1,0 +1,64 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AUTH_RECOVER_ERRORS = exports.AUTH_ME_ERRORS = exports.AUTH_GOOGLE_CALLBACK_ERRORS = exports.AUTH_DELETE_ME_ERRORS = exports.AUTH_CHANGE_PASSWORD_ERRORS = exports.AUTH_RESET_PASSWORD_ERRORS = exports.AUTH_VERIFY_EMAIL_ERRORS = exports.AUTH_RESEND_VERIFICATION_ERRORS = exports.AUTH_LOGOUT_ERRORS = exports.AUTH_LOGIN_ERRORS = exports.AUTH_SIGNUP_ERRORS = void 0;
+exports.AUTH_SIGNUP_ERRORS = [
+    'AUTH_INTERNAL_ERROR',
+    'AUTH_RATE_LIMITED',
+    'VALIDATION_ERROR',
+];
+exports.AUTH_LOGIN_ERRORS = [
+    'AUTH_RATE_LIMITED',
+    'AUTH_INVALID_CREDENTIALS',
+    'AUTH_EMAIL_NOT_VERIFIED',
+    'VALIDATION_ERROR',
+    'AUTH_INTERNAL_ERROR',
+];
+exports.AUTH_LOGOUT_ERRORS = [
+    'AUTH_INTERNAL_ERROR',
+];
+exports.AUTH_RESEND_VERIFICATION_ERRORS = [
+    'AUTH_RATE_LIMITED',
+    'AUTH_INTERNAL_ERROR',
+    'VALIDATION_ERROR',
+];
+exports.AUTH_VERIFY_EMAIL_ERRORS = [
+    'AUTH_TOKEN_EXPIRED',
+    'AUTH_FORBIDDEN',
+    'AUTH_INTERNAL_ERROR',
+    'VALIDATION_ERROR',
+];
+exports.AUTH_RESET_PASSWORD_ERRORS = [
+    'AUTH_TOKEN_EXPIRED',
+    'AUTH_FORBIDDEN',
+    'AUTH_INTERNAL_ERROR',
+    'VALIDATION_ERROR',
+];
+exports.AUTH_CHANGE_PASSWORD_ERRORS = [
+    'AUTH_UNAUTHORIZED',
+    'AUTH_FORBIDDEN',
+    'AUTH_INVALID_CREDENTIALS',
+    'AUTH_INTERNAL_ERROR',
+    'VALIDATION_ERROR',
+];
+exports.AUTH_DELETE_ME_ERRORS = [
+    'AUTH_UNAUTHORIZED',
+    'AUTH_INTERNAL_ERROR',
+];
+// ---------------------------------------
+// GET /api/auth/callback/google
+// ---------------------------------------
+// Success redirects with 302, JSON is only for error cases.
+exports.AUTH_GOOGLE_CALLBACK_ERRORS = [
+    'AUTH_CSRF_FAILED',
+    'AUTH_FORBIDDEN',
+    'AUTH_INTERNAL_ERROR',
+];
+exports.AUTH_ME_ERRORS = [
+    'AUTH_UNAUTHORIZED',
+    'AUTH_INTERNAL_ERROR',
+];
+exports.AUTH_RECOVER_ERRORS = [
+    'AUTH_RATE_LIMITED',
+    'AUTH_INTERNAL_ERROR',
+    'VALIDATION_ERROR',
+];

@@ -43,8 +43,23 @@
   },
   "pages": {
     "home": {
-      "subtitle": "Si veus això, l'enrutament i el servidor de desenvolupament funcionen.",
-      "title": "Hola des de Next en Docker 👋"
+      "title": "Sales de joc",
+      "subtitle": "Uneix-te a una sala per començar a jugar amb altres usuaris.",
+      "room": {
+        "label": "Sala #{id}",
+        "statusFull": "La sala està plena.",
+        "statusWaiting": "Esperant jugadors…",
+        "playersHeading": "Jugadors a la sala",
+        "invitationsHeading": "Invitacions enviades",
+        "invitationsEmpty": "Encara no s’han enviat invitacions des d’aquesta sala.",
+        "invitationAccepted": "Acceptada",
+        "invitationPending": "Pendent",
+        "receivedInvitationsHeading": "Invitacions rebudes"
+      },
+      "actions": {
+        "join": "Unir-se a qualsevol sala disponible",
+        "leave": "Sortir de la sala"
+      }
     },
     "game": {
       "description": "Juga a Transcendence i gestiona els teus torns.",
@@ -377,17 +392,31 @@
         "addFriend": "Afegir amic",
         "cancel": "Cancel·lar",
         "cancelRequest": "Cancel·lar sol·licitud",
+        "inviteSent": "Has enviat una invitacio a {username}",
         "inviteToGame": "Convidar a partida",
         "message": "Missatge",
+        "decline": "Rebutjar invitació",
         "reject": "Rebutjar",
-        "unfriend": "Eliminar amic"
+        "unfriend": "Eliminar amic",
+        "inviteErrors": {
+          "GAME_INVITATION_ROOM_REQUIRED": "Connecta't a la sala de joc primer",
+          "GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de joc ja no està disponible",
+          "GAME_INVITATION_DUPLICATE_PENDING": "Invitació ja pendent",
+          "GAME_INVITATION_RECENT_DUPLICATE": "Acabes d'enviar una invitació, espera un moment",
+          "GAME_INVITATION_PENDING_LIMIT": "Massa invitacions pendents",
+          "GAME_INVITATION_RATE_LIMITED": "Massa invitacions enviades, torna-ho a intentar més tard",
+          "GAME_INVITATION_NOT_FRIEND": "No ets amic d'aquest usuari",
+          "GAME_INVITATION_ALREADY_IN_ROOM": "Aquest usuari ja és en una sala de joc",
+          "default": "No s'ha pogut enviar la invitació"
+        }
       },
       "emptyStates": {
         "offline": "No hi ha amics desconnectats",
         "online": "No hi ha amics connectats",
         "pending": "No has enviat sol·licituds",
         "request": "No tens sol·licituds pendents",
-        "search": "No s’han trobat usuaris"
+        "search": "No s’han trobat usuaris",
+        "gameInvitations": "Encara no hi ha invitacions de joc"
       },
       "friends": {
         "offline": "Amics desconnectats",
@@ -409,7 +438,10 @@
       },
       "searchLabel": "Cercador",
       "searchPlaceholder": "Cerca usuaris",
-      "title": "Social"
+      "title": "Social",
+      "gameInvitations": "Invitacions de joc",
+      "gameInvitationSubtitle": "Convidat a la sala {roomId}",
+      "gameInvitationSentSubtitle": "Invitació pending"
     }
   },
   "validation": {

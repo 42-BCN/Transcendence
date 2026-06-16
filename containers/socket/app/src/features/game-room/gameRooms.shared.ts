@@ -50,6 +50,10 @@ export function incrementGameRoomConnection(socket: Socket) {
   return roomMemberKey;
 }
 
+export function hasActiveGameRoomConnection(memberKey: string) {
+  return (activeGameRoomConnections.get(memberKey) ?? 0) > 0;
+}
+
 export function decrementGameRoomConnection(socket: Socket) {
   const roomMemberKey = getRoomMemberKey(socket);
   if (!roomMemberKey) {

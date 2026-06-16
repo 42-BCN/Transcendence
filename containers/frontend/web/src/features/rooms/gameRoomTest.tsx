@@ -1,23 +1,18 @@
 'use client';
 
 import type { FormEvent } from 'react';
-import {
-  Form,
-  SubmitButton,
-  TextField,
-} from '@components';
+import { useTranslations } from 'next-intl';
+import { Stack, Text, Form, SubmitButton, ScrollArea, Avatar } from '@components';
 
 import type { gameRoomState, PlayerState } from '@/contracts/sockets/rooms/gameRooms.schema';
 
 import {
   GameRoomSocketJoinAnyRoom,
-  GameRoomSocketJoin,
   GameRoomSocketLeaveRoom,
-  GameRoomSocketPrintDebug,
 } from '@/lib/sockets/game-room-socket.manager';
 
+import { SentRoomInvitations } from './sent-room-invitations';
 
-// helper function
 export function makeGameRoomAction(action: (formData: FormData) => void) {
   return (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,88 +21,94 @@ export function makeGameRoomAction(action: (formData: FormData) => void) {
   };
 }
 
-const room_test_ui_style = 'bg-black/60 backdrop-blur-sm p-10 rounded-xl outline h-[95vh] overflow-scroll';
-
 type GameRoomTestProps = {
   gameRoomStateCtx: gameRoomState;
-  gameRoomsDebugInfo: string;
   gameRoomsErrorInfo: string;
 };
 
 export function GameRoomTest({
   gameRoomStateCtx,
-  gameRoomsDebugInfo,
   gameRoomsErrorInfo,
 }: GameRoomTestProps) {
-
-  const teammates = gameRoomStateCtx.teammates.map((user: PlayerState) => (
-    <li key={user.userId}>{user.userName} (): {user.userId}</li>
-  )
-  );
-
-  const inviteUrl = gameRoomStateCtx.id !== 0
-    ? `${window.location.origin}${window.location.pathname}?roomId=${gameRoomStateCtx.id}`
-    : '';
-
+  const t = useTranslations('pages.home');
+  const isInRoom = gameRoomStateCtx.id !== 0;
 
   return (
-    <>
-      <div className={room_test_ui_style}>
-      <h5 className="text-xl">raw data:</h5>
-      <p>{JSON.stringify(gameRoomStateCtx)}</p>
-      <p>{gameRoomsDebugInfo}</p>
-      <p>{gameRoomsErrorInfo}</p>
-      <hr className="m-4"/>
-      <h5 className="text-xl" >room info</h5>
-      <p>gameRoomId: {gameRoomStateCtx.id !== 0 ? gameRoomStateCtx.id : "not on any game room."}</p>
-      <hr className="m-1 w-[4rem]"/>
-      <p>teammates: {gameRoomStateCtx.id !== 0 ? "" : "not on any game room."}</p>
-      <div>
-        <ul>{teammates}</ul>
-      </div>
-      
-      <hr className="m-1 w-[4rem]"/>
-      
-      <p>invite link: </p>
-      <a href={inviteUrl}> {inviteUrl} </a>
+    <Stack gap="none" className="h-full min-h-0">
+      {isInRoom ? (
+        <>
+          <div className="px-4 pt-14 pb-4 md:px-6 md:pt-8">
+            <Stack gap="xs">
+              <Text as="p" variant="caption" color="tertiary">
+                {t('room.label', { id: gameRoomStateCtx.id })}
+              </Text>
+              <Text as="h1" variant="heading-xl">
+                {gameRoomStateCtx.isGameRoomFull ? t('room.statusFull') : t('room.statusWaiting')}
+              </Text>
+            </Stack>
+          </div>
 
+          <ScrollArea className="px-4 md:px-6">
+            <Stack gap="lg" className="pb-6">
+              {gameRoomStateCtx.teammates.length > 0 && (
+                <Stack gap="sm" as="section" aria-labelledby="players-heading">
+                  <Text as="h2" variant="caption" color="secondary" id="players-heading">
+                    {t('room.playersHeading')}
+                  </Text>
+                  <div className="flex flex-wrap gap-4">
+                    {gameRoomStateCtx.teammates.map((user: PlayerState) => (
+                      <div key={user.userId} className="flex flex-col items-center gap-1">
+                        <Avatar size="lg" alt={user.userName} />
+                        <Text variant="body-xs" color="secondary">{user.userName}</Text>
+                      </div>
+                    ))}
+                  </div>
+                </Stack>
+              )}
 
+              <SentRoomInvitations
+                roomId={gameRoomStateCtx.id}
+                teammateUsernames={new Set(gameRoomStateCtx.teammates.map((u: PlayerState) => u.userName))}
+              />
+            </Stack>
+          </ScrollArea>
 
-      <hr className="m-4"/>
+          <div className="px-4 pb-6 pt-2 md:px-6">
+            {gameRoomsErrorInfo && (
+              <Text variant="caption" color="danger" className="mb-2">
+                {gameRoomsErrorInfo}
+              </Text>
+            )}
+            <Form onSubmit={makeGameRoomAction(GameRoomSocketLeaveRoom)}>
+              <SubmitButton idleLabel={t('actions.leave')} />
+            </Form>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="px-4 pt-14 pb-4 md:px-6 md:pt-8">
+            <Stack gap="xs">
+              <Text as="h1" variant="heading-xl">
+                {t('title')}
+              </Text>
+              <Text as="p" variant="body" color="secondary">
+                {t('subtitle')}
+              </Text>
+            </Stack>
+          </div>
 
-      <h4>join any room form.</h4>
-      <Form onSubmit={makeGameRoomAction(GameRoomSocketJoinAnyRoom)}>
-        <SubmitButton idleLabel="join any room." />
-      </Form>
-
-      <hr className="m-2 w-[4rem]"/>
-
-      <h4>join room by id form.</h4>
-      <Form onSubmit={makeGameRoomAction(GameRoomSocketJoin)}>
-        <TextField
-          name="gameRoomId"
-          labelKey="features.game.room.fields.gameRoomId"
-        />
-        <SubmitButton idleLabel="join room." />
-      </Form>
-
-      <hr className="m-2 w-[4rem]"/>
-      
-      <h4>leave current room form.</h4>
-      <Form onSubmit={makeGameRoomAction(GameRoomSocketLeaveRoom)}>
-        <SubmitButton idleLabel="leave current game room." />
-      </Form>
-
-      <hr className="m-2 w-[4rem]"/>
-
-      <h4>print debug info backend.</h4>
-      <Form onSubmit={makeGameRoomAction(GameRoomSocketPrintDebug)}>
-        <SubmitButton idleLabel="print debug info." />
-      </Form>
-
-      <hr className="m-2 w-[4rem]"/>
-
-      </div>
-    </>
+          <div className="px-4 pb-6 pt-2 md:px-6">
+            {gameRoomsErrorInfo && (
+              <Text variant="caption" color="danger" className="mb-2">
+                {gameRoomsErrorInfo}
+              </Text>
+            )}
+            <Form onSubmit={makeGameRoomAction(GameRoomSocketJoinAnyRoom)}>
+              <SubmitButton idleLabel={t('actions.join')} />
+            </Form>
+          </div>
+        </>
+      )}
+    </Stack>
   );
 }

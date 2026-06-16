@@ -12,6 +12,7 @@ import {
   listDirectMessagesForFriendship,
   markDirectMessagesAsRead,
 } from './direct-messages.repo';
+import { toDirectMessage } from './direct-messages.mapper';
 
 function ensureInternalSecret(req: Request, res: Response): boolean {
   const secret = process.env.SOCKET_INTERNAL_SECRET;
@@ -47,15 +48,7 @@ export function handleInternalDirectMessageHistory(req: Request, res: Response):
       }
 
       const rows = await listDirectMessagesForFriendship(friendship.id);
-      const messages: DirectMessage[] = rows.map((row) => ({
-        id: row.id,
-        createdAt: row.createdAt.getTime(),
-        senderId: row.senderId,
-        username: row.sender.username,
-        readAt: row.readAt?.getTime() ?? null,
-        type: 'user',
-        content: { text: row.body },
-      }));
+      const messages: DirectMessage[] = rows.map(toDirectMessage);
 
       res.json({
         ok: true,
@@ -96,15 +89,7 @@ export function handleInternalDirectMessageSend(req: Request, res: Response): vo
         friendshipId: friendship.id,
         userId: parsed.data.friendUserId,
       });
-      const message: DirectMessage = {
-        id: saved.id,
-        createdAt: saved.createdAt.getTime(),
-        senderId: saved.senderId,
-        username: saved.sender.username,
-        readAt: saved.readAt?.getTime() ?? null,
-        type: 'user',
-        content: { text: saved.body },
-      };
+      const message: DirectMessage = toDirectMessage(saved);
 
       res.json({
         ok: true,

@@ -4,12 +4,13 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
-import type {FormEvent, KeyboardEvent} from 'react';
+import type { FormEvent, KeyboardEvent } from 'react';
 import { useTranslations } from 'next-intl';
-
+import { useRouter } from '@/i18n/navigation';
 
 import { Form, Stack, TextAreaField } from '@components';
 
@@ -25,6 +26,8 @@ import type { ChatMessageUnion } from '@/contracts/sockets/chat/chat.schema';
 import { ChatHeader } from '@/features/chat/chat.header';
 import { ChatMain } from '@/features/chat/chat.main';
 import { chatStyles } from '@/features/chat/chat.styles';
+import { acceptGameInvitation } from '@/features/game-invitations/game-invitations.client';
+import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
 import { directMessagesSocket } from '@/lib/sockets/direct-messages-socket.client';
 import { DirectMessagesSocketManager } from '@/lib/sockets/direct-messages-socket.manager';
 import { useSocialStore } from '@/providers/social-provider';
@@ -34,11 +37,18 @@ type DirectMessageContextValue = {
   value: string;
   setValue: (value: string) => void;
   sendMessage: () => void;
+  currentUserId: string;
+  activeGameInvitationIds: string[];
+  hasLoadedGameInvitationSummary: boolean;
+  joiningInvitationId: string | null;
+  joiningError: string | null;
+  hasActiveGameRoom: boolean;
+  acceptInvitation: (invitationId: string) => void;
 };
 
 const DirectMessageContext = createContext<DirectMessageContextValue | null>(null);
 
-type DirectChatMessage = (ChatMessageUnion | DirectMessageError) & {
+type DirectChatMessage = (ChatMessageUnion | DirectMessage | DirectMessageError) & {
   clientMessageId?: string;
   senderId?: string;
   readAt?: number | null;
@@ -54,7 +64,11 @@ type DirectMessagesFeatureProps = {
 };
 
 function toChatMessage(message: DirectMessage, currentUserId: string): DirectChatMessage {
-  return message.senderId === currentUserId ? { ...message, type: 'me' } : message;
+  if (message.type === 'user' && message.senderId === currentUserId) {
+    return { ...message, type: 'me' };
+  }
+
+  return message;
 }
 
 function toChatHistory(history: DirectMessageHistory, currentUserId: string): DirectChatHistory {
@@ -178,12 +192,34 @@ function DirectMessagesContent({
     throw new Error('DirectMessagesContent must be used within a DirectMessagesFeature');
   }
 
-  const { messages, value, setValue, sendMessage } = context;
+  const {
+    messages,
+    value,
+    setValue,
+    sendMessage,
+    currentUserId,
+    activeGameInvitationIds,
+    hasLoadedGameInvitationSummary,
+    joiningInvitationId,
+    joiningError,
+    hasActiveGameRoom,
+    acceptInvitation,
+  } = context;
 
   return (
     <Stack gap="none" className={chatStyles.wrapper}>
       <ChatHeader room={friendUsername} participants={[]} />
-      <ChatMain messages={messages} initialUnreadMessageId={initialUnreadMessageId} />
+      <ChatMain
+        messages={messages}
+        initialUnreadMessageId={initialUnreadMessageId}
+        currentUserId={currentUserId}
+        activeInvitationIds={activeGameInvitationIds}
+        hasLoadedInvitationSummary={hasLoadedGameInvitationSummary}
+        joiningInvitationId={joiningInvitationId}
+        joiningError={joiningError}
+        hasActiveGameRoom={hasActiveGameRoom}
+        onAcceptInvitation={acceptInvitation}
+      />
       <Form
         onSubmit={(event: FormEvent<HTMLFormElement>) => {
           event.preventDefault();
@@ -215,7 +251,19 @@ export function DirectMessagesFeature({
   currentUserId,
   currentUsername,
 }: DirectMessagesFeatureProps) {
+  const router = useRouter();
+  const roomsStore = useContext(RoomsStoreContext);
   const setFriendUnreadMessageCount = useSocialStore((state) => state.setFriendUnreadMessageCount);
+  const activeGameInvitationIds = useSocialStore((state) => state.activeGameInvitationIds);
+  const hasLoadedGameInvitationSummary = useSocialStore(
+    (state) => state.hasLoadedGameInvitationSummary,
+  );
+  const consumePendingInvitationMessages = useSocialStore(
+    (state) => state.consumePendingInvitationMessages,
+  );
+  const setActiveGameInvitationSummary = useSocialStore(
+    (state) => state.setActiveGameInvitationSummary,
+  );
   const {
     messages,
     value,
@@ -225,6 +273,17 @@ export function DirectMessagesFeature({
     handleDirectHistory,
     handleDirectError,
   } = useDirectMessageState(currentUserId);
+  const [joiningInvitationId, setJoiningInvitationId] = useState<string | null>(null);
+  const [joiningError, setJoiningError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const pendingMessages = consumePendingInvitationMessages(friendUserId);
+    if (pendingMessages.length === 0) {
+      return;
+    }
+
+    setMessages((previous) => mergeMessages(previous, pendingMessages));
+  }, [consumePendingInvitationMessages, friendUserId, setMessages]);
 
   const initialUnreadMessageId = useMemo(
     () =>
@@ -289,9 +348,69 @@ export function DirectMessagesFeature({
     setValue('');
   }, [currentUserId, currentUsername, setMessages, setValue, value]);
 
+  const handleAcceptInvitation = useCallback(
+    (invitationId: string) => {
+      if (joiningInvitationId) {
+        return;
+      }
+
+      setJoiningInvitationId(invitationId);
+      setJoiningError(null);
+
+      void acceptGameInvitation(invitationId)
+        .then((response) => {
+          if (!response.ok) {
+            const code = response.error.code;
+            if (code === 'GAME_INVITATION_ALREADY_ACCEPTED') {
+              setJoiningError('This invitation was already accepted.');
+            } else if (code === 'GAME_INVITATION_EXPIRED') {
+              setJoiningError('This invitation has expired.');
+            } else if (code === 'GAME_INVITATION_NOT_JOINABLE' || code === 'GAME_INVITATION_ROOM_UNAVAILABLE') {
+              setJoiningError('The game room is no longer available.');
+            } else {
+              setJoiningError('Could not join the game room.');
+            }
+            return;
+          }
+
+          roomsStore?.setRoomState(response.data.room);
+          setActiveGameInvitationSummary(response.data.summary);
+          router.push('/game');
+        })
+        .finally(() => {
+          setJoiningInvitationId(null);
+        });
+    },
+    [joiningInvitationId, roomsStore, router, setActiveGameInvitationSummary],
+  );
+
   const contextValue = useMemo(
-    () => ({ messages, value, setValue, sendMessage }),
-    [messages, value, setValue, sendMessage],
+    () => ({
+      messages,
+      value,
+      setValue,
+      sendMessage,
+      currentUserId,
+      activeGameInvitationIds,
+      hasLoadedGameInvitationSummary,
+      joiningInvitationId,
+      joiningError,
+      hasActiveGameRoom: (roomsStore?.roomState.id ?? 0) > 0,
+      acceptInvitation: handleAcceptInvitation,
+    }),
+    [
+      activeGameInvitationIds,
+      currentUserId,
+      handleAcceptInvitation,
+      hasLoadedGameInvitationSummary,
+      joiningInvitationId,
+      joiningError,
+      messages,
+      roomsStore?.roomState.id,
+      sendMessage,
+      setValue,
+      value,
+    ],
   );
 
   return (
