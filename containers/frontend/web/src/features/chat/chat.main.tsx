@@ -272,27 +272,32 @@ export function ChatMain({
   onAcceptInvitation?: (invitationId: string) => void;
   onDeclineInvitation?: (invitationId: string) => void;
 }) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const didScrollToUnreadRef = useRef(false);
   const t = useTranslations('features.chat');
 
   useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
     if (initialUnreadMessageId && !didScrollToUnreadRef.current) {
       const target = document.getElementById(`message-${initialUnreadMessageId}`);
 
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const top =
+          target.getBoundingClientRect().top -
+          container.getBoundingClientRect().top +
+          container.scrollTop;
+        container.scrollTo({ top, behavior: 'smooth' });
         didScrollToUnreadRef.current = true;
         return;
       }
     }
 
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   }, [initialUnreadMessageId, messages]);
   return (
-    <ScrollArea>
+    <ScrollArea ref={scrollContainerRef}>
       <Stack className={chatStyles.main.wrapper}>
         {messages.map((message) => {
           const { id, username, content, type } = message;
@@ -344,7 +349,6 @@ export function ChatMain({
             </div>
           );
         })}
-        <div ref={bottomRef} />
       </Stack>
     </ScrollArea>
   );
