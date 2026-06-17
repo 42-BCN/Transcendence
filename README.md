@@ -304,10 +304,12 @@ To run this project locally, ensure you have installed:
    The project supports three deployment environments. For evaluation or live testing, it is highly recommended to run the **Demo** mode first.
 
    #### A. Demo Mode (Recommended for Evaluation)
-   Runs the application compiled for production, but automatically provisions, pushes the schema, and populates the database with **initial seed data** (test users, friendship graphs, etc.) so you can test features immediately.
+   Runs the application compiled for production, but automatically provisions the database, pushes the schema, and populates it with **initial seed data** (test users, friendship graphs, etc.) so you can test features immediately.
+   To launch this environment for the first time (or to reset and re-seed the database), run:
    ```bash
-   make demo
+   make demo-reset
    ```
+   For subsequent runs (without resetting the database), you can simply use `make demo`.
    *Access the app at: `https://localhost:8443`*
 
    #### B. Production Mode
