@@ -3,8 +3,10 @@ import { useEffect, useState, useContext } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { IconButton } from '@components';
+import { cn } from '@/lib/styles/cn';
 import { ChatFeature } from '@/features/chat';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useGameChatUi } from '@/features/game/game-chat-ui.context';
 import {
   MOBILE_MENU_CLOSE_EVENT,
   MOBILE_MENU_OPEN_EVENT,
@@ -63,6 +65,9 @@ export default function GameSidePage() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const isChatVisible = isDesktop ? true : chatVisible;
 
+  const chatUi = useGameChatUi();
+  const setChatOpen = chatUi?.setChatOpen;
+
   const roomsStore = useContext(RoomsStoreContext);
   const isOverlayActive = getIsOverlayActive(
     useGame((state) => state.connectionError),
@@ -72,6 +77,12 @@ export default function GameSidePage() {
     Boolean(useGame((state) => state.mapBounds)),
     useGame((state) => state.phase),
   );
+
+  const isChatOpen = !isOverlayActive && isChatVisible;
+
+  useEffect(() => {
+    setChatOpen?.(isChatOpen);
+  }, [isChatOpen, setChatOpen]);
 
   useMobileMenuEffects(setChatVisible, setIsMenuOpen);
 
@@ -93,7 +104,12 @@ export default function GameSidePage() {
       )}
 
       {!isOverlayActive && (
-        <div className={gameSidePageStyles.chatWrapper}>
+        <div
+          className={cn(
+            gameSidePageStyles.chatWrapper,
+            isChatVisible ? gameSidePageStyles.chatWrapperActive : gameSidePageStyles.chatWrapperInactive,
+          )}
+        >
           <ChatFeature isVisible={isChatVisible} />
         </div>
       )}

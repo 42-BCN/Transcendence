@@ -13,6 +13,9 @@ import { GlassCard } from '@components/primitives/glass-card';
 import { useShallow } from 'zustand/react/shallow';
 import { useTheme } from '@/providers/theme-provider';
 import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/lib/styles/cn';
+import { useGameChatUi } from './game-chat-ui.context';
 import { Crawler } from './meshes/Crawler.jsx';
 import { Drone } from './meshes/Drone.jsx';
 import { Gunner } from './meshes/Gunner.jsx';
@@ -864,6 +867,21 @@ function GameScreenOverlay({
   );
 }
 
+function GameCanvas() {
+  const chatUi = useGameChatUi();
+  const isMobile = useMediaQuery('(max-width: 1023px)');
+  const blockCanvas = Boolean(isMobile && chatUi?.isChatOpen);
+
+  return (
+    <div className={cn('absolute inset-0', blockCanvas && 'pointer-events-none touch-none')}>
+      <Canvas>
+        <Scene />
+      </Canvas>
+    </div>
+  );
+}
+
+
 function HandlePhaseScreen() {
   const t = useTranslations('features.game');
   const phase = useGame((state) => state.phase);
@@ -898,9 +916,8 @@ function HandlePhaseScreen() {
             <Reset />
           </div>
           <HUD />
-          <Canvas>
-            <Scene />
-          </Canvas>
+          <EndPlan />
+          <GameCanvas />
         </div>
       );
   }
