@@ -853,80 +853,44 @@ export function Game() {
 
   if (connectionError) {
     return (
-      <div className="fixed inset-0 z-0">
-        <Canvas>
-          <>
-            <color attach="background" args={['#000000']} />
-            <Html fullscreen style={{ pointerEvents: 'none' }}>
-              <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-                <div className="text-center max-w-md px-6">
-                  <h2>Game unavailable</h2>
-                  <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
-                </div>
-              </div>
-            </Html>
-          </>
-        </Canvas>
+      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+        <div className="text-center max-w-md px-6">
+          <h2>Game unavailable</h2>
+          <p className="text-sm text-gray-300 mt-4">{connectionError}</p>
+        </div>
       </div>
     );
   }
 
   if (!isRoomFull) {
     return (
-      <div className="fixed inset-0 z-0">
-        <Canvas>
-          <>
-            <color attach="background" args={['#000000']} />
-            <Html fullscreen style={{ pointerEvents: 'none' }}>
-              <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-                <div className="text-center max-w-md px-6">
-                  <h2>Room not ready</h2>
-                  <p className="text-sm text-gray-300 mt-4">The game route is only available when the room has 4 players.</p>
-                </div>
-              </div>
-            </Html>
-          </>
-        </Canvas>
+      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+        <div className="text-center max-w-md px-6">
+          <h2>Room not ready</h2>
+          <p className="text-sm text-gray-300 mt-4">The game route is only available when the room has 4 players.</p>
+        </div>
       </div>
     );
   }
 
   if (mapBounds.width > 0 && (activePlayers?.length ?? 0) < 4) {
     return (
-      <div className="fixed inset-0 z-0">
-        <Canvas>
-          <>
-            <color attach="background" args={['#000000']} />
-            <Html fullscreen style={{ pointerEvents: 'none' }}>
-              <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-                <div className="text-center max-w-md px-6">
-                  <h2>Game paused</h2>
-                  <p className="text-sm text-gray-300 mt-4">A player disconnected. The game is blocked until the room is full again.</p>
-                </div>
-              </div>
-            </Html>
-          </>
-        </Canvas>
+      <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+        <div className="text-center max-w-md px-6">
+          <h2>Game paused</h2>
+          <p className="text-sm text-gray-300 mt-4">A player disconnected. The game is blocked until the room is full again.</p>
+        </div>
       </div>
     );
   }
 
   return !mapBounds || mapBounds.width === 0 ? (
-    <div className="fixed inset-0 z-0">
-      <Canvas>
-        <>
-          <color attach="background" args={['#000000']} />
-          <Html fullscreen style={{ pointerEvents: 'none' }}>
-            <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
-              <div className="text-center">
-                <h2>Connecting to Server...</h2>
-                <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
-                <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
-              </div>
-            </div>
-          </Html>
-        </>
-      </Canvas>
+    <div className="absolute inset-0 bg-black flex items-center justify-center text-white z-25">
+      <div className="text-center">
+        <h2>Connecting to Server...</h2>
+        <p className="text-sm text-gray-400 mt-4">{debugInfo}</p>
+        <p className="text-xs text-gray-500 mt-2">Check browser console for detailed logs</p>
+      </div>
     </div>
   ) : <HandlePhaseScreen />
 }

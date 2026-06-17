@@ -246,35 +246,43 @@ function canEnemyAttackTarget(
   target: entity,
   ab: abilityInfo,
 ): boolean {
-  if (!ab || ab.name === 'error' || ab.range === 0) return false;
+  if (!ab || ab.name === 'error' || ab.range === 0)
+    return false;
   const tp = target.position;
   const dx = tp.x - fromPos.x;
   const dz = tp.z - fromPos.z;
 
   switch (ab.type) {
     case 'cross': {
-      if (tp.y !== fromPos.y || (dx !== 0 && dz !== 0)) return false;
+      if (tp.y !== fromPos.y || (dx !== 0 && dz !== 0))
+        return false;
       const dist = Math.abs(dx) + Math.abs(dz);
-      if (dist === 0 || dist > ab.range) return false;
+      if (dist === 0 || dist > ab.range)
+        return false;
       const sx = Math.sign(dx), sz = Math.sign(dz);
       for (let n = 1; n < dist; n++) {
         const cx = fromPos.x + n * sx, cz = fromPos.z + n * sz;
-        if (gameState.tiles[`${cx},${fromPos.y},${cz}`]) return false;
+        if (gameState.tiles[`${cx},${fromPos.y},${cz}`])
+          return false;
         const blocker = checkEnt(cx, fromPos.y, cz);
-        if (blocker && !blocker.isDead) return false;
+        if (blocker && !blocker.isDead)
+          return false;
       }
       return true;
     }
     case 'circle': {
-      if (tp.y !== fromPos.y) return false;
+      if (tp.y !== fromPos.y)
+        return false;
       const d2 = Math.sqrt(dx * dx + dz * dz);
-      if (d2 === 0 || d2 > ab.range) return false;
+      if (d2 === 0 || d2 > ab.range)
+        return false;
       return hasLoS(fromPos, tp.x, tp.y, tp.z) !== -1;
     }
     case 'sphere': {
       const dy = tp.y - fromPos.y;
       const d3 = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      if (d3 === 0 || d3 > ab.range) return false;
+      if (d3 === 0 || d3 > ab.range)
+        return false;
       return hasLoS(fromPos, tp.x, tp.y, tp.z) !== -1;
     }
     default:
@@ -1131,7 +1139,7 @@ export function initState() {
         break;
       case "generator":
         enemEnt[entity.id] = {
-          ...base(), ...entity, type: "enemy", hp: 50, maxHp: 50, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 1, maxHp: 50, armor: 0,
           abilities: [],
           dice: [],
         }

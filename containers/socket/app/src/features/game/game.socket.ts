@@ -495,15 +495,56 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       gsync(nsp, session);
     });
 
+    // socket.on('game:client:toggleEndTurn', async () => {
+    //   await withSessionState(session, () => {
+    //     const client = getPlayerClientState(session, role, memberKey);
+    //     if (!client || role === 'spectator')
+    //       return;
+    //     if (session.readyPlayers.has(role)) {
+    //       setClear(getClientKey(role, memberKey));
+    //       session.readyPlayers.delete(role);
+    //     } else {
+    //       session.readyPlayers.add(role);
+    //       setClear(getClientKey(role, memberKey));
+    //       client.selectedEnt = null;
+    //       client.canSelect = false;
+    //     }
+    //   });
+    //   syncClient(socket, session, role, memberKey);
+    //   gsync(nsp, session);
+    // });
+    //
+    // socket.on('game:client:nextPhase', async () => {
+    //   if (role === 'spectator')
+    //     return;
+    //   const assignedPlayers = getSessionPlayerRoleCount(session);
+    //   if (session.readyPlayers.size !== assignedPlayers)
+    //     return;
+    //
+    //   session.readyPlayers.clear();
+    //   await withSessionState(session, async () => {
+    //     await nextPhase(
+    //       () => gsync(nsp, session),
+    //       (effect) => vfx(nsp, session, effect),
+    //     );
+    //     for (const key in session.state.clients) {
+    //       setClear(key);
+    //     }
+    //   });
+    //   syncAllClients(nsp, session);
+    //   gsync(nsp, session);
+    // });
+
     socket.on('game:client:toggleEndTurn', async () => {
       await withSessionState(session, () => {
         const client = getPlayerClientState(session, role, memberKey);
-        if (!client || role === 'spectator')
-          return;
+        if (!client || role === 'spectator') return;
+
         if (session.readyPlayers.has(role)) {
           setClear(getClientKey(role, memberKey));
           session.readyPlayers.delete(role);
-        } else {
+        }
+        else {
           session.readyPlayers.add(role);
           setClear(getClientKey(role, memberKey));
           client.selectedEnt = null;
@@ -512,15 +553,11 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       });
       syncClient(socket, session, role, memberKey);
       gsync(nsp, session);
-    });
-
-    socket.on('game:client:nextPhase', async () => {
       if (role === 'spectator')
         return;
       const assignedPlayers = getSessionPlayerRoleCount(session);
       if (session.readyPlayers.size !== assignedPlayers)
         return;
-
       session.readyPlayers.clear();
       await withSessionState(session, async () => {
         await nextPhase(

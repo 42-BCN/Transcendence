@@ -264,9 +264,13 @@ export const useGame = create<gameState>()((set, get) => ({
   activePlayers: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
 
+  // nextPhase: () => {
+  //   gameSocket.emit('game:client:endTurn');
+  // },
+
   nextPhase: () => {
     gameSocket.emit('game:client:toggleEndTurn');
-    gameSocket.emit('game:client:nextPhase');
+    // gameSocket.emit('game:client:nextPhase');
   },
 
   resetGame: () => {
