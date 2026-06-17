@@ -11,6 +11,7 @@ import { HttpStatus } from '@contracts/http';
 import { normalizeEmailLocale } from '../mail';
 import * as SharedRepo from '../shared.repo';
 import { getAuthCookieSameSite } from '../auth.cookies';
+import { disconnectUserSockets } from './local.socket-client';
 import * as Service from './local.service';
 
 function errorStatus(code: AuthErrorName): number {
@@ -37,6 +38,7 @@ function sendOk<TResponse>(
 
 type SessionIdentityData = {
   identityKey: string;
+  sessionId: string;
   username: string;
   isGuest: boolean;
   userId?: string;
@@ -58,9 +60,14 @@ function newGuestId(): string {
   return randomUUID().replaceAll('-', '').slice(0, 24);
 }
 
-function guestIdentity(guestId: string, guestUsername: string): SessionIdentityData {
+function guestIdentity(
+  guestId: string,
+  guestUsername: string,
+  sessionId: string,
+): SessionIdentityData {
   return {
     identityKey: `guest:${guestId}`,
+    sessionId,
     username: guestUsername,
     isGuest: true,
     guestId,
@@ -111,6 +118,7 @@ export async function postGuestSession(
       res,
       {
         identityKey: `user:${user.id}`,
+        sessionId: req.sessionID,
         username: user.username,
         isGuest: false,
         userId: user.id,
@@ -135,7 +143,7 @@ export async function postGuestSession(
       return;
     }
 
-    sendOk(res, guestIdentity(guestId, guestUsername), 200);
+    sendOk(res, guestIdentity(guestId, guestUsername, req.sessionID), 200);
   });
 }
 
@@ -154,6 +162,7 @@ export async function getSessionIdentity(
       res,
       {
         identityKey: `user:${user.id}`,
+        sessionId: req.sessionID,
         username: user.username,
         isGuest: false,
         userId: user.id,
@@ -178,10 +187,17 @@ export async function getSessionIdentity(
     req.session.guestUsername = guestUsername;
   }
 
-  sendOk(res, guestIdentity(guestId, guestUsername), 200);
+  sendOk(res, guestIdentity(guestId, guestUsername, req.sessionID), 200);
 }
 
-export function postLogout(req: Request, res: Response): void {
+export async function postLogout(req: Request, res: Response): Promise<void> {
+  const userId = req.session.userId;
+  const sessionId = req.sessionID;
+
+  if (typeof userId === 'string' && userId.length > 0 && typeof sessionId === 'string' && sessionId.length > 0) {
+    await disconnectUserSockets(userId, sessionId);
+  }
+
   req.session.destroy((err) => {
     if (err) return sendError(res, 'AUTH_INTERNAL_ERROR');
 

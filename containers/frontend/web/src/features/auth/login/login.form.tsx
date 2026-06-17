@@ -11,7 +11,6 @@ import { type LoginReq } from '@/contracts/api/auth/auth.validation';
 import { loginAction } from './login.action';
 import { useAutoFocus } from '@/hooks/useAutoFocus';
 import { createSubmitHandler } from '@/lib/http/submitHandler';
-import { notifyAuthChanged } from '@/lib/sockets/realtime-session-bridge';
 
 export function LoginForm() {
   const t = useTranslations('features.auth');
@@ -19,10 +18,7 @@ export function LoginForm() {
   const [state, formAction] = useActionState(loginAction, null);
   const identifierRef = useAutoFocus<HTMLInputElement>();
 
-  const handleSubmit = createSubmitHandler(form, (formData) => {
-    notifyAuthChanged();
-    formAction(formData);
-  });
+  const handleSubmit = createSubmitHandler(form, formAction);
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -47,7 +43,7 @@ export function LoginForm() {
         {t('login.forgotPassword')}
       </InternalLink>
       <Stack gap="sm">
-        <SubmitButton idleLabel={t('login.submit')} />
+        <SubmitButton id="login-submit" idleLabel={t('login.submit')} />
         <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
       </Stack>
     </Form>

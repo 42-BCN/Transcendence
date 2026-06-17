@@ -92,6 +92,12 @@ export function subscribeMemberToGameRoomChannel(memberKey: string, gameRoomId: 
     .socketsJoin(getGameRoomChannel(gameRoomId));
 }
 
+export function unsubscribeMemberFromGameRoomChannel(memberKey: string, gameRoomId: number) {
+  void gameRoomNamespace
+    ?.in(getGameRoomMemberChannel(memberKey))
+    .socketsLeave(getGameRoomChannel(gameRoomId));
+}
+
 function updateGameRoomState(socket: Socket) {
   const roomMemberKey = getRoomMemberKey(socket);
   if (!roomMemberKey) {
@@ -119,7 +125,12 @@ function broadcastRoomUpdate(socket: Socket, gameRoomId: number, gameRoomState: 
   socket.nsp.to(gameRoomChannel).emit('gameRoom:room:update', gameRoomState);
 }
 
-function handleJoinResult(socket: Socket, username: string, gameRoom: ReturnType<typeof gameRoomsManager.joinUserToGameRoom>) {
+function handleJoinResult(
+  socket: Socket,
+  memberKey: string,
+  username: string,
+  gameRoom: ReturnType<typeof gameRoomsManager.joinUserToGameRoom>,
+) {
   if (typeof gameRoom === 'string') {
     if (gameRoom === 'error:no_assigned_room') {
       emitGameRoomError(socket, 'not on any room.');
@@ -146,11 +157,16 @@ function handleJoinResult(socket: Socket, username: string, gameRoom: ReturnType
 
   emitJoinedRoomState(socket, gameRoom.id, username);
   broadcastRoomUpdate(socket, gameRoom.id, gameRoom);
-  void socket.join(getGameRoomChannel(gameRoom.id));
-  socket.nsp.to(socket.id).emit('gameRoom:room:update', gameRoom);
+  subscribeMemberToGameRoomChannel(memberKey, gameRoom.id);
+  emitGameRoomStateToMember(memberKey, gameRoom);
 }
 
-function handleLeaveResult(socket: Socket, username: string, gameRoom: ReturnType<typeof gameRoomsManager.removeUserFromGameRoom>) {
+function handleLeaveResult(
+  socket: Socket,
+  memberKey: string,
+  username: string,
+  gameRoom: ReturnType<typeof gameRoomsManager.removeUserFromGameRoom>,
+) {
   if (gameRoom === 'error:no_assigned_room') {
     emitGameRoomError(socket, 'not on any room.');
     emitEmptyGameRoomState(socket);
@@ -159,11 +175,11 @@ function handleLeaveResult(socket: Socket, username: string, gameRoom: ReturnTyp
 
   const { id: gameRoomId } = gameRoom;
   const gameRoomChannel = getGameRoomChannel(gameRoomId);
-  void socket.leave(gameRoomChannel);
+  unsubscribeMemberFromGameRoomChannel(memberKey, gameRoomId);
   socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
   socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
-  emitEmptyGameRoomState(socket);
-  socket.nsp.to(socket.id).emit('gameRoom:debug:msg', 'left room');
+  emitGameRoomStateToMember(memberKey, EMPTY_GAME_ROOM_STATE);
+  gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:debug:msg', 'left room');
 }
 
 function logConnection(socket: Socket, roomMemberKey: string, username: string) {
@@ -219,7 +235,7 @@ export function registerGameRoomSocket(nsp: Namespace) {
 
     socket.on('gameRoom:teammate:joinAny', () => {
       const gameRoom = gameRoomsManager.joinUserToAnyGameRoom(roomMemberKey, username);
-      handleJoinResult(socket, username, gameRoom);
+      handleJoinResult(socket, roomMemberKey, username, gameRoom);
       if (typeof gameRoom !== 'string' && typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
         markJoinedRoom(socket.data.userId as string, gameRoom.id);
       }
@@ -227,7 +243,7 @@ export function registerGameRoomSocket(nsp: Namespace) {
 
     socket.on('gameRoom:teammate:join', (gameRoomId: number) => {
       const gameRoom = gameRoomsManager.joinUserToGameRoom(roomMemberKey, username, gameRoomId);
-      handleJoinResult(socket, username, gameRoom);
+      handleJoinResult(socket, roomMemberKey, username, gameRoom);
       if (typeof gameRoom !== 'string' && typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
         markJoinedRoom(socket.data.userId as string, gameRoom.id);
       }
@@ -235,7 +251,7 @@ export function registerGameRoomSocket(nsp: Namespace) {
 
     socket.on('gameRoom:teammate:leave', () => {
       const gameRoom = gameRoomsManager.removeUserFromGameRoom(roomMemberKey);
-      handleLeaveResult(socket, username, gameRoom);
+      handleLeaveResult(socket, roomMemberKey, username, gameRoom);
       if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
         notifyPendingInvitees(socket.data.userId as string);
       }
