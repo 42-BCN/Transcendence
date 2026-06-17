@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import { useStore } from 'zustand';
 
 import {
@@ -9,6 +9,7 @@ import {
   type GameInvitationsStore,
 } from './game-invitations.store';
 import type { GameInvitationsState } from './game-invitations.types';
+import { REALTIME_IDENTITY_CHANGED_EVENT } from '@/lib/sockets/realtime-session-bridge';
 
 export const GameInvitationsStoreContext = createContext<GameInvitationsStore | null>(null);
 
@@ -18,6 +19,20 @@ export function GameInvitationsProvider({ children }: { children: ReactNode }) {
   if (!storeRef.current) {
     storeRef.current = createGameInvitationsStore();
   }
+
+  useEffect(() => {
+    const store = storeRef.current;
+    if (!store) return;
+
+    const handleIdentityChanged = () => {
+      store.getState().resetInvitationState();
+    };
+
+    window.addEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+    return () => {
+      window.removeEventListener(REALTIME_IDENTITY_CHANGED_EVENT, handleIdentityChanged);
+    };
+  }, []);
 
   return (
     <GameInvitationsStoreContext.Provider value={storeRef.current}>

@@ -12,6 +12,7 @@ import {
 } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 
 import { directMessagesSocket } from './direct-messages-socket.client';
+import { isSessionSyncedAsUser } from './realtime-session-bridge';
 
 type DirectMessagesSocketManagerProps = {
   friendUserId: string;
@@ -85,7 +86,7 @@ export function DirectMessagesSocketManager({
         console.error('Failed to initialize direct-messages session identity', error);
       })
       .finally(() => {
-        if (isMounted) {
+        if (isMounted && isSessionSyncedAsUser()) {
           directMessagesSocket.connect();
         }
       });

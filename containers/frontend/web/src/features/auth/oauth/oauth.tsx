@@ -2,6 +2,7 @@
 
 import { Button } from '@components';
 import type { ReactNode } from 'react';
+import { notifyAuthChanged } from '@/lib/sockets/realtime-session-bridge';
 
 function GoogleLogo() {
   return (
@@ -29,6 +30,7 @@ function GoogleLogo() {
 
 export function Oauth({ children }: { children: ReactNode }) {
   function startGoogleOauth(): void {
+    notifyAuthChanged();
     window.location.assign('/api/auth/google');
   }
 

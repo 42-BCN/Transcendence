@@ -34,6 +34,12 @@ const AUTH_CHANGED_EVENT = 'transcendence:auth-changed';
 export const REALTIME_IDENTITY_CHANGED_EVENT = 'transcendence:realtime-identity-changed';
 const ACTIVE_ROOM_STORAGE_KEY = 'transcendence:active-room-id';
 
+let sessionSyncedAsUser = false;
+
+export function isSessionSyncedAsUser(): boolean {
+  return sessionSyncedAsUser;
+}
+
 function hasMountedListeners(socket: {
   listeners: (event: string) => unknown[];
 }) {
@@ -123,6 +129,7 @@ async function rejoinStoredRoomIfNeeded() {
 
 export function RealtimeSessionBridge() {
   const lastIdentityKeyRef = useRef<string | null>(null);
+  const lastIsGuestRef = useRef<boolean | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -136,36 +143,51 @@ export function RealtimeSessionBridge() {
 
       const nextIdentityKey = identity?.identityKey ?? null;
       const previousIdentityKey = lastIdentityKeyRef.current;
+      const previousIsGuest = lastIsGuestRef.current;
 
       if (previousIdentityKey === nextIdentityKey) {
         return;
       }
 
       lastIdentityKeyRef.current = nextIdentityKey;
+      lastIsGuestRef.current = identity?.isGuest ?? null;
       resetChatSessionIdentity();
       window.dispatchEvent(new CustomEvent(REALTIME_IDENTITY_CHANGED_EVENT));
 
       if (!nextIdentityKey) {
+        sessionSyncedAsUser = false;
         disconnectSocket(chatSocket);
         disconnectSocket(gameRoomSocket);
         disconnectSocket(gameSocket);
         disconnectSocket(friendsSocket);
         disconnectSocket(directMessagesSocket);
+        window.sessionStorage.removeItem(ACTIVE_ROOM_STORAGE_KEY);
         return;
       }
 
       disconnectSocket(chatSocket);
       disconnectSocket(gameSocket);
       disconnectSocket(gameRoomSocket);
+      disconnectSocket(friendsSocket);
+      disconnectSocket(directMessagesSocket);
 
-      await rejoinStoredRoomIfNeeded();
+      const wasGuest = previousIsGuest === true;
+      if (wasGuest) {
+        window.sessionStorage.removeItem(ACTIVE_ROOM_STORAGE_KEY);
+      } else {
+        await rejoinStoredRoomIfNeeded();
+      }
 
       restartSocket(chatSocket);
       restartSocket(gameSocket);
+      restartSocket(gameRoomSocket);
 
       if (identity?.isGuest === false && identity.userId) {
+        sessionSyncedAsUser = true;
         restartSocket(friendsSocket);
         restartSocket(directMessagesSocket);
+      } else {
+        sessionSyncedAsUser = false;
       }
     };
 
@@ -181,6 +203,7 @@ export function RealtimeSessionBridge() {
 
     return () => {
       isMounted = false;
+      sessionSyncedAsUser = false;
       window.removeEventListener(AUTH_CHANGED_EVENT, handleAuthChanged);
       window.removeEventListener('focus', handleAuthChanged);
       window.removeEventListener('pageshow', handleAuthChanged);
