@@ -14,7 +14,7 @@ import {
 import { SentRoomInvitations } from './sent-room-invitations';
 import { gameRoomTestStyles } from './game-room-test.styles';
 
-const AVATAR_COUNT = 4;
+const AVATAR_COUNT = 14;
 function guestAvatarSrc(username: string): string {
   const index = [...username].reduce((acc, c) => acc + c.charCodeAt(0), 0) % AVATAR_COUNT;
   return `/avatars/avatar-${index + 1}.png`;
@@ -53,7 +53,10 @@ export function GameRoomTest({ gameRoomStateCtx, gameRoomsErrorInfo }: GameRoomT
 
           <Stack gap="md" className={gameRoomTestStyles.content}>
             {gameRoomStateCtx.teammates.length > 0 && (
-              <section className={gameRoomTestStyles.avatarSection} aria-labelledby="players-heading">
+              <section
+                className={gameRoomTestStyles.avatarSection}
+                aria-labelledby="players-heading"
+              >
                 <Text as="h2" variant="caption" color="secondary" id="players-heading">
                   {t('room.playersHeading')}
                 </Text>
