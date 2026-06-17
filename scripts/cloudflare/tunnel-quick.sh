@@ -16,10 +16,6 @@ case "$TARGET_ENV" in
     NODE_ENV_VALUE="development"
     COMPOSE_OVERRIDE="containers/docker-compose.dev.yml"
     ;;
-  demo)
-    NODE_ENV_VALUE="production"
-    COMPOSE_OVERRIDE="containers/docker-compose.demo.yml"
-    ;;
   production)
     NODE_ENV_VALUE="production"
     COMPOSE_OVERRIDE="containers/docker-compose.prod.yml"

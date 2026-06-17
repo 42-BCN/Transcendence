@@ -282,46 +282,55 @@ To run this project locally, ensure you have installed:
 - **GNU Make**
 - A Unix-like shell environment
 
-### Quick Start
+### Evaluation (42)
+
+```bash
+make
+```
+
+This builds and starts production, prepares the database, and starts a Cloudflare quick tunnel. The tunnel URL is printed to the terminal — open it in a browser to access the app.
+
+### Quick Start (Development)
 1. **Clone the repository**:
   ```bash
   git clone https://github.com/42-BCN/Transcendence.git
   cd Transcendence
   ```
 
-2. **Setup the environment**:
-  Run the setup script to automatically generate the necessary `.env` files and local HTTPS certificates.
-  ```bash
-  make setup
-  ```
-
-  > **Note**: For detailed information on how environment variables and certificates are managed under the hood, refer to our internal documentation: `scripts/env/README.md` and `scripts/certs/README.md`.
-
-3. **Launch the project**:
-  Start the development environment. This will build the containers, push the Prisma schema, and seed the database.
+2. **Launch the development environment**:
+  Builds the containers, pushes the Prisma schema, and seeds the database with hot-reloading enabled.
   ```bash
   make dev
   ```
   *The platform will be served through Nginx over HTTPS at: `https://localhost:8443`*
 
+  > **Note**: For details on environment variables and certificates, refer to `scripts/env/README.md` and `scripts/certs/README.md`.
+
 ### Deployment Environments
-The project supports different deployment targets via Make:
-- `make dev` (Development mode with hot-reloading)
-- `make demo` (Demonstration mode)
-- `make prod` (Production build)
+- `make` — Production evaluation flow (build + DB setup + quick tunnel)
+- `make dev` — Development mode with hot-reloading
+- `make prod` — Production build only
 
 ### Makefile Cheat Sheet
 We use a comprehensive Makefile to manage the Docker lifecycle and database utilities.
 
-**Service Management**
-- `make dev-up`: Start existing dev containers
-- `make dev-down`: Stop and remove dev containers
-- `make dev-clean`: Deep clean of the environment
-- `make dev-logs`: View container logs
+**Production**
+- `make prod-build`: Build production images
+- `make prod-down`: Stop production containers
+- `make prod-clean`: Stop and remove production volumes
+- `make prod-logs`: View production logs
+- `make prod-ps`: List production containers
+- `make prod-db-setup`: Push schema and seed the production DB
+- `make prod-tunnel-quick`: Start Cloudflare quick tunnel for production
 
-**Database Utilities**
+**Development**
+- `make dev-down`: Stop dev containers
+- `make dev-clean`: Deep clean dev environment
+- `make dev-logs`: View dev logs
+
+**Database Utilities (development)**
 - `make db-push`: Push Prisma schema to the database
-- `make db-seed`: Populate the database with initial seed data
+- `make db-seed`: Populate the database with seed data
 - `make db-reset`: Drop and recreate the database
 
 **Container Shell Access**
@@ -332,11 +341,9 @@ We use a comprehensive Makefile to manage the Docker lifecycle and database util
 
 **Cloudflare Quick Tunnels**
 Exposes the running app through a temporary `trycloudflare.com` URL (no Cloudflare account required).
-- `make tunnel-quick` — development
-- `make demo-tunnel-quick` — demo
 - `make prod-tunnel-quick` — production
+- `make tunnel-quick` — development
 
-Use the matching logs/down command for the selected environment (e.g. `make demo-tunnel-quick-logs`, `make demo-tunnel-quick-down`).
 Quick Tunnel URLs change every time. If using Google OAuth, update the redirect URI to match the current URL.
 
 ---
