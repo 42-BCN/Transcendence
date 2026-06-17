@@ -303,9 +303,16 @@
       }
     },
     "chat": {
+      "errors": {
+        "INVALID_CHAT_MESSAGE": "No s'ha pogut enviar el missatge."
+      },
       "hideChat": "Amaga el xat",
       "messageAriaLabel": "Missatge",
-      "showChat": "Mostra el xat"
+      "showChat": "Mostra el xat",
+      "system": {
+        "userJoined": "{username} s'ha unit al xat.",
+        "userLeft": "{username} ha sortit del xat."
+      }
     },
     "directMessages": {
       "metadata": {
