@@ -55,7 +55,7 @@ export default function GameSidePage() {
             placement="left"
           />
           <div className={gameSidePageStyles.helpButton}>
-            <GameInstructions label="Instrucciones del juego" />
+            <GameInstructions />
           </div>
         </>
       )}
