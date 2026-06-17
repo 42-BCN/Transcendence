@@ -349,7 +349,14 @@ declare const messages: {
       "playingAs": "Playing as",
       "dice": "d{num}",
       "statusWithIcon": "⚡ {status}",
-      "doomIcon": "☠",
+      "doomIcon": "☠\ufe0e",
+      "classes": {
+        "assassin": "Assassin",
+        "paladin": "Paladin",
+        "mage": "Mage",
+        "alchemist": "Alchemist",
+        "spectator": "Spectator"
+      },
       "room": {
         "fields": {
           "gameRoomId": "Game room ID"

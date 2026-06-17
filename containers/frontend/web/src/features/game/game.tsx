@@ -157,11 +157,14 @@ function AbButtons() {
     <div className="flex flex-wrap gap-2 md:gap-4">
       {ent?.abilities.map((ability) => {
         const cd = abilityCD?.[ability] || 0;
-        const cn = cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white';
+        const cn = `${
+          cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'
+        } py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm`;
         return (
           <Button
             key={ability}
             w="auto"
+            size="sm"
             className={cn}
             onMouseEnter={(event) => {
               if (
@@ -216,7 +219,8 @@ function DiceButtons() {
         <Button
           key={i}
           w="auto"
-          className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}
+          size="sm"
+          className={`py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm bg-gray-500 text-white transition-all opacity-60`}
         >
           {t('dice', { num: diceNum })}
         </Button>
@@ -225,6 +229,7 @@ function DiceButtons() {
         <Button
           key={i}
           w="auto"
+          size="sm"
           onMouseEnter={(event) => {
             event.stopPropagation();
             if (!ability) showMoveRange(diceNum);
@@ -240,7 +245,7 @@ function DiceButtons() {
               canSelect || Boolean(ability) ? selectDice(diceNum) : movDice(diceNum);
             }
           }}
-          className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
+          className={`py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm bg-blue-500 text-white transition-all rounded
             ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
         >
           {t('dice', { num: diceNum })}
@@ -258,8 +263,9 @@ function Reset() {
   if (!history.some((h) => h.who === assignedCharacter && h.type !== 'forcedMov')) return null;
   return (
     <Button
-      className="absolute z-10 top-8 left-8"
+      className="py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm"
       variant="primary"
+      size="sm"
       w="auto"
       onPress={() => {
         resetHistory();
@@ -281,13 +287,19 @@ function EndPlan({ isStandalone = false }: { isStandalone?: boolean }) {
 
   return (
     <Button
-      className={isStandalone ? 'absolute z-20 bottom-4 left-16' : 'shrink-0 h-fit'}
+      className={
+        isStandalone
+          ? 'absolute z-20 bottom-4 left-2 md:left-16 py-1 px-2.5 text-[11px] md:py-2 md:px-4 md:text-sm'
+          : 'shrink-0 h-fit py-1 px-2.5 text-[11px] md:py-2 md:px-4 md:text-sm'
+      }
       variant="primary"
+      size="sm"
       w="auto"
       onPress={() => nextPhase()}
     >
       {t('endTurn')}
-      <br />
+      <br className="hidden md:inline" />
+      <span className="inline md:hidden"> - </span>
       {readyPlayers?.length} / {activePlayers?.length}
     </Button>
   );
@@ -304,7 +316,10 @@ function HUD() {
   }
 
   return (
-    <Stack className="z-20 absolute left-16 bottom-4 max-w-[calc(100vw-5rem)] md:max-w-[calc(66.66vw-5rem)]">
+    <Stack
+      gap="sm"
+      className="z-20 absolute left-2 md:left-16 bottom-4 max-w-[calc(100vw-1rem)] md:max-w-[calc(66.66vw-5rem)] md:gap-4"
+    >
       <AbButtons />
       <div className="w-full">
         <Meter
@@ -321,7 +336,7 @@ function HUD() {
           {ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-2 md:gap-4">
+      <div className="flex flex-wrap items-center gap-1.5 md:gap-4">
         <DiceButtons />
         {showEndPlan && <EndPlan />}
       </div>
@@ -413,6 +428,7 @@ export function getMesh(id: string) {
 }
 
 function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
+  const t = useTranslations('features.game');
   const phase = useGame((s) => s.phase);
   const enemy = useGame((s) => s.enemies[enemyId]);
   const players = useGame(useShallow((s) => s.players));
@@ -460,7 +476,7 @@ function EnemyTargetIndicator({ enemyId }: { enemyId: string }) {
         }}
       >
         <span style={{ fontSize: '11px', lineHeight: 1 }}>{icon}</span>
-        <span style={{ color: color }}>{targetId.charAt(0).toUpperCase() + targetId.slice(1)}</span>
+        <span style={{ color: color }}>{t(`classes.${targetId}` as Parameters<typeof t>[0])}</span>
       </div>
     </Html>
   );
@@ -727,7 +743,7 @@ function TopBar() {
 
   return (
     <div
-      className="absolute top-0 left-8 right-16 z-30 h-8 flex items-center px-4 gap-4 transition-colors duration-700"
+      className="absolute top-0 left-2 md:left-8 right-16 z-30 h-8 flex items-center px-2 md:px-4 gap-2 md:gap-4 transition-colors duration-700"
       style={{
         background:
           pct >= 80
@@ -748,7 +764,7 @@ function TopBar() {
         }`,
       }}
     >
-      <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase shrink-0 w-40">
+      <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase shrink-0 w-24 md:w-40 truncate">
         {name(phase)}
       </span>
 
@@ -770,7 +786,7 @@ function TopBar() {
           />
         </div>
         <span
-          className="text-[11px] font-mono w-8 text-right shrink-0 tabular-nums"
+          className="text-[11px] font-mono shrink-0 tabular-nums"
           style={{ color: fillColor }}
         >
           {pct}
@@ -790,7 +806,7 @@ function CharacterCard() {
 
   return (
     <div
-      className="absolute top-10 left-16 z-20 flex items-center gap-2.5 px-3 py-2 rounded select-none backdrop-blur-sm transition-colors duration-700"
+      className="flex items-center gap-1.5 md:gap-2.5 px-2 py-1 md:px-3 md:py-2 rounded select-none backdrop-blur-sm transition-colors duration-700"
       style={{
         background: isDark ? 'rgba(0,0,0,0.82)' : 'rgba(255,255,255,0.90)',
         border: `1px solid ${color}${isDark ? '30' : '60'}`,
@@ -806,7 +822,7 @@ function CharacterCard() {
           className="text-[13px] font-bold uppercase tracking-wide leading-none"
           style={{ color }}
         >
-          {assignedCharacter}
+          {t(`classes.${assignedCharacter}` as Parameters<typeof t>[0])}
         </div>
       </div>
     </div>
@@ -875,15 +891,17 @@ function HandlePhaseScreen() {
     case 'END':
     default:
       return (
-        <>
+        <div className="w-full h-full relative overflow-hidden">
           <TopBar />
-          <CharacterCard />
+          <div className="absolute top-10 left-2 md:left-16 z-20 flex flex-col gap-2 items-start">
+            <CharacterCard />
+            <Reset />
+          </div>
           <HUD />
-          <Reset />
           <Canvas>
             <Scene />
           </Canvas>
-        </>
+        </div>
       );
   }
 }

@@ -346,7 +346,14 @@
       "playingAs": "Jugando como",
       "dice": "d{num}",
       "statusWithIcon": "⚡ {status}",
-      "doomIcon": "☠",
+      "doomIcon": "☠\ufe0e",
+      "classes": {
+        "assassin": "Asesino",
+        "paladin": "Paladín",
+        "mage": "Mago",
+        "alchemist": "Alquimista",
+        "spectator": "Espectador"
+      },
       "room": {
         "fields": {
           "gameRoomId": "ID de la sala"
