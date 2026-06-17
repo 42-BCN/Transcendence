@@ -57,7 +57,7 @@ function EnemyCard({
   skills?: SkillData[];
 }) {
   return (
-    <div className="mb-4 p-3 rounded-lg bg-bg-secondary/40 border border-border-primary">
+    <div className="mb-4 p-3 rounded-lg bg-bg-secondary border border-border-primary">
       <p className="font-bold text-text-primary mb-1">{name}</p>
       <ul className="mb-2 space-y-0.5">
         {stats.map((stat, index) => (
@@ -85,7 +85,7 @@ function ClassCard({
   skills: SkillData[];
 }) {
   return (
-    <div className="mb-4 p-3 rounded-lg bg-bg-secondary/40 border border-border-primary">
+    <div className="mb-4 p-3 rounded-lg bg-bg-secondary border border-border-primary">
       <p className="font-bold text-text-primary">{name}</p>
       <p className="text-xs text-text-secondary italic mb-2">{role}</p>
       <ul className="mb-2 space-y-0.5">
@@ -144,7 +144,7 @@ export function GameInstructions() {
         onOpenChange={setOpen}
         className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm"
       >
-        <Modal className="relative w-[min(90vw,780px)] max-h-[85vh] overflow-hidden rounded-2xl border border-border-primary bg-bg-primary/90 backdrop-blur-md shadow-2xl flex flex-col">
+        <Modal className="relative w-[min(90vw,780px)] max-h-[85vh] overflow-hidden rounded-2xl border border-border-primary bg-bg-primary shadow-2xl flex flex-col">
           <Dialog className="flex flex-col h-full overflow-hidden" aria-label={t('title')}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-border-primary shrink-0">
               <div className="flex items-center gap-2">
