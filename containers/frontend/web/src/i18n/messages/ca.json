@@ -303,9 +303,16 @@
       }
     },
     "chat": {
+      "errors": {
+        "INVALID_CHAT_MESSAGE": "No s'ha pogut enviar el missatge."
+      },
       "hideChat": "Amaga el xat",
       "messageAriaLabel": "Missatge",
-      "showChat": "Mostra el xat"
+      "showChat": "Mostra el xat",
+      "system": {
+        "userJoined": "{username} s'ha unit al xat.",
+        "userLeft": "{username} ha sortit del xat."
+      }
     },
     "directMessages": {
       "metadata": {
@@ -334,6 +341,130 @@
       "endTurn": "Acabar torn",
       "healthLabel": "HP",
       "resetPlan": "Reiniciar pla",
+      "instructions": {
+        "title": "Instruccions del joc",
+        "close": "Tancar",
+        "objective": {
+          "title": "Objectiu",
+          "intro": "Sou un escamot cooperatiu de 4 personatges. Heu de destruir el <strong>Generador enemic</strong> abans que la seva energia arribi al 100%.",
+          "energyTitle": "L'energia puja al final de cada ronda:",
+          "energyItems": ["+5% pel generador.", "+3% per cada enemic d'elit.", "+1% per cada enemic comú."],
+          "loseTitle": "Perdeu si:",
+          "loseItems": ["el generador arriba al 100%, o", "moren els 4 personatges de l'escamot."],
+          "height": "L'<strong>alçada</strong> afecta el moviment, l'abast, els empentesos i els atacs que només funcionen a dalt o a baix."
+        },
+        "turnStructure": {
+          "title": "Estructura del torn",
+          "planning": {
+            "title": "A. Planificació conjunta (120 seg.)",
+            "body": "Els jugadors decideixen què fa cada personatge, quina habilitat usa, a quin objectiu apunta i quin enemic atacarà cadascú. Tots han d'estar d'acord per continuar."
+          },
+          "execution": {
+            "title": "B. Execució",
+            "body": "El joc executa automàticament el pla."
+          },
+          "enemy": {
+            "title": "C. Torn enemic",
+            "items": ["Puja l'energia del generador.", "Els enemics usen els seus daus i accions.", "La interfície pot mostrar pistes d'objectiu."]
+          }
+        },
+        "generalRules": {
+          "title": "Regles generals",
+          "items": [
+            "Cada personatge i enemic té el seu propi set de daus.",
+            "Cada acció consumeix 1 dau.",
+            "En un torn: moure's o usar habilitats (no ambdós).",
+            "Moviment: una vegada per torn, fins al valor més alt dels daus.",
+            "Habilitats: s'apliquen si es compleix la condició de la tirada.",
+            "Les unitats amb 0 PV moren."
+          ],
+          "diceAction": "Cada acció consumeix 1 dau."
+        },
+        "abilities": {
+          "title": "Com usar les habilitats",
+          "steps": [
+            "Selecciona el teu personatge.",
+            "Tria una habilitat.",
+            "Passa el ratolí sobre un dau per veure l'abast o l'efecte.",
+            "Selecciona la casella o objectiu.",
+            "Confirma dins la planificació."
+          ]
+        },
+        "playableClasses": {
+          "title": "Classes jugables",
+          "assassin": {
+            "name": "Assassí",
+            "role": "Dany ràpid, empentesos i control.",
+            "stats": ["PV: 13", "Daus: 4d4 + 1d8"],
+            "skills": [
+              { "name": "Punyalada", "details": ["cos a cos · sense CD · dany: resultat / 2 · cond: parell"] },
+              { "name": "Tir de navailles", "details": ["abast lineal · dany: 2 · sense CD · cond: > 3"] },
+              { "name": "Patada", "details": ["cos a cos · sense CD · dany: 1 · empeny 1 casella · cond: senar", "l'empentós s'aplica encara que falli"] },
+              { "name": "Lligar", "details": ["cos a cos · sense CD · elimina 1 dau de l'enemic · cond: > 1", "no es pot aplicar diverses vegades al mateix enemic"] }
+            ]
+          },
+          "paladin": {
+            "name": "Paladí",
+            "role": "Tanc i protector.",
+            "stats": ["PV: 16", "Daus: 4d6"],
+            "skills": [
+              { "name": "Estocada", "details": ["abast 1 línia recta · CD 1 · dany: 2 · cond: > 3"] },
+              { "name": "Defensar", "details": ["abast 2 · àrea circular, objectiu únic · sense CD", "redueix a la meitat les properes x instàncies de dany · cond: > 1"] },
+              { "name": "Cop d'escut", "details": ["AOE en creu · CD 2 · dany: 4x · cond: > 5", "empeny 1 casella als enemics dels extrems (encara que falli)"] },
+              { "name": "Tall vertical", "details": ["cos a cos · CD 1 · cobreix tots els nivells", "dany: 2x + 2 si nivell diferent · cond: > 3"] }
+            ]
+          },
+          "alchemist": {
+            "name": "Alquimista",
+            "role": "Suport, control de zona i debilitació.",
+            "stats": ["PV: 10", "Daus: 1d6 + 1d8 + 1d10"],
+            "skills": [
+              { "name": "Dopatge", "details": ["abast 2 en línia · CD 1 · pot aplicar-se a si mateix", "dona la meitat del dau com a bonificació a la propera acció de l'objectiu"] },
+              { "name": "Matràs de buit", "details": ["abast circular 2 · centre fins a 3 caselles · AOE · CD 2", "dany: (resultat - 2) / 2 · absorbeix cap al centre · cond: > 5"] },
+              { "name": "Matràs bombàstic", "details": ["abast circular 1 en creu · centre fins a 3 caselles · CD 2", "dany: (resultat - 2) / 2 · empeny diag. cap amunt · cond: > 5"] },
+              { "name": "Oxidació", "details": ["abast 1 circular · sense CD · redueix l'armadura de l'objectiu en x · cond: > 2"] }
+            ]
+          },
+          "mage": {
+            "name": "Mag",
+            "role": "Dany en àrea, foc i control de nivells.",
+            "stats": ["PV: 8", "Daus: 1d4 + 1d8 + 1d12"],
+            "skills": [
+              { "name": "Alè de foc", "details": ["abast 3 · AOE · CD 2 · aplica cremada 2 torns (1 dany/torn) · cond: > 3", "cos a cos: dany = resultat / 3 + 2", "mitjà: dany = resultat / 4 + 1 (nivell diferent)", "llunyà: dany = resultat / 4 - 2 + 1 (nivell diferent)"] },
+              { "name": "Cometa azur", "details": ["abast infinit mateix pla · CD 3 · dany: resultat / 2 + 2 · cond: > 3"] },
+              { "name": "Petit meteorit", "details": ["abast 4 circular · CD 1 · només zona superior", "dany: x + 2 si nivell diferent · cond: > 2"] },
+              { "name": "Espines emergents", "details": ["abast 4 circular · CD 1 · només zona inferior", "dany: x + 2 si nivell diferent · cond: > 2"] }
+            ]
+          }
+        },
+        "enemyClasses": {
+          "title": "Classes enemigues",
+          "drone": {
+            "name": "Dron",
+            "stats": ["PV: 3 · Daus: 3d4", "atac cos a cos · dany: 1 · cond: x > 1"]
+          },
+          "tracker": {
+            "name": "Rastrejador",
+            "stats": ["PV: 4 · Daus: 2d4 + 1d6", "atac cos a cos · dany: 1 · cond: x > 1"]
+          },
+          "centurion": {
+            "name": "Centurió (d'elit)",
+            "stats": ["PV: 20 · Escut: 2 · Daus: d6 + 2d8"],
+            "skills": [
+              { "name": "Embestida", "details": ["abast línia 3 · sense CD · es mou 3 caselles · empeny perpendicular", "dany: resultat / 2 · cond: > 4 (l'empentós s'aplica igualment)"] },
+              { "name": "Mini bomba atòmica", "details": ["abast circular 2 · CD 2 · es fa 4 de dany a si mateixa", "dany: resultat / 2 + 2 · cond: > 3"] }
+            ]
+          },
+          "jaeger": {
+            "name": "Jaeger (d'elit)",
+            "stats": ["PV: 10 · Escut: 1 · Daus: 2d6 + 1d10"],
+            "skills": [
+              { "name": "Empentó", "details": ["cos a cos · sense CD · empeny 2 caselles · dany: x · cond: x > 3"] },
+              { "name": "Tret d'impacte", "details": ["abast circular 6 · CD 1 · ignora barreres · al de més vida (empat: més llunyà)", "dany: resultat / 2 · cond: > 5"] }
+            ]
+          }
+        }
+      },
       "room": {
         "fields": {
           "gameRoomId": "ID de la sala"
