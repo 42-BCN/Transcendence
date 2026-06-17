@@ -20,6 +20,7 @@ import {
   Menu,
   Search,
   Trash2,
+  HelpCircle,
 } from 'lucide-react';
 
 export const icons = {
@@ -44,6 +45,7 @@ export const icons = {
   menu: Menu,
   search: Search,
   trash: Trash2,
+  help: HelpCircle,
 };
 
 export type IconName = keyof typeof icons;
