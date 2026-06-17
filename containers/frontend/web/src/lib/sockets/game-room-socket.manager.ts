@@ -3,16 +3,52 @@
 import { ensureChatSessionIdentity, gameRoomSocket } from '@/lib/sockets/socket';
 import type { gameRoomState } from '@/contracts/sockets/rooms/gameRooms.schema';
 
+async function ensureGameRoomSocketConnected(): Promise<void> {
+  if (gameRoomSocket.connected) {
+    return;
+  }
+
+  await ensureChatSessionIdentity();
+
+  await new Promise<void>((resolve, reject) => {
+    const cleanup = () => {
+      gameRoomSocket.off('connect', handleConnect);
+      gameRoomSocket.off('connect_error', handleConnectError);
+    };
+
+    const handleConnect = () => {
+      cleanup();
+      resolve();
+    };
+
+    const handleConnectError = (error: Error) => {
+      cleanup();
+      reject(error);
+    };
+
+    gameRoomSocket.on('connect', handleConnect);
+    gameRoomSocket.on('connect_error', handleConnectError);
+    gameRoomSocket.connect();
+  });
+}
+
 export function GameRoomSocketJoinAnyRoom() {
-  gameRoomSocket.emit('gameRoom:teammate:joinAny');
+  void ensureGameRoomSocketConnected().then(() => {
+    gameRoomSocket.emit('gameRoom:teammate:joinAny');
+  });
 }
 
 export function GameRoomSocketJoin(formData: FormData) {
-  gameRoomSocket.emit('gameRoom:teammate:join', Number(formData.get('gameRoomId')));
+  const roomId = Number(formData.get('gameRoomId'));
+  void ensureGameRoomSocketConnected().then(() => {
+    gameRoomSocket.emit('gameRoom:teammate:join', roomId);
+  });
 }
 
 export function GameRoomSocketLeaveRoom() {
-  gameRoomSocket.emit('gameRoom:teammate:leave');
+  void ensureGameRoomSocketConnected().then(() => {
+    gameRoomSocket.emit('gameRoom:teammate:leave');
+  });
 }
 
 export function GameRoomSocketPrintDebug() {
@@ -55,10 +91,7 @@ export function initGameRoomSocketHandelers(
   let isMounted = true;
 
   void ensureChatSessionIdentity()
-    .catch((error) => {
-      console.error('[ GameRoom ] failed to initialize guest session identity', error);
-    })
-    .finally(() => {
+    .then(() => {
       if (!isMounted) return;
       gameRoomSocket.connect();
       const urlParams = new URLSearchParams(window.location.search);
@@ -67,6 +100,9 @@ export function initGameRoomSocketHandelers(
         gameRoomSocket.emit('gameRoom:teammate:join', roomId);
       }
       console.log('[ GameRoom ] connected. roomId from URL:', roomId || 'none');
+    })
+    .catch((error) => {
+      console.error('[ GameRoom ] failed to initialize guest session identity', error);
     });
 
   return () => {

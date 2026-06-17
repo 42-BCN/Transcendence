@@ -441,7 +441,10 @@ export const useGame = create<gameState>()((set, get) => ({
     (gameSocket as any).on('game:server:error', handleGameError);
 
     ensureChatSessionIdentity()
-      .finally(() => gameSocket.connect());
+      .then(() => gameSocket.connect())
+      .catch((error) => {
+        console.error('Failed to initialize game session identity', error);
+      });
   },
 
   cleanupSocketListeners: () => {

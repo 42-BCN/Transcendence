@@ -12,7 +12,6 @@ import {
 } from '@/contracts/sockets/direct-messages/direct-messages.schema';
 
 import { directMessagesSocket } from './direct-messages-socket.client';
-import { isSessionSyncedAsUser } from './realtime-session-bridge';
 
 type DirectMessagesSocketManagerProps = {
   friendUserId: string;
@@ -82,13 +81,13 @@ export function DirectMessagesSocketManager({
     messageListeners.forEach(([event, handler]) => directMessagesSocket.on(event, handler));
 
     void ensureChatSessionIdentity()
-      .catch((error) => {
-        console.error('Failed to initialize direct-messages session identity', error);
-      })
-      .finally(() => {
-        if (isMounted && isSessionSyncedAsUser()) {
+      .then(() => {
+        if (isMounted) {
           directMessagesSocket.connect();
         }
+      })
+      .catch((error) => {
+        console.error('Failed to initialize direct-messages session identity', error);
       });
 
     return () => {

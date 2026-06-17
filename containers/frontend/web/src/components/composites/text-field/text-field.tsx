@@ -29,7 +29,14 @@ export function TextField({
   ...props
 }: TextFieldProps) {
   const isInvalid = props.isInvalid ?? Boolean(errorKey);
-  const stableId = props.id ?? (typeof props.name === 'string' ? props.name : undefined);
+  const stableId =
+    props.id
+    ?? (typeof props.name === 'string' ? props.name : undefined)
+    ?? labelKey.replace(/[^a-zA-Z0-9_-]+/g, '-');
+  const labelId = `${stableId}-label`;
+  const descriptionId = descriptionKey ? `${stableId}-description` : undefined;
+  const errorId = errorKey ? `${stableId}-error` : undefined;
+  const describedBy = [descriptionId, errorId].filter(Boolean).join(' ') || undefined;
   const t = useTranslations();
   return (
     <AriaTextField
@@ -38,14 +45,25 @@ export function TextField({
       className={textFieldStyles.root()}
       isInvalid={isInvalid}
     >
-      <Label className={textFieldStyles.label()}>{t(labelKey)}</Label>
-      <Input {...inputProps} ref={inputRef} />
+      <Label id={labelId} className={textFieldStyles.label()}>{t(labelKey)}</Label>
+      <Input
+        {...inputProps}
+        ref={inputRef}
+        id={stableId}
+        aria-labelledby={labelId}
+        aria-describedby={describedBy}
+        aria-invalid={isInvalid || undefined}
+      />
       {descriptionKey && (
-        <Text slot="description" className={textFieldStyles.description()}>
+        <Text id={descriptionId} slot="description" className={textFieldStyles.description()}>
           {t(descriptionKey)}
         </Text>
       )}
-      {errorKey && <FieldError className={textFieldStyles.error()}>{t(errorKey)}</FieldError>}
+      {errorKey && (
+        <FieldError id={errorId} className={textFieldStyles.error()}>
+          {t(errorKey)}
+        </FieldError>
+      )}
     </AriaTextField>
   );
 }
