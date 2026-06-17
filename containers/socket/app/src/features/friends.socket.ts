@@ -26,6 +26,7 @@ import { fetchAcceptedFriendIds } from '../internal/friends.client';
 
 let friendsNsp: Namespace<ClientToServerFriendshipEvents, ServerToClientFriendshipEvents> | null =
   null;
+const PRESENCE_DISCONNECT_GRACE_MS = 5000;
 
 /** userId -> number of active /friends connections */
 const onlineCounts = new Map<string, number>();
@@ -35,6 +36,9 @@ const userStates = new Map<string, 'online' | 'away'>();
 
 /** userId -> username (cached from socket.data on first connection) */
 const usernames = new Map<string, string>();
+
+/** userId -> pending offline timeout */
+const pendingOfflineTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
 export function registerFriendsSocket(
   nsp: Namespace<ClientToServerFriendshipEvents, ServerToClientFriendshipEvents>,
@@ -59,7 +63,8 @@ export function registerFriendsSocket(
       const currentUserId = parsedUserId.data;
       const username: string = socket.data.username ?? 'unknown';
 
-      const wasOffline = (onlineCounts.get(currentUserId) ?? 0) === 0;
+      const wasOffline = !isUserPresenceActive(currentUserId);
+      cancelPendingOffline(currentUserId);
       incrementOnline(currentUserId);
       usernames.set(currentUserId, username);
 
@@ -99,23 +104,23 @@ export function registerFriendsSocket(
         logEvents.info({ event: 'presence_active', userId: currentUserId });
       });
 
-      socket.on('disconnect', () => {
+      socket.on('disconnect', (reason) => {
         decrementOnline(currentUserId);
         const isNowOffline = (onlineCounts.get(currentUserId) ?? 0) === 0;
 
         if (isNowOffline) {
-          userStates.delete(currentUserId);
-          usernames.delete(currentUserId);
-          friendsNsp?.to(`status:${currentUserId}`).emit(presenceSocketEvents.offline, {
-            userId: currentUserId,
-          });
-          logEvents.info({ event: 'presence_offline', userId: currentUserId });
+          if (reason === 'server namespace disconnect') {
+            markUserOffline(currentUserId);
+          } else {
+            scheduleOffline(currentUserId);
+          }
         }
 
         logEvents.info({
           event: 'friends_socket_disconnected',
           userId: currentUserId,
           socketId: socket.id,
+          reason,
         });
       });
     },
@@ -143,8 +148,7 @@ async function setupPresenceForSocket(
   }
 
   for (const friendId of friendIds) {
-    const count = onlineCounts.get(friendId) ?? 0;
-    if (count > 0) {
+    if (isUserPresenceActive(friendId)) {
       const state = userStates.get(friendId) ?? 'online';
       const friendUsername = usernames.get(friendId) ?? 'unknown';
       if (state === 'away') {
@@ -171,8 +175,7 @@ export function subscribeUserToFriendStatus(userId: string, friendId: string): v
 
   friendsNsp.in(userRoom).socketsJoin(friendStatusRoom);
 
-  const friendCount = onlineCounts.get(friendId) ?? 0;
-  if (friendCount > 0) {
+  if (isUserPresenceActive(friendId)) {
     const state = userStates.get(friendId) ?? 'online';
     const friendUsername = usernames.get(friendId) ?? 'unknown';
     if (state === 'away') {
@@ -194,6 +197,50 @@ function decrementOnline(userId: string) {
   const next = (onlineCounts.get(userId) ?? 1) - 1;
   if (next <= 0) onlineCounts.delete(userId);
   else onlineCounts.set(userId, next);
+}
+
+function cancelPendingOffline(userId: string) {
+  const timeoutId = pendingOfflineTimeouts.get(userId);
+  if (!timeoutId) {
+    return;
+  }
+
+  clearTimeout(timeoutId);
+  pendingOfflineTimeouts.delete(userId);
+}
+
+function hasPendingOffline(userId: string) {
+  return pendingOfflineTimeouts.has(userId);
+}
+
+function isUserPresenceActive(userId: string) {
+  return (onlineCounts.get(userId) ?? 0) > 0 || hasPendingOffline(userId);
+}
+
+function markUserOffline(userId: string) {
+  cancelPendingOffline(userId);
+  userStates.delete(userId);
+  usernames.delete(userId);
+  friendsNsp?.to(`status:${userId}`).emit(presenceSocketEvents.offline, {
+    userId,
+  });
+  logEvents.info({ event: 'presence_offline', userId });
+}
+
+function scheduleOffline(userId: string) {
+  cancelPendingOffline(userId);
+
+  const timeoutId = setTimeout(() => {
+    pendingOfflineTimeouts.delete(userId);
+
+    if ((onlineCounts.get(userId) ?? 0) > 0) {
+      return;
+    }
+
+    markUserOffline(userId);
+  }, PRESENCE_DISCONNECT_GRACE_MS);
+
+  pendingOfflineTimeouts.set(userId, timeoutId);
 }
 
 export function emitToUser(
@@ -386,9 +433,7 @@ export function getUsersPresence(userIds: string[]): Record<string, FriendPresen
   const status: Record<string, FriendPresence> = {};
 
   for (const id of userIds) {
-    const connectionCount = onlineCounts.get(id) ?? 0;
-
-    if (connectionCount === 0) {
+    if (!isUserPresenceActive(id)) {
       status[id] = 'offline';
       continue;
     }
