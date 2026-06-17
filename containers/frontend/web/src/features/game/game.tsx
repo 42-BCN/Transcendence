@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useContext, type ReactNode } from 'react';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
-import { Center, Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
+import { Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame, type pos as Position } from './store';
 import { useTranslations } from 'next-intl';
 import { Button } from '@components/controls/button';
@@ -868,6 +868,10 @@ function HandlePhaseScreen() {
           accentColor="text-rose-600 dark:text-rose-400"
         />
       );
+    case 'PLAN':
+    case 'EXEC':
+    case 'ENEMY':
+    case 'END':
     default:
       return (
         <>
