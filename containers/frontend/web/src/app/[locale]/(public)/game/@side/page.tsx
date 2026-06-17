@@ -60,10 +60,10 @@ function useMobileMenuEffects(
 
 export default function GameSidePage() {
   const t = useTranslations('features.chat');
-  const [chatVisible, setChatVisible] = useState(false);
+  const [chatVisible, setChatVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const isChatVisible = isDesktop ? true : chatVisible;
+  const isChatVisible = chatVisible;
 
   const chatUi = useGameChatUi();
   const setChatOpen = chatUi?.setChatOpen;
