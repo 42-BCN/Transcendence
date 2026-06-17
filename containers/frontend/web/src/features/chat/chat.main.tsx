@@ -271,8 +271,8 @@ export function ChatMain({
           const textVariant = type === 'system' || type === 'error' ? 'caption' : 'body-xs';
           const textClassName =
             type === 'system' || type === 'error'
-              ? chatStyles.main.metaText
-              : 'whitespace-pre-wrap';
+              ? `${chatStyles.main.metaText} break-words`
+              : 'whitespace-pre-wrap break-words';
 
           return (
             <div key={id} id={`message-${id}`} className={messageClassName}>
@@ -297,11 +297,7 @@ export function ChatMain({
                     onDeclineInvitation,
                   })
                 ) : (
-                  <Text
-                    as="p"
-                    variant={textVariant}
-                    className={textClassName}
-                  >
+                  <Text as="p" variant={textVariant} className={textClassName}>
                     {content.text}
                   </Text>
                 )}
