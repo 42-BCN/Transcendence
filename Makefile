@@ -6,6 +6,12 @@ COMPOSE_DEV = APP_ENV=development NODE_ENV=development $(COMPOSE_BASE) -f contai
 COMPOSE_DEMO = APP_ENV=demo NODE_ENV=production $(COMPOSE_BASE) -f containers/docker-compose.demo.yml
 COMPOSE_PROD = APP_ENV=production NODE_ENV=production $(COMPOSE_BASE) -f containers/docker-compose.prod.yml
 COMPOSE = APP_ENV=$(ENV) NODE_ENV=$(NODE_ENV_VALUE) $(COMPOSE_BASE)
+COMPOSE_ENV = $(if $(filter development,$(ENV)),$(COMPOSE_DEV),$(if $(filter demo,$(ENV)),$(COMPOSE_DEMO),$(if $(filter production,$(ENV)),$(COMPOSE_PROD),$(COMPOSE))))
+
+FRONTEND_SERVICE = frontend
+BACKEND_SERVICE = backend
+NGINX_SERVICE = nginx
+CONTRACT_SERVICES = $(FRONTEND_SERVICE) $(BACKEND_SERVICE)
 
 SETUP_SCRIPT = scripts/env/setup-env.sh
 TUNNEL_SCRIPT = scripts/cloudflare/tunnel.sh
@@ -41,9 +47,11 @@ ALL_ENV_FILES = \
 	tunnel tunnel-logs tunnel-down \
 	tunnel-stable tunnel-stable-down tunnel-stable-logs \
 	tunnel-quick tunnel-quick-down tunnel-quick-logs \
+	demo-tunnel-quick demo-tunnel-quick-down demo-tunnel-quick-logs \
+	prod-tunnel-quick prod-tunnel-quick-down prod-tunnel-quick-logs \
 	db-reset db-seed db-push db-setup prisma-generate \
 	clean-env clean-all-env \
-	ps restart shell-frontend shell-api shell-db shell-socket setup stop \
+	ps restart rebuild-front rebuild-back rebuild-nginx rebuild-contracts switch-dev switch-prod shell-frontend shell-api shell-db shell-socket setup stop \
 	node-modules node-modules-backend node-modules-frontend node-modules-socket \
 	storybook storybook-build
 
@@ -155,55 +163,78 @@ prod-ps:
 #---- Generic containers ----
 
 up: setup
-	$(COMPOSE) up -d
+	$(COMPOSE_ENV) up -d
 
 down:
-	$(COMPOSE) down
+	$(COMPOSE_ENV) down
 
 clean:
-	$(COMPOSE) down -v --remove-orphans
+	$(COMPOSE_ENV) down --remove-orphans
 
-fclean: clean
-	docker image prune -af
-	docker volume prune -af
-	docker system prune -af --volumes
+fclean:
+	$(COMPOSE_ENV) down -v --remove-orphans
+	docker system prune -f
 
-re: fclean all
+re: setup
+	$(COMPOSE_ENV) down --remove-orphans
+	$(COMPOSE_ENV) up -d --build
 
 ps:
-	$(COMPOSE) ps
+	$(COMPOSE_ENV) ps
 
 stop:
-	$(COMPOSE) stop
+	$(COMPOSE_ENV) stop
 
 restart:
-	$(COMPOSE) restart
+	$(COMPOSE_ENV) restart
+
+rebuild-front: setup
+	$(COMPOSE_ENV) up -d --build $(FRONTEND_SERVICE)
+
+rebuild-back: setup
+	$(COMPOSE_ENV) up -d --build $(BACKEND_SERVICE)
+
+rebuild-nginx: setup
+	$(COMPOSE_ENV) up -d --build $(NGINX_SERVICE)
+
+rebuild-contracts: setup
+	$(COMPOSE_ENV) up -d --build $(CONTRACT_SERVICES)
+
+switch-dev: ENV=development
+switch-dev: setup
+	$(COMPOSE_PROD) down --remove-orphans
+	$(COMPOSE_DEV) up -d
+
+switch-prod: ENV=production
+switch-prod: setup
+	$(COMPOSE_DEV) down --remove-orphans
+	$(COMPOSE_PROD) up -d --build
 
 #---- Logs ----
 
 logs:
-	$(COMPOSE) logs -f
+	$(COMPOSE_ENV) logs -f
 
 logs-frontend:
-	$(COMPOSE) logs -f frontend
+	$(COMPOSE_ENV) logs -f frontend
 
 logs-api:
-	$(COMPOSE) logs -f backend
+	$(COMPOSE_ENV) logs -f backend
 
 logs-nginx:
-	$(COMPOSE) logs -f nginx
+	$(COMPOSE_ENV) logs -f nginx
 
 logs-db:
-	$(COMPOSE) logs -f postgres
+	$(COMPOSE_ENV) logs -f postgres
 
 logs-socket:
-	$(COMPOSE) logs -f socket
+	$(COMPOSE_ENV) logs -f socket
 
 logs-last:
-	$(COMPOSE) logs --tail=100
+	$(COMPOSE_ENV) logs --tail=100
 
 logs-frontend-last:
-	$(COMPOSE) logs --tail=100 frontend
+	$(COMPOSE_ENV) logs --tail=100 frontend
 
 logs-split:
 	-tmux kill-session -t logs 2>/dev/null || true
@@ -233,12 +264,31 @@ tunnel-stable-logs: tunnel-logs
 
 # Quick (dashboard-free) tunnel
 tunnel-quick:
-	sh $(TUNNEL_QUICK_SCRIPT)
+	APP_ENV=development sh $(TUNNEL_QUICK_SCRIPT) development
 
 tunnel-quick-down:
 	$(COMPOSE_DEV) rm -sf cloudflared
 
-tunnel-quick-logs: tunnel-logs
+tunnel-quick-logs:
+	$(COMPOSE_DEV) logs -f cloudflared
+
+demo-tunnel-quick:
+	APP_ENV=demo sh $(TUNNEL_QUICK_SCRIPT) demo
+
+demo-tunnel-quick-down:
+	$(COMPOSE_DEMO) rm -sf cloudflared
+
+demo-tunnel-quick-logs:
+	$(COMPOSE_DEMO) logs -f cloudflared
+
+prod-tunnel-quick:
+	APP_ENV=production sh $(TUNNEL_QUICK_SCRIPT) production
+
+prod-tunnel-quick-down:
+	$(COMPOSE_PROD) rm -sf cloudflared
+
+prod-tunnel-quick-logs:
+	$(COMPOSE_PROD) logs -f cloudflared
 
 #---- Env cleanup ----
 
@@ -251,16 +301,16 @@ clean-all-env:
 #---- Shell access ----
 
 shell-frontend:
-	$(COMPOSE) exec frontend sh
+	$(COMPOSE_ENV) exec frontend sh
 
 shell-api:
-	$(COMPOSE) exec backend sh
+	$(COMPOSE_ENV) exec backend sh
 
 shell-db:
-	$(COMPOSE) exec postgres sh
+	$(COMPOSE_ENV) exec postgres sh
 
 shell-socket:
-	$(COMPOSE) exec socket sh
+	$(COMPOSE_ENV) exec socket sh
 
 #---- Database management ----
 # Development-only DB commands.

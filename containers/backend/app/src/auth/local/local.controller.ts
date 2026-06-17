@@ -11,6 +11,7 @@ import { HttpStatus } from '@contracts/http';
 import { normalizeEmailLocale } from '../mail';
 import * as SharedRepo from '../shared.repo';
 import { getAuthCookieSameSite } from '../auth.cookies';
+import { disconnectUserSockets } from './local.socket-client';
 import * as Service from './local.service';
 
 function errorStatus(code: AuthErrorName): number {
@@ -37,11 +38,11 @@ function sendOk<TResponse>(
 
 type SessionIdentityData = {
   identityKey: string;
+  sessionId: string;
   username: string;
   isGuest: boolean;
   userId?: string;
   guestId?: string;
-  previousGuestId?: string;
 };
 
 type SessionIdentityRes = {
@@ -58,9 +59,14 @@ function newGuestId(): string {
   return randomUUID().replaceAll('-', '').slice(0, 24);
 }
 
-function guestIdentity(guestId: string, guestUsername: string): SessionIdentityData {
+function guestIdentity(
+  guestId: string,
+  guestUsername: string,
+  sessionId: string,
+): SessionIdentityData {
   return {
     identityKey: `guest:${guestId}`,
+    sessionId,
     username: guestUsername,
     isGuest: true,
     guestId,
@@ -81,12 +87,10 @@ export async function postLogin(
   res: Response<LoginRes>,
 ): Promise<void> {
   const result = await Service.login(req.body);
-  const previousGuestId = req.session.guestId;
 
   req.session.regenerate((err) => {
     if (err) return sendError(res, 'AUTH_INTERNAL_ERROR');
     req.session.userId = result.id;
-    req.session.previousGuestId = previousGuestId;
     req.session.guestId = undefined;
     req.session.guestUsername = undefined;
     req.session.save((saveErr) => {
@@ -111,12 +115,10 @@ export async function postGuestSession(
       res,
       {
         identityKey: `user:${user.id}`,
+        sessionId: req.sessionID,
         username: user.username,
         isGuest: false,
         userId: user.id,
-        ...(typeof req.session.previousGuestId === 'string'
-          ? { previousGuestId: req.session.previousGuestId }
-          : {}),
       },
       200,
     );
@@ -135,7 +137,7 @@ export async function postGuestSession(
       return;
     }
 
-    sendOk(res, guestIdentity(guestId, guestUsername), 200);
+    sendOk(res, guestIdentity(guestId, guestUsername, req.sessionID), 200);
   });
 }
 
@@ -154,12 +156,10 @@ export async function getSessionIdentity(
       res,
       {
         identityKey: `user:${user.id}`,
+        sessionId: req.sessionID,
         username: user.username,
         isGuest: false,
         userId: user.id,
-        ...(typeof req.session.previousGuestId === 'string'
-          ? { previousGuestId: req.session.previousGuestId }
-          : {}),
       },
       200,
     );
@@ -178,10 +178,17 @@ export async function getSessionIdentity(
     req.session.guestUsername = guestUsername;
   }
 
-  sendOk(res, guestIdentity(guestId, guestUsername), 200);
+  sendOk(res, guestIdentity(guestId, guestUsername, req.sessionID), 200);
 }
 
-export function postLogout(req: Request, res: Response): void {
+export async function postLogout(req: Request, res: Response): Promise<void> {
+  const userId = req.session.userId;
+  const sessionId = req.sessionID;
+
+  if (typeof userId === 'string' && userId.length > 0 && typeof sessionId === 'string' && sessionId.length > 0) {
+    await disconnectUserSockets(userId, sessionId);
+  }
+
   req.session.destroy((err) => {
     if (err) return sendError(res, 'AUTH_INTERNAL_ERROR');
 

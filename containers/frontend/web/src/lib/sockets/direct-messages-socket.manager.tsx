@@ -81,13 +81,13 @@ export function DirectMessagesSocketManager({
     messageListeners.forEach(([event, handler]) => directMessagesSocket.on(event, handler));
 
     void ensureChatSessionIdentity()
-      .catch((error) => {
-        console.error('Failed to initialize direct-messages session identity', error);
-      })
-      .finally(() => {
+      .then(() => {
         if (isMounted) {
           directMessagesSocket.connect();
         }
+      })
+      .catch((error) => {
+        console.error('Failed to initialize direct-messages session identity', error);
       });
 
     return () => {

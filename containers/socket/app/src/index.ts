@@ -11,7 +11,11 @@ import {
   handlePrepareInvitationRoom,
   handleValidateInvitationReceiver,
 } from './internal/game-invitations.routes';
-import { handleInternalNotify, handlePresenceCheck } from './internal/notify.routes';
+import {
+  handleDisconnectSessionSockets,
+  handleInternalNotify,
+  handlePresenceCheck,
+} from './internal/notify.routes';
 import { registerSockets } from './sockets/socket.register';
 import { logEvents } from './socket.logs';
 
@@ -66,6 +70,7 @@ registerSockets(io);
 
 app.post('/internal/notify', handleInternalNotify);
 app.post('/internal/presence', handlePresenceCheck);
+app.post('/internal/sessions/disconnect-session', handleDisconnectSessionSockets);
 app.post('/internal/direct-messages/dispatch', handleInternalDirectMessageDispatch);
 app.post('/internal/game-invitations/prepare-room', handlePrepareInvitationRoom);
 app.post('/internal/game-invitations/validate-receiver', handleValidateInvitationReceiver);
