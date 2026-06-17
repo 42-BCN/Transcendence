@@ -343,6 +343,11 @@
       "pausedDesc": "Un jugador s'ha desconnectat. El joc queda bloquejat fins que la sala torni a estar completa.",
       "connecting": "Connectant amb el servidor...",
       "debugHint": "Consulta la consola del navegador per veure els registres detallats",
+      "turn": "Torn {num}",
+      "playingAs": "Jugant com a",
+      "dice": "d{num}",
+      "statusWithIcon": "⚡ {status}",
+      "doomIcon": "☠",
       "room": {
         "fields": {
           "gameRoomId": "ID de la sala"

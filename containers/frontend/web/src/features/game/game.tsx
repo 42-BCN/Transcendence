@@ -201,6 +201,7 @@ function AbButtons() {
 }
 
 function DiceButtons() {
+  const t = useTranslations('features.game');
   const ent = useGame((state) => state.getSel());
   const canSelect = useGame((state) => state.canSelect);
   const showMoveRange = useGame((state) => state.showMoveRange);
@@ -219,7 +220,7 @@ function DiceButtons() {
           w="auto"
           className={`px-4 py-2 bg-gray-500 text-white transition-all opacity-60`}
         >
-          {`d${diceNum}`}
+          {t('dice', { num: diceNum })}
         </Button>
       ))}
       {ent?.dice.map((diceNum, i) => (
@@ -244,7 +245,7 @@ function DiceButtons() {
           className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
             ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
         >
-          {`d${diceNum}`}
+          {t('dice', { num: diceNum })}
         </Button>
       ))}
     </div>
@@ -318,7 +319,7 @@ function HUD() {
       </div>
       {ent.status && (
         <div className="text-sm px-2 py-1 rounded w-fit border border-yellow-200/50 bg-yellow-50 text-yellow-800 dark:bg-black/60 dark:text-yellow-200 dark:border-transparent">
-          ⚡ {ent.status}
+          {t('statusWithIcon', { status: ent.status })}
           {ent.statusTurns > 0 ? ` (${ent.statusTurns})` : ''}
         </div>
       )}
@@ -715,6 +716,7 @@ const CLASS_ICON: Record<string, string> = {
 };
 
 function TopBar() {
+  const t = useTranslations('features.game');
   const { theme } = useTheme();
   const doom = useGame((s) => s.doom);
   const phase = useGame((s) => s.phase);
@@ -753,12 +755,12 @@ function TopBar() {
       </span>
 
       <span className="text-[10px] font-mono text-gray-500 dark:text-gray-400 shrink-0">
-        Turn {String(turn).padStart(2, '0')}
+        {t('turn', { num: String(turn).padStart(2, '0') })}
       </span>
 
       <div className="flex flex-1 items-center gap-2">
         <span className="text-[11px] shrink-0" style={{ color: fillColor }}>
-          ☠
+          {t('doomIcon')}
         </span>
         <div className="flex-1 h-1.5 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-800">
           <div
@@ -781,6 +783,7 @@ function TopBar() {
 }
 
 function CharacterCard() {
+  const t = useTranslations('features.game');
   const { theme } = useTheme();
   const assignedCharacter = useGame((s) => s.assignedCharacter);
   const color = CLASS_COLOR[assignedCharacter] ?? CLASS_COLOR.spectator;
@@ -799,7 +802,7 @@ function CharacterCard() {
       <span className="text-base leading-none">{icon}</span>
       <div className="leading-none">
         <div className="text-[9px] tracking-[0.18em] text-gray-500 dark:text-gray-400 uppercase mb-1">
-          Playing as
+          {t('playingAs')}
         </div>
         <div
           className="text-[13px] font-bold uppercase tracking-wide leading-none"

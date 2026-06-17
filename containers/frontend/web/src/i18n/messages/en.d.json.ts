@@ -345,6 +345,11 @@ declare const messages: {
       "pausedDesc": "A player disconnected. The game is blocked until the room is full again.",
       "connecting": "Connecting to Server...",
       "debugHint": "Check browser console for detailed logs",
+      "turn": "Turn {num}",
+      "playingAs": "Playing as",
+      "dice": "d{num}",
+      "statusWithIcon": "⚡ {status}",
+      "doomIcon": "☠",
       "room": {
         "fields": {
           "gameRoomId": "Game room ID"

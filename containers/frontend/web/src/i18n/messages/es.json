@@ -342,6 +342,11 @@
       "pausedDesc": "Un jugador se ha desconectado. El juego queda bloqueado hasta que la sala vuelva a estar completa.",
       "connecting": "Conectando con el servidor...",
       "debugHint": "Consulta la consola del navegador para ver los registros detallados",
+      "turn": "Turno {num}",
+      "playingAs": "Jugando como",
+      "dice": "d{num}",
+      "statusWithIcon": "⚡ {status}",
+      "doomIcon": "☠",
       "room": {
         "fields": {
           "gameRoomId": "ID de la sala"
