@@ -11,6 +11,9 @@ import { Stack } from '@components/primitives/stack';
 import { Text } from '@components/primitives/text';
 import { useShallow } from 'zustand/react/shallow';
 import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/lib/styles/cn';
+import { useGameChatUi } from './game-chat-ui.context';
 import { Crawler } from './meshes/Crawler.jsx';
 import { Drone } from './meshes/Drone.jsx';
 import { Gunner } from './meshes/Gunner.jsx';
@@ -745,6 +748,20 @@ function CharacterCard() {
   );
 }
 
+function GameCanvas() {
+  const chatUi = useGameChatUi();
+  const isMobile = useMediaQuery('(max-width: 1023px)');
+  const blockCanvas = Boolean(isMobile && chatUi?.isChatOpen);
+
+  return (
+    <div className={cn('absolute inset-0', blockCanvas && 'pointer-events-none touch-none')}>
+      <Canvas>
+        <Scene />
+      </Canvas>
+    </div>
+  );
+}
+
 function HandlePhaseScreen() {
   const phase = useGame((state) => state.phase);
   switch (phase) {
@@ -772,9 +789,7 @@ function HandlePhaseScreen() {
           <HUD />
           <Reset />
           <EndPlan />
-          <Canvas>
-            <Scene />
-          </Canvas>
+          <GameCanvas />
         </>
       )
   }

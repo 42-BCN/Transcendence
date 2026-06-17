@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { IconButton } from '@components';
+import { cn } from '@/lib/styles/cn';
 import { ChatFeature } from '@/features/chat';
+import { useGameChatUi } from '@/features/game/game-chat-ui.context';
 import {
   MOBILE_MENU_CLOSE_EVENT,
   MOBILE_MENU_OPEN_EVENT,
@@ -15,6 +17,13 @@ export default function GameSidePage() {
   const t = useTranslations('features.chat');
   const [chatVisible, setChatVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const chatUi = useGameChatUi();
+
+  const setChatOpen = chatUi?.setChatOpen;
+
+  useEffect(() => {
+    setChatOpen?.(chatVisible);
+  }, [chatVisible, setChatOpen]);
 
   useEffect(() => {
     const closeChat = () => {
@@ -57,7 +66,12 @@ export default function GameSidePage() {
         </>
       )}
 
-      <div className={gameSidePageStyles.chatWrapper}>
+      <div
+        className={cn(
+          gameSidePageStyles.chatWrapper,
+          chatVisible ? gameSidePageStyles.chatWrapperActive : gameSidePageStyles.chatWrapperInactive,
+        )}
+      >
         <ChatFeature isVisible={chatVisible} />
       </div>
     </>
