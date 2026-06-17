@@ -10,6 +10,7 @@ import {
   MOBILE_MENU_OPEN_EVENT,
 } from '@/features/navigation/mobile-menu.events';
 import { gameSidePageStyles } from './page.styles';
+import { GameInstructions } from '@/features/game/game-instructions';
 
 export default function GameSidePage() {
   const t = useTranslations('features.chat');
@@ -45,13 +46,18 @@ export default function GameSidePage() {
   return (
     <>
       {!isMenuOpen && (
-        <IconButton
-          onPress={() => setChatVisible((v) => !v)}
-          icon="messages"
-          label={isChatVisible ? t('hideChat') : t('showChat')}
-          className={gameSidePageStyles.toggleButton}
-          placement="left"
-        />
+        <>
+          <IconButton
+            onPress={() => setChatVisible((v) => !v)}
+            icon="messages"
+            label={isChatVisible ? t('hideChat') : t('showChat')}
+            className={gameSidePageStyles.toggleButton}
+            placement="left"
+          />
+          <div className={gameSidePageStyles.helpButton}>
+            <GameInstructions label="Instrucciones del juego" />
+          </div>
+        </>
       )}
 
       <div className={gameSidePageStyles.chatWrapper}>
