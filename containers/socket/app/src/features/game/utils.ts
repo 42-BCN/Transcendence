@@ -92,11 +92,21 @@ export async function nextPhase(sync: () => void, vfx: (effect: vfx) => void) {
   sync();
   try {
     await executionPhase(sync, vfx);
+    if (gameState.phase === 'WIN' || gameState.phase === 'LOSE') {
+      sync();
+      return;
+    }
+
     incrementDoom(vfx);
-    if ((gameState.phase as string) === 'LOSE') {
+    if (gameState.phase === 'LOSE') {
+      sync();
       return;
     }
     await enemyPhase(sync, vfx);
+    if (gameState.phase === 'LOSE') {
+      sync();
+      return;
+    }
     await endTurn(sync, vfx);
   } catch (err) {
     console.error('Turn resolution failed:', err);
@@ -447,15 +457,17 @@ export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
       ent.hasMoved = false;
     }
   };
-  gameState.turn = gameState.turn + 1;
-  gameState.phase = 'PLAN';
-  gameState.history.splice(0);
-  for (const k in gameState.clones)
-    delete (gameState.clones as Record<string, unknown>)[k];
-  for (const k in gameState.forcedMoveOrigins)
-    delete (gameState.forcedMoveOrigins as Record<string, unknown>)[k];
-  for (const k in gameState.planningStatusOrigins)
-    delete (gameState.planningStatusOrigins as Record<string, unknown>)[k];
+  if (gameState.phase !== 'WIN' && gameState.phase !== 'LOSE') {
+    gameState.turn = gameState.turn + 1;
+    gameState.phase = 'PLAN';
+    gameState.history.splice(0);
+    for (const k in gameState.clones)
+      delete (gameState.clones as Record<string, unknown>)[k];
+    for (const k in gameState.forcedMoveOrigins)
+      delete (gameState.forcedMoveOrigins as Record<string, unknown>)[k];
+    for (const k in gameState.planningStatusOrigins)
+      delete (gameState.planningStatusOrigins as Record<string, unknown>)[k];
+  }
   sync();
   for (const id in gameState.clients)
     setClear(id);
