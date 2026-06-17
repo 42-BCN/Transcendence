@@ -9,7 +9,6 @@ type SessionIdentityResponse = {
     isGuest?: boolean;
     userId?: string;
     guestId?: string;
-    previousGuestId?: string;
   };
 };
 
@@ -22,7 +21,6 @@ export type SocketIdentity = {
   isGuest: boolean;
   userId?: string;
   guestId?: string;
-  previousGuestId?: string;
 };
 
 const BACKEND_SESSION_IDENTITY_URL =
@@ -84,9 +82,8 @@ function getRequiredIdentityFields(identity: RawSessionIdentity | undefined) {
 function getOptionalIdentityFields(identity: RawSessionIdentity) {
   const userId = toOptionalString(identity.userId);
   const guestId = toOptionalString(identity.guestId);
-  const previousGuestId = toOptionalString(identity.previousGuestId);
 
-  return { userId, guestId, previousGuestId };
+  return { userId, guestId };
 }
 
 function buildSocketIdentity(
@@ -100,9 +97,6 @@ function buildSocketIdentity(
     isGuest: requiredFields.isGuest,
     ...(optionalFields.userId ? { userId: optionalFields.userId } : {}),
     ...(optionalFields.guestId ? { guestId: optionalFields.guestId } : {}),
-    ...(optionalFields.previousGuestId
-      ? { previousGuestId: optionalFields.previousGuestId }
-      : {}),
   };
 }
 
@@ -122,7 +116,6 @@ function applySocketIdentity(socket: Socket, identity: SocketIdentity) {
   socket.data.identityKey = identity.identityKey;
   socket.data.sessionId = identity.sessionId;
   socket.data.guestId = identity.guestId;
-  socket.data.previousGuestId = identity.previousGuestId;
   socket.data.isGuest = identity.isGuest;
 }
 

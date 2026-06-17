@@ -5,7 +5,6 @@ import {
   cancelPendingGameRoomRemoval,
   decrementGameRoomConnection,
   gameRoomsManager,
-  getPreviousRoomMemberKey,
   getRoomMemberKey,
   incrementGameRoomConnection,
   scheduleGameRoomRemoval,
@@ -191,34 +190,10 @@ function logConnection(socket: Socket, roomMemberKey: string, username: string) 
   console.log('=========================================================');
 }
 
-function migrateGuestRoomIfNeeded(
-  socket: Socket,
-  roomMemberKey: string,
-  previousRoomMemberKey: string | null,
-  username: string,
-) {
-  if (!previousRoomMemberKey) {
-    return;
-  }
-
-  cancelPendingGameRoomRemoval(previousRoomMemberKey);
-
-  const migratedRoom = gameRoomsManager.migrateUserToMemberKey(
-    previousRoomMemberKey,
-    roomMemberKey,
-    username,
-  );
-
-  if (typeof migratedRoom !== 'string') {
-    broadcastRoomUpdate(socket, migratedRoom.id, migratedRoom);
-  }
-}
-
 export function registerGameRoomSocket(nsp: Namespace) {
   gameRoomNamespace = nsp;
   nsp.on('connection', (socket: Socket) => {
     const roomMemberKey = incrementGameRoomConnection(socket);
-    const previousRoomMemberKey = getPreviousRoomMemberKey(socket);
     const username = socket.data.username;
 
     if (!roomMemberKey || typeof username !== 'string' || username.length === 0) {
@@ -226,7 +201,6 @@ export function registerGameRoomSocket(nsp: Namespace) {
       return;
     }
 
-    migrateGuestRoomIfNeeded(socket, roomMemberKey, previousRoomMemberKey, username);
     void socket.join(getGameRoomMemberChannel(roomMemberKey));
     updateGameRoomState(socket);
     socket.nsp.to(socket.id).emit('gameRoom:debug:msg', 'first connection');

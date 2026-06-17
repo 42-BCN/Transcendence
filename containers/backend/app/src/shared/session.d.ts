@@ -5,6 +5,5 @@ declare module 'express-session' {
     userId?: string;
     guestId?: string;
     guestUsername?: string;
-    previousGuestId?: string;
   }
 }

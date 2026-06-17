@@ -23,7 +23,6 @@ type SessionIdentity = {
   isGuest: boolean;
   userId?: string;
   guestId?: string;
-  previousGuestId?: string;
 };
 
 type SessionIdentityResponse = {

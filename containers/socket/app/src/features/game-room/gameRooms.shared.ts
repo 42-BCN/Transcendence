@@ -21,19 +21,6 @@ export function getRoomMemberKey(socket: Socket) {
   );
 }
 
-export function getPreviousRoomMemberKey(socket: Socket) {
-  if (
-    typeof socket.data.previousGuestId === 'string'
-    && socket.data.previousGuestId.length > 0
-    && typeof socket.data.userId === 'string'
-    && socket.data.userId.length > 0
-  ) {
-    return `guest:${socket.data.previousGuestId}`;
-  }
-
-  return null;
-}
-
 export function incrementGameRoomConnection(socket: Socket) {
   const roomMemberKey = getRoomMemberKey(socket);
   if (!roomMemberKey) {

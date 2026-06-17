@@ -33,11 +33,9 @@ export function getGoogleCallback(req: Request, res: Response, next: NextFunctio
       return sendError(res, 'AUTH_INTERNAL_ERROR');
     }
 
-    const previousGuestId = req.session.guestId;
     req.session.regenerate((regenErr) => {
       if (regenErr) return next(regenErr);
       req.session.userId = userId;
-      req.session.previousGuestId = previousGuestId;
       req.session.guestId = undefined;
       req.session.guestUsername = undefined;
       req.session.save((saveErr) => {
