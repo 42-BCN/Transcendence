@@ -169,7 +169,6 @@ function AbButtons() {
                 !selectedAb &&
                 Object.keys(useGame.getState().highlights).length === 0
               ) {
-                console.log('enter');
                 event.stopPropagation();
                 showAbRange(ability);
               }
@@ -180,7 +179,6 @@ function AbButtons() {
                 !selectedAb &&
                 Object.keys(useGame.getState().highlights).length === 0
               ) {
-                console.log('exit');
                 event.stopPropagation();
                 clearSelectables();
               }
