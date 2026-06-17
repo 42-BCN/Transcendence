@@ -12,6 +12,7 @@ import {
 import { RoomsStoreContext, type RoomsStore } from '@/features/rooms/rooms-provider';
 import { useGame } from '@/features/game/store';
 import { gameSidePageStyles } from './page.styles';
+import { GameInstructions } from '@/features/game/game-instructions';
 
 function getIsOverlayActive(
   connectionError: string | null,
@@ -28,6 +29,7 @@ function getIsOverlayActive(
   if (!hasMapBounds || mapWidth === 0) return true;
   return phase === 'WIN' || phase === 'LOSE';
 }
+
 
 function getIsRoomFull(roomsStore: RoomsStore | null) {
   return roomsStore?.roomState?.isGameRoomFull ?? false;
@@ -76,13 +78,18 @@ export default function GameSidePage() {
   return (
     <>
       {!isMenuOpen && !isOverlayActive && (
-        <IconButton
-          onPress={() => setChatVisible((v) => !v)}
-          icon="messages"
-          label={isChatVisible ? t('hideChat') : t('showChat')}
-          className={gameSidePageStyles.toggleButton}
-          placement="left"
-        />
+        <>
+          <IconButton
+            onPress={() => setChatVisible((v) => !v)}
+            icon="messages"
+            label={isChatVisible ? t('hideChat') : t('showChat')}
+            className={gameSidePageStyles.toggleButton}
+            placement="left"
+          />
+          <div className={gameSidePageStyles.helpButton}>
+            <GameInstructions />
+          </div>
+        </>
       )}
 
       {!isOverlayActive && (

@@ -1,507 +1,765 @@
 {
-  "common": {
-    "globalError": {
-      "title": "Algo salió mal",
-      "tryAgain": "Inténtalo de nuevo",
-      "unexpectedMessage": "Ha ocurrido un error inesperado"
-    }
-  },
-  "components": {
-    "breadcrumb": {
-      "edit": "Editar perfil",
-      "home": "Inicio",
-      "me": "Mi Cuenta",
-      "reset-password": "Restablecer Contraseña"
-    },
-    "footer": {
-      "appName": "Transcendence",
-      "copyright": "© {year} {appName}. Todos los derechos reservados",
-      "github": "GitHub",
-      "privacy": "Política de Privacidad",
-      "terms": "Términos de Servicio"
-    },
-    "localeSwitcher": {
-      "ariaLabel": "Idioma",
-      "ca": "CA",
-      "en": "EN",
-      "es": "ES"
-    },
-    "submitButton": {
-      "pendingLabel": "Enviando..."
-    },
-    "textAreaField": {
-      "characterCount": "{current} de {max} caracteres"
-    }
-  },
-  "layouts": {
-    "locale": {
-      "metadata": {
-        "description": "Juega a Transcendence, chatea con amigos y gestiona tu cuenta en un solo lugar.",
-        "title": "Transcendence"
-      }
-    }
-  },
-  "pages": {
-    "home": {
-      "title": "Salas de juego",
-      "subtitle": "Unéte a una sala para empezar a jugar con otros usuarios.",
-      "room": {
-        "label": "Sala #{id}",
-        "statusFull": "La sala está llena",
-        "statusWaiting": "Esperando jugadores…",
-        "playersHeading": "Jugadores en la sala",
-        "invitationsHeading": "Invitaciones enviadas",
-        "invitationsEmpty": "Aún no se han enviado invitaciones desde esta sala.",
-        "invitationAccepted": "Aceptada",
-        "invitationPending": "Pendiente",
-        "receivedInvitationsHeading": "Invitaciones recibidas"
-      },
-      "actions": {
-        "join": "Unirse a cualquier sala disponible",
-        "leave": "Salir de la sala"
-      }
-    },
-    "game": {
-      "description": "Juega a Transcendence y gestiona tus turnos.",
-      "metadata": {
-        "description": "Juega a Transcendence y gestiona tus turnos.",
-        "title": "Juego"
-      },
-      "title": "Juego"
-    },
-    "me": {
-      "metadata": {
-        "description": "Consulta y gestiona los datos de tu cuenta de Transcendence.",
-        "title": "Mi Cuenta"
-      },
-      "subtitle": "Accede a los datos protegidos de tu cuenta.",
-      "title": "Mi Cuenta"
-    },
-    "notFound": {
-      "backToHome": "Volver al inicio",
-      "description": "La página que buscas no existe.",
-      "title": "Página no encontrada"
-    },
-    "privacy": {
-      "metadata": {
-        "description": "Descubre qué datos recopila Transcendence, cómo los usa y cómo los protege.",
-        "title": "Política de Privacidad"
-      },
-      "contact": {
-        "description": "Si tienes alguna pregunta sobre esta política o deseas ejercer tus derechos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
-        "title": "Contacto"
-      },
-      "dataCollected": {
-        "description": "Cuando usas nuestra plataforma, podemos recopilar la siguiente información:",
-        "items": {
-          "email": "Dirección de correo electrónico (usada para el registro y la autenticación)",
-          "technical": "Datos técnicos (tipo de navegador, información del dispositivo y dirección IP con fines de seguridad)",
-          "usage": "Datos de uso (historial de partidas, puntuaciones y registros de interacción)",
-          "username": "Nombre de usuario (elegido por ti para identificarte en el juego)"
-        },
-        "title": "Datos Recopilados"
-      },
-      "dataUsage": {
-        "description": "Los datos que recopilamos se utilizan exclusivamente para los siguientes fines:",
-        "items": {
-          "account": "Gestión de cuentas y autenticación",
-          "communication": "Enviar comunicaciones necesarias relacionadas con tu cuenta",
-          "gameplay": "Proporcionar la experiencia de juego y funciones sociales",
-          "improvement": "Mejorar y optimizar la plataforma"
-        },
-        "title": "Cómo Usamos tus Datos"
-      },
-      "intro": "En Transcendence, valoramos tu privacidad. Esta política describe qué datos recopilamos, cómo los usamos, cómo los almacenamos y qué derechos tienes sobre tu información personal.",
-      "lastUpdated": "Última actualización: Abril 2026",
-      "rights": {
-        "description": "Como usuario, tienes los siguientes derechos sobre tus datos personales:",
-        "items": {
-          "access": "Derecho a acceder a tus datos personales",
-          "deletion": "Derecho a solicitar la eliminación de tus datos",
-          "portability": "Derecho a la portabilidad de datos",
-          "rectification": "Derecho a corregir datos inexactos"
-        },
-        "title": "Tus Derechos"
-      },
-      "storage": {
-        "description": "Tus datos se almacenan de forma segura en nuestros servidores. Implementamos medidas de seguridad estándar de la industria, incluyendo conexiones cifradas (HTTPS), hash seguro de contraseñas y auditorías de seguridad regulares. Conservamos tus datos solo mientras tu cuenta esté activa o según sea necesario para proporcionarte nuestros servicios.",
-        "title": "Almacenamiento y Seguridad de Datos"
-      },
-      "title": "Política de Privacidad"
-    },
-    "terms": {
-      "metadata": {
-        "description": "Consulta las reglas, responsabilidades y condiciones legales para usar Transcendence.",
-        "title": "Términos de Servicio"
-      },
-      "acceptance": {
-        "description": "Al crear una cuenta o utilizar nuestros servicios, aceptas estas condiciones en su totalidad. Si no estás de acuerdo con alguna parte de estos Términos, debes abstenerte de utilizar la plataforma.",
-        "title": "Aceptación de los Términos"
-      },
-      "conduct": {
-        "description": "Para mantener un entorno justo, respetuoso y divertido, te comprometes a no:",
-        "items": {
-          "cheating": "Utilizar trampas, software de automatización (bots) o hacks para obtener ventaja.",
-          "disruption": "Intentar interrumpir la integridad o seguridad de nuestros servidores.",
-          "harassment": "Acosar, abusar o participar en conductas que dañen a la comunidad o a otros jugadores."
-        },
-        "title": "Conducta del Usuario"
-      },
-      "contact": {
-        "description": "Si tienes preguntas o deseas ejercer cualquier derecho relacionado con estos Términos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
-        "title": "Contacto"
-      },
-      "disclaimer": {
-        "description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona tal cual y según disponibilidad. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores.",
-        "title": "Exención de responsabilidad"
-      },
-      "intro": "Bienvenido a Transcendence. El uso de esta plataforma está sujeto a los siguientes Términos de Servicio, que rigen la relación entre tú y el equipo de desarrollo.",
-      "ip": {
-        "description": "Todo el contenido, incluyendo el código del juego, gráficos y marcas registradas, es propiedad de Transcendence. Otorgamos una licencia limitada y no transferible para uso personal y no comercial.",
-        "title": "Propiedad Intelectual"
-      },
-      "lastUpdated": "Última actualización: Abril 2026",
-      "law": {
-        "description": "Estos Términos se rigen e interpretan de acuerdo con las leyes aplicables a los servicios digitales dentro del ámbito de jurisdicción de este proyecto.",
-        "title": "Ley Aplicable"
-      },
-      "registration": {
-        "description": "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades que ocurran bajo tu cuenta.",
-        "items": {
-          "accuracy": "Aceptas proporcionar información precisa y completa durante el registro.",
-          "security": "Debes notificarnos inmediatamente cualquier uso no autorizado de tu cuenta."
-        },
-        "title": "Registro de Cuenta"
-      },
-      "termination": {
-        "description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto.",
-        "title": "Cancelación"
-      },
-      "title": "Términos de Servicio"
-    }
-  },
-  "features": {
-    "auth": {
-      "actions": {
-        "continueWithGoogle": "Continuar con Google",
-        "login": "Iniciar sesión",
-        "logoutAriaLabel": "Cerrar sesión",
-        "resendEmail": "Reenviar correo",
-        "sendEmail": "Enviar correo electrónico",
-        "signup": "Crear cuenta"
-      },
-      "changePassword": {
-        "description": "Introduce tu contraseña actual y elige una nueva.",
-        "submit": "Guardar cambios",
-        "success": "La contraseña se actualizó correctamente.",
-        "title": "Cambiar contraseña"
-      },
-      "fields": {
-        "confirmPassword": {
-          "label": "Confirmar contraseña",
-          "placeholder": "Vuelve a introducir tu contraseña"
-        },
-        "currentPassword": {
-          "label": "Contraseña actual",
-          "placeholder": "Introduce tu contraseña actual"
-        },
-        "email": {
-          "label": "Correo electrónico",
-          "placeholder": "nombre@ejemplo.com"
-        },
-        "identifier": {
-          "description": "Usa el correo o el nombre de usuario con el que te registraste.",
-          "label": "Correo o nombre de usuario",
-          "placeholder": "nombre@ejemplo.com o usuario"
-        },
-        "newPassword": {
-          "description": "Mínimo 8 caracteres.",
-          "label": "Nueva contraseña",
-          "placeholder": "Introduce tu nueva contraseña"
-        },
-        "password": {
-          "description": "Mínimo 8 caracteres.",
-          "label": "Contraseña",
-          "placeholder": "Introduce tu contraseña"
-        },
-        "username": {
-          "label": "Nombre de usuario",
-          "placeholder": "tu_usuario"
-        }
-      },
-      "login": {
-        "forgotPassword": "¿Has olvidado la contraseña?",
-        "goToSignup": "Crear una",
-        "metadata": {
-          "description": "Inicia sesión en tu cuenta de Transcendence para jugar, chatear y gestionar tu perfil.",
-          "title": "Iniciar sesión"
-        },
-        "noAccount": "¿No tienes cuenta?",
-        "submit": "Iniciar sesión",
-        "title": "Iniciar sesión"
-      },
-      "messages": {
-        "or": "O",
-        "success": "Correo enviado. Espera para volver a intentarlo."
-      },
-      "recover": {
-        "backToLogin": "Volver al inicio de sesión",
-        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
-        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
-        "metadata": {
-          "description": "Solicita un correo para restablecer la contraseña y recuperar el acceso a tu cuenta de Transcendence.",
-          "title": "Recuperar cuenta"
-        },
-        "rememberedPassword": "¿Has recordado tu contraseña?",
-        "sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
-        "title": "Revisa tu correo"
-      },
-      "reset": {
-        "backToLogin": "Volver a iniciar sesión",
-        "description": "Introduce tu nueva contraseña.",
-        "metadata": {
-          "description": "Define una nueva contraseña para tu cuenta de Transcendence.",
-          "title": "Restablecer contraseña"
-        },
-        "submit": "Guardar nueva contraseña",
-        "success": "La contraseña se actualizó correctamente.",
-        "title": "Restablecer contraseña"
-      },
-      "signup": {
-        "goToLogin": "Iniciar sesión",
-        "haveAccount": "¿Ya tienes cuenta?",
-        "metadata": {
-          "description": "Crea tu cuenta de Transcendence para empezar a jugar y conectar con amigos.",
-          "title": "Crear cuenta"
-        },
-        "privacy": {
-          "error": "Debes aceptar la Política de Privacidad para continuar.",
-          "label": "He leído y acepto la <link>Política de Privacidad</link>"
-        },
-        "title": "Crear cuenta"
-      },
-      "verification": {
-        "backToLogin": "Iniciar sesión",
-        "checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
-        "checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
-        "invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
-        "isConfirmed": "¿Ya confirmaste?",
-        "metadata": {
-          "description": "Confirma tu dirección de correo para activar tu cuenta de Transcendence.",
-          "title": "Verifica tu correo electrónico"
-        },
-        "missingToken": "Falta el token de verificación.",
-        "recoverTitle": "Recuperar cuenta",
-        "resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta.",
-        "resending": "Enviando...",
-        "resendTitle": "Reenviar correo de verificación",
-        "sent": "Te hemos enviado un correo para confirmar tu cuenta.",
-        "title": "Verifica tu correo electrónico",
-        "verified": "Correo verificado. Redirigiendo a tu perfil...",
-        "verifying": "Verificando tu correo..."
-      }
-    },
-    "chat": {
-      "hideChat": "Ocultar chat",
-      "messageAriaLabel": "Mensaje",
-      "showChat": "Mostrar chat"
-    },
-    "directMessages": {
-      "metadata": {
-        "description": "Abre conversaciones privadas con tus amigos en Transcendence.",
-        "title": "Mensajes directos"
-      },
-      "emptyState": "Todavía no hay conversaciones",
-      "listTitle": "Mensajes",
-      "openList": "Abrir lista de mensajes",
-      "closeList": "Cerrar lista de mensajes",
-      "selectionTitle": "Selecciona una conversación",
-      "selectionBody": "Elige un amigo de la lista para abrir tus mensajes.",
-      "accessTitle": "Mensajes directos",
-      "accessBody": {
-        "authenticated": "Esta conversación solo está disponible entre amigos aceptados.",
-        "unauthenticated": "Necesitas iniciar sesión para abrir un chat privado."
-      },
-      "backToHome": "Volver al inicio",
-      "presence": {
-        "online": "● En línea",
-        "away": "● Ausente",
-        "offline": "Desconectado"
-      }
-    },
-    "game": {
-      "endTurn": "Terminar turno",
-      "healthLabel": "HP",
-      "resetPlan": "Reiniciar plan",
-      "winScreen": "¡HAS GANADO!",
-      "loseScreen": "HAS PERDIDO",
-      "unavailable": "Juego no disponible",
-      "roomNotReady": "La sala no está lista",
-      "roomNotReadyDesc": "Solo puedes acceder al juego cuando la sala tiene 4 jugadores.",
-      "paused": "Juego en pausa",
-      "pausedDesc": "Un jugador se ha desconectado. El juego queda bloqueado hasta que la sala vuelva a estar completa.",
-      "connecting": "Conectando con el servidor...",
-      "debugHint": "Consulta la consola del navegador para ver los registros detallados",
-      "turn": "Turno {num}",
-      "playingAs": "Jugando como",
-      "dice": "d{num}",
-      "statusWithIcon": "⚡ {status}",
-      "doomIcon": "☠\ufe0e",
-      "classes": {
-        "assassin": "Asesino",
-        "paladin": "Paladín",
-        "mage": "Mago",
-        "alchemist": "Alquimista",
-        "spectator": "Espectador"
-      },
-      "room": {
-        "fields": {
-          "gameRoomId": "ID de la sala"
-        }
-      }
-    },
-    "navigation": {
-      "createAccount": "Crear cuenta",
-      "game": "Juego",
-      "home": "Inicio",
-      "messages": "Mensajes",
-      "login": "Iniciar sesión",
-      "logout": "Cerrar sesión",
-      "mainAriaLabel": "Navegación principal",
-      "menu": "Menú",
-      "profile": "Perfil",
-      "settings": "Configuración",
-      "ui": "UI"
-    },
-    "profile": {
-      "actions": {
-        "changePassword": "Cambiar contraseña",
-        "deleteAccount": "Eliminar cuenta",
-        "editProfile": "Editar perfil"
-      },
-      "bio": "Biografía",
-      "delete": {
-        "body": "Esta acción elimina tu cuenta de forma permanente, borra tu perfil y cierra tu sesión. No se puede deshacer.",
-        "cancel": "Cancelar",
-        "description": "Esto elimina tu cuenta de forma permanente y cierra tu sesión.",
-        "title": "¿Eliminar cuenta?"
-      },
-      "edit": {
-        "avatarAlt": "Seleccionar avatar {name}",
-        "chooseAvatar": "Elige tu avatar",
-        "placeholder": "Cuéntales a los demás jugadores un poco sobre ti",
-        "submit": "Guardar cambios",
-        "title": "Editar perfil"
-      },
-      "emptyBio": "Sin biografía",
-      "fail": "No se pudo cargar tu perfil.",
-      "metadata": {
-        "publicDescription": "Consulta el perfil público de {username} en Transcendence."
-      },
-      "provider": "Proveedor",
-      "userId": "ID de usuario",
-      "username": "Nombre de usuario"
-    },
-    "settings": {
-      "dark": "Oscuro",
-      "language": "Idioma",
-      "light": "Claro",
-      "theme": "Tema"
-    },
-    "social": {
-      "actions": {
-        "accept": "Aceptar",
-        "addFriend": "Añadir amigo",
-        "cancel": "Cancelar",
-        "cancelRequest": "Cancelar solicitud",
-        "inviteSent": "Has enviado una invitacion a {username}",
-        "inviteToGame": "Invitar a partida",
-        "message": "Mensaje",
-        "decline": "Rechazar invitación",
-        "reject": "Rechazar",
-        "unfriend": "Eliminar amigo",
-        "inviteErrors": {
-          "GAME_INVITATION_ROOM_REQUIRED": "Conéctate a la sala de juego primero",
-          "GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de juego ya no está disponible",
-          "GAME_INVITATION_DUPLICATE_PENDING": "Invitación ya pendiente",
-          "GAME_INVITATION_RECENT_DUPLICATE": "Acabas de enviar una invitación, espera un momento",
-          "GAME_INVITATION_PENDING_LIMIT": "Demasiadas invitaciones pendientes",
-          "GAME_INVITATION_RATE_LIMITED": "Demasiadas invitaciones enviadas, inténtalo más tarde",
-          "GAME_INVITATION_NOT_FRIEND": "No eres amigo de este usuario",
-          "GAME_INVITATION_ALREADY_IN_ROOM": "Este usuario ya está en una sala de juego",
-          "default": "No se pudo enviar la invitación"
-        }
-      },
-      "emptyStates": {
-        "offline": "No hay amigos desconectados",
-        "online": "No hay amigos conectados",
-        "pending": "No has enviado solicitudes",
-        "request": "No tienes solicitudes pendientes",
-        "search": "No se han encontrado usuarios",
-        "gameInvitations": "Aún no hay invitaciones de juego"
-      },
-      "friends": {
-        "offline": "Amigos desconectados",
-        "online": "Amigos conectados",
-        "title": "Amigos"
-      },
-      "guest": {
-        "body": "Para encontrar amigos, ver quién está conectado y jugar, necesitas una cuenta.",
-        "login": "Iniciar sesión",
-        "noAccount": "¿No tienes cuenta?",
-        "signup": "Crear una",
-        "title": "Conéctate con la comunidad"
-      },
-      "requests": {
-        "now": "ahora",
-        "received": "Recibidas",
-        "sent": "Enviadas",
-        "title": "Solicitudes"
-      },
-      "searchLabel": "Buscador",
-      "searchPlaceholder": "Buscar usuarios",
-      "title": "Social",
-      "gameInvitations": "Invitaciones a juego",
-      "gameInvitationSubtitle": "Invitado a la sala {roomId}",
-      "gameInvitationSentSubtitle": "Invitación pendiente"
-    }
-  },
-  "validation": {
-    "FIELD_TOO_LONG": "Demasiado largo.",
-    "FIELD_TOO_SHORT": "Demasiado corto.",
-    "INVALID_EMAIL": "Introduce un correo electrónico válido.",
-    "INVALID_EMAIL_OR_USERNAME": "Introduce un correo electrónico o nombre de usuario válido.",
-    "INVALID_FORMAT": "Formato no válido.",
-    "INVALID_USERNAME": "El nombre de usuario debe tener entre 3 y 30 caracteres y solo puede contener letras, números, guiones bajos (_) o guiones (-).",
-    "INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
-    "OUT_OF_RANGE": "Solicitud fuera de rango.",
-    "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden.",
-    "REQUIRED": "Este campo es obligatorio.",
-    "USERNAME_TOO_LONG": "El nombre de usuario no puede superar los 30 caracteres.",
-    "USERNAME_TOO_SHORT": "El nombre de usuario debe tener al menos 3 caracteres."
-  },
-  "errors": {
-    "AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
-    "AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
-    "AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
-    "AUTH_FORBIDDEN": "No tienes permiso para acceder a este recurso.",
-    "AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
-    "AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
-    "AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
-    "AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
-    "AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
-    "AUTH_UNAUTHORIZED": "Debes iniciar sesión para ver este contenido.",
-    "FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde.",
-    "FRIENDSHIP_ALREADY_ACCEPTED": "Esta solicitud ya ha sido aceptada.",
-    "FRIENDSHIP_ALREADY_EXISTS": "Ya sois amigos.",
-    "FRIENDSHIP_NOT_FOUND": "No se ha encontrado la amistad.",
-    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad.",
-    "FRIENDSHIP_REQUEST_NOT_FOUND": "La solicitud no existe o ya no está disponible.",
-    "FRIENDSHIP_SELF_REQUEST": "No puedes añadirte a ti mismo.",
-    "generic": "Algo salió mal. Vuelve a intentarlo.",
-    "INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
-    "UNAUTHORIZED_ACTION": "Acción no permitida.",
-    "USER_NOT_FOUND": "Usuario no encontrado.",
-    "VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo."
-  }
+	"common": {
+		"globalError": {
+			"title": "Algo salió mal",
+			"tryAgain": "Inténtalo de nuevo",
+			"unexpectedMessage": "Ha ocurrido un error inesperado"
+		}
+	},
+	"components": {
+		"breadcrumb": {
+			"edit": "Editar perfil",
+			"home": "Inicio",
+			"me": "Mi Cuenta",
+			"reset-password": "Restablecer Contraseña"
+		},
+		"footer": {
+			"appName": "Transcendence",
+			"copyright": "© {year} {appName}. Todos los derechos reservados",
+			"github": "GitHub",
+			"privacy": "Política de Privacidad",
+			"terms": "Términos de Servicio"
+		},
+		"localeSwitcher": {
+			"ariaLabel": "Idioma",
+			"ca": "CA",
+			"en": "EN",
+			"es": "ES"
+		},
+		"submitButton": {
+			"pendingLabel": "Enviando..."
+		},
+		"textAreaField": {
+			"characterCount": "{current} de {max} caracteres"
+		}
+	},
+	"layouts": {
+		"locale": {
+			"metadata": {
+				"description": "Juega a Transcendence, chatea con amigos y gestiona tu cuenta en un solo lugar.",
+				"title": "Transcendence"
+			}
+		}
+	},
+	"pages": {
+		"home": {
+			"title": "Salas de juego",
+			"subtitle": "Unéte a una sala para empezar a jugar con otros usuarios.",
+			"room": {
+				"label": "Sala #{id}",
+				"statusFull": "La sala está llena",
+				"statusWaiting": "Esperando jugadores…",
+				"playersHeading": "Jugadores en la sala",
+				"invitationsHeading": "Invitaciones enviadas",
+				"invitationsEmpty": "Aún no se han enviado invitaciones desde esta sala.",
+				"invitationAccepted": "Aceptada",
+				"invitationPending": "Pendiente",
+				"receivedInvitationsHeading": "Invitaciones recibidas"
+			},
+			"actions": {
+				"join": "Unirse a cualquier sala disponible",
+				"leave": "Salir de la sala"
+			}
+		},
+		"game": {
+			"description": "Juega a Transcendence y gestiona tus turnos.",
+			"metadata": {
+				"description": "Juega a Transcendence y gestiona tus turnos.",
+				"title": "Juego"
+			},
+			"title": "Juego"
+		},
+		"me": {
+			"metadata": {
+				"description": "Consulta y gestiona los datos de tu cuenta de Transcendence.",
+				"title": "Mi Cuenta"
+			},
+			"subtitle": "Accede a los datos protegidos de tu cuenta.",
+			"title": "Mi Cuenta"
+		},
+		"notFound": {
+			"backToHome": "Volver al inicio",
+			"description": "La página que buscas no existe.",
+			"title": "Página no encontrada"
+		},
+		"privacy": {
+			"metadata": {
+				"description": "Descubre qué datos recopila Transcendence, cómo los usa y cómo los protege.",
+				"title": "Política de Privacidad"
+			},
+			"contact": {
+				"description": "Si tienes alguna pregunta sobre esta política o deseas ejercer tus derechos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
+				"title": "Contacto"
+			},
+			"dataCollected": {
+				"description": "Cuando usas nuestra plataforma, podemos recopilar la siguiente información:",
+				"items": {
+					"email": "Dirección de correo electrónico (usada para el registro y la autenticación)",
+					"technical": "Datos técnicos (tipo de navegador, información del dispositivo y dirección IP con fines de seguridad)",
+					"usage": "Datos de uso (historial de partidas, puntuaciones y registros de interacción)",
+					"username": "Nombre de usuario (elegido por ti para identificarte en el juego)"
+				},
+				"title": "Datos Recopilados"
+			},
+			"dataUsage": {
+				"description": "Los datos que recopilamos se utilizan exclusivamente para los siguientes fines:",
+				"items": {
+					"account": "Gestión de cuentas y autenticación",
+					"communication": "Enviar comunicaciones necesarias relacionadas con tu cuenta",
+					"gameplay": "Proporcionar la experiencia de juego y funciones sociales",
+					"improvement": "Mejorar y optimizar la plataforma"
+				},
+				"title": "Cómo Usamos tus Datos"
+			},
+			"intro": "En Transcendence, valoramos tu privacidad. Esta política describe qué datos recopilamos, cómo los usamos, cómo los almacenamos y qué derechos tienes sobre tu información personal.",
+			"lastUpdated": "Última actualización: Abril 2026",
+			"rights": {
+				"description": "Como usuario, tienes los siguientes derechos sobre tus datos personales:",
+				"items": {
+					"access": "Derecho a acceder a tus datos personales",
+					"deletion": "Derecho a solicitar la eliminación de tus datos",
+					"portability": "Derecho a la portabilidad de datos",
+					"rectification": "Derecho a corregir datos inexactos"
+				},
+				"title": "Tus Derechos"
+			},
+			"storage": {
+				"description": "Tus datos se almacenan de forma segura en nuestros servidores. Implementamos medidas de seguridad estándar de la industria, incluyendo conexiones cifradas (HTTPS), hash seguro de contraseñas y auditorías de seguridad regulares. Conservamos tus datos solo mientras tu cuenta esté activa o según sea necesario para proporcionarte nuestros servicios.",
+				"title": "Almacenamiento y Seguridad de Datos"
+			},
+			"title": "Política de Privacidad"
+		},
+		"terms": {
+			"metadata": {
+				"description": "Consulta las reglas, responsabilidades y condiciones legales para usar Transcendence.",
+				"title": "Términos de Servicio"
+			},
+			"acceptance": {
+				"description": "Al crear una cuenta o utilizar nuestros servicios, aceptas estas condiciones en su totalidad. Si no estás de acuerdo con alguna parte de estos Términos, debes abstenerte de utilizar la plataforma.",
+				"title": "Aceptación de los Términos"
+			},
+			"conduct": {
+				"description": "Para mantener un entorno justo, respetuoso y divertido, te comprometes a no:",
+				"items": {
+					"cheating": "Utilizar trampas, software de automatización (bots) o hacks para obtener ventaja.",
+					"disruption": "Intentar interrumpir la integridad o seguridad de nuestros servidores.",
+					"harassment": "Acosar, abusar o participar en conductas que dañen a la comunidad o a otros jugadores."
+				},
+				"title": "Conducta del Usuario"
+			},
+			"contact": {
+				"description": "Si tienes preguntas o deseas ejercer cualquier derecho relacionado con estos Términos, por favor contacta con el equipo abriendo una incidencia en nuestro <link>repositorio de GitHub</link>.",
+				"title": "Contacto"
+			},
+			"disclaimer": {
+				"description": "Transcendence es un proyecto educativo y comunitario. En consecuencia, el servicio se proporciona tal cual y según disponibilidad. No garantizamos que el servicio sea ininterrumpido, puntual, seguro o libre de errores.",
+				"title": "Exención de responsabilidad"
+			},
+			"intro": "Bienvenido a Transcendence. El uso de esta plataforma está sujeto a los siguientes Términos de Servicio, que rigen la relación entre tú y el equipo de desarrollo.",
+			"ip": {
+				"description": "Todo el contenido, incluyendo el código del juego, gráficos y marcas registradas, es propiedad de Transcendence. Otorgamos una licencia limitada y no transferible para uso personal y no comercial.",
+				"title": "Propiedad Intelectual"
+			},
+			"lastUpdated": "Última actualización: Abril 2026",
+			"law": {
+				"description": "Estos Términos se rigen e interpretan de acuerdo con las leyes aplicables a los servicios digitales dentro del ámbito de jurisdicción de este proyecto.",
+				"title": "Ley Aplicable"
+			},
+			"registration": {
+				"description": "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades que ocurran bajo tu cuenta.",
+				"items": {
+					"accuracy": "Aceptas proporcionar información precisa y completa durante el registro.",
+					"security": "Debes notificarnos inmediatamente cualquier uso no autorizado de tu cuenta."
+				},
+				"title": "Registro de Cuenta"
+			},
+			"termination": {
+				"description": "Nos reservamos el derecho de suspender o cerrar tu cuenta a nuestra discreción, sin previo aviso, por conductas que consideremos que violan estos Términos o que resulten perjudiciales para otros usuarios o el proyecto.",
+				"title": "Cancelación"
+			},
+			"title": "Términos de Servicio"
+		}
+	},
+	"features": {
+		"auth": {
+			"actions": {
+				"continueWithGoogle": "Continuar con Google",
+				"login": "Iniciar sesión",
+				"logoutAriaLabel": "Cerrar sesión",
+				"resendEmail": "Reenviar correo",
+				"sendEmail": "Enviar correo electrónico",
+				"signup": "Crear cuenta"
+			},
+			"changePassword": {
+				"description": "Introduce tu contraseña actual y elige una nueva.",
+				"submit": "Guardar cambios",
+				"success": "La contraseña se actualizó correctamente.",
+				"title": "Cambiar contraseña"
+			},
+			"fields": {
+				"confirmPassword": {
+					"label": "Confirmar contraseña",
+					"placeholder": "Vuelve a introducir tu contraseña"
+				},
+				"currentPassword": {
+					"label": "Contraseña actual",
+					"placeholder": "Introduce tu contraseña actual"
+				},
+				"email": {
+					"label": "Correo electrónico",
+					"placeholder": "nombre@ejemplo.com"
+				},
+				"identifier": {
+					"description": "Usa el correo o el nombre de usuario con el que te registraste.",
+					"label": "Correo o nombre de usuario",
+					"placeholder": "nombre@ejemplo.com o usuario"
+				},
+				"newPassword": {
+					"description": "Mínimo 8 caracteres.",
+					"label": "Nueva contraseña",
+					"placeholder": "Introduce tu nueva contraseña"
+				},
+				"password": {
+					"description": "Mínimo 8 caracteres.",
+					"label": "Contraseña",
+					"placeholder": "Introduce tu contraseña"
+				},
+				"username": {
+					"label": "Nombre de usuario",
+					"placeholder": "tu_usuario"
+				}
+			},
+			"login": {
+				"forgotPassword": "¿Has olvidado la contraseña?",
+				"goToSignup": "Crear una",
+				"metadata": {
+					"description": "Inicia sesión en tu cuenta de Transcendence para jugar, chatear y gestionar tu perfil.",
+					"title": "Iniciar sesión"
+				},
+				"noAccount": "¿No tienes cuenta?",
+				"submit": "Iniciar sesión",
+				"title": "Iniciar sesión"
+			},
+			"messages": {
+				"or": "O",
+				"success": "Correo enviado. Espera para volver a intentarlo."
+			},
+			"recover": {
+				"backToLogin": "Volver al inicio de sesión",
+				"checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para crear una nueva contraseña.",
+				"checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, inténtalo de nuevo más tarde.",
+				"metadata": {
+					"description": "Solicita un correo para restablecer la contraseña y recuperar el acceso a tu cuenta de Transcendence.",
+					"title": "Recuperar cuenta"
+				},
+				"rememberedPassword": "¿Has recordado tu contraseña?",
+				"sent": "Te hemos enviado instrucciones para restablecer la contraseña al correo que introdujiste.",
+				"title": "Revisa tu correo"
+			},
+			"reset": {
+				"backToLogin": "Volver a iniciar sesión",
+				"description": "Introduce tu nueva contraseña.",
+				"metadata": {
+					"description": "Define una nueva contraseña para tu cuenta de Transcendence.",
+					"title": "Restablecer contraseña"
+				},
+				"submit": "Guardar nueva contraseña",
+				"success": "La contraseña se actualizó correctamente.",
+				"title": "Restablecer contraseña"
+			},
+			"signup": {
+				"goToLogin": "Iniciar sesión",
+				"haveAccount": "¿Ya tienes cuenta?",
+				"metadata": {
+					"description": "Crea tu cuenta de Transcendence para empezar a jugar y conectar con amigos.",
+					"title": "Crear cuenta"
+				},
+				"privacy": {
+					"error": "Debes aceptar la Política de Privacidad para continuar.",
+					"label": "He leído y acepto la <link>Política de Privacidad</link>"
+				},
+				"title": "Crear cuenta"
+			},
+			"verification": {
+				"backToLogin": "Iniciar sesión",
+				"checkInbox": "Revisa tu bandeja de entrada y sigue las instrucciones para activar tu cuenta.",
+				"checkSpam": "Si no lo encuentras, revisa la carpeta de correo no deseado. Si tampoco está ahí, puedes volver a enviarlo.",
+				"invalidOrExpired": "El enlace de verificación no es válido o ha caducado.",
+				"isConfirmed": "¿Ya confirmaste?",
+				"metadata": {
+					"description": "Confirma tu dirección de correo para activar tu cuenta de Transcendence.",
+					"title": "Verifica tu correo electrónico"
+				},
+				"missingToken": "Falta el token de verificación.",
+				"recoverTitle": "Recuperar cuenta",
+				"resendDescription": "Introduce el correo electrónico que usaste para crear tu cuenta.",
+				"resending": "Enviando...",
+				"resendTitle": "Reenviar correo de verificación",
+				"sent": "Te hemos enviado un correo para confirmar tu cuenta.",
+				"title": "Verifica tu correo electrónico",
+				"verified": "Correo verificado. Redirigiendo a tu perfil...",
+				"verifying": "Verificando tu correo..."
+			}
+		},
+		"chat": {
+			"errors": {
+				"INVALID_CHAT_MESSAGE": "No se pudo enviar el mensaje."
+			},
+			"hideChat": "Ocultar chat",
+			"messageAriaLabel": "Mensaje",
+			"showChat": "Mostrar chat",
+			"system": {
+				"userJoined": "{username} se unió al chat.",
+				"userLeft": "{username} salió del chat."
+			}
+		},
+		"directMessages": {
+			"metadata": {
+				"description": "Abre conversaciones privadas con tus amigos en Transcendence.",
+				"title": "Mensajes directos"
+			},
+			"emptyState": "Todavía no hay conversaciones",
+			"listTitle": "Mensajes",
+			"openList": "Abrir lista de mensajes",
+			"closeList": "Cerrar lista de mensajes",
+			"selectionTitle": "Selecciona una conversación",
+			"selectionBody": "Elige un amigo de la lista para abrir tus mensajes.",
+			"accessTitle": "Mensajes directos",
+			"accessBody": {
+				"authenticated": "Esta conversación solo está disponible entre amigos aceptados.",
+				"unauthenticated": "Necesitas iniciar sesión para abrir un chat privado."
+			},
+			"backToHome": "Volver al inicio",
+			"presence": {
+				"online": "● En línea",
+				"away": "● Ausente",
+				"offline": "Desconectado"
+			}
+		},
+		"game": {
+			"endTurn": "Terminar turno",
+			"healthLabel": "HP",
+			"resetPlan": "Reiniciar plan",
+			"winScreen": "¡HAS GANADO!",
+			"loseScreen": "HAS PERDIDO",
+			"unavailable": "Juego no disponible",
+			"roomNotReady": "La sala no está lista",
+			"roomNotReadyDesc": "Solo puedes acceder al juego cuando la sala tiene 4 jugadores.",
+			"paused": "Juego en pausa",
+			"pausedDesc": "Un jugador se ha desconectado. El juego queda bloqueado hasta que la sala vuelva a estar completa.",
+			"connecting": "Conectando con el servidor...",
+			"debugHint": "Consulta la consola del navegador para ver los registros detallados",
+			"turn": "Turno {num}",
+			"playingAs": "Jugando como",
+			"dice": "d{num}",
+			"statusWithIcon": "⚡ {status}",
+			"doomIcon": "☠\ufe0e",
+			"classes": {
+				"assassin": "Asesino",
+				"paladin": "Paladín",
+				"mage": "Mago",
+				"alchemist": "Alquimista",
+				"spectator": "Espectador"
+			},
+			"instructions": {
+				"title": "Instrucciones del juego",
+				"close": "Cerrar",
+				"objective": {
+					"title": "Objetivo",
+					"intro": "Sois un escuadrón cooperativo de 4 personajes. Debéis destruir el <strong>Generador enemigo</strong> antes de que su energía llegue al 100%.",
+					"energyTitle": "La energía sube al final de cada ronda:",
+					"energyItems": [
+						"+5% por el generador.",
+						"+3% por cada enemigo élite.",
+						"+1% por cada enemigo común."
+					],
+					"loseTitle": "Perdéis si:",
+					"loseItems": [
+						"el generador llega al 100%, o",
+						"mueren los 4 personajes del escuadrón."
+					],
+					"height": "La <strong>altura</strong> afecta a movimiento, alcance, empujes y ataques que solo funcionan arriba o abajo."
+				},
+				"turnStructure": {
+					"title": "Estructura del turno",
+					"planning": {
+						"title": "A. Planificación conjunta (120 seg.)",
+						"body": "Los jugadores deciden qué hace cada personaje, qué habilidad usa, a qué objetivo apunta y qué enemigo atacará a cada uno. Todos deben estar de acuerdo para continuar."
+					},
+					"execution": {
+						"title": "B. Ejecución",
+						"body": "El juego ejecuta automáticamente el plan."
+					},
+					"enemy": {
+						"title": "C. Turno enemigo",
+						"items": [
+							"Sube la energía del generador.",
+							"Los enemigos usan sus dados y acciones.",
+							"La interfaz puede mostrar pistas de objetivo."
+						]
+					}
+				},
+				"generalRules": {
+					"title": "Reglas generales",
+					"items": [
+						"Cada personaje y enemigo tiene su propio set de dados.",
+						"Cada acción consume 1 dado.",
+						"En un turno: moverse o usar habilidades (no ambos).",
+						"Movimiento: una vez por turno, hasta el valor más alto de los dados.",
+						"Habilidades: se aplican si se cumple la condición de la tirada.",
+						"Las unidades con 0 PV mueren."
+					],
+					"diceAction": "Cada acción consume 1 dado."
+				},
+				"abilities": {
+					"title": "Cómo usar las habilidades",
+					"steps": [
+						"Selecciona tu personaje.",
+						"Elige una habilidad.",
+						"Pasa el ratón sobre un dado para ver el rango o efecto.",
+						"Selecciona la casilla u objetivo.",
+						"Confirma dentro de la planificación."
+					]
+				},
+				"playableClasses": {
+					"title": "Clases jugables",
+					"assassin": {
+						"name": "Asesino",
+						"role": "Daño rápido, empujes y control.",
+						"stats": ["PV: 13", "Dados: 4d4 + 1d8"],
+						"skills": [
+							{
+								"name": "Puñalada",
+								"details": ["melee · sin CD · daño: resultado / 2 · cond: par"]
+							},
+							{
+								"name": "Tiro de navajas",
+								"details": ["rango lineal · daño: 2 · sin CD · cond: > 3"]
+							},
+							{
+								"name": "Patada",
+								"details": [
+									"melee · sin CD · daño: 1 · empuja 1 casilla · cond: impar",
+									"el empuje se aplica aunque falle"
+								]
+							},
+							{
+								"name": "Atar",
+								"details": [
+									"melee · sin CD · elimina 1 dado del enemigo · cond: > 1",
+									"no se puede aplicar varias veces al mismo enemigo"
+								]
+							}
+						]
+					},
+					"paladin": {
+						"name": "Paladín",
+						"role": "Tanque y protector.",
+						"stats": ["PV: 16", "Dados: 4d6"],
+						"skills": [
+							{
+								"name": "Estocada",
+								"details": ["rango 1 línea recta · CD 1 · daño: 2 · cond: > 3"]
+							},
+							{
+								"name": "Defender",
+								"details": [
+									"rango 2 · área circular, objetivo único · sin CD",
+									"reduce a la mitad las próximas x instancias de daño · cond: > 1"
+								]
+							},
+							{
+								"name": "Golpe de escudo",
+								"details": [
+									"AOE en cruz · CD 2 · daño: 4x · cond: > 5",
+									"empuja 1 casilla a los enemigos de los extremos (aunque falle)"
+								]
+							},
+							{
+								"name": "Corte vertical",
+								"details": [
+									"melee · CD 1 · cubre todos los niveles",
+									"daño: 2x + 2 si distinto nivel · cond: > 3"
+								]
+							}
+						]
+					},
+					"alchemist": {
+						"name": "Alquimista",
+						"role": "Apoyo, control de zona y debilitación.",
+						"stats": ["PV: 10", "Dados: 1d6 + 1d8 + 1d10"],
+						"skills": [
+							{
+								"name": "Dopaje",
+								"details": [
+									"rango 2 en línea · CD 1 · puede aplicarse a sí mismo",
+									"dona mitad del dado como bonificación a la próxima acción del objetivo"
+								]
+							},
+							{
+								"name": "Matraz de vacío",
+								"details": [
+									"rango circular 2 · centro hasta 3 casillas · AOE · CD 2",
+									"daño: (resultado - 2) / 2 · absorbe hacia el centro · cond: > 5"
+								]
+							},
+							{
+								"name": "Matraz bombástico",
+								"details": [
+									"rango circular 1 en cruz · centro hasta 3 casillas · CD 2",
+									"daño: (resultado - 2) / 2 · empuja diag. hacia arriba · cond: > 5"
+								]
+							},
+							{
+								"name": "Oxidación",
+								"details": [
+									"rango 1 circular · sin CD · reduce armadura del objetivo en x · cond: > 2"
+								]
+							}
+						]
+					},
+					"mage": {
+						"name": "Mago",
+						"role": "Daño en área, fuego y control de niveles.",
+						"stats": ["PV: 8", "Dados: 1d4 + 1d8 + 1d12"],
+						"skills": [
+							{
+								"name": "Aliento de fuego",
+								"details": [
+									"rango 3 · AOE · CD 2 · aplica quemadura 2 turnos (1 daño/turno) · cond: > 3",
+									"melee: daño = resultado / 3 + 2",
+									"media: daño = resultado / 4 + 1 (distinto nivel)",
+									"lejana: daño = resultado / 4 - 2 + 1 (distinto nivel)"
+								]
+							},
+							{
+								"name": "Cometa azur",
+								"details": [
+									"rango infinito mismo plano · CD 3 · daño: resultado / 2 + 2 · cond: > 3"
+								]
+							},
+							{
+								"name": "Pequeño meteoro",
+								"details": [
+									"rango 4 circular · CD 1 · solo zona superior",
+									"daño: x + 2 si distinto nivel · cond: > 2"
+								]
+							},
+							{
+								"name": "Espinas emergentes",
+								"details": [
+									"rango 4 circular · CD 1 · solo zona inferior",
+									"daño: x + 2 si distinto nivel · cond: > 2"
+								]
+							}
+						]
+					}
+				},
+				"enemyClasses": {
+					"title": "Clases enemigas",
+					"drone": {
+						"name": "Dron",
+						"stats": [
+							"PV: 3 · Dados: 3d4",
+							"ataque melee · daño: 1 · cond: x > 1"
+						]
+					},
+					"tracker": {
+						"name": "Rastreador",
+						"stats": [
+							"PV: 4 · Dados: 2d4 + 1d6",
+							"ataque melee · daño: 1 · cond: x > 1"
+						]
+					},
+					"centurion": {
+						"name": "Centurión (élite)",
+						"stats": ["PV: 20 · Escudo: 2 · Dados: d6 + 2d8"],
+						"skills": [
+							{
+								"name": "Embestida",
+								"details": [
+									"rango línea 3 · sin CD · se mueve 3 casillas · empuja perpendicular",
+									"daño: resultado / 2 · cond: > 4 (empuje igualmente se aplica)"
+								]
+							},
+							{
+								"name": "Mini bomba atómica",
+								"details": [
+									"rango circular 2 · CD 2 · se daña 4 a sí misma",
+									"daño: resultado / 2 + 2 · cond: > 3"
+								]
+							}
+						]
+					},
+					"jaeger": {
+						"name": "Jaeger (élite)",
+						"stats": ["PV: 10 · Escudo: 1 · Dados: 2d6 + 1d10"],
+						"skills": [
+							{
+								"name": "Empujón",
+								"details": [
+									"melee · sin CD · empuja 2 casillas · daño: x · cond: x > 3"
+								]
+							},
+							{
+								"name": "Disparo de impacto",
+								"details": [
+									"rango circular 6 · CD 1 · ignora barreras · al de más vida (empate: más lejano)",
+									"daño: resultado / 2 · cond: > 5"
+								]
+							}
+						]
+					}
+				}
+			},
+			"room": {
+				"fields": {
+					"gameRoomId": "ID de la sala"
+				}
+			}
+		},
+		"navigation": {
+			"createAccount": "Crear cuenta",
+			"game": "Juego",
+			"home": "Inicio",
+			"messages": "Mensajes",
+			"login": "Iniciar sesión",
+			"logout": "Cerrar sesión",
+			"mainAriaLabel": "Navegación principal",
+			"menu": "Menú",
+			"profile": "Perfil",
+			"settings": "Configuración",
+			"ui": "UI"
+		},
+		"profile": {
+			"actions": {
+				"changePassword": "Cambiar contraseña",
+				"deleteAccount": "Eliminar cuenta",
+				"editProfile": "Editar perfil"
+			},
+			"bio": "Biografía",
+			"delete": {
+				"body": "Esta acción elimina tu cuenta de forma permanente, borra tu perfil y cierra tu sesión. No se puede deshacer.",
+				"cancel": "Cancelar",
+				"description": "Esto elimina tu cuenta de forma permanente y cierra tu sesión.",
+				"title": "¿Eliminar cuenta?"
+			},
+			"edit": {
+				"avatarAlt": "Seleccionar avatar {name}",
+				"chooseAvatar": "Elige tu avatar",
+				"placeholder": "Cuéntales a los demás jugadores un poco sobre ti",
+				"submit": "Guardar cambios",
+				"title": "Editar perfil"
+			},
+			"emptyBio": "Sin biografía",
+			"fail": "No se pudo cargar tu perfil.",
+			"metadata": {
+				"publicDescription": "Consulta el perfil público de {username} en Transcendence."
+			},
+			"provider": "Proveedor",
+			"userId": "ID de usuario",
+			"username": "Nombre de usuario"
+		},
+		"settings": {
+			"dark": "Oscuro",
+			"language": "Idioma",
+			"light": "Claro",
+			"theme": "Tema"
+		},
+		"social": {
+			"actions": {
+				"accept": "Aceptar",
+				"addFriend": "Añadir amigo",
+				"cancel": "Cancelar",
+				"cancelRequest": "Cancelar solicitud",
+				"inviteSent": "Has enviado una invitacion a {username}",
+				"inviteToGame": "Invitar a partida",
+				"message": "Mensaje",
+				"decline": "Rechazar invitación",
+				"reject": "Rechazar",
+				"unfriend": "Eliminar amigo",
+				"inviteErrors": {
+					"GAME_INVITATION_ROOM_REQUIRED": "Conéctate a la sala de juego primero",
+					"GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de juego ya no está disponible",
+					"GAME_INVITATION_DUPLICATE_PENDING": "Invitación ya pendiente",
+					"GAME_INVITATION_RECENT_DUPLICATE": "Acabas de enviar una invitación, espera un momento",
+					"GAME_INVITATION_PENDING_LIMIT": "Demasiadas invitaciones pendientes",
+					"GAME_INVITATION_RATE_LIMITED": "Demasiadas invitaciones enviadas, inténtalo más tarde",
+					"GAME_INVITATION_NOT_FRIEND": "No eres amigo de este usuario",
+					"GAME_INVITATION_ALREADY_IN_ROOM": "Este usuario ya está en una sala de juego",
+					"default": "No se pudo enviar la invitación"
+				}
+			},
+			"emptyStates": {
+				"offline": "No hay amigos desconectados",
+				"online": "No hay amigos conectados",
+				"pending": "No has enviado solicitudes",
+				"request": "No tienes solicitudes pendientes",
+				"search": "No se han encontrado usuarios",
+				"gameInvitations": "Aún no hay invitaciones de juego"
+			},
+			"friends": {
+				"offline": "Amigos desconectados",
+				"online": "Amigos conectados",
+				"title": "Amigos"
+			},
+			"guest": {
+				"body": "Para encontrar amigos, ver quién está conectado y jugar, necesitas una cuenta.",
+				"login": "Iniciar sesión",
+				"noAccount": "¿No tienes cuenta?",
+				"signup": "Crear una",
+				"title": "Conéctate con la comunidad"
+			},
+			"requests": {
+				"now": "ahora",
+				"received": "Recibidas",
+				"sent": "Enviadas",
+				"title": "Solicitudes"
+			},
+			"searchLabel": "Buscador",
+			"searchPlaceholder": "Buscar usuarios",
+			"title": "Social",
+			"gameInvitations": "Invitaciones a juego",
+			"gameInvitationSubtitle": "Invitado a la sala {roomId}",
+			"gameInvitationSentSubtitle": "Invitación pendiente"
+		}
+	},
+	"validation": {
+		"FIELD_TOO_LONG": "Demasiado largo.",
+		"FIELD_TOO_SHORT": "Demasiado corto.",
+		"INVALID_EMAIL": "Introduce un correo electrónico válido.",
+		"INVALID_EMAIL_OR_USERNAME": "Introduce un correo electrónico o nombre de usuario válido.",
+		"INVALID_FORMAT": "Formato no válido.",
+		"INVALID_USERNAME": "El nombre de usuario debe tener entre 3 y 30 caracteres y solo puede contener letras, números, guiones bajos (_) o guiones (-).",
+		"INVALID_USERNAME_FORMAT": "El nombre de usuario solo puede contener letras, números, guiones bajos (_) y guiones (-).",
+		"OUT_OF_RANGE": "Solicitud fuera de rango.",
+		"PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden.",
+		"REQUIRED": "Este campo es obligatorio.",
+		"USERNAME_TOO_LONG": "El nombre de usuario no puede superar los 30 caracteres.",
+		"USERNAME_TOO_SHORT": "El nombre de usuario debe tener al menos 3 caracteres."
+	},
+	"errors": {
+		"AUTH_ACCOUNT_LOCKED": "Tu cuenta está bloqueada temporalmente. Inténtalo más tarde.",
+		"AUTH_EMAIL_ALREADY_EXISTS": "El correo electrónico ya existe",
+		"AUTH_EMAIL_NOT_VERIFIED": "Verifica tu correo antes de iniciar sesión.",
+		"AUTH_FORBIDDEN": "No tienes permiso para acceder a este recurso.",
+		"AUTH_INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+		"AUTH_INVALID_CREDENTIALS": "Credenciales inválidas",
+		"AUTH_NO_PENDING_RECOVER": "No se encontró ninguna solicitud de restablecimiento. Empieza de nuevo.",
+		"AUTH_RATE_LIMITED": "Demasiados intentos. Inténtalo más tarde.",
+		"AUTH_TOKEN_EXPIRED": "El enlace de verificación no es válido o ha caducado.",
+		"AUTH_UNAUTHORIZED": "Debes iniciar sesión para ver este contenido.",
+		"FETCH_FAILED": "Ha fallado la solicitud a la API. Inténtalo de nuevo más tarde.",
+		"FRIENDSHIP_ALREADY_ACCEPTED": "Esta solicitud ya ha sido aceptada.",
+		"FRIENDSHIP_ALREADY_EXISTS": "Ya sois amigos.",
+		"FRIENDSHIP_NOT_FOUND": "No se ha encontrado la amistad.",
+		"FRIENDSHIP_REQUEST_ALREADY_SENT": "Ya se ha enviado una solicitud de amistad.",
+		"FRIENDSHIP_REQUEST_NOT_FOUND": "La solicitud no existe o ya no está disponible.",
+		"FRIENDSHIP_SELF_REQUEST": "No puedes añadirte a ti mismo.",
+		"generic": "Algo salió mal. Vuelve a intentarlo.",
+		"INTERNAL_ERROR": "Algo salió mal. Vuelve a intentarlo.",
+		"UNAUTHORIZED_ACTION": "Acción no permitida.",
+		"USER_NOT_FOUND": "Usuario no encontrado.",
+		"VALIDATION_ERROR": "Error de validación: revisa los campos e inténtalo de nuevo."
+	}
 }
