@@ -47,7 +47,7 @@
       "subtitle": "Unéte a una sala para empezar a jugar con otros usuarios.",
       "room": {
         "label": "Sala #{id}",
-        "statusFull": "La sala está llena.",
+        "statusFull": "La sala está llena",
         "statusWaiting": "Esperando jugadores…",
         "playersHeading": "Jugadores en la sala",
         "invitationsHeading": "Invitaciones enviadas",

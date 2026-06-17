@@ -50,7 +50,7 @@ declare const messages: {
       "subtitle": "Join a room to start playing with other users.",
       "room": {
         "label": "Room #{id}",
-        "statusFull": "Room is full.",
+        "statusFull": "Room is full",
         "statusWaiting": "Waiting for players…",
         "playersHeading": "Players in room",
         "invitationsHeading": "Invitations sent",
