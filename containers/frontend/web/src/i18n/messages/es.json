@@ -302,9 +302,16 @@
       }
     },
     "chat": {
+      "errors": {
+        "INVALID_CHAT_MESSAGE": "No se pudo enviar el mensaje."
+      },
       "hideChat": "Ocultar chat",
       "messageAriaLabel": "Mensaje",
-      "showChat": "Mostrar chat"
+      "showChat": "Mostrar chat",
+      "system": {
+        "userJoined": "{username} se unió al chat.",
+        "userLeft": "{username} salió del chat."
+      }
     },
     "directMessages": {
       "metadata": {

@@ -305,9 +305,16 @@ declare const messages: {
       }
     },
     "chat": {
+      "errors": {
+        "INVALID_CHAT_MESSAGE": "Message could not be sent."
+      },
       "hideChat": "Hide Chat",
       "messageAriaLabel": "Message",
-      "showChat": "Show Chat"
+      "showChat": "Show Chat",
+      "system": {
+        "userJoined": "{username} joined the chat.",
+        "userLeft": "{username} left the chat."
+      }
     },
     "directMessages": {
       "metadata": {

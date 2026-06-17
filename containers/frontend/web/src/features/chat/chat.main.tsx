@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Button, MessageBubble, ScrollArea, Stack, Text } from '@components';
 import { chatStyles } from './chat.styles';
@@ -221,6 +222,25 @@ function renderInvitationCard(args: {
   );
 }
 
+function getMetaMessageText(
+  message: Extract<ChatMainMessage, { type: 'system' | 'error' }>,
+  t: ReturnType<typeof useTranslations<'features.chat'>>,
+): string {
+  if (message.type === 'system') {
+    if (message.content.text === 'USER_JOINED') {
+      return t('system.userJoined', { username: message.username ?? '' });
+    }
+
+    return t('system.userLeft', { username: message.username ?? '' });
+  }
+
+  if (message.content.text === 'INVALID_CHAT_MESSAGE') {
+    return t('errors.INVALID_CHAT_MESSAGE');
+  }
+
+  return message.content.text;
+}
+
 export function ChatMain({
   messages,
   initialUnreadMessageId,
@@ -254,6 +274,7 @@ export function ChatMain({
 }) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const didScrollToUnreadRef = useRef(false);
+  const t = useTranslations('features.chat');
 
   useEffect(() => {
     if (initialUnreadMessageId && !didScrollToUnreadRef.current) {
@@ -314,7 +335,9 @@ export function ChatMain({
                     variant={textVariant}
                     className={textClassName}
                   >
-                    {content.text}
+                    {type === 'system' || type === 'error'
+                      ? getMetaMessageText(message, t)
+                      : content.text}
                   </Text>
                 )}
               </MessageBubble>
