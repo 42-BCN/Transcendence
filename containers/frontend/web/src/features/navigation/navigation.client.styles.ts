@@ -23,7 +23,7 @@ export const navigationClientStyles = {
     ),
   mobileTrigger: (position: NavigationPosition, forceVisibleTrigger = false) =>
     cn(
-      forceVisibleTrigger ? '' : 'md:hidden',
+      forceVisibleTrigger ? '' : 'lg:hidden',
       navigationPositionClassNames[position].mobileTrigger,
       'pointer-events-auto right-4 top-3 z-[110]',
     ),

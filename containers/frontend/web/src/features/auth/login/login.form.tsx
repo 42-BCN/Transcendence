@@ -18,8 +18,10 @@ export function LoginForm() {
   const [state, formAction] = useActionState(loginAction, null);
   const identifierRef = useAutoFocus<HTMLInputElement>();
 
+  const handleSubmit = createSubmitHandler(form, formAction);
+
   return (
-    <Form onSubmit={createSubmitHandler(form, formAction)}>
+    <Form onSubmit={handleSubmit}>
       <TextField
         value={form.values.identifier}
         errorKey={form.errors.identifier && `validation.${form.errors.identifier}`}
@@ -41,7 +43,7 @@ export function LoginForm() {
         {t('login.forgotPassword')}
       </InternalLink>
       <Stack gap="sm">
-        <SubmitButton idleLabel={t('login.submit')} />
+        <SubmitButton id="login-submit" idleLabel={t('login.submit')} />
         <ApiFeedback result={state ?? null} successMessage={t('messages.success')} />
       </Stack>
     </Form>

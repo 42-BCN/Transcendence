@@ -1,9 +1,11 @@
 import type { Request, Response } from 'express';
+import { z } from 'zod';
 
 import {
   FriendshipInternalNotifyBodySchema,
   FriendshipPresenceCheckBodySchema,
   gameInvitationSocketEvents,
+  friendshipSocketUserIdSchema,
   friendshipSocketEvents,
 } from '@contracts/sockets/friendships/friendships.schema';
 import {
@@ -11,6 +13,7 @@ import {
   getUsersPresence,
   subscribeUserToFriendStatus,
 } from '../features/friends.socket';
+import { disconnectAuthenticatedSessionSockets } from '../sockets/socket.register';
 import { logEvents } from '../socket.logs';
 
 type ZodFlattenableError = {
@@ -120,3 +123,41 @@ export function handlePresenceCheck(req: Request, res: Response): void {
     data: { presence },
   });
 }
+
+export function handleDisconnectSessionSockets(req: Request, res: Response): void {
+  if (!validateInternalSecret(req, res, 'internal_disconnect_session_unauthorized')) return;
+
+  const parsed = DisconnectSessionBodySchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    logEvents.warn({
+      event: 'internal_disconnect_session_validation_failed',
+      errors: parsed.error.flatten(),
+    });
+    respondBadRequest(res, parsed.error);
+    return;
+  }
+
+  const disconnectedSockets = disconnectAuthenticatedSessionSockets(
+    parsed.data.userId,
+    parsed.data.sessionId,
+  );
+
+  logEvents.info({
+    event: 'internal_disconnect_session_succeeded',
+    userId: parsed.data.userId,
+    sessionId: parsed.data.sessionId,
+    disconnectedSockets,
+  });
+
+  res.json({
+    ok: true,
+    data: {
+      disconnectedSockets,
+    },
+  });
+}
+const DisconnectSessionBodySchema = z.object({
+  userId: friendshipSocketUserIdSchema,
+  sessionId: z.string().min(1),
+});

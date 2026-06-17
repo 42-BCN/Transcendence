@@ -1,5 +1,7 @@
 _This project has been created as part of the 42 curriculum by cmanica-, [capapes](https://github.com/carolinapapes), mfontser, joanavar, tatahere._
 
+![DancingRaccon](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDAwdW4wYzhkeTVicHZidHl4ZThqNXJ5NDdva2pwZHRibzZzd3J2NiZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/aQwvKKi4Lv3t63nZl9/giphy.gif)
+
 # Transcendence
 ### A full-stack web platform combining social interaction, real-time systems, and 
 browser-based multiplayer gameplay
@@ -327,6 +329,15 @@ We use a comprehensive Makefile to manage the Docker lifecycle and database util
 - `make shell-api`
 - `make shell-socket`
 - `make shell-db`
+
+**Cloudflare Quick Tunnels**
+Exposes the running app through a temporary `trycloudflare.com` URL (no Cloudflare account required).
+- `make tunnel-quick` — development
+- `make demo-tunnel-quick` — demo
+- `make prod-tunnel-quick` — production
+
+Use the matching logs/down command for the selected environment (e.g. `make demo-tunnel-quick-logs`, `make demo-tunnel-quick-down`).
+Quick Tunnel URLs change every time. If using Google OAuth, update the redirect URI to match the current URL.
 
 ---
 

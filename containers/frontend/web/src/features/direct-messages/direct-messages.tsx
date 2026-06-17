@@ -49,8 +49,10 @@ type DirectMessageContextValue = {
   invitationsByMessageId: Record<string, GameInvitationView>;
   hasLoadedInvitations: boolean;
   joiningInvitationId: string | null;
+  joiningErrorInvitationId: string | null;
   joiningError: string | null;
   decliningInvitationId: string | null;
+  decliningErrorInvitationId: string | null;
   decliningError: string | null;
   hasActiveGameRoom: boolean;
   acceptInvitation: (invitationId: string) => void;
@@ -212,8 +214,10 @@ function DirectMessagesContent({
     invitationsByMessageId,
     hasLoadedInvitations,
     joiningInvitationId,
+    joiningErrorInvitationId,
     joiningError,
     decliningInvitationId,
+    decliningErrorInvitationId,
     decliningError,
     hasActiveGameRoom,
     acceptInvitation,
@@ -230,8 +234,10 @@ function DirectMessagesContent({
         invitationsByMessageId={invitationsByMessageId}
         hasLoadedInvitations={hasLoadedInvitations}
         joiningInvitationId={joiningInvitationId}
+        joiningErrorInvitationId={joiningErrorInvitationId}
         joiningError={joiningError}
         decliningInvitationId={decliningInvitationId}
+        decliningErrorInvitationId={decliningErrorInvitationId}
         decliningError={decliningError}
         hasActiveGameRoom={hasActiveGameRoom}
         onAcceptInvitation={acceptInvitation}
@@ -291,8 +297,10 @@ export function DirectMessagesFeature({
     handleDirectError,
   } = useDirectMessageState(currentUserId);
   const [joiningInvitationId, setJoiningInvitationId] = useState<string | null>(null);
+  const [joiningErrorInvitationId, setJoiningErrorInvitationId] = useState<string | null>(null);
   const [joiningError, setJoiningError] = useState<string | null>(null);
   const [decliningInvitationId, setDecliningInvitationId] = useState<string | null>(null);
+  const [decliningErrorInvitationId, setDecliningErrorInvitationId] = useState<string | null>(null);
   const [decliningError, setDecliningError] = useState<string | null>(null);
   const invitationsByMessageId = useMemo(
     () =>
@@ -370,11 +378,13 @@ export function DirectMessagesFeature({
       }
 
       setJoiningInvitationId(invitationId);
+      setJoiningErrorInvitationId(null);
       setJoiningError(null);
 
       void acceptGameInvitation(invitationId)
         .then((response) => {
           if (!response.ok) {
+            setJoiningErrorInvitationId(invitationId);
             const code = response.error.code;
             if (code === 'GAME_INVITATION_ALREADY_ACCEPTED') {
               setJoiningError('This invitation was already accepted.');
@@ -388,6 +398,7 @@ export function DirectMessagesFeature({
             return;
           }
 
+          setJoiningErrorInvitationId(null);
           roomsStore?.setRoomState(response.data.room);
           void fetchGameInvitationState().then((stateResponse) => {
             if (stateResponse.ok) {
@@ -410,11 +421,13 @@ export function DirectMessagesFeature({
       }
 
       setDecliningInvitationId(invitationId);
+      setDecliningErrorInvitationId(null);
       setDecliningError(null);
 
       void declineGameInvitation(invitationId)
         .then((response) => {
           if (!response.ok) {
+            setDecliningErrorInvitationId(invitationId);
             const code = response.error.code;
             if (code === 'GAME_INVITATION_ALREADY_CANCELLED') {
               setDecliningError('This invitation was already declined.');
@@ -428,6 +441,7 @@ export function DirectMessagesFeature({
             return;
           }
 
+          setDecliningErrorInvitationId(null);
           void fetchGameInvitationState().then((stateResponse) => {
             if (stateResponse.ok) {
               gameInvitationsStore?.getState().setInvitationState(stateResponse.data);
@@ -451,8 +465,10 @@ export function DirectMessagesFeature({
       invitationsByMessageId,
       hasLoadedInvitations,
       joiningInvitationId,
+      joiningErrorInvitationId,
       joiningError,
       decliningInvitationId,
+      decliningErrorInvitationId,
       decliningError,
       hasActiveGameRoom: (roomsStore?.roomState.id ?? 0) > 0,
       acceptInvitation: handleAcceptInvitation,
@@ -467,8 +483,10 @@ export function DirectMessagesFeature({
       hasLoadedInvitations,
       invitationsByMessageId,
       joiningInvitationId,
+      joiningErrorInvitationId,
       joiningError,
       messages,
+      decliningErrorInvitationId,
       roomsStore?.roomState.id,
       sendMessage,
       setValue,

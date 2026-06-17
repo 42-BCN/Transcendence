@@ -8,6 +8,7 @@ import {
   emitGameRoomJoined,
   emitGameRoomStateToMember,
   subscribeMemberToGameRoomChannel,
+  unsubscribeMemberFromGameRoomChannel,
 } from '../features/game-room/gameRoom.socket';
 
 function ensureInternalSecret(req: Request, res: Response): boolean {
@@ -144,6 +145,7 @@ export function handleAcceptInvitationRoom(req: Request, res: Response): void {
 
   const previousRoom = gameRoomsManager.removeUserFromGameRoom(memberKey);
   if (typeof previousRoom !== 'string') {
+    unsubscribeMemberFromGameRoomChannel(memberKey, previousRoom.id);
     broadcastGameRoomState(previousRoom.id, previousRoom);
   }
 

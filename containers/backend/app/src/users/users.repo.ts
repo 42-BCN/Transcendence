@@ -93,10 +93,10 @@ export async function selectUserMeProfileData(id: string): Promise<UserMeProfile
   return row ? mapUserMeProfileRow(row) : null;
 }
 
-export async function updateUserBio(id: string, bio: string): Promise<UserMeProfile | null> {
+export async function updateUserProfile(id: string, bio: string, avatar: string | null): Promise<UserMeProfile | null> {
   const result = await prisma.user.updateMany({
     where: { id },
-    data: { bio },
+    data: { bio, avatar },
   });
 
   if (result.count === 0) return null;

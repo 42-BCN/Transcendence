@@ -2,7 +2,7 @@
 
 import type { FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { Stack, Text, Form, SubmitButton, ScrollArea, Avatar } from '@components';
+import { Stack, Text, Form, SubmitButton, Avatar } from '@components';
 
 import type { gameRoomState, PlayerState } from '@/contracts/sockets/rooms/gameRooms.schema';
 
@@ -12,6 +12,13 @@ import {
 } from '@/lib/sockets/game-room-socket.manager';
 
 import { SentRoomInvitations } from './sent-room-invitations';
+import { gameRoomTestStyles } from './game-room-test.styles';
+
+const AVATAR_COUNT = 4;
+function guestAvatarSrc(username: string): string {
+  const index = [...username].reduce((acc, c) => acc + c.charCodeAt(0), 0) % AVATAR_COUNT;
+  return `/avatars/avatar-${index + 1}.png`;
+}
 
 export function makeGameRoomAction(action: (formData: FormData) => void) {
   return (e: FormEvent<HTMLFormElement>) => {
@@ -26,87 +33,88 @@ type GameRoomTestProps = {
   gameRoomsErrorInfo: string;
 };
 
-export function GameRoomTest({
-  gameRoomStateCtx,
-  gameRoomsErrorInfo,
-}: GameRoomTestProps) {
+export function GameRoomTest({ gameRoomStateCtx, gameRoomsErrorInfo }: GameRoomTestProps) {
   const t = useTranslations('pages.home');
   const isInRoom = gameRoomStateCtx.id !== 0;
+  const teammateUsernames = new Set(gameRoomStateCtx.teammates.map((u: PlayerState) => u.userName));
 
   return (
-    <Stack gap="none" className="h-full min-h-0">
+    <Stack gap="none" className={gameRoomTestStyles.wrapper}>
       {isInRoom ? (
         <>
-          <div className="px-4 pt-14 pb-4 md:px-6 md:pt-8">
-            <Stack gap="xs">
-              <Text as="p" variant="caption" color="tertiary">
-                {t('room.label', { id: gameRoomStateCtx.id })}
-              </Text>
-              <Text as="h1" variant="heading-xl">
-                {gameRoomStateCtx.isGameRoomFull ? t('room.statusFull') : t('room.statusWaiting')}
-              </Text>
-            </Stack>
-          </div>
+          <Stack gap="xs" className={gameRoomTestStyles.header}>
+            <Text as="p" variant="caption" color="tertiary">
+              {t('room.label', { id: gameRoomStateCtx.id })}
+            </Text>
+            <Text as="h1" variant="heading-xl">
+              {gameRoomStateCtx.isGameRoomFull ? t('room.statusFull') : t('room.statusWaiting')}
+            </Text>
+          </Stack>
 
-          <ScrollArea className="px-4 md:px-6">
-            <Stack gap="lg" className="pb-6">
-              {gameRoomStateCtx.teammates.length > 0 && (
-                <Stack gap="sm" as="section" aria-labelledby="players-heading">
-                  <Text as="h2" variant="caption" color="secondary" id="players-heading">
-                    {t('room.playersHeading')}
-                  </Text>
-                  <div className="flex flex-wrap gap-4">
+          <Stack gap="md" className={gameRoomTestStyles.content}>
+            {gameRoomStateCtx.teammates.length > 0 && (
+              <section className={gameRoomTestStyles.avatarSection} aria-labelledby="players-heading">
+                <Text as="h2" variant="caption" color="secondary" id="players-heading">
+                  {t('room.playersHeading')}
+                </Text>
+                <div className={gameRoomTestStyles.avatarScroll}>
+                  <div className={gameRoomTestStyles.avatarRow}>
                     {gameRoomStateCtx.teammates.map((user: PlayerState) => (
-                      <div key={user.userId} className="flex flex-col items-center gap-1">
-                        <Avatar size="lg" alt={user.userName} />
-                        <Text variant="body-xs" color="secondary">{user.userName}</Text>
+                      <div key={user.userId} className={gameRoomTestStyles.avatarItem}>
+                        <Avatar size="lg" src={guestAvatarSrc(user.userName)} alt={user.userName} />
+                        <Text
+                          variant="body-xs"
+                          color="secondary"
+                          className={gameRoomTestStyles.avatarName}
+                          title={user.userName}
+                        >
+                          {user.userName}
+                        </Text>
                       </div>
                     ))}
                   </div>
-                </Stack>
-              )}
+                </div>
+              </section>
+            )}
 
-              <SentRoomInvitations
-                roomId={gameRoomStateCtx.id}
-                teammateUsernames={new Set(gameRoomStateCtx.teammates.map((u: PlayerState) => u.userName))}
-              />
-            </Stack>
-          </ScrollArea>
+            <SentRoomInvitations
+              roomId={gameRoomStateCtx.id}
+              teammateUsernames={teammateUsernames}
+            />
+          </Stack>
 
-          <div className="px-4 pb-6 pt-2 md:px-6">
+          <Stack gap="xs" className={gameRoomTestStyles.footer}>
             {gameRoomsErrorInfo && (
-              <Text variant="caption" color="danger" className="mb-2">
+              <Text variant="caption" color="danger">
                 {gameRoomsErrorInfo}
               </Text>
             )}
             <Form onSubmit={makeGameRoomAction(GameRoomSocketLeaveRoom)}>
               <SubmitButton idleLabel={t('actions.leave')} />
             </Form>
-          </div>
+          </Stack>
         </>
       ) : (
         <>
-          <div className="px-4 pt-14 pb-4 md:px-6 md:pt-8">
-            <Stack gap="xs">
-              <Text as="h1" variant="heading-xl">
-                {t('title')}
-              </Text>
-              <Text as="p" variant="body" color="secondary">
-                {t('subtitle')}
-              </Text>
-            </Stack>
-          </div>
+          <Stack gap="xs" className={gameRoomTestStyles.header}>
+            <Text as="h1" variant="heading-xl">
+              {t('title')}
+            </Text>
+            <Text as="p" variant="body" color="secondary">
+              {t('subtitle')}
+            </Text>
+          </Stack>
 
-          <div className="px-4 pb-6 pt-2 md:px-6">
+          <Stack gap="xs" className={gameRoomTestStyles.footer}>
             {gameRoomsErrorInfo && (
-              <Text variant="caption" color="danger" className="mb-2">
+              <Text variant="caption" color="danger">
                 {gameRoomsErrorInfo}
               </Text>
             )}
             <Form onSubmit={makeGameRoomAction(GameRoomSocketJoinAnyRoom)}>
               <SubmitButton idleLabel={t('actions.join')} />
             </Form>
-          </div>
+          </Stack>
         </>
       )}
     </Stack>

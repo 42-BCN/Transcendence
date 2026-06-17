@@ -33,7 +33,7 @@ export function Oauth({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Button icon={<GoogleLogo />} variant="secondary" onPress={startGoogleOauth}>
+    <Button id="login-google-oauth" icon={<GoogleLogo />} variant="secondary" onPress={startGoogleOauth}>
       {children}
     </Button>
   );

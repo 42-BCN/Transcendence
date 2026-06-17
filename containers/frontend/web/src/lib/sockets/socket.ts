@@ -32,26 +32,71 @@ type ClientToServerRobotsEvents = {
 };
 
 let sessionPromise: Promise<void> | null = null;
+let guestSessionBootstrapEnabled = true;
+let lastSessionEnsureAt = 0;
+const SESSION_ENSURE_CACHE_MS = 1000;
 
 export async function ensureChatSessionIdentity(): Promise<void> {
   if (sessionPromise) return sessionPromise;
 
-  const endpoint = `${envPublic.apiBaseUrl.replace(/\/$/, '')}/auth/guest/session`;
+  if (Date.now() - lastSessionEnsureAt < SESSION_ENSURE_CACHE_MS) {
+    return Promise.resolve();
+  }
 
-  sessionPromise = fetch(endpoint, {
-    method: 'POST',
+  const baseUrl = envPublic.apiBaseUrl.replace(/\/$/, '');
+  const identityEndpoint = `${baseUrl}/auth/session/identity`;
+  const guestEndpoint = `${baseUrl}/auth/guest/session`;
+
+  sessionPromise = fetch(identityEndpoint, {
+    method: 'GET',
     credentials: 'include',
     headers: { Accept: 'application/json' },
+    cache: 'no-store',
   })
     .then((response) => {
-      if (!response.ok) {
-        sessionPromise = null;
-        throw new Error(`Failed to initialize chat session identity (${response.status})`);
+      if (response.ok) {
+        return;
       }
+
+      if (response.status === 429) {
+        return;
+      }
+
+      if (response.status !== 401) {
+        sessionPromise = null;
+        throw new Error(`Failed to read session identity (${response.status})`);
+      }
+
+      if (!guestSessionBootstrapEnabled) {
+        return;
+      }
+
+      return fetch(guestEndpoint, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      }).then((guestResponse) => {
+        if (guestResponse.status === 429) {
+          return;
+        }
+
+        if (!guestResponse.ok) {
+          sessionPromise = null;
+          throw new Error(
+            `Failed to initialize chat session identity (${guestResponse.status})`,
+          );
+        }
+      });
+    })
+    .then(() => {
+      lastSessionEnsureAt = Date.now();
     })
     .catch((error) => {
       sessionPromise = null;
       throw error;
+    })
+    .finally(() => {
+      sessionPromise = null;
     });
 
   return sessionPromise;
@@ -59,6 +104,11 @@ export async function ensureChatSessionIdentity(): Promise<void> {
 
 export function resetChatSessionIdentity(): void {
   sessionPromise = null;
+  lastSessionEnsureAt = 0;
+}
+
+export function setGuestSessionBootstrapEnabled(enabled: boolean): void {
+  guestSessionBootstrapEnabled = enabled;
 }
 
 function createSocketUrl(pathname: string): string {

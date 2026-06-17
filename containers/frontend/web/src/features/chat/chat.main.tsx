@@ -44,7 +44,7 @@ function getInvitationCardState(args: {
   const status = invitation?.status;
   const isExpired = new Date(message.content.expiresAt).getTime() <= Date.now();
   const isAccepted = status === 'accepted' || typeof message.content.acceptedAt === 'string';
-  const isCancelled = status === 'cancelled';
+  const isCancelled = status === 'cancelled' || typeof message.content.cancelledAt === 'string';
 
   return {
     isInvitee: currentUserId === message.content.invitedUserId,
@@ -167,8 +167,10 @@ function renderInvitationCard(args: {
   invitation?: GameInvitationView;
   hasLoadedInvitations?: boolean;
   joiningInvitationId?: string | null;
+  joiningErrorInvitationId?: string | null;
   joiningError?: string | null;
   decliningInvitationId?: string | null;
+  decliningErrorInvitationId?: string | null;
   decliningError?: string | null;
   hasActiveGameRoom?: boolean;
   onAcceptInvitation?: (invitationId: string) => void;
@@ -180,8 +182,10 @@ function renderInvitationCard(args: {
     invitation: _invitation,
     hasLoadedInvitations: _hasLoadedInvitations,
     joiningInvitationId,
+    joiningErrorInvitationId,
     joiningError,
     decliningInvitationId: _decliningInvitationId,
+    decliningErrorInvitationId,
     decliningError,
     hasActiveGameRoom,
     onAcceptInvitation,
@@ -198,8 +202,10 @@ function renderInvitationCard(args: {
         invitationId: message.id,
         isJoining: state.isJoining,
         isDeclining: state.isDeclining,
-        joiningError: joiningError && joiningInvitationId === message.id ? joiningError : null,
-        decliningError: decliningError && state.isDeclining ? decliningError : null,
+        joiningError:
+          joiningError && joiningErrorInvitationId === message.id ? joiningError : null,
+        decliningError:
+          decliningError && decliningErrorInvitationId === message.id ? decliningError : null,
         onAcceptInvitation,
         onDeclineInvitation,
       })
@@ -222,8 +228,10 @@ export function ChatMain({
   invitationsByMessageId,
   hasLoadedInvitations,
   joiningInvitationId,
+  joiningErrorInvitationId,
   joiningError,
   decliningInvitationId,
+  decliningErrorInvitationId,
   decliningError,
   hasActiveGameRoom,
   onAcceptInvitation,
@@ -235,8 +243,10 @@ export function ChatMain({
   invitationsByMessageId?: Record<string, GameInvitationView>;
   hasLoadedInvitations?: boolean;
   joiningInvitationId?: string | null;
+  joiningErrorInvitationId?: string | null;
   joiningError?: string | null;
   decliningInvitationId?: string | null;
+  decliningErrorInvitationId?: string | null;
   decliningError?: string | null;
   hasActiveGameRoom?: boolean;
   onAcceptInvitation?: (invitationId: string) => void;
@@ -289,8 +299,10 @@ export function ChatMain({
                     invitation: invitationsByMessageId?.[message.id],
                     hasLoadedInvitations,
                     joiningInvitationId,
+                    joiningErrorInvitationId,
                     joiningError,
                     decliningInvitationId,
+                    decliningErrorInvitationId,
                     decliningError,
                     hasActiveGameRoom,
                     onAcceptInvitation,
