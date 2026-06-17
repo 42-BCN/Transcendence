@@ -30,6 +30,8 @@ ENV_FILES = \
 	containers/frontend/docker/.env.$(ENV) \
 	containers/database/docker/.env.$(ENV)
 
+GENERATED_ENVS = development production
+
 ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/nginx/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/backend/docker/.env.$(env)) \
@@ -37,8 +39,6 @@ ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/cloudflared/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/frontend/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/database/docker/.env.$(env))
-
-GENERATED_ENVS = development production
 
 .PHONY: all \
 	dev dev-build dev-down dev-clean dev-logs dev-ps \
