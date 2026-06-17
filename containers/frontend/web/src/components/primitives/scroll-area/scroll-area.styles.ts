@@ -7,6 +7,7 @@ const base = `
   overflow-y-auto
   overflow-x-hidden
   overscroll-contain
+  touch-pan-y
 `;
 
 export function scrollAreaStyles(className?: string) {
