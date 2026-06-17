@@ -47,7 +47,7 @@ export default function GameSidePage() {
           <IconButton
             onPress={() => setChatVisible((v) => !v)}
             icon="messages"
-            label={isChatVisible ? t('hideChat') : t('showChat')}
+            label={chatVisible ? t('hideChat') : t('showChat')}
             className={gameSidePageStyles.toggleButton}
             placement="left"
           />
