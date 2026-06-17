@@ -340,6 +340,130 @@
       "endTurn": "End turn",
       "healthLabel": "HP",
       "resetPlan": "Reset plan",
+      "instructions": {
+        "title": "Game instructions",
+        "close": "Close",
+        "objective": {
+          "title": "Objective",
+          "intro": "You are a cooperative squad of 4 characters. You must destroy the <strong>enemy Generator</strong> before its energy reaches 100%.",
+          "energyTitle": "Energy increases at the end of each round:",
+          "energyItems": ["+5% from the generator.", "+3% for each elite enemy.", "+1% for each common enemy."],
+          "loseTitle": "You lose if:",
+          "loseItems": ["the generator reaches 100%, or", "all 4 squad characters die."],
+          "height": "<strong>Height</strong> affects movement, range, pushes, and attacks that only work above or below."
+        },
+        "turnStructure": {
+          "title": "Turn structure",
+          "planning": {
+            "title": "A. Joint planning (120 sec.)",
+            "body": "Players decide what each character does, which ability to use, which target to aim at, and which enemy will attack each player. Everyone must agree before continuing."
+          },
+          "execution": {
+            "title": "B. Execution",
+            "body": "The game automatically executes the plan."
+          },
+          "enemy": {
+            "title": "C. Enemy turn",
+            "items": ["Generator energy increases.", "Enemies use their dice and actions.", "The interface may show target hints."]
+          }
+        },
+        "generalRules": {
+          "title": "General rules",
+          "items": [
+            "Each character and enemy has its own dice set.",
+            "Each action consumes 1 die.",
+            "On a turn: move or use abilities (not both).",
+            "Movement: once per turn, up to the highest die value.",
+            "Abilities: apply if the roll condition is met.",
+            "Units with 0 HP die."
+          ],
+          "diceAction": "Each action consumes 1 die."
+        },
+        "abilities": {
+          "title": "How to use abilities",
+          "steps": [
+            "Select your character.",
+            "Choose an ability.",
+            "Hover over a die to see range or effect.",
+            "Select the tile or target.",
+            "Confirm within the planning phase."
+          ]
+        },
+        "playableClasses": {
+          "title": "Playable classes",
+          "assassin": {
+            "name": "Assassin",
+            "role": "Fast damage, pushes and control.",
+            "stats": ["HP: 13", "Dice: 4d4 + 1d8"],
+            "skills": [
+              { "name": "Backstab", "details": ["melee · no CD · damage: result / 2 · cond: even"] },
+              { "name": "Blade throw", "details": ["linear range · damage: 2 · no CD · cond: > 3"] },
+              { "name": "Kick", "details": ["melee · no CD · damage: 1 · pushes 1 tile · cond: odd", "push applies even on failure"] },
+              { "name": "Bind", "details": ["melee · no CD · removes 1 enemy die · cond: > 1", "cannot be applied multiple times to the same enemy"] }
+            ]
+          },
+          "paladin": {
+            "name": "Paladin",
+            "role": "Tank and protector.",
+            "stats": ["HP: 16", "Dice: 4d6"],
+            "skills": [
+              { "name": "Thrust", "details": ["range 1 straight line · CD 1 · damage: 2 · cond: > 3"] },
+              { "name": "Defend", "details": ["range 2 · circular area, single target · no CD", "halves the next x damage instances · cond: > 1"] },
+              { "name": "Shield bash", "details": ["cross AOE · CD 2 · damage: 4x · cond: > 5", "pushes edge enemies 1 tile (even on failure)"] },
+              { "name": "Vertical slash", "details": ["melee · CD 1 · covers all levels", "damage: 2x + 2 if different level · cond: > 3"] }
+            ]
+          },
+          "alchemist": {
+            "name": "Alchemist",
+            "role": "Support, zone control and weakening.",
+            "stats": ["HP: 10", "Dice: 1d6 + 1d8 + 1d10"],
+            "skills": [
+              { "name": "Doping", "details": ["range 2 in line · CD 1 · can target self", "grants half the die as bonus to target's next action"] },
+              { "name": "Void flask", "details": ["circular range 2 · center up to 3 tiles · AOE · CD 2", "damage: (result - 2) / 2 · pulls toward center · cond: > 5"] },
+              { "name": "Bombastic flask", "details": ["circular range 1 in cross · center up to 3 tiles · CD 2", "damage: (result - 2) / 2 · pushes diagonally upward · cond: > 5"] },
+              { "name": "Oxidation", "details": ["circular range 1 · no CD · reduces target armor by x · cond: > 2"] }
+            ]
+          },
+          "mage": {
+            "name": "Mage",
+            "role": "Area damage, fire and level control.",
+            "stats": ["HP: 8", "Dice: 1d4 + 1d8 + 1d12"],
+            "skills": [
+              { "name": "Fire breath", "details": ["range 3 · AOE · CD 2 · applies burn for 2 turns (1 dmg/turn) · cond: > 3", "melee: damage = result / 3 + 2", "medium: damage = result / 4 + 1 (different level)", "long: damage = result / 4 - 2 + 1 (different level)"] },
+              { "name": "Azure comet", "details": ["infinite range same plane · CD 3 · damage: result / 2 + 2 · cond: > 3"] },
+              { "name": "Small meteor", "details": ["circular range 4 · CD 1 · upper zone only", "damage: x + 2 if different level · cond: > 2"] },
+              { "name": "Emerging thorns", "details": ["circular range 4 · CD 1 · lower zone only", "damage: x + 2 if different level · cond: > 2"] }
+            ]
+          }
+        },
+        "enemyClasses": {
+          "title": "Enemy classes",
+          "drone": {
+            "name": "Drone",
+            "stats": ["HP: 3 · Dice: 3d4", "melee attack · damage: 1 · cond: x > 1"]
+          },
+          "tracker": {
+            "name": "Tracker",
+            "stats": ["HP: 4 · Dice: 2d4 + 1d6", "melee attack · damage: 1 · cond: x > 1"]
+          },
+          "centurion": {
+            "name": "Centurion (elite)",
+            "stats": ["HP: 20 · Shield: 2 · Dice: d6 + 2d8"],
+            "skills": [
+              { "name": "Charge", "details": ["line range 3 · no CD · moves 3 tiles · perpendicular push", "damage: result / 2 · cond: > 4 (push still applies)"] },
+              { "name": "Mini atomic bomb", "details": ["circular range 2 · CD 2 · deals 4 self-damage", "damage: result / 2 + 2 · cond: > 3"] }
+            ]
+          },
+          "jaeger": {
+            "name": "Jaeger (elite)",
+            "stats": ["HP: 10 · Shield: 1 · Dice: 2d6 + 1d10"],
+            "skills": [
+              { "name": "Shove", "details": ["melee · no CD · pushes 2 tiles · damage: x · cond: x > 3"] },
+              { "name": "Impact shot", "details": ["circular range 6 · CD 1 · ignores barriers · targets highest HP (tie: farthest)", "damage: result / 2 · cond: > 5"] }
+            ]
+          }
+        }
+      },
       "room": {
         "fields": {
           "gameRoomId": "Game room ID"

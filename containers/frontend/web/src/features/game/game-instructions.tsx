@@ -2,9 +2,15 @@
 
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { Dialog, Modal, ModalOverlay } from 'react-aria-components';
 import { IconButton } from '@components';
 import { Icon } from '@components/primitives/icon';
+
+type SkillData = { name: string; details: string[] };
+
+const PLAYABLE_CLASS_KEYS = ['assassin', 'paladin', 'alchemist', 'mage'] as const;
+const ENEMY_CLASS_KEYS = ['drone', 'tracker', 'centurion', 'jaeger'] as const;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -26,20 +32,14 @@ function SubSection({ title, children }: { title: string; children: ReactNode })
   );
 }
 
-function Skill({
-  name,
-  details,
-}: {
-  name: string;
-  details: string[];
-}) {
+function Skill({ name, details }: SkillData) {
   return (
     <div className="mb-3 pl-3 border-l-2 border-border-primary">
       <p className="font-semibold text-text-primary text-sm">{name}</p>
       <ul className="mt-1 space-y-0.5">
-        {details.map((d, i) => (
-          <li key={i} className="text-xs text-text-secondary">
-            {d}
+        {details.map((detail, index) => (
+          <li key={index} className="text-xs text-text-secondary">
+            {detail}
           </li>
         ))}
       </ul>
@@ -54,20 +54,20 @@ function EnemyCard({
 }: {
   name: string;
   stats: string[];
-  skills?: { name: string; details: string[] }[];
+  skills?: SkillData[];
 }) {
   return (
     <div className="mb-4 p-3 rounded-lg bg-bg-secondary/40 border border-border-primary">
       <p className="font-bold text-text-primary mb-1">{name}</p>
       <ul className="mb-2 space-y-0.5">
-        {stats.map((s, i) => (
-          <li key={i} className="text-xs text-text-secondary">
-            {s}
+        {stats.map((stat, index) => (
+          <li key={index} className="text-xs text-text-secondary">
+            {stat}
           </li>
         ))}
       </ul>
-      {skills?.map((sk) => (
-        <Skill key={sk.name} name={sk.name} details={sk.details} />
+      {skills?.map((skill) => (
+        <Skill key={skill.name} name={skill.name} details={skill.details} />
       ))}
     </div>
   );
@@ -82,35 +82,60 @@ function ClassCard({
   name: string;
   stats: string[];
   role: string;
-  skills: { name: string; details: string[] }[];
+  skills: SkillData[];
 }) {
   return (
     <div className="mb-4 p-3 rounded-lg bg-bg-secondary/40 border border-border-primary">
       <p className="font-bold text-text-primary">{name}</p>
       <p className="text-xs text-text-secondary italic mb-2">{role}</p>
       <ul className="mb-2 space-y-0.5">
-        {stats.map((s, i) => (
-          <li key={i} className="text-xs text-text-secondary">
-            {s}
+        {stats.map((stat, index) => (
+          <li key={index} className="text-xs text-text-secondary">
+            {stat}
           </li>
         ))}
       </ul>
-      {skills.map((sk) => (
-        <Skill key={sk.name} name={sk.name} details={sk.details} />
+      {skills.map((skill) => (
+        <Skill key={skill.name} name={skill.name} details={skill.details} />
       ))}
     </div>
   );
 }
 
-export function GameInstructions({ label }: { label: string }) {
+function asStringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
+function asSkillArray(value: unknown): SkillData[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.filter(
+    (item): item is SkillData =>
+      typeof item === 'object' &&
+      item !== null &&
+      'name' in item &&
+      'details' in item &&
+      typeof item.name === 'string' &&
+      Array.isArray(item.details),
+  );
+}
+
+export function GameInstructions() {
+  const t = useTranslations('features.game.instructions');
   const [open, setOpen] = useState(false);
+
+  const energyItems = asStringArray(t.raw('objective.energyItems'));
+  const loseItems = asStringArray(t.raw('objective.loseItems'));
+  const enemyTurnItems = asStringArray(t.raw('turnStructure.enemy.items'));
+  const generalRuleItems = asStringArray(t.raw('generalRules.items'));
+  const abilitySteps = asStringArray(t.raw('abilities.steps'));
 
   return (
     <>
       <IconButton
         onPress={() => setOpen(true)}
         icon="help"
-        label={label}
+        label={t('title')}
         placement="left"
       />
 
@@ -120,171 +145,122 @@ export function GameInstructions({ label }: { label: string }) {
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       >
         <Modal className="relative w-[min(90vw,780px)] max-h-[85vh] overflow-hidden rounded-2xl border border-border-primary bg-bg-primary/90 backdrop-blur-md shadow-2xl flex flex-col">
-          <Dialog className="flex flex-col h-full overflow-hidden" aria-label={label}>
-            {/* Header */}
+          <Dialog className="flex flex-col h-full overflow-hidden" aria-label={t('title')}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-border-primary shrink-0">
               <div className="flex items-center gap-2">
                 <Icon name="help" className="w-5 h-5 text-text-secondary" />
-                <span className="font-bold text-text-primary text-base">Instrucciones del juego</span>
+                <span className="font-bold text-text-primary text-base">{t('title')}</span>
               </div>
               <button
                 onClick={() => setOpen(false)}
                 className="rounded-lg p-1 text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors"
-                aria-label="Cerrar"
+                aria-label={t('close')}
               >
                 <Icon name="close" className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Scrollable content */}
             <div className="overflow-y-auto flex-1 px-6 py-5 text-sm">
-
-              {/* --- OBJETIVO --- */}
-              <Section title="Objetivo">
+              <Section title={t('objective.title')}>
                 <p className="text-text-secondary mb-2">
-                  Sois un escuadrón cooperativo de 4 personajes. Debéis destruir el{' '}
-                  <strong className="text-text-primary">Generador enemigo</strong> antes de que su
-                  energía llegue al 100%.
+                  {t.rich('objective.intro', {
+                    strong: (chunks) => (
+                      <strong className="text-text-primary">{chunks}</strong>
+                    ),
+                  })}
                 </p>
-                <p className="text-text-secondary mb-1 font-semibold">La energía sube al final de cada ronda:</p>
+                <p className="text-text-secondary mb-1 font-semibold">{t('objective.energyTitle')}</p>
                 <ul className="list-disc list-inside text-text-secondary space-y-0.5 mb-3">
-                  <li>+5% por el generador.</li>
-                  <li>+3% por cada enemigo élite.</li>
-                  <li>+1% por cada enemigo común.</li>
+                  {energyItems.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
-                <p className="text-text-secondary font-semibold mb-1">Perdéis si:</p>
+                <p className="text-text-secondary font-semibold mb-1">{t('objective.loseTitle')}</p>
                 <ul className="list-disc list-inside text-text-secondary space-y-0.5 mb-3">
-                  <li>el generador llega al 100%, o</li>
-                  <li>mueren los 4 personajes del escuadrón.</li>
+                  {loseItems.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
                 <p className="text-text-secondary">
-                  La <strong className="text-text-primary">altura</strong> afecta a movimiento, alcance, empujes y ataques que solo funcionan arriba o abajo.
+                  {t.rich('objective.height', {
+                    strong: (chunks) => (
+                      <strong className="text-text-primary">{chunks}</strong>
+                    ),
+                  })}
                 </p>
               </Section>
 
-              {/* --- ESTRUCTURA DEL TURNO --- */}
-              <Section title="Estructura del turno">
-                <SubSection title="A. Planificación conjunta (120 seg.)">
-                  <p className="text-text-secondary mb-1">Los jugadores deciden qué hace cada personaje, qué habilidad usa, a qué objetivo apunta y qué enemigo atacará a cada uno. Todos deben estar de acuerdo para continuar.</p>
+              <Section title={t('turnStructure.title')}>
+                <SubSection title={t('turnStructure.planning.title')}>
+                  <p className="text-text-secondary mb-1">{t('turnStructure.planning.body')}</p>
                 </SubSection>
-                <SubSection title="B. Ejecución">
-                  <p className="text-text-secondary">El juego ejecuta automáticamente el plan.</p>
+                <SubSection title={t('turnStructure.execution.title')}>
+                  <p className="text-text-secondary">{t('turnStructure.execution.body')}</p>
                 </SubSection>
-                <SubSection title="C. Turno enemigo">
+                <SubSection title={t('turnStructure.enemy.title')}>
                   <ul className="list-disc list-inside text-text-secondary space-y-0.5">
-                    <li>Sube la energía del generador.</li>
-                    <li>Los enemigos usan sus dados y acciones.</li>
-                    <li>La interfaz puede mostrar pistas de objetivo.</li>
+                    {enemyTurnItems.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
                   </ul>
                 </SubSection>
               </Section>
 
-              {/* --- REGLAS GENERALES --- */}
-              <Section title="Reglas generales">
+              <Section title={t('generalRules.title')}>
                 <ul className="list-disc list-inside text-text-secondary space-y-1">
-                  <li>Cada personaje y enemigo tiene su propio set de dados.</li>
-                  <li><strong className="text-text-primary">Cada acción consume 1 dado.</strong></li>
-                  <li>En un turno: moverse <em>o</em> usar habilidades (no ambos).</li>
-                  <li>Movimiento: una vez por turno, hasta el valor más alto de los dados.</li>
-                  <li>Habilidades: se aplican si se cumple la condición de la tirada.</li>
-                  <li>Las unidades con 0 PV mueren.</li>
+                  {generalRuleItems.map((item, index) => (
+                    <li key={index}>
+                      {index === 1 ? (
+                        <strong className="text-text-primary">{t('generalRules.diceAction')}</strong>
+                      ) : (
+                        item
+                      )}
+                    </li>
+                  ))}
                 </ul>
               </Section>
 
-              {/* --- USO DE HABILIDADES --- */}
-              <Section title="Cómo usar las habilidades">
+              <Section title={t('abilities.title')}>
                 <ol className="list-decimal list-inside text-text-secondary space-y-1">
-                  <li>Selecciona tu personaje.</li>
-                  <li>Elige una habilidad.</li>
-                  <li>Pasa el ratón sobre un dado para ver el rango o efecto.</li>
-                  <li>Selecciona la casilla u objetivo.</li>
-                  <li>Confirma dentro de la planificación.</li>
+                  {abilitySteps.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
                 </ol>
               </Section>
 
-              {/* --- CLASES JUGABLES --- */}
-              <Section title="Clases jugables">
-                <ClassCard
-                  name="Asesino"
-                  stats={['PV: 13', 'Dados: 4d4 + 1d8']}
-                  role="Daño rápido, empujes y control."
-                  skills={[
-                    { name: 'Puñalada', details: ['melee · sin CD · daño: resultado / 2 · cond: par'] },
-                    { name: 'Tiro de navajas', details: ['rango lineal · daño: 2 · sin CD · cond: > 3'] },
-                    { name: 'Patada', details: ['melee · sin CD · daño: 1 · empuja 1 casilla · cond: impar', 'el empuje se aplica aunque falle'] },
-                    { name: 'Atar', details: ['melee · sin CD · elimina 1 dado del enemigo · cond: > 1', 'no se puede aplicar varias veces al mismo enemigo'] },
-                  ]}
-                />
-                <ClassCard
-                  name="Paladín"
-                  stats={['PV: 16', 'Dados: 4d6']}
-                  role="Tanque y protector."
-                  skills={[
-                    { name: 'Estocada', details: ['rango 1 línea recta · CD 1 · daño: 2 · cond: > 3'] },
-                    { name: 'Defender', details: ['rango 2 · área circular, objetivo único · sin CD', 'reduce a la mitad las próximas x instancias de daño · cond: > 1'] },
-                    { name: 'Golpe de escudo', details: ['AOE en cruz · CD 2 · daño: 4x · cond: > 5', 'empuja 1 casilla a los enemigos de los extremos (aunque falle)'] },
-                    { name: 'Corte vertical', details: ['melee · CD 1 · cubre todos los niveles', 'daño: 2x + 2 si distinto nivel · cond: > 3'] },
-                  ]}
-                />
-                <ClassCard
-                  name="Alquimista"
-                  stats={['PV: 10', 'Dados: 1d6 + 1d8 + 1d10']}
-                  role="Apoyo, control de zona y debilitación."
-                  skills={[
-                    { name: 'Dopaje', details: ['rango 2 en línea · CD 1 · puede aplicarse a sí mismo', 'dona mitad del dado como bonificación a la próxima acción del objetivo'] },
-                    { name: 'Matraz de vacío', details: ['rango circular 2 · centro hasta 3 casillas · AOE · CD 2', 'daño: (resultado - 2) / 2 · absorbe hacia el centro · cond: > 5'] },
-                    { name: 'Matraz bombástico', details: ['rango circular 1 en cruz · centro hasta 3 casillas · CD 2', 'daño: (resultado - 2) / 2 · empuja diag. hacia arriba · cond: > 5'] },
-                    { name: 'Oxidación', details: ['rango 1 circular · sin CD · reduce armadura del objetivo en x · cond: > 2'] },
-                  ]}
-                />
-                <ClassCard
-                  name="Mago"
-                  stats={['PV: 8', 'Dados: 1d4 + 1d8 + 1d12']}
-                  role="Daño en área, fuego y control de niveles."
-                  skills={[
-                    {
-                      name: 'Aliento de fuego', details: [
-                        'rango 3 · AOE · CD 2 · aplica quemadura 2 turnos (1 daño/turno) · cond: > 3',
-                        'melee: daño = resultado / 3 + 2',
-                        'media: daño = resultado / 4 + 1 (distinto nivel)',
-                        'lejana: daño = resultado / 4 - 2 + 1 (distinto nivel)',
-                      ]
-                    },
-                    { name: 'Cometa azur', details: ['rango infinito mismo plano · CD 3 · daño: resultado / 2 + 2 · cond: > 3'] },
-                    { name: 'Pequeño meteoro', details: ['rango 4 circular · CD 1 · solo zona superior', 'daño: x + 2 si distinto nivel · cond: > 2'] },
-                    { name: 'Espinas emergentes', details: ['rango 4 circular · CD 1 · solo zona inferior', 'daño: x + 2 si distinto nivel · cond: > 2'] },
-                  ]}
-                />
+              <Section title={t('playableClasses.title')}>
+                {PLAYABLE_CLASS_KEYS.map((classKey) => {
+                  const prefix = `playableClasses.${classKey}` as const;
+
+                  return (
+                    <ClassCard
+                      key={classKey}
+                      name={t(`${prefix}.name`)}
+                      role={t(`${prefix}.role`)}
+                      stats={asStringArray(t.raw(`${prefix}.stats`))}
+                      skills={asSkillArray(t.raw(`${prefix}.skills`))}
+                    />
+                  );
+                })}
               </Section>
 
-              {/* --- ENEMIGOS --- */}
-              <Section title="Clases enemigas">
-                <EnemyCard
-                  name="Dron"
-                  stats={['PV: 3 · Dados: 3d4', 'ataque melee · daño: 1 · cond: x > 1']}
-                />
-                <EnemyCard
-                  name="Rastreador"
-                  stats={['PV: 4 · Dados: 2d4 + 1d6', 'ataque melee · daño: 1 · cond: x > 1']}
-                />
-                <EnemyCard
-                  name="Centurión (élite)"
-                  stats={['PV: 20 · Escudo: 2 · Dados: d6 + 2d8']}
-                  skills={[
-                    { name: 'Embestida', details: ['rango línea 3 · sin CD · se mueve 3 casillas · empuja perpendicular', 'daño: resultado / 2 · cond: > 4 (empuje igualmente se aplica)'] },
-                    { name: 'Mini bomba atómica', details: ['rango circular 2 · CD 2 · se daña 4 a sí misma', 'daño: resultado / 2 + 2 · cond: > 3'] },
-                  ]}
-                />
-                <EnemyCard
-                  name="Jaeger (élite)"
-                  stats={['PV: 10 · Escudo: 1 · Dados: 2d6 + 1d10']}
-                  skills={[
-                    { name: 'Empujón', details: ['melee · sin CD · empuja 2 casillas · daño: x · cond: x > 3'] },
-                    { name: 'Disparo de impacto', details: ['rango circular 6 · CD 1 · ignora barreras · al de más vida (empate: más lejano)', 'daño: resultado / 2 · cond: > 5'] },
-                  ]}
-                />
-              </Section>
+              <Section title={t('enemyClasses.title')}>
+                {ENEMY_CLASS_KEYS.map((enemyKey) => {
+                  const prefix = `enemyClasses.${enemyKey}` as const;
+                  const skills = t.has(`${prefix}.skills`)
+                    ? asSkillArray(t.raw(`${prefix}.skills`))
+                    : undefined;
 
+                  return (
+                    <EnemyCard
+                      key={enemyKey}
+                      name={t(`${prefix}.name`)}
+                      stats={asStringArray(t.raw(`${prefix}.stats`))}
+                      skills={skills}
+                    />
+                  );
+                })}
+              </Section>
             </div>
           </Dialog>
         </Modal>
