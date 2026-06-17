@@ -916,7 +916,6 @@ function HandlePhaseScreen() {
             <Reset />
           </div>
           <HUD />
-          <EndPlan />
           <GameCanvas />
         </div>
       );

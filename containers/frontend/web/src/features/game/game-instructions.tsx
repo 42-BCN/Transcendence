@@ -142,7 +142,7 @@ export function GameInstructions() {
       <ModalOverlay
         isOpen={open}
         onOpenChange={setOpen}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm"
       >
         <Modal className="relative w-[min(90vw,780px)] max-h-[85vh] overflow-hidden rounded-2xl border border-border-primary bg-bg-primary/90 backdrop-blur-md shadow-2xl flex flex-col">
           <Dialog className="flex flex-col h-full overflow-hidden" aria-label={t('title')}>
