@@ -47,6 +47,8 @@ ALL_ENV_FILES = \
 	tunnel tunnel-logs tunnel-down \
 	tunnel-stable tunnel-stable-down tunnel-stable-logs \
 	tunnel-quick tunnel-quick-down tunnel-quick-logs \
+	demo-tunnel-quick demo-tunnel-quick-down demo-tunnel-quick-logs \
+	prod-tunnel-quick prod-tunnel-quick-down prod-tunnel-quick-logs \
 	db-reset db-seed db-push db-setup prisma-generate \
 	clean-env clean-all-env \
 	ps restart rebuild-front rebuild-back rebuild-nginx rebuild-contracts switch-dev switch-prod shell-frontend shell-api shell-db shell-socket setup stop \
@@ -262,12 +264,31 @@ tunnel-stable-logs: tunnel-logs
 
 # Quick (dashboard-free) tunnel
 tunnel-quick:
-	sh $(TUNNEL_QUICK_SCRIPT)
+	APP_ENV=development sh $(TUNNEL_QUICK_SCRIPT) development
 
 tunnel-quick-down:
 	$(COMPOSE_DEV) rm -sf cloudflared
 
-tunnel-quick-logs: tunnel-logs
+tunnel-quick-logs:
+	$(COMPOSE_DEV) logs -f cloudflared
+
+demo-tunnel-quick:
+	APP_ENV=demo sh $(TUNNEL_QUICK_SCRIPT) demo
+
+demo-tunnel-quick-down:
+	$(COMPOSE_DEMO) rm -sf cloudflared
+
+demo-tunnel-quick-logs:
+	$(COMPOSE_DEMO) logs -f cloudflared
+
+prod-tunnel-quick:
+	APP_ENV=production sh $(TUNNEL_QUICK_SCRIPT) production
+
+prod-tunnel-quick-down:
+	$(COMPOSE_PROD) rm -sf cloudflared
+
+prod-tunnel-quick-logs:
+	$(COMPOSE_PROD) logs -f cloudflared
 
 #---- Env cleanup ----
 
