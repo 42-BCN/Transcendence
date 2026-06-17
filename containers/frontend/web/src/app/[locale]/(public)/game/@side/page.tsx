@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 
 import { IconButton } from '@components';
 import { ChatFeature } from '@/features/chat';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import {
   MOBILE_MENU_CLOSE_EVENT,
   MOBILE_MENU_OPEN_EVENT,
@@ -14,10 +13,8 @@ import { GameInstructions } from '@/features/game/game-instructions';
 
 export default function GameSidePage() {
   const t = useTranslations('features.chat');
-  const [chatVisible, setChatVisible] = useState(false);
+  const [chatVisible, setChatVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const isChatVisible = isDesktop ? true : chatVisible;
 
   useEffect(() => {
     const closeChat = () => {
@@ -50,7 +47,7 @@ export default function GameSidePage() {
           <IconButton
             onPress={() => setChatVisible((v) => !v)}
             icon="messages"
-            label={isChatVisible ? t('hideChat') : t('showChat')}
+            label={chatVisible ? t('hideChat') : t('showChat')}
             className={gameSidePageStyles.toggleButton}
             placement="left"
           />
@@ -61,7 +58,7 @@ export default function GameSidePage() {
       )}
 
       <div className={gameSidePageStyles.chatWrapper}>
-        <ChatFeature isVisible={isChatVisible} />
+        <ChatFeature isVisible={chatVisible} />
       </div>
     </>
   );
