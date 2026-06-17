@@ -62,7 +62,7 @@ all: dev switch-prod prod-tunnel-quick
 #---- Setup ----
 
 setup:
-	@APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
+	APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
 
 #---- Development ----
 
