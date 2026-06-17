@@ -222,8 +222,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         if (!client || role === 'spectator' || !client.selectedEnt)
           return;
         const selectedEnt = client.selectedEnt;
-        const playerClone = session.state.clones?.[`clone_${role}`];
-        if (selectedEnt.startsWith('clone_') && playerClone?.hasMoved === true)
+        if (selectedEnt === `clone_${role}` && session.state.clones[`clone_${role}`]?.hasMoved === true)
           return;
         const ent = session.state.players[selectedEnt] || session.state.ghosts[selectedEnt]
           || session.state.enemies[selectedEnt] || session.state.clones[selectedEnt];
@@ -313,6 +312,8 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         const client = getPlayerClientState(session, role, memberKey);
         if (!client)
           return;
+        if (who.replace('clone_', '') !== role)
+          return;
         const ent = session.state.players[who] || session.state.clones[who] || session.state.enemies[who];
         if (!ent)
           return;
@@ -333,6 +334,8 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
       await withSessionState(session, () => {
         const client = getPlayerClientState(session, role, memberKey);
         if (!client)
+          return;
+        if (who.replace('clone_', '') !== role)
           return;
         const ent = session.state.players[who] || session.state.clones[who] || session.state.enemies[who];
         if (!ent)
@@ -355,6 +358,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         client.highlights = {};
         client.selectedDice = null;
       });
+      syncClient(socket, session, role, memberKey);
     });
 
     socket.on('game:client:clearSl', async () => {
@@ -366,6 +370,7 @@ export function registerGameSocket(nsp: Namespace<ClientToServerGameEvents, Serv
         client.selectedDice = null;
         client.canSelect = true;
       });
+      syncClient(socket, session, role, memberKey);
     });
 
     socket.on('game:client:clearSelDice', async () => {

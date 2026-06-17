@@ -211,7 +211,7 @@ function DiceButtons() {
             }}
             onPress={() => {
               if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
-                (canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
+                (!canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
               }
             }}
             className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -321,18 +321,22 @@ function Tile({ id, pos }: { id: string; pos: Position }) {
       onPointerOver={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(true);
-        if (isSelectable && selectedAb) setAoePreview(id);
+        if (isSelectable && selectedAb)
+          setAoePreview(id);
       }}
       onPointerOut={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(false);
-        if (isSelectable && selectedAb) clearAoePreview();
+        if (isSelectable && selectedAb)
+          clearAoePreview();
       }}
       onClick={(event: ThreeEvent<MouseEvent>) => {
         if (phase !== 'PLAN') return;
         event.stopPropagation();
-        if (isSelectable && isHovered) addHistoryAbility(id);
-        else if (isHighlighted && !selectedAb && isHovered) moveClone(id);
+        if (isSelectable && isHovered)
+          addHistoryAbility(id);
+        else if (isHighlighted && !selectedAb && isHovered)
+          moveClone(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
