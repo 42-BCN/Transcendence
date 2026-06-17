@@ -4,11 +4,12 @@ import { useTranslations } from 'next-intl';
 
 import { IconButton } from '@components';
 import { ChatFeature } from '@/features/chat';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import {
   MOBILE_MENU_CLOSE_EVENT,
   MOBILE_MENU_OPEN_EVENT,
 } from '@/features/navigation/mobile-menu.events';
-import { RoomsStoreContext } from '@/features/rooms/rooms-provider';
+import { RoomsStoreContext, type RoomsStore } from '@/features/rooms/rooms-provider';
 import { useGame } from '@/features/game/store';
 import { gameSidePageStyles } from './page.styles';
 
@@ -16,53 +17,30 @@ function getIsOverlayActive(
   connectionError: string | null,
   isRoomFull: boolean,
   mapWidth: number,
-  activePlayersCount: number,
+  activePlayers: string[] | null | undefined,
   hasMapBounds: boolean,
   phase: string,
 ) {
   if (connectionError) return true;
   if (!isRoomFull) return true;
+  const activePlayersCount = activePlayers?.length ?? 0;
   if (mapWidth > 0 && activePlayersCount < 4) return true;
   if (!hasMapBounds || mapWidth === 0) return true;
-  if (phase === 'WIN' || phase === 'LOSE') return true;
-  return false;
+  return phase === 'WIN' || phase === 'LOSE';
 }
 
-export default function GameSidePage() {
-  const t = useTranslations('features.chat');
-  const [chatVisible, setChatVisible] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+function getIsRoomFull(roomsStore: RoomsStore | null) {
+  return roomsStore?.roomState?.isGameRoomFull ?? false;
+}
 
-  const roomsStore = useContext(RoomsStoreContext);
-  const roomState = roomsStore?.roomState;
-  const isRoomFull = roomState?.isGameRoomFull ?? false;
-
-  const connectionError = useGame((state) => state.connectionError);
-  const activePlayers = useGame((state) => state.activePlayers);
-  const mapBounds = useGame((state) => state.mapBounds);
-  const phase = useGame((state) => state.phase);
-
-  const isOverlayActive = getIsOverlayActive(
-    connectionError,
-    isRoomFull,
-    mapBounds.width,
-    activePlayers?.length ?? 0,
-    Boolean(mapBounds),
-    phase,
-  );
-
+function useMobileMenuEffects(
+  setChatVisible: (v: boolean) => void,
+  setIsMenuOpen: (v: boolean) => void,
+) {
   useEffect(() => {
-    const closeChat = () => {
-      setChatVisible(false);
-    };
-
-    const openMenu = () => {
-      setIsMenuOpen(true);
-    };
-
-    const closeMenu = () => {
-      setIsMenuOpen(false);
-    };
+    const closeChat = () => setChatVisible(false);
+    const openMenu = () => setIsMenuOpen(true);
+    const closeMenu = () => setIsMenuOpen(false);
 
     window.addEventListener(MOBILE_MENU_OPEN_EVENT, closeChat);
     window.addEventListener(MOBILE_MENU_OPEN_EVENT, openMenu);
@@ -73,7 +51,27 @@ export default function GameSidePage() {
       window.removeEventListener(MOBILE_MENU_OPEN_EVENT, openMenu);
       window.removeEventListener(MOBILE_MENU_CLOSE_EVENT, closeMenu);
     };
-  }, []);
+  }, [setChatVisible, setIsMenuOpen]);
+}
+
+export default function GameSidePage() {
+  const t = useTranslations('features.chat');
+  const [chatVisible, setChatVisible] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isChatVisible = isDesktop ? true : chatVisible;
+
+  const roomsStore = useContext(RoomsStoreContext);
+  const isOverlayActive = getIsOverlayActive(
+    useGame((state) => state.connectionError),
+    getIsRoomFull(roomsStore),
+    useGame((state) => state.mapBounds.width),
+    useGame((state) => state.activePlayers),
+    Boolean(useGame((state) => state.mapBounds)),
+    useGame((state) => state.phase),
+  );
+
+  useMobileMenuEffects(setChatVisible, setIsMenuOpen);
 
   return (
     <>
@@ -81,7 +79,7 @@ export default function GameSidePage() {
         <IconButton
           onPress={() => setChatVisible((v) => !v)}
           icon="messages"
-          label={chatVisible ? t('hideChat') : t('showChat')}
+          label={isChatVisible ? t('hideChat') : t('showChat')}
           className={gameSidePageStyles.toggleButton}
           placement="left"
         />
@@ -89,7 +87,7 @@ export default function GameSidePage() {
 
       {!isOverlayActive && (
         <div className={gameSidePageStyles.chatWrapper}>
-          <ChatFeature isVisible={chatVisible} />
+          <ChatFeature isVisible={isChatVisible} />
         </div>
       )}
     </>

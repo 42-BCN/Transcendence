@@ -37,23 +37,6 @@ services:
       - backend
     restart: unless-stopped
 
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    env_file:
-      - ./cloudflared/.env.${APP_ENV:-development}
-    command:
-      - --no-autoupdate
-      - --protocol
-      - http2
-      - --url
-      - https://nginx:443
-      - --no-tls-verify
-    depends_on:
-      - nginx
-    restart: unless-stopped
-    networks:
-      - edge
-
   storybook:
     profiles:
       - storybook

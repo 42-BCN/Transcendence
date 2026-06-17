@@ -2,8 +2,15 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Stack, Text, Avatar } from '@components';
+import { Text, Avatar } from '@components';
 import { useGameInvitationsStore } from '@/features/game-invitations/store/game-invitations.provider';
+import { gameRoomTestStyles } from './game-room-test.styles';
+
+const AVATAR_COUNT = 4;
+function guestAvatarSrc(username: string): string {
+  const index = [...username].reduce((acc, c) => acc + c.charCodeAt(0), 0) % AVATAR_COUNT;
+  return `/avatars/avatar-${index + 1}.png`;
+}
 
 type RoomInvitationsProps = {
   roomId: number;
@@ -50,38 +57,56 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
   if (!hasSent && !hasReceived) return null;
 
   return (
-    <Stack gap="md">
+    <div className={gameRoomTestStyles.sections}>
       {hasSent && (
-        <Stack gap="sm" as="section" aria-labelledby="sent-invitations-heading">
+        <section className={gameRoomTestStyles.avatarSection} aria-labelledby="sent-invitations-heading">
           <Text as="h2" variant="caption" color="secondary" id="sent-invitations-heading">
             {t('invitationsHeading')}
           </Text>
-          <div className="flex flex-wrap gap-4">
-            {filteredSent.map((inv) => (
-              <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
-                <Avatar size="lg" alt={inv.friendUsername} />
-                <Text variant="body-xs" color="secondary">{inv.friendUsername}</Text>
-              </div>
-            ))}
+          <div className={gameRoomTestStyles.avatarScroll}>
+            <div className={gameRoomTestStyles.avatarRow}>
+              {filteredSent.map((inv) => (
+                <div key={inv.id} className={gameRoomTestStyles.invitationAvatarItem}>
+                  <Avatar size="lg" src={guestAvatarSrc(inv.friendUsername)} alt={inv.friendUsername} />
+                  <Text
+                    variant="body-xs"
+                    color="secondary"
+                    className={gameRoomTestStyles.avatarName}
+                    title={inv.friendUsername}
+                  >
+                    {inv.friendUsername}
+                  </Text>
+                </div>
+              ))}
+            </div>
           </div>
-        </Stack>
+        </section>
       )}
 
       {hasReceived && (
-        <Stack gap="sm" as="section" aria-labelledby="received-invitations-heading">
+        <section className={gameRoomTestStyles.avatarSection} aria-labelledby="received-invitations-heading">
           <Text as="h2" variant="caption" color="secondary" id="received-invitations-heading">
             {t('receivedInvitationsHeading')}
           </Text>
-          <div className="flex flex-wrap gap-4">
-            {filteredReceived.map((inv) => (
-              <div key={inv.id} className="flex flex-col items-center gap-1 opacity-50">
-                <Avatar size="lg" alt={inv.friendUsername} />
-                <Text variant="body-xs" color="secondary">{inv.friendUsername}</Text>
-              </div>
-            ))}
+          <div className={gameRoomTestStyles.avatarScroll}>
+            <div className={gameRoomTestStyles.avatarRow}>
+              {filteredReceived.map((inv) => (
+                <div key={inv.id} className={gameRoomTestStyles.invitationAvatarItem}>
+                  <Avatar size="lg" src={guestAvatarSrc(inv.friendUsername)} alt={inv.friendUsername} />
+                  <Text
+                    variant="body-xs"
+                    color="secondary"
+                    className={gameRoomTestStyles.avatarName}
+                    title={inv.friendUsername}
+                  >
+                    {inv.friendUsername}
+                  </Text>
+                </div>
+              ))}
+            </div>
           </div>
-        </Stack>
+        </section>
       )}
-    </Stack>
+    </div>
   );
 }
