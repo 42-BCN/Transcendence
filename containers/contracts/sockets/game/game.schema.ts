@@ -121,6 +121,7 @@ export interface ClientToServerGameEvents {
   'game:client:resetHistory': () => void;
   'game:client:sync': () => void;
   'game:client:globalSync': () => void;
+  'game:client:resetGame': () => void;
 }
 
 export type ServerToClientGameEvents = {
