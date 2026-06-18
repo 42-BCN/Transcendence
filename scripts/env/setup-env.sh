@@ -220,8 +220,7 @@ sync_db_vars_if_needed() {
 
   default_user="${backend_user:-${db_user:-app}}"
   default_password="${backend_password:-${db_password:-change-me}}"
-  _default_db_name="$([ "$APP_ENV" = "development" ] && echo "app_development" || echo "app")"
-  default_db="${backend_db:-${db_name:-$_default_db_name}}"
+  default_db="${backend_db:-${db_name:-app}}"
 
   printf "Postgres user [%s]: " "$default_user"
   read -r input_user
