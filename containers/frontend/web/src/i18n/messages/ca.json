@@ -353,6 +353,8 @@
 			"turn": "Torn {num}",
 			"playingAs": "Jugant com a",
 			"dice": "d{num}",
+			"reset": "Reiniciar",
+			"exit": "Sortir",
 			"statusWithIcon": "⚡ {status}",
 			"doomIcon": "☠\ufe0e",
 			"classes": {

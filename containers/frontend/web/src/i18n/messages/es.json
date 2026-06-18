@@ -352,6 +352,8 @@
 			"turn": "Turno {num}",
 			"playingAs": "Jugando como",
 			"dice": "d{num}",
+			"reset": "Reiniciar",
+			"exit": "Salir",
 			"statusWithIcon": "⚡ {status}",
 			"doomIcon": "☠\ufe0e",
 			"classes": {

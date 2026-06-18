@@ -92,18 +92,18 @@ export async function nextPhase(sync: () => void, vfx: (effect: vfx) => void) {
   sync();
   try {
     await executionPhase(sync, vfx);
-    if (gameState.phase === 'WIN' || gameState.phase === 'LOSE') {
+    if ((gameState.phase as string) === 'WIN' || (gameState.phase as string) === 'LOSE') {
       sync();
       return;
     }
 
     incrementDoom(vfx);
-    if (gameState.phase === 'LOSE') {
+    if ((gameState.phase as string) === 'LOSE') {
       sync();
       return;
     }
     await enemyPhase(sync, vfx);
-    if (gameState.phase === 'LOSE') {
+    if ((gameState.phase as string) === 'LOSE') {
       sync();
       return;
     }
@@ -465,7 +465,7 @@ export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
       ent.hasMoved = false;
     }
   };
-  if (gameState.phase !== 'WIN' && gameState.phase !== 'LOSE') {
+  if ((gameState.phase as string) !== 'WIN' && (gameState.phase as string) !== 'LOSE') {
     gameState.turn = gameState.turn + 1;
     gameState.phase = 'PLAN';
     gameState.history.splice(0);

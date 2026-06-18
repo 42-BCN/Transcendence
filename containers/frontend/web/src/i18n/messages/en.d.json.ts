@@ -355,6 +355,8 @@ declare const messages: {
 			"turn": "Turn {num}",
 			"playingAs": "Playing as",
 			"dice": "d{num}",
+			"reset": "Reset",
+			"exit": "Exit",
 			"statusWithIcon": "⚡ {status}",
 			"doomIcon": "☠\ufe0e",
 			"classes": {
