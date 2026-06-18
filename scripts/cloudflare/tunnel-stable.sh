@@ -5,12 +5,28 @@ set -eu
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 SETUP_SCRIPT="$ROOT_DIR/scripts/env/setup-env.sh"
+TARGET_ENV="${1:-${APP_ENV:-development}}"
 ENV_FILE="${CLOUDFLARED_ENV_FILE:-$ROOT_DIR/containers/cloudflared/.env.development}"
 
-compose_dev() {
-  APP_ENV=development NODE_ENV=development docker compose \
+case "$TARGET_ENV" in
+  development)
+    NODE_ENV_VALUE="development"
+    COMPOSE_OVERRIDE="containers/docker-compose.dev.yml"
+    ;;
+  production)
+    NODE_ENV_VALUE="production"
+    COMPOSE_OVERRIDE="containers/docker-compose.prod.yml"
+    ;;
+  *)
+    echo "Unsupported environment: $TARGET_ENV" >&2
+    exit 1
+    ;;
+esac
+
+compose_env() {
+  APP_ENV="$TARGET_ENV" NODE_ENV="$NODE_ENV_VALUE" docker compose \
     -f "$ROOT_DIR/containers/docker-compose.yml" \
-    -f "$ROOT_DIR/containers/docker-compose.dev.yml" \
+    -f "$ROOT_DIR/$COMPOSE_OVERRIDE" \
     "$@"
 }
 
@@ -40,14 +56,14 @@ echo
 echo "Starting stable Cloudflare tunnel..."
 echo "Public URL: $PUBLIC_APP_URL"
 echo "Syncing PUBLIC_APP_URL into generated env files..."
-PUBLIC_APP_URL="$PUBLIC_APP_URL" APP_ENV=development sh "$SETUP_SCRIPT" development
+PUBLIC_APP_URL="$PUBLIC_APP_URL" APP_ENV="$TARGET_ENV" sh "$SETUP_SCRIPT" "$TARGET_ENV"
 
 echo
 echo "Recreating frontend, backend, and socket for the stable tunnel URL..."
-compose_dev up -d --no-deps --force-recreate frontend backend socket > /dev/null
+compose_env up -d --no-deps --force-recreate frontend backend socket > /dev/null
 
 echo "Starting cloudflared..."
-compose_dev up -d cloudflared > /dev/null
+compose_env up -d cloudflared > /dev/null
 
 echo
 echo "Stable tunnel ready: $PUBLIC_APP_URL"

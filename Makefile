@@ -62,7 +62,7 @@ all: init-envs
 	$(MAKE) db-setup
 	$(COMPOSE_DEV) down --remove-orphans
 	$(COMPOSE_PROD) up -d --build
-	APP_ENV=production sh $(TUNNEL_QUICK_SCRIPT) production
+	$(MAKE) ENV=production tunnel
 
 init-envs:
 	$(MAKE) setup-dev
@@ -225,7 +225,7 @@ logs-split:
 #---- Cloudflare tunnel ----
 
 tunnel:
-	sh $(TUNNEL_SCRIPT)
+	APP_ENV=$(ENV) sh $(TUNNEL_SCRIPT) $(ENV)
 
 tunnel-logs:
 	$(COMPOSE_DEV) logs -f cloudflared
