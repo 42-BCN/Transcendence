@@ -352,8 +352,8 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
     if (!target)
       continue;
     const validAbs = enemy.abilities
-      .map((name: string) => ({ name, ab: getAbility(name) }))
-      .filter(({ ab }: { name: string; ab: abilityInfo }) => ab.name !== 'error' && ab.range > 0)
+      .map((name) => ({ name, ab: getAbility(name) }))
+      .filter(({ name, ab }) => ab.name !== 'error' && ab.range > 0 && !enemy.abilitiesCD[name])
       .sort((a: { name: string; ab: abilityInfo }, b: { name: string; ab: abilityInfo }) =>
         (b.ab.range + (b.ab.AoErange ?? 0)) -
         (a.ab.range + (a.ab.AoErange ?? 0))
@@ -1139,7 +1139,7 @@ export function initState() {
         break;
       case "generator":
         enemEnt[entity.id] = {
-          ...base(), ...entity, type: "enemy", hp: 1, maxHp: 50, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 50, maxHp: 50, armor: 0,
           abilities: [],
           dice: [],
         }

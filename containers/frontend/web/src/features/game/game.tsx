@@ -904,6 +904,7 @@ function HandlePhaseScreen() {
           icon="🏆"
           title={t('winScreen')}
           accentColor="text-emerald-600 dark:text-emerald-400"
+          extra={
             <div className="flex gap-4 justify-center">
               <Button variant="primary" w="auto" onPress={resetGame}>
                 Reset
@@ -912,6 +913,7 @@ function HandlePhaseScreen() {
                 Exit Room
               </Button>
             </div>
+          }
         />
       );
     case 'LOSE':
@@ -920,6 +922,7 @@ function HandlePhaseScreen() {
           icon="💀"
           title={t('loseScreen')}
           accentColor="text-rose-600 dark:text-rose-400"
+          extra={
             <div className="flex gap-4 justify-center">
               <Button variant="primary" w="auto" onPress={resetGame}>
                 Reset
@@ -928,6 +931,7 @@ function HandlePhaseScreen() {
                 Exit Room
               </Button>
             </div>
+          }
         />
       );
     case 'PLAN':
