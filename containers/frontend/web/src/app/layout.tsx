@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { mono, primary } from './fonts';
 import { createAppMetadata } from '@/lib/metadata/metadata.config';
 import { routing } from '@/i18n/routing';
 import './globals.css';
@@ -26,7 +25,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html
       lang={routing.defaultLocale}
-      className={`${primary.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -45,8 +43,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             `,
           }}
         />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" />
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
       </head>
-
       <body className="min-h-[100dvh] flex text-text-primary bg-bg-primary transition-colors duration-300">
         <div
           id="tahatahere"
