@@ -307,7 +307,7 @@ This builds and starts production, prepares the database, and starts a Cloudflar
   > **Note**: For details on environment variables and certificates, refer to `scripts/env/README.md` and `scripts/certs/README.md`.
 
 ### Deployment Environments
-- `make` — Production evaluation flow (build + DB setup + quick tunnel)
+- `make` — Full evaluation flow: setup dev env, setup prod env, run dev, switch to prod, then open a production quick tunnel
 - `make dev` — Development mode with hot-reloading
 - `make prod` — Production build only
 - `make setup-dev` — Generate development env files and certificates
