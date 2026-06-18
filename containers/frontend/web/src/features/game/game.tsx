@@ -907,10 +907,10 @@ function HandlePhaseScreen() {
           extra={
             <div className="flex gap-4 justify-center">
               <Button variant="primary" w="auto" onPress={resetGame}>
-                Reset
+                {t('Reset')}
               </Button>
               <Button w="auto" onPress={handleExitRoom}>
-                Exit Room
+                {t('Exit')}
               </Button>
             </div>
           }
@@ -925,10 +925,10 @@ function HandlePhaseScreen() {
           extra={
             <div className="flex gap-4 justify-center">
               <Button variant="primary" w="auto" onPress={resetGame}>
-                Reset
+                {t('Reset')}
               </Button>
               <Button w="auto" onPress={handleExitRoom}>
-                Exit Room
+                {t('Exit')}
               </Button>
             </div>
           }
