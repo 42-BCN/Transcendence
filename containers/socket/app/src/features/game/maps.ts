@@ -13,8 +13,8 @@ wwwwwwwwww
 wwwwwwwwww
 wwwwwwwwww,
 
-wwwwgowwww
-wwowoowoww
+wwwwwwwwww
+wwowwwwoww
 wooowwooow
 ooooooooow
 oooooooooo

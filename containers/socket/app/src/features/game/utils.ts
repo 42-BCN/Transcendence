@@ -92,11 +92,21 @@ export async function nextPhase(sync: () => void, vfx: (effect: vfx) => void) {
   sync();
   try {
     await executionPhase(sync, vfx);
+    if (gameState.phase === 'WIN' || gameState.phase === 'LOSE') {
+      sync();
+      return;
+    }
+
     incrementDoom(vfx);
-    if ((gameState.phase as string) === 'LOSE') {
+    if (gameState.phase === 'LOSE') {
+      sync();
       return;
     }
     await enemyPhase(sync, vfx);
+    if (gameState.phase === 'LOSE') {
+      sync();
+      return;
+    }
     await endTurn(sync, vfx);
   } catch (err) {
     console.error('Turn resolution failed:', err);
@@ -148,7 +158,8 @@ export async function executionPhase(sync: () => void, vfx: (effect: vfx) => voi
       gameState.enemies[entityId] || gameState.clones[entityId];
     if (ent) ent.position = { ...gameState.forcedMoveOrigins[entityId] };
   }
-  gameState.forcedMoveOrigins = {};
+  for (const k in gameState.forcedMoveOrigins)
+    delete (gameState.forcedMoveOrigins as Record<string, unknown>)[k];
   for (const entityId in gameState.planningStatusOrigins) {
     const ent: any =
       gameState.players[entityId] ||
@@ -164,7 +175,8 @@ export async function executionPhase(sync: () => void, vfx: (effect: vfx) => voi
       }
     }
   }
-  gameState.planningStatusOrigins = {};
+  for (const k in gameState.planningStatusOrigins)
+    delete (gameState.planningStatusOrigins as Record<string, unknown>)[k];
   for (const id in gameState.ghosts) {
     gameState.players[id] = {
       ...gameState.ghosts[id],
@@ -174,8 +186,10 @@ export async function executionPhase(sync: () => void, vfx: (effect: vfx) => voi
       },
     };
   }
-  gameState.ghosts = {};
-  gameState.clones = {};
+  for (const k in gameState.ghosts)
+    delete (gameState.ghosts as Record<string, unknown>)[k];
+  for (const k in gameState.clones)
+    delete (gameState.clones as Record<string, unknown>)[k];
   const historySnapshot = [...gameState.history];
   for (const action of historySnapshot) {
     if (action.type === 'ability' && action.abName) {
@@ -184,6 +198,7 @@ export async function executionPhase(sync: () => void, vfx: (effect: vfx) => voi
       await sleep(400);
     }
     else if (action.type === 'mov') {
+      sync();
       await moveTo(action.who, action.target, sync);
     }
     else if (action.type === 'forcedMov') {
@@ -199,16 +214,18 @@ export async function executionPhase(sync: () => void, vfx: (effect: vfx) => voi
 
 export function incrementDoom(vfx: (effect: vfx) => void) {
   for (const enemy of Object.values(gameState.enemies)) {
+    if (enemy.isDead)
+      continue;
     const name = enemy.id.split('_')[0];
     let doomAmt = 0;
-    if (enemy.isDead)
-      doomAmt = 0;
-    else if (name === 'crawler' || name === 'drone')
+    if (name === 'crawler' || name === 'drone')
       doomAmt = 1;
     else if (name === 'jaeger' || name === 'centurion')
       doomAmt = 3;
     else if (name === 'generator')
       doomAmt = 5;
+    if (doomAmt === 0)
+      continue;
     const capped = gameState.doom + doomAmt > 100 ? 100 - gameState.doom : doomAmt;
     vfx({
       vfxid: nextVfxId(`doom_${enemy.id}`),
@@ -229,41 +246,48 @@ function canEnemyAttackTarget(
   target: entity,
   ab: abilityInfo,
 ): boolean {
-  if (!ab || ab.name === 'error' || ab.range === 0) return false;
+  if (!ab || ab.name === 'error' || ab.range === 0)
+    return false;
   const tp = target.position;
   const dx = tp.x - fromPos.x;
   const dz = tp.z - fromPos.z;
 
   switch (ab.type) {
     case 'cross': {
-      if (tp.y !== fromPos.y || (dx !== 0 && dz !== 0)) return false;
+      if (tp.y !== fromPos.y || (dx !== 0 && dz !== 0))
+        return false;
       const dist = Math.abs(dx) + Math.abs(dz);
-      if (dist === 0 || dist > ab.range) return false;
+      if (dist === 0 || dist > ab.range)
+        return false;
       const sx = Math.sign(dx), sz = Math.sign(dz);
       for (let n = 1; n < dist; n++) {
         const cx = fromPos.x + n * sx, cz = fromPos.z + n * sz;
-        if (gameState.tiles[`${cx},${fromPos.y},${cz}`]) return false;
+        if (gameState.tiles[`${cx},${fromPos.y},${cz}`])
+          return false;
         const blocker = checkEnt(cx, fromPos.y, cz);
-        if (blocker && !blocker.isDead) return false;
+        if (blocker && !blocker.isDead)
+          return false;
       }
       return true;
     }
     case 'circle': {
-      if (tp.y !== fromPos.y) return false;
+      if (tp.y !== fromPos.y)
+        return false;
       const d2 = Math.sqrt(dx * dx + dz * dz);
-      if (d2 === 0 || d2 > ab.range) return false;
+      if (d2 === 0 || d2 > ab.range)
+        return false;
       return hasLoS(fromPos, tp.x, tp.y, tp.z) !== -1;
     }
     case 'sphere': {
       const dy = tp.y - fromPos.y;
       const d3 = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      if (d3 === 0 || d3 > ab.range) return false;
+      if (d3 === 0 || d3 > ab.range)
+        return false;
       return hasLoS(fromPos, tp.x, tp.y, tp.z) !== -1;
     }
     default:
       return false;
   }
-  phaseClean();
 }
 
 function findBestEnemyAttackPos(
@@ -328,8 +352,8 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
     if (!target)
       continue;
     const validAbs = enemy.abilities
-      .map((name: string) => ({ name, ab: getAbility(name) }))
-      .filter(({ ab }: { name: string; ab: abilityInfo }) => ab.name !== 'error' && ab.range > 0)
+      .map((name) => ({ name, ab: getAbility(name) }))
+      .filter(({ name, ab }) => ab.name !== 'error' && ab.range > 0 && !enemy.abilitiesCD[name])
       .sort((a: { name: string; ab: abilityInfo }, b: { name: string; ab: abilityInfo }) =>
         (b.ab.range + (b.ab.AoErange ?? 0)) -
         (a.ab.range + (a.ab.AoErange ?? 0))
@@ -368,9 +392,7 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
       moveDie = minIdx !== -1 ? enemy.dice.splice(minIdx, 1)[0] : enemy.dice.pop()!;
       movePath = closestPath.slice(0, -1); // exclude player tile
     }
-
     enemy.usedDice.push(moveDie);
-
     const steps = Math.min(movePath.length - 1, moveDie);
     for (let i = 1; i <= steps; i++) {
       await sleep(300);
@@ -378,13 +400,11 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
       gameState.enemies[enemy.id].position = { x: sx, y: sy, z: sz };
       sync();
     }
-
     if (!enemy.dice.length)
       continue;
     const movedEnt = gameState.enemies[enemy.id];
     if (!movedEnt || movedEnt.isDead)
       continue;
-
     if (canEnemyAttackTarget(movedEnt.position, target, chosenAb)) {
       const attackDie = enemy.dice.pop()!;
       enemy.usedDice.push(attackDie);
@@ -394,6 +414,13 @@ export async function enemyPhase(sync: () => void, vfx: (effect: vfx) => void) {
     }
   }
   phaseClean();
+  let isOver = true;
+  for (const ent of Object.values(gameState.players)) {
+    if (!ent.isDead)
+      isOver = false;
+  }
+  if (isOver === true)
+    gameState.phase = 'LOSE';
 }
 
 export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
@@ -403,6 +430,13 @@ export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
   for (const ent of Object.values(entities)) {
     if (!ent)
       continue;
+    if (ent.isDead) {
+      if (ent.type === 'player')
+        delete gameState.players[ent.id];
+      else if (ent.type === 'enemy')
+        delete gameState.enemies[ent.id];
+      continue;
+    }
     updateCooldowns(ent.id);
     const status = ent.status;
     if (status) {
@@ -413,7 +447,7 @@ export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
           ent.isDead = true;
         }
       }
-      if (ent.status === 'boost' || --ent.statusTurns === 0) {
+      if (!ent.isDead && (ent.status === 'boost' || --ent.statusTurns === 0)) {
         ent.status = null;
         ent.statusTurns = 0;
         vfx({ vfxid: nextVfxId(`stat_expire_${ent.id}`), eid: ent.id, type: 'stat expire', amount: null });
@@ -431,12 +465,17 @@ export async function endTurn(sync: () => void, vfx: (effect: vfx) => void) {
       ent.hasMoved = false;
     }
   };
-  gameState.turn = gameState.turn + 1;
-  gameState.phase = 'PLAN';
-  gameState.history = [];
-  gameState.clones = {};
-  gameState.forcedMoveOrigins = {};
-  gameState.planningStatusOrigins = {};
+  if (gameState.phase !== 'WIN' && gameState.phase !== 'LOSE') {
+    gameState.turn = gameState.turn + 1;
+    gameState.phase = 'PLAN';
+    gameState.history.splice(0);
+    for (const k in gameState.clones)
+      delete (gameState.clones as Record<string, unknown>)[k];
+    for (const k in gameState.forcedMoveOrigins)
+      delete (gameState.forcedMoveOrigins as Record<string, unknown>)[k];
+    for (const k in gameState.planningStatusOrigins)
+      delete (gameState.planningStatusOrigins as Record<string, unknown>)[k];
+  }
   sync();
   for (const id in gameState.clients)
     setClear(id);
@@ -1084,20 +1123,6 @@ export function initState() {
           dice: [4, 4, 6],
         }
         break;
-      case "spawner":
-        enemEnt[entity.id] = {
-          ...base(), ...entity, type: "enemy", hp: 10, maxHp: 10, armor: 0,
-          abilities: ["Spawn Drone", "Spawn Crawler"],
-          dice: [4, 6],
-        }
-        break;
-      case "mortar":
-        enemEnt[entity.id] = {
-          ...base(), ...entity, type: "enemy", hp: 12, maxHp: 12, armor: 0,
-          abilities: ["Shoot", "Reload"],
-          dice: [6, 6],
-        }
-        break;
       case "centurion":
         enemEnt[entity.id] = {
           ...base(), ...entity, type: "enemy", hp: 20, maxHp: 20, armor: 2,
@@ -1114,7 +1139,7 @@ export function initState() {
         break;
       case "generator":
         enemEnt[entity.id] = {
-          ...base(), ...entity, type: "enemy", hp: 1, maxHp: 50, armor: 0,
+          ...base(), ...entity, type: "enemy", hp: 50, maxHp: 50, armor: 0,
           abilities: [],
           dice: [],
         }
@@ -1375,17 +1400,28 @@ export function executeAbility(who: string, which: string, target: string, dice:
     vfx({ vfxid: nextVfxId(`miss_${missEid}`), eid: missEid, type: 'miss', amount: null });
     return;
   }
+  const resolveId = (id: string) => {
+    if (id.startsWith('clone_')) {
+      const base = id.replace('clone_', '');
+      if (gameState.players[base] || gameState.enemies[base]) return base;
+    }
+    return id;
+  };
+
   let targets: string[] = [];
   if (!target.includes(',')) {
-    targets = [target];
+    targets = [resolveId(target)];
   }
   else {
     const [x, y, z] = target.split(',').map(Number);
     const entOnTile = checkEnt(x, y + 1, z);
-    if (entOnTile && !entOnTile.isDead) targets = [entOnTile.id];
+    if (entOnTile && !entOnTile.isDead) targets = [resolveId(entOnTile.id)];
   }
   if (ab.AoE) {
-    targets = [...new Set([...targets, ...getAoE(who, target, ab.AoE, ab.AoErange)])];
+    targets = [...new Set([
+      ...targets,
+      ...getAoE(who, target, ab.AoE, ab.AoErange).map(resolveId),
+    ])];
   }
   if (ab.effect && ab.effect[0] === 'move') {
     const attackerBase = who.replace('clone_', '');

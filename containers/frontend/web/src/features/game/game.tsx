@@ -1,6 +1,6 @@
 'use client';
-
-import { useRef, useEffect, useState, useContext, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useRef, useEffect, useState, useContext, type ReactNode } from 'react';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { Environment, Html, MapControls, OrthographicCamera } from '@react-three/drei';
 import { useGame, type pos as Position } from './store';
@@ -48,7 +48,8 @@ function FloatingVfx({ entityId }: { entityId: string }) {
       document.head.appendChild(style);
     }
   }, []);
-  if (entries.length === 0) return null;
+  if (entries.length === 0)
+    return null;
   return (
     <>
       {entries.map((v) => (
@@ -160,9 +161,8 @@ function AbButtons() {
     <div className="flex flex-wrap gap-2 md:gap-4">
       {ent?.abilities.map((ability) => {
         const cd = abilityCD?.[ability] || 0;
-        const cn = `${
-          cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'
-        } py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm`;
+        const cn = `${cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'
+          } py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm`;
         return (
           <Button
             key={ability}
@@ -245,16 +245,16 @@ function DiceButtons() {
           }}
           onPress={() => {
             if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
-              canSelect || Boolean(ability) ? selectDice(diceNum) : movDice(diceNum);
+              (!canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
             }
           }}
-          className={`py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm bg-blue-500 text-white transition-all rounded
-            ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
+          className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
+              ${!canSelect ? 'ring-4 ring-yellow-400 animate-pulse bg-yellow-500' : 'hover:bg-blue-600'}`}
         >
-          {t('dice', { num: diceNum })}
+          {`d${diceNum}`}
         </Button>
       ))}
-    </div>
+    </div >
   );
 }
 
@@ -377,18 +377,22 @@ function Tile({ id, pos }: { id: string; pos: Position }) {
       onPointerOver={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(true);
-        if (isSelectable && selectedAb) setAoePreview(id);
+        if (isSelectable && selectedAb)
+          setAoePreview(id);
       }}
       onPointerOut={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(false);
-        if (isSelectable && selectedAb) clearAoePreview();
+        if (isSelectable && selectedAb)
+          clearAoePreview();
       }}
       onClick={(event: ThreeEvent<MouseEvent>) => {
         if (phase !== 'PLAN') return;
         event.stopPropagation();
-        if (isSelectable && isHovered) addHistoryAbility(id);
-        else if (isHighlighted && !selectedAb && isHovered) moveClone(id);
+        if (isSelectable && isHovered)
+          addHistoryAbility(id);
+        else if (isHighlighted && !selectedAb && isHovered)
+          moveClone(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -756,15 +760,14 @@ function TopBar() {
             : isDark
               ? 'rgba(0,0,0,0.90)'
               : 'rgba(255,255,255,0.92)',
-        borderBottom: `1px solid ${
-          pct >= 80
-            ? isDark
-              ? '#ef444430'
-              : '#fca5a5'
-            : isDark
-              ? 'rgba(255,255,255,0.07)'
-              : 'rgba(0,0,0,0.08)'
-        }`,
+        borderBottom: `1px solid ${pct >= 80
+          ? isDark
+            ? '#ef444430'
+            : '#fca5a5'
+          : isDark
+            ? 'rgba(255,255,255,0.07)'
+            : 'rgba(0,0,0,0.08)'
+          }`,
       }}
     >
       <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase shrink-0 w-24 md:w-40 truncate">
@@ -885,6 +888,14 @@ function GameCanvas() {
 function HandlePhaseScreen() {
   const t = useTranslations('features.game');
   const phase = useGame((state) => state.phase);
+  const resetGame = useGame((state) => state.resetGame);
+  const cleanupSocketListeners = useGame((state) => state.cleanupSocketListeners);
+  const router = useRouter();
+
+  const handleExitRoom = useCallback(() => {
+    cleanupSocketListeners();
+    router.push('/');
+  }, [cleanupSocketListeners, router]);
 
   switch (phase) {
     case 'WIN':
@@ -893,6 +904,16 @@ function HandlePhaseScreen() {
           icon="🏆"
           title={t('winScreen')}
           accentColor="text-emerald-600 dark:text-emerald-400"
+          extra={
+            <div className="flex gap-4 justify-center">
+              <Button variant="primary" w="auto" onPress={resetGame}>
+                Reset
+              </Button>
+              <Button w="auto" onPress={handleExitRoom}>
+                Exit Room
+              </Button>
+            </div>
+          }
         />
       );
     case 'LOSE':
@@ -901,6 +922,16 @@ function HandlePhaseScreen() {
           icon="💀"
           title={t('loseScreen')}
           accentColor="text-rose-600 dark:text-rose-400"
+          extra={
+            <div className="flex gap-4 justify-center">
+              <Button variant="primary" w="auto" onPress={resetGame}>
+                Reset
+              </Button>
+              <Button w="auto" onPress={handleExitRoom}>
+                Exit Room
+              </Button>
+            </div>
+          }
         />
       );
     case 'PLAN':

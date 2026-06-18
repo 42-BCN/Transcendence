@@ -28,6 +28,14 @@ function createInitialServerState(): serverGameState {
 export class GameSessionManager {
   private sessions = new Map<number, GameSession>();
 
+  resetSession(roomId: number): void {
+    const session = this.sessions.get(roomId);
+    if (!session) return;
+    session.state = createInitialServerState();
+    session.readyPlayers.clear();
+  }
+
+
   getOrCreateSession(gameRoom: gameRoomState): GameSession {
     const existing = this.sessions.get(gameRoom.id);
     if (existing) {

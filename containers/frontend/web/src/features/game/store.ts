@@ -119,6 +119,7 @@ type gameState = globalGameState & localGameState & {
   entityTints: Record<string, { color: string; expiresAt: number }>;
 
   nextPhase: () => void;
+  resetGame: () => void;
 
   initSocketListeners: () => void;
   cleanupSocketListeners: () => void;
@@ -142,12 +143,12 @@ type gameState = globalGameState & localGameState & {
 };
 
 const ABILITY_AOE: Record<string, { type: string; range: number }> = {
-  'Shield Bash':    { type: 'cross',    range: 2 },
+  'Shield Bash': { type: 'cross', range: 2 },
   'Vertical Slash': { type: 'vertical', range: 1 },
-  'Fire Breath':    { type: 'cone',     range: 3 },
-  'Vacuum Flask':   { type: 'cross',    range: 1 },
-  'Bombastic Flask':{ type: 'cross',    range: 1 },
-  'Atomic Bomb':    { type: 'circle',   range: 2 },
+  'Fire Breath': { type: 'cone', range: 3 },
+  'Vacuum Flask': { type: 'cross', range: 1 },
+  'Bombastic Flask': { type: 'cross', range: 1 },
+  'Atomic Bomb': { type: 'circle', range: 2 },
 };
 
 function getAoePreviewTiles(
@@ -158,6 +159,7 @@ function getAoePreviewTiles(
   players: Record<string, entity>,
   enemies: Record<string, entity>,
   clones: Record<string, entity>,
+  attackerId?: string | null,
 ): Record<string, boolean> {
   let cx: number, cy: number, cz: number;
   if (targetId.includes(',')) {
@@ -165,7 +167,8 @@ function getAoePreviewTiles(
     cy = cy + 1;
   } else {
     const ent = players[targetId] || enemies[targetId] || clones[targetId];
-    if (!ent) return {};
+    if (!ent)
+      return {};
     ({ x: cx, y: cy, z: cz } = ent.position);
   }
 
@@ -182,15 +185,19 @@ function getAoePreviewTiles(
       for (let n = 1; n <= aoeRange; ++n) {
         const x = cx + n * dx;
         const z = cz + n * dz;
-        const key = `${x},${cy - 1},${z}`;
-        if (!tiles[key]) break;
-        result[key] = true;
+        if (tiles[`${x},${cy},${z}`])
+          break;
+        const floorKey = `${x},${cy - 1},${z}`;
+        if (!tiles[floorKey])
+          break;
+        result[floorKey] = true;
       }
     }
   } else if (aoeType === 'circle') {
     for (let dx = -aoeRange; dx <= aoeRange; ++dx) {
       for (let dz = -aoeRange; dz <= aoeRange; ++dz) {
-        if (aoeRange * aoeRange < dx * dx + dz * dz) continue;
+        if (aoeRange * aoeRange < dx * dx + dz * dz)
+          continue;
         markTile(cx + dx, cy, cz + dz);
       }
     }
@@ -198,8 +205,32 @@ function getAoePreviewTiles(
     markTile(cx, cy, cz);
     markTile(cx, cy + 1, cz);
     markTile(cx, cy - 1, cz);
+  } else if (aoeType === 'cone') {
+    if (!attackerId)
+      return result;
+    const attacker =
+      players[attackerId] ||
+      clones[attackerId] ||
+      players[attackerId.replace('clone_', '')] ||
+      clones[`clone_${attackerId}`];
+    if (!attacker)
+      return result;
+    const o = attacker.position;
+    const fx = Math.sign(cx - o.x);
+    const fz = Math.sign(cz - o.z);
+    const [px, pz] = [fz, fx];
+    const CONE = [
+      [1, 0, 0], [2, 0, 0], [2, 1, 0], [2, -1, 0], [2, 0, -1],
+      [2, 0, 1], [3, 0, 0], [3, 1, 0], [3, -1, 0], [3, 0, 1],
+      [3, 1, 1], [3, -1, 1], [3, 0, -1], [3, 1, -1], [3, -1, -1],
+    ] as const;
+    for (const [fwd, hgt, prp] of CONE) {
+      const x = o.x + fx * fwd + px * prp;
+      const y = o.y + hgt;
+      const z = o.z + fz * fwd + pz * prp;
+      markTile(x, y, z);
+    }
   }
-
   return result;
 }
 
@@ -233,9 +264,17 @@ export const useGame = create<gameState>()((set, get) => ({
   activePlayers: [],
   mapBounds: { width: 0, height: 0, depth: 0 },
 
+  // nextPhase: () => {
+  //   gameSocket.emit('game:client:endTurn');
+  // },
+
   nextPhase: () => {
     gameSocket.emit('game:client:toggleEndTurn');
-    gameSocket.emit('game:client:nextPhase');
+    // gameSocket.emit('game:client:nextPhase');
+  },
+
+  resetGame: () => {
+    gameSocket.emit('game:client:resetGame');
   },
 
   selectEntity: (id) => {
@@ -269,6 +308,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
   addHistoryAbility: (target: string) => {
     console.log('history before ability: ', get().history);
+    set({ aoePreview: {} });
     gameSocket.emit('game:client:addHistoryAbility', target);
   },
 
@@ -302,14 +342,18 @@ export const useGame = create<gameState>()((set, get) => ({
 
   clearSelectables: () => {
     gameSocket.emit('game:client:clearSl');
-    set({ selectables: {}, canSelect: true });
+    set({ selectables: {}, canSelect: true, aoePreview: {} });
   },
 
   setAoePreview: (targetId) => {
     const s = get();
     const ab = s.selectedAb ? ABILITY_AOE[s.selectedAb] : undefined;
     if (!ab) return;
-    const preview = getAoePreviewTiles(targetId, ab.type, ab.range, s.tiles, s.players, s.enemies, s.clones);
+    const preview = getAoePreviewTiles(
+      targetId, ab.type, ab.range,
+      s.tiles, s.players, s.enemies, s.clones,
+      s.selectedEnt,
+    );
     set({ aoePreview: preview });
   },
 
@@ -318,9 +362,6 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   initSocketListeners: () => {
-    // if (gameSocket.connected)
-    //   return;
-
     gameSocket.off('connect');
     gameSocket.off('disconnect');
     gameSocket.off('game:server:join');
@@ -337,6 +378,9 @@ export const useGame = create<gameState>()((set, get) => ({
       console.log('history after action: ', state.history);
       console.log('activePlayers after action: ', state.activePlayers);
       console.log('readyPLayers after action: ', state.readyPlayers);
+      const prevPhase = get().phase;
+      const isGameReset =
+        (prevPhase === 'WIN' || prevPhase === 'LOSE') && state.phase === 'PLAN';
 
       set({
         phase: state.phase,
@@ -351,6 +395,7 @@ export const useGame = create<gameState>()((set, get) => ({
         mapBounds: state.mapBounds || get().mapBounds,
         readyPlayers: state.readyPlayers || get().readyPlayers,
         activePlayers: state.activePlayers || get().activePlayers,
+        ...(isGameReset ? { vfx: {}, entityTints: {}, aoePreview: {} } : {}),
       });
     };
 
@@ -405,8 +450,7 @@ export const useGame = create<gameState>()((set, get) => ({
     };
 
     const handleSync = (state: localGameState) => {
-      if (!state)
-        return;
+      if (!state) return;
       console.log('🔄 Received sync event');
       set({
         highlights: state.highlights,
@@ -415,6 +459,7 @@ export const useGame = create<gameState>()((set, get) => ({
         selectedAb: state.selectedAb,
         selectedEnt: state.selectedEnt,
         selectedDice: state.selectedDice,
+        aoePreview: {},
       });
     };
 
