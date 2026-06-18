@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 . "$SCRIPT_DIR/../lib/os.sh"
 detect_os
-echo "✅ Detected OS: $OS"
+echo "Detected OS: $OS"
 echo
 
 
@@ -17,10 +17,10 @@ cat <<EOF
 
 mkcert is not installed.
 
-This script can install mkcert on your machine so Chrome trusts https://localhost.
-You may be prompted for your password (admin) to install the local CA.
+This script can install it so your browser trusts https://localhost during development.
+You may be prompted for your administrator password while installing the local CA.
 
-Do you want to install mkcert now? [Y/n]
+Install mkcert now? [Y/n]
 EOF
   read ans || ans=""
   case "$ans" in
@@ -30,7 +30,7 @@ EOF
 }
 
 install_mkcert() {
-  echo "📦 Attempting to install mkcert..."
+  echo "Installing mkcert..."
   case "$OS" in
     macos)
       has brew || return 1
@@ -51,7 +51,7 @@ install_mkcert() {
       sudo chmod +x /usr/local/bin/mkcert
       ;;
     wsl)
-      echo "⚠️ WSL detected. Prefer installing mkcert on Windows host for Chrome trust."
+      echo "WSL detected. Install mkcert on the Windows host if you want Chrome to trust localhost."
       return 1
       ;;
     *)
@@ -60,23 +60,23 @@ install_mkcert() {
   esac
 }
 
-echo "➡️ Using mkcert"
+echo "Using mkcert certificates."
 
 if ! has mkcert; then
-  echo "ℹ️ mkcert not found"
+  echo "mkcert was not found."
   if confirm_install_mkcert; then
     install_mkcert || {
-      echo "❌ Could not install mkcert. Re-run and choose self-signed."
+      echo "Could not install mkcert. Re-run the script and use the self-signed option instead."
       exit 1
     }
   else
-    echo "❌ User declined mkcert installation. Re-run and choose self-signed."
+    echo "mkcert installation was skipped. Re-run the script and use the self-signed option instead."
     exit 1
   fi
 fi
 
-echo "✅ mkcert available"
-echo "🔧 Installing local CA (may prompt)..."
+echo "mkcert is available."
+echo "Installing the local CA. Your system may prompt for confirmation."
 
 mkcert -install
 
@@ -88,4 +88,4 @@ mkcert \
   -cert-file "$CRT" \
   localhost 127.0.0.1 ::1 backend socket frontend nginx
 
-echo "🎉 HTTPS ready with trusted mkcert certificate"
+echo "Trusted mkcert certificates are ready."

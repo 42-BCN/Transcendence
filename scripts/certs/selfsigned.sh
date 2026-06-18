@@ -187,27 +187,27 @@ EOF
     rm -f /out/ca.srl
   '
 }
-echo "➡️ Using self-signed certificate..."
+echo "Generating self-signed development certificates..."
 
 if docker_ok; then
-  echo "✅ Docker available → generating CA and leaf cert with Docker"
+  echo "Docker is available, generating the CA and server certificate in a container."
   openssl_selfsigned_docker
 elif has openssl; then
-  echo "⚠️ Docker not available → using host openssl"
+  echo "Docker is not available, falling back to the host OpenSSL installation."
   openssl_selfsigned_host
 else
   cat <<EOF
-❌ Cannot generate self-signed certificate.
+Could not generate self-signed certificates.
 
-Reason:
-- Docker is not available (or daemon not running)
+Why this failed:
+- Docker is not available or the daemon is not running
 - OpenSSL is not installed on this machine
 
-Fix options:
+How to fix it:
 1) Start Docker Desktop / Docker daemon, then re-run this script
 2) Install OpenSSL on your machine, then re-run this script
 
-After fixing, run:
+Then run:
   ./scripts/certs/dev-certs.sh
 
 EOF
@@ -215,32 +215,22 @@ EOF
 fi
 
 cat << EOF
-✅ Self-signed cert chain created
-📄 CA certificate:   $(pwd)/$CERT_DIR/ca.pem
-📄 Server certificate: $(pwd)/$CRT
-🔑 Server private key: $(pwd)/$KEY
+Self-signed certificate chain created.
+  CA certificate:   $(pwd)/$CERT_DIR/ca.pem
+  Server cert:      $(pwd)/$CRT
+  Private key:      $(pwd)/$KEY
 
-⚠️  Trust the CA certificate, not the server certificate, in your browser or OS store.
-    The server cert is signed by the local CA and is only meant for HTTPS serving.
+Import the CA certificate into your browser or OS trust store.
+Do not import the server certificate directly.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔐 Chrome Certificate Setup (UI Method)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## 🔐 Chrome Certificate Setup 
+Chrome trust setup
 
 1. Open in Chrome: chrome://settings/certificates
-
-2. Custom -> Trusted certificates -> import
-
+2. Go to Custom -> Trusted certificates -> Import
 3. Select the CA file at the root of this repo: ca.pem
-
-4. Click OK
-
-7. Close ALL Chrome windows
-
-8. Reopen Chrome and visit:
+4. Confirm the import
+5. Close all Chrome windows
+6. Reopen Chrome and visit:
 
    https://localhost:8443
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF

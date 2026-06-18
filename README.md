@@ -310,6 +310,10 @@ This builds and starts production, prepares the database, and starts a Cloudflar
 - `make` — Production evaluation flow (build + DB setup + quick tunnel)
 - `make dev` — Development mode with hot-reloading
 - `make prod` — Production build only
+- `make setup-dev` — Generate development env files and certificates
+- `make setup-prod` — Generate production env files and certificates
+- `make switch-dev` — Switch from the production stack to the development stack
+- `make switch-prod` — Switch from the development stack to the production stack
 
 ### Makefile Cheat Sheet
 We use a comprehensive Makefile to manage the Docker lifecycle and database utilities.
@@ -320,13 +324,22 @@ We use a comprehensive Makefile to manage the Docker lifecycle and database util
 - `make prod-clean`: Stop and remove production volumes
 - `make prod-logs`: View production logs
 - `make prod-ps`: List production containers
-- `make prod-db-setup`: Push schema and seed the production DB
 - `make prod-tunnel-quick`: Start Cloudflare quick tunnel for production
 
 **Development**
 - `make dev-down`: Stop dev containers
 - `make dev-clean`: Deep clean dev environment
 - `make dev-logs`: View dev logs
+
+**Environment Setup**
+- `make setup-dev`: Generate development `.env` files and local certificates
+- `make setup-prod`: Generate production `.env` files and local certificates
+- `make switch-dev`: Stop production containers and start the dev stack
+- `make switch-prod`: Stop development containers and start the production stack
+
+**Docker Cleanup**
+- `make fclean`: Stop the current stack, remove its volumes, and prune unused Docker data
+- `make fclean-docker`: Aggressively prune Docker containers, images, networks, and volumes across the system
 
 **Database Utilities (development)**
 - `make db-push`: Push Prisma schema to the database
