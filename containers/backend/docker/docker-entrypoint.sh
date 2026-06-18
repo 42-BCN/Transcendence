@@ -16,9 +16,6 @@ if [ "$NODE_ENV" = "development" ]; then
   else
     echo "Dependencies already installed."
   fi
-
-  echo "Generating Prisma client..."
-  npm run prisma:generate
 fi
 
 echo "Starting Express.js..."
