@@ -12,6 +12,7 @@ export type SplitScreenGridProps = {
   mobileSideLayout?: SplitScreenGridMobileSideLayout;
   mobileFullClassName?: string;
   mobileSideClassName?: string;
+  mobileSideInteractive?: boolean;
 };
 
 export function SplitScreenGrid({
@@ -21,8 +22,15 @@ export function SplitScreenGrid({
   mobileSideLayout = 'stack',
   mobileFullClassName,
   mobileSideClassName,
+  mobileSideInteractive = false,
 }: SplitScreenGridProps) {
-  const styles = splitScreenGridStyles({ mobileStackMode, mobileSideLayout, mobileFullClassName, mobileSideClassName });
+  const styles = splitScreenGridStyles({
+    mobileStackMode,
+    mobileSideLayout,
+    mobileFullClassName,
+    mobileSideClassName,
+    mobileSideInteractive,
+  });
 
   return (
     <main className={styles.wrapper}>

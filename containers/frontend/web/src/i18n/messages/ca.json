@@ -1,618 +1,768 @@
 {
-  "common": {
-    "globalError": {
-      "title": "Alguna cosa ha anat malament",
-      "tryAgain": "Torna-ho a provar",
-      "unexpectedMessage": "S'ha produït un error inesperat"
-    }
-  },
-  "components": {
-    "breadcrumb": {
-      "edit": "Editar perfil",
-      "home": "Inici",
-      "me": "El Meu Compte",
-      "reset-password": "Restablir Contrasenya"
-    },
-    "footer": {
-      "appName": "Transcendence",
-      "copyright": "© {year} {appName}. Tots els drets reservats",
-      "github": "GitHub",
-      "privacy": "Política de Privacitat",
-      "terms": "Termes de Servei"
-    },
-    "localeSwitcher": {
-      "ariaLabel": "Idioma",
-      "ca": "CA",
-      "en": "EN",
-      "es": "ES"
-    },
-    "submitButton": {
-      "pendingLabel": "Enviant..."
-    },
-    "textAreaField": {
-      "characterCount": "{current} de {max} caràcters"
-    }
-  },
-  "layouts": {
-    "locale": {
-      "metadata": {
-        "description": "Juga a Transcendence, xateja amb amics i gestiona el teu compte des d'un sol lloc.",
-        "title": "Transcendence"
-      }
-    }
-  },
-  "pages": {
-    "home": {
-      "title": "Sales de joc",
-      "subtitle": "Uneix-te a una sala per començar a jugar amb altres usuaris.",
-      "room": {
-        "label": "Sala #{id}",
-        "statusFull": "La sala està plena.",
-        "statusWaiting": "Esperant jugadors…",
-        "playersHeading": "Jugadors a la sala",
-        "invitationsHeading": "Invitacions enviades",
-        "invitationsEmpty": "Encara no s’han enviat invitacions des d’aquesta sala.",
-        "invitationAccepted": "Acceptada",
-        "invitationPending": "Pendent",
-        "receivedInvitationsHeading": "Invitacions rebudes"
-      },
-      "actions": {
-        "join": "Unir-se a qualsevol sala disponible",
-        "leave": "Sortir de la sala"
-      }
-    },
-    "game": {
-      "description": "Juga a Transcendence i gestiona els teus torns.",
-      "metadata": {
-        "description": "Juga a Transcendence i gestiona els teus torns.",
-        "title": "Joc"
-      },
-      "title": "Joc"
-    },
-    "me": {
-      "metadata": {
-        "description": "Consulta i gestiona les dades del teu compte de Transcendence.",
-        "title": "El Meu Compte"
-      },
-      "subtitle": "Accedeix a les dades protegides del teu compte.",
-      "title": "El Meu Compte"
-    },
-    "notFound": {
-      "backToHome": "Torna a l'inici",
-      "description": "La pàgina que busques no existeix.",
-      "title": "Pàgina no trobada"
-    },
-    "privacy": {
-      "metadata": {
-        "description": "Descobreix quines dades recopila Transcendence, com les fa servir i com les protegeix.",
-        "title": "Política de Privacitat"
-      },
-      "contact": {
-        "description": "Si tens alguna pregunta sobre aquesta política o desitges exercir els teus drets, si us plau, contacta amb l'equip de desenvolupament a través del nostre <link>repositori de GitHub</link>.",
-        "title": "Contacte"
-      },
-      "dataCollected": {
-        "description": "Quan fas servir la nostra plataforma, podem recopilar la següent informació:",
-        "items": {
-          "email": "Adreça de correu electrònic (utilitzada per al registre i l'autenticació)",
-          "technical": "Dades tècniques (tipus de navegador, informació del dispositiu i adreça IP amb fins de seguretat)",
-          "usage": "Dades d'ús (historial de partides, puntuacions i registres d'interacció)",
-          "username": "Nom d'usuari (escollit per tu per identificar-te al joc)"
-        },
-        "title": "Dades Recopilades"
-      },
-      "dataUsage": {
-        "description": "Les dades que recopilem s'utilitzen exclusivament per als següents fins:",
-        "items": {
-          "account": "Gestió de comptes i autenticació",
-          "communication": "Enviar comunicacions necessàries relacionades amb el teu compte",
-          "gameplay": "Proporcionar l'experiència de joc i funcions socials",
-          "improvement": "Millorar i optimitzar la plataforma"
-        },
-        "title": "Com Fem Servir les Teves Dades"
-      },
-      "intro": "A Transcendence, valorem la teva privacitat. Aquesta política descriu quines dades recopilem, com les fem servir, com les emmagatzemem i quins drets tens sobre la teva informació personal.",
-      "lastUpdated": "Última actualització: Abril 2026",
-      "rights": {
-        "description": "Com a usuari, tens els següents drets sobre les teves dades personals:",
-        "items": {
-          "access": "Dret a accedir a les teves dades personals",
-          "deletion": "Dret a sol·licitar l'eliminació de les teves dades",
-          "portability": "Dret a la portabilitat de dades",
-          "rectification": "Dret a corregir dades inexactes"
-        },
-        "title": "Els Teus Drets"
-      },
-      "storage": {
-        "description": "Les teves dades s'emmagatzemen de forma segura als nostres servidors. Implementem mesures de seguretat estàndard de la indústria, incloent connexions xifrades (HTTPS), hash segur de contrasenyes i auditories de seguretat regulars. Conservem les teves dades només mentre el teu compte estigui actiu o segons sigui necessari per proporcionar-te els nostres serveis.",
-        "title": "Emmagatzematge i Seguretat de Dades"
-      },
-      "title": "Política de Privacitat"
-    },
-    "terms": {
-      "metadata": {
-        "description": "Consulta les regles, responsabilitats i condicions legals per fer servir Transcendence.",
-        "title": "Termes de Servei"
-      },
-      "acceptance": {
-        "description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma.",
-        "title": "Acceptació dels Termes"
-      },
-      "conduct": {
-        "description": "Per mantenir un entorn just, respectuós i divertit, et compromets a no:",
-        "items": {
-          "cheating": "Utilitzar trampes, programari d'automatització (bots) o hacks per obtenir avantatge.",
-          "disruption": "Intentar interrompre la integritat o seguretat dels nostres servidors.",
-          "harassment": "Assetjar, abusar o participar en conductes que danyin la comunitat o altres jugadors."
-        },
-        "title": "Conducta de l'Usuari"
-      },
-      "contact": {
-        "description": "Si tens preguntes o desitges exercir qualsevol dret relacionat amb aquests Termes, si us plau, contacta amb l'equip obrint una incidència en el nostre <link>repositori de GitHub</link>.",
-        "title": "Contacte"
-      },
-      "disclaimer": {
-        "description": "Transcendence és un projecte educatiu i comunitari. En conseqüència, el servei es proporciona tal com està i segons disponibilitat. No garantim que el servei sigui ininterromput, puntual, segur o lliure d'errors.",
-        "title": "Exempció de responsabilitat"
-      },
-      "intro": "Benvingut a Transcendence. L'ús d'aquesta plataforma està subjecte als següents Termes de Servei, que regeixen la relació entre tu i l'equip de desenvolupament.",
-      "ip": {
-        "description": "Tot el contingut, incloent el codi del joc, gràfics i marques registrades, és propietat de Transcendence. Atorguem una llicència limitada i no transferible per a ús personal i no comercial.",
-        "title": "Propietat Intel·lectual"
-      },
-      "lastUpdated": "Última actualització: Abril 2026",
-      "law": {
-        "description": "Aquests Termes es regeixen i interpreten d'acord amb les lleis aplicables als serveis digitals dins de l'àmbit de jurisdicció d'aquest projecte.",
-        "title": "Llei Aplicable"
-      },
-      "registration": {
-        "description": "Ets responsable de mantenir la confidencialitat de les teves credencials i de totes les activitats que es produeixin sota el teu compte.",
-        "items": {
-          "accuracy": "Acceptes proporcionar informació precisa i completa durant el registre.",
-          "security": "Ens has de notificar immediatament qualsevol ús no autoritzat del teu compte."
-        },
-        "title": "Registre de Compte"
-      },
-      "termination": {
-        "description": "Ens reservem el dret de suspendre o tancar el teu compte a la nostra discreció, sense previ avís, per conductes que considerem que violen aquests Termes o que resultin perjudicials per a altres usuaris o el projecte.",
-        "title": "Cancel·lació"
-      },
-      "title": "Termes de Servei"
-    }
-  },
-  "features": {
-    "auth": {
-      "actions": {
-        "continueWithGoogle": "Continuar amb Google",
-        "login": "Iniciar sessió",
-        "logoutAriaLabel": "Tancar sessió",
-        "resendEmail": "Tornar a enviar el correu",
-        "sendEmail": "Enviar correu electrònic",
-        "signup": "Crear compte"
-      },
-      "changePassword": {
-        "description": "Introdueix la teva contrasenya actual i tria'n una de nova.",
-        "submit": "Desa els canvis",
-        "success": "La contrasenya s'ha actualitzat correctament.",
-        "title": "Canvia la contrasenya"
-      },
-      "fields": {
-        "confirmPassword": {
-          "label": "Confirmar contrasenya",
-          "placeholder": "Torna a introduir la teva contrasenya"
-        },
-        "currentPassword": {
-          "label": "Contrasenya actual",
-          "placeholder": "Introdueix la teva contrasenya actual"
-        },
-        "email": {
-          "label": "Correu electrònic",
-          "placeholder": "nom@exemple.com"
-        },
-        "identifier": {
-          "description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar.",
-          "label": "Correu o nom d'usuari",
-          "placeholder": "nom@exemple.com o usuari"
-        },
-        "newPassword": {
-          "description": "Mínim 8 caràcters.",
-          "label": "Contrasenya nova",
-          "placeholder": "Introdueix la teva contrasenya nova"
-        },
-        "password": {
-          "description": "Mínim 8 caràcters.",
-          "label": "Contrasenya",
-          "placeholder": "Introdueix la teva contrasenya"
-        },
-        "username": {
-          "label": "Nom d'usuari",
-          "placeholder": "el_teu_usuari"
-        }
-      },
-      "login": {
-        "forgotPassword": "Has oblidat la contrasenya?",
-        "goToSignup": "Crear-ne un",
-        "metadata": {
-          "description": "Inicia sessió al teu compte de Transcendence per jugar, xatejar i gestionar el teu perfil.",
-          "title": "Iniciar sessió"
-        },
-        "noAccount": "No tens compte?",
-        "submit": "Iniciar sessió",
-        "title": "Iniciar sessió"
-      },
-      "messages": {
-        "or": "O",
-        "success": "Correu enviat. Espera per tornar-ho a intentar."
-      },
-      "recover": {
-        "backToLogin": "Torna a iniciar sessió",
-        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
-        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
-        "metadata": {
-          "description": "Sol·licita un correu de restabliment de contrasenya per recuperar l'accés al teu compte de Transcendence.",
-          "title": "Recuperar compte"
-        },
-        "rememberedPassword": "Has recordat la teva contrasenya?",
-        "sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
-        "title": "Revisa el teu correu"
-      },
-      "reset": {
-        "backToLogin": "Torna a iniciar sessió",
-        "description": "Introdueix la teva nova contrasenya.",
-        "metadata": {
-          "description": "Defineix una contrasenya nova per al teu compte de Transcendence.",
-          "title": "Restableix la contrasenya"
-        },
-        "rememberedPassword": "Has recordat la contrasenya?",
-        "submit": "Desa la contrasenya nova",
-        "success": "La contrasenya s'ha actualitzat correctament.",
-        "title": "Restableix la contrasenya"
-      },
-      "signup": {
-        "goToLogin": "Iniciar sessió",
-        "haveAccount": "Ja tens compte?",
-        "metadata": {
-          "description": "Crea el teu compte de Transcendence per començar a jugar i connectar amb amics.",
-          "title": "Crear compte"
-        },
-        "privacy": {
-          "error": "Has d'acceptar la Política de Privacitat per continuar.",
-          "label": "He llegit i accepto la <link>Política de Privacitat</link>"
-        },
-        "title": "Crear compte"
-      },
-      "verification": {
-        "backToLogin": "Iniciar sessió",
-        "checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
-        "checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
-        "invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
-        "isConfirmed": "Ja has confirmat?",
-        "metadata": {
-          "description": "Confirma la teva adreça de correu electrònic per activar el teu compte de Transcendence.",
-          "title": "Verifica el teu correu electrònic"
-        },
-        "missingToken": "Falta el token de verificació.",
-        "recoverTitle": "Recuperar compte",
-        "resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte.",
-        "resending": "Enviant...",
-        "resendTitle": "Torna a enviar el correu de verificació",
-        "sent": "T'hem enviat un correu per confirmar el teu compte.",
-        "title": "Verifica el teu correu electrònic",
-        "verified": "Correu verificat. Redirigint al teu perfil...",
-        "verifying": "Verificant el teu correu..."
-      }
-    },
-    "chat": {
-      "errors": {
-        "INVALID_CHAT_MESSAGE": "No s'ha pogut enviar el missatge."
-      },
-      "hideChat": "Amaga el xat",
-      "messageAriaLabel": "Missatge",
-      "showChat": "Mostra el xat",
-      "system": {
-        "userJoined": "{username} s'ha unit al xat.",
-        "userLeft": "{username} ha sortit del xat."
-      }
-    },
-    "directMessages": {
-      "metadata": {
-        "description": "Obre converses privades amb els teus amics a Transcendence.",
-        "title": "Missatges directes"
-      },
-      "emptyState": "Encara no hi ha converses",
-      "listTitle": "Missatges",
-      "openList": "Obrir llista de missatges",
-      "closeList": "Tancar llista de missatges",
-      "selectionTitle": "Selecciona una conversa",
-      "selectionBody": "Tria un amic de la llista per obrir els teus missatges.",
-      "accessTitle": "Missatges directes",
-      "accessBody": {
-        "authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
-        "unauthenticated": "Has d'iniciar sessió per obrir un xat privat."
-      },
-      "backToHome": "Torna a l'inici",
-      "presence": {
-        "online": "● En línia",
-        "away": "● Absent",
-        "offline": "Desconnectat"
-      }
-    },
-    "game": {
-      "endTurn": "Acabar torn",
-      "healthLabel": "HP",
-      "resetPlan": "Reiniciar pla",
-      "instructions": {
-        "title": "Instruccions del joc",
-        "close": "Tancar",
-        "objective": {
-          "title": "Objectiu",
-          "intro": "Sou un escamot cooperatiu de 4 personatges. Heu de destruir el <strong>Generador enemic</strong> abans que la seva energia arribi al 100%.",
-          "energyTitle": "L'energia puja al final de cada ronda:",
-          "energyItems": ["+5% pel generador.", "+3% per cada enemic d'elit.", "+1% per cada enemic comú."],
-          "loseTitle": "Perdeu si:",
-          "loseItems": ["el generador arriba al 100%, o", "moren els 4 personatges de l'escamot."],
-          "height": "L'<strong>alçada</strong> afecta el moviment, l'abast, els empentesos i els atacs que només funcionen a dalt o a baix."
-        },
-        "turnStructure": {
-          "title": "Estructura del torn",
-          "planning": {
-            "title": "A. Planificació conjunta (120 seg.)",
-            "body": "Els jugadors decideixen què fa cada personatge, quina habilitat usa, a quin objectiu apunta i quin enemic atacarà cadascú. Tots han d'estar d'acord per continuar."
-          },
-          "execution": {
-            "title": "B. Execució",
-            "body": "El joc executa automàticament el pla."
-          },
-          "enemy": {
-            "title": "C. Torn enemic",
-            "items": ["Puja l'energia del generador.", "Els enemics usen els seus daus i accions.", "La interfície pot mostrar pistes d'objectiu."]
-          }
-        },
-        "generalRules": {
-          "title": "Regles generals",
-          "items": [
-            "Cada personatge i enemic té el seu propi set de daus.",
-            "Cada acció consumeix 1 dau.",
-            "En un torn: moure's o usar habilitats (no ambdós).",
-            "Moviment: una vegada per torn, fins al valor més alt dels daus.",
-            "Habilitats: s'apliquen si es compleix la condició de la tirada.",
-            "Les unitats amb 0 PV moren."
-          ],
-          "diceAction": "Cada acció consumeix 1 dau."
-        },
-        "abilities": {
-          "title": "Com usar les habilitats",
-          "steps": [
-            "Selecciona el teu personatge.",
-            "Tria una habilitat.",
-            "Passa el ratolí sobre un dau per veure l'abast o l'efecte.",
-            "Selecciona la casella o objectiu.",
-            "Confirma dins la planificació."
-          ]
-        },
-        "playableClasses": {
-          "title": "Classes jugables",
-          "assassin": {
-            "name": "Assassí",
-            "role": "Dany ràpid, empentesos i control.",
-            "stats": ["PV: 13", "Daus: 4d4 + 1d8"],
-            "skills": [
-              { "name": "Punyalada", "details": ["cos a cos · sense CD · dany: resultat / 2 · cond: parell"] },
-              { "name": "Tir de navailles", "details": ["abast lineal · dany: 2 · sense CD · cond: > 3"] },
-              { "name": "Patada", "details": ["cos a cos · sense CD · dany: 1 · empeny 1 casella · cond: senar", "l'empentós s'aplica encara que falli"] },
-              { "name": "Lligar", "details": ["cos a cos · sense CD · elimina 1 dau de l'enemic · cond: > 1", "no es pot aplicar diverses vegades al mateix enemic"] }
-            ]
-          },
-          "paladin": {
-            "name": "Paladí",
-            "role": "Tanc i protector.",
-            "stats": ["PV: 16", "Daus: 4d6"],
-            "skills": [
-              { "name": "Estocada", "details": ["abast 1 línia recta · CD 1 · dany: 2 · cond: > 3"] },
-              { "name": "Defensar", "details": ["abast 2 · àrea circular, objectiu únic · sense CD", "redueix a la meitat les properes x instàncies de dany · cond: > 1"] },
-              { "name": "Cop d'escut", "details": ["AOE en creu · CD 2 · dany: 4x · cond: > 5", "empeny 1 casella als enemics dels extrems (encara que falli)"] },
-              { "name": "Tall vertical", "details": ["cos a cos · CD 1 · cobreix tots els nivells", "dany: 2x + 2 si nivell diferent · cond: > 3"] }
-            ]
-          },
-          "alchemist": {
-            "name": "Alquimista",
-            "role": "Suport, control de zona i debilitació.",
-            "stats": ["PV: 10", "Daus: 1d6 + 1d8 + 1d10"],
-            "skills": [
-              { "name": "Dopatge", "details": ["abast 2 en línia · CD 1 · pot aplicar-se a si mateix", "dona la meitat del dau com a bonificació a la propera acció de l'objectiu"] },
-              { "name": "Matràs de buit", "details": ["abast circular 2 · centre fins a 3 caselles · AOE · CD 2", "dany: (resultat - 2) / 2 · absorbeix cap al centre · cond: > 5"] },
-              { "name": "Matràs bombàstic", "details": ["abast circular 1 en creu · centre fins a 3 caselles · CD 2", "dany: (resultat - 2) / 2 · empeny diag. cap amunt · cond: > 5"] },
-              { "name": "Oxidació", "details": ["abast 1 circular · sense CD · redueix l'armadura de l'objectiu en x · cond: > 2"] }
-            ]
-          },
-          "mage": {
-            "name": "Mag",
-            "role": "Dany en àrea, foc i control de nivells.",
-            "stats": ["PV: 8", "Daus: 1d4 + 1d8 + 1d12"],
-            "skills": [
-              { "name": "Alè de foc", "details": ["abast 3 · AOE · CD 2 · aplica cremada 2 torns (1 dany/torn) · cond: > 3", "cos a cos: dany = resultat / 3 + 2", "mitjà: dany = resultat / 4 + 1 (nivell diferent)", "llunyà: dany = resultat / 4 - 2 + 1 (nivell diferent)"] },
-              { "name": "Cometa azur", "details": ["abast infinit mateix pla · CD 3 · dany: resultat / 2 + 2 · cond: > 3"] },
-              { "name": "Petit meteorit", "details": ["abast 4 circular · CD 1 · només zona superior", "dany: x + 2 si nivell diferent · cond: > 2"] },
-              { "name": "Espines emergents", "details": ["abast 4 circular · CD 1 · només zona inferior", "dany: x + 2 si nivell diferent · cond: > 2"] }
-            ]
-          }
-        },
-        "enemyClasses": {
-          "title": "Classes enemigues",
-          "drone": {
-            "name": "Dron",
-            "stats": ["PV: 3 · Daus: 3d4", "atac cos a cos · dany: 1 · cond: x > 1"]
-          },
-          "tracker": {
-            "name": "Rastrejador",
-            "stats": ["PV: 4 · Daus: 2d4 + 1d6", "atac cos a cos · dany: 1 · cond: x > 1"]
-          },
-          "centurion": {
-            "name": "Centurió (d'elit)",
-            "stats": ["PV: 20 · Escut: 2 · Daus: d6 + 2d8"],
-            "skills": [
-              { "name": "Embestida", "details": ["abast línia 3 · sense CD · es mou 3 caselles · empeny perpendicular", "dany: resultat / 2 · cond: > 4 (l'empentós s'aplica igualment)"] },
-              { "name": "Mini bomba atòmica", "details": ["abast circular 2 · CD 2 · es fa 4 de dany a si mateixa", "dany: resultat / 2 + 2 · cond: > 3"] }
-            ]
-          },
-          "jaeger": {
-            "name": "Jaeger (d'elit)",
-            "stats": ["PV: 10 · Escut: 1 · Daus: 2d6 + 1d10"],
-            "skills": [
-              { "name": "Empentó", "details": ["cos a cos · sense CD · empeny 2 caselles · dany: x · cond: x > 3"] },
-              { "name": "Tret d'impacte", "details": ["abast circular 6 · CD 1 · ignora barreres · al de més vida (empat: més llunyà)", "dany: resultat / 2 · cond: > 5"] }
-            ]
-          }
-        }
-      },
-      "room": {
-        "fields": {
-          "gameRoomId": "ID de la sala"
-        }
-      }
-    },
-    "navigation": {
-      "createAccount": "Crear compte",
-      "game": "Joc",
-      "home": "Inici",
-      "messages": "Missatges",
-      "login": "Iniciar sessió",
-      "logout": "Tancar sessió",
-      "mainAriaLabel": "Navegació principal",
-      "menu": "Menú",
-      "profile": "Perfil",
-      "settings": "Configuració",
-      "ui": "UI"
-    },
-    "profile": {
-      "actions": {
-        "changePassword": "Canviar contrasenya",
-        "deleteAccount": "Eliminar compte",
-        "editProfile": "Editar perfil"
-      },
-      "bio": "Biografia",
-      "delete": {
-        "body": "Aquesta acció elimina el teu compte de manera permanent, esborra el teu perfil i tanca la teva sessió. No es pot desfer.",
-        "cancel": "Cancel·lar",
-        "description": "Això elimina el teu compte de manera permanent i tanca la teva sessió.",
-        "title": "Eliminar compte?"
-      },
-      "edit": {
-        "avatarAlt": "Seleccionar avatar {name}",
-        "chooseAvatar": "Tria el teu avatar",
-        "placeholder": "Explica'ls a la resta de jugadors una mica sobre tu",
-        "submit": "Desar canvis",
-        "title": "Editar perfil"
-      },
-      "emptyBio": "Sense biografia",
-      "fail": "No s'ha pogut carregar el teu perfil.",
-      "metadata": {
-        "publicDescription": "Consulta el perfil públic de {username} a Transcendence."
-      },
-      "provider": "Proveïdor",
-      "userId": "ID d'usuari",
-      "username": "Nom d'usuari"
-    },
-    "settings": {
-      "dark": "Fosc",
-      "language": "Idioma",
-      "light": "Clar",
-      "theme": "Tema"
-    },
-    "social": {
-      "actions": {
-        "accept": "Acceptar",
-        "addFriend": "Afegir amic",
-        "cancel": "Cancel·lar",
-        "cancelRequest": "Cancel·lar sol·licitud",
-        "inviteSent": "Has enviat una invitacio a {username}",
-        "inviteToGame": "Convidar a partida",
-        "message": "Missatge",
-        "decline": "Rebutjar invitació",
-        "reject": "Rebutjar",
-        "unfriend": "Eliminar amic",
-        "inviteErrors": {
-          "GAME_INVITATION_ROOM_REQUIRED": "Connecta't a la sala de joc primer",
-          "GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de joc ja no està disponible",
-          "GAME_INVITATION_DUPLICATE_PENDING": "Invitació ja pendent",
-          "GAME_INVITATION_RECENT_DUPLICATE": "Acabes d'enviar una invitació, espera un moment",
-          "GAME_INVITATION_PENDING_LIMIT": "Massa invitacions pendents",
-          "GAME_INVITATION_RATE_LIMITED": "Massa invitacions enviades, torna-ho a intentar més tard",
-          "GAME_INVITATION_NOT_FRIEND": "No ets amic d'aquest usuari",
-          "GAME_INVITATION_ALREADY_IN_ROOM": "Aquest usuari ja és en una sala de joc",
-          "default": "No s'ha pogut enviar la invitació"
-        }
-      },
-      "emptyStates": {
-        "offline": "No hi ha amics desconnectats",
-        "online": "No hi ha amics connectats",
-        "pending": "No has enviat sol·licituds",
-        "request": "No tens sol·licituds pendents",
-        "search": "No s’han trobat usuaris",
-        "gameInvitations": "Encara no hi ha invitacions de joc"
-      },
-      "friends": {
-        "offline": "Amics desconnectats",
-        "online": "Amics connectats",
-        "title": "Amics"
-      },
-      "guest": {
-        "body": "Per trobar amics, veure qui està connectat i jugar, necessites un compte.",
-        "login": "Iniciar sessió",
-        "noAccount": "No tens compte?",
-        "signup": "Crear-ne un",
-        "title": "Connecta amb la comunitat"
-      },
-      "requests": {
-        "now": "ara",
-        "received": "Rebudes",
-        "sent": "Enviades",
-        "title": "Sol·licituds"
-      },
-      "searchLabel": "Cercador",
-      "searchPlaceholder": "Cerca usuaris",
-      "title": "Social",
-      "gameInvitations": "Invitacions de joc",
-      "gameInvitationSubtitle": "Convidat a la sala {roomId}",
-      "gameInvitationSentSubtitle": "Invitació pending"
-    }
-  },
-  "validation": {
-    "FIELD_TOO_LONG": "Massa llarg.",
-    "FIELD_TOO_SHORT": "Massa curt.",
-    "INVALID_EMAIL": "Introdueix un correu electrònic vàlid.",
-    "INVALID_EMAIL_OR_USERNAME": "Introdueix un correu electrònic o nom d'usuari vàlid.",
-    "INVALID_FORMAT": "Format no vàlid.",
-    "INVALID_USERNAME": "El nom d'usuari ha de tenir entre 3 i 30 caràcters i només pot contenir lletres, números, guions baixos (_) o guions (-).",
-    "INVALID_USERNAME_FORMAT": "El nom d'usuari només pot contenir lletres, números, guions baixos (_) i guions (-).",
-    "OUT_OF_RANGE": "Sol·licitud fora de rang",
-    "PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen.",
-    "REQUIRED": "Aquest camp és obligatori.",
-    "USERNAME_TOO_LONG": "El nom d'usuari no pot superar els 30 caràcters.",
-    "USERNAME_TOO_SHORT": "El nom d'usuari ha de tenir almenys 3 caràcters."
-  },
-  "errors": {
-    "AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
-    "AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
-    "AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
-    "AUTH_FORBIDDEN": "No tens permís per accedir a aquest recurs.",
-    "AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
-    "AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
-    "AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
-    "AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
-    "AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
-    "AUTH_UNAUTHORIZED": "Has d'iniciar sessió per veure aquest contingut.",
-    "FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard.",
-    "FRIENDSHIP_ALREADY_ACCEPTED": "Aquesta sol·licitud ja ha estat acceptada.",
-    "FRIENDSHIP_ALREADY_EXISTS": "Ja sou amics.",
-    "FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
-    "FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat.",
-    "FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
-    "FRIENDSHIP_SELF_REQUEST": "No et pots afegir a tu mateix.",
-    "generic": "Alguna cosa ha anat malament. Torna-ho a provar.",
-    "INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
-    "UNAUTHORIZED_ACTION": "Acció no permesa.",
-    "USER_NOT_FOUND": "Usuari no trobat.",
-    "VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou."
-  }
+	"common": {
+		"globalError": {
+			"title": "Alguna cosa ha anat malament",
+			"tryAgain": "Torna-ho a provar",
+			"unexpectedMessage": "S'ha produït un error inesperat"
+		}
+	},
+	"components": {
+		"breadcrumb": {
+			"edit": "Editar perfil",
+			"home": "Inici",
+			"me": "El Meu Compte",
+			"reset-password": "Restablir Contrasenya"
+		},
+		"footer": {
+			"appName": "Transcendence",
+			"copyright": "© {year} {appName}. Tots els drets reservats",
+			"github": "GitHub",
+			"privacy": "Política de Privacitat",
+			"terms": "Termes de Servei"
+		},
+		"localeSwitcher": {
+			"ariaLabel": "Idioma",
+			"ca": "CA",
+			"en": "EN",
+			"es": "ES"
+		},
+		"submitButton": {
+			"pendingLabel": "Enviant..."
+		},
+		"textAreaField": {
+			"characterCount": "{current} de {max} caràcters"
+		}
+	},
+	"layouts": {
+		"locale": {
+			"metadata": {
+				"description": "Juga a Transcendence, xateja amb amics i gestiona el teu compte des d'un sol lloc.",
+				"title": "Transcendence"
+			}
+		}
+	},
+	"pages": {
+		"home": {
+			"title": "Sales de joc",
+			"subtitle": "Uneix-te a una sala per començar a jugar amb altres usuaris.",
+			"room": {
+				"label": "Sala #{id}",
+				"statusFull": "La sala està plena",
+				"statusWaiting": "Esperant jugadors…",
+				"playersHeading": "Jugadors a la sala",
+				"invitationsHeading": "Invitacions enviades",
+				"invitationsEmpty": "Encara no s’han enviat invitacions des d’aquesta sala.",
+				"invitationAccepted": "Acceptada",
+				"invitationPending": "Pendent",
+				"receivedInvitationsHeading": "Invitacions rebudes"
+			},
+			"actions": {
+				"join": "Unir-se a qualsevol sala disponible",
+				"leave": "Sortir de la sala"
+			}
+		},
+		"game": {
+			"description": "Juga a Transcendence i gestiona els teus torns.",
+			"metadata": {
+				"description": "Juga a Transcendence i gestiona els teus torns.",
+				"title": "Joc"
+			},
+			"title": "Joc"
+		},
+		"me": {
+			"metadata": {
+				"description": "Consulta i gestiona les dades del teu compte de Transcendence.",
+				"title": "El Meu Compte"
+			},
+			"subtitle": "Accedeix a les dades protegides del teu compte.",
+			"title": "El Meu Compte"
+		},
+		"notFound": {
+			"backToHome": "Torna a l'inici",
+			"description": "La pàgina que busques no existeix.",
+			"title": "Pàgina no trobada"
+		},
+		"privacy": {
+			"metadata": {
+				"description": "Descobreix quines dades recopila Transcendence, com les fa servir i com les protegeix.",
+				"title": "Política de Privacitat"
+			},
+			"contact": {
+				"description": "Si tens alguna pregunta sobre aquesta política o desitges exercir els teus drets, si us plau, contacta amb l'equip de desenvolupament a través del nostre <link>repositori de GitHub</link>.",
+				"title": "Contacte"
+			},
+			"dataCollected": {
+				"description": "Quan fas servir la nostra plataforma, podem recopilar la següent informació:",
+				"items": {
+					"email": "Adreça de correu electrònic (utilitzada per al registre i l'autenticació)",
+					"technical": "Dades tècniques (tipus de navegador, informació del dispositiu i adreça IP amb fins de seguretat)",
+					"usage": "Dades d'ús (historial de partides, puntuacions i registres d'interacció)",
+					"username": "Nom d'usuari (escollit per tu per identificar-te al joc)"
+				},
+				"title": "Dades Recopilades"
+			},
+			"dataUsage": {
+				"description": "Les dades que recopilem s'utilitzen exclusivament per als següents fins:",
+				"items": {
+					"account": "Gestió de comptes i autenticació",
+					"communication": "Enviar comunicacions necessàries relacionades amb el teu compte",
+					"gameplay": "Proporcionar l'experiència de joc i funcions socials",
+					"improvement": "Millorar i optimitzar la plataforma"
+				},
+				"title": "Com Fem Servir les Teves Dades"
+			},
+			"intro": "A Transcendence, valorem la teva privacitat. Aquesta política descriu quines dades recopilem, com les fem servir, com les emmagatzemem i quins drets tens sobre la teva informació personal.",
+			"lastUpdated": "Última actualització: Abril 2026",
+			"rights": {
+				"description": "Com a usuari, tens els següents drets sobre les teves dades personals:",
+				"items": {
+					"access": "Dret a accedir a les teves dades personals",
+					"deletion": "Dret a sol·licitar l'eliminació de les teves dades",
+					"portability": "Dret a la portabilitat de dades",
+					"rectification": "Dret a corregir dades inexactes"
+				},
+				"title": "Els Teus Drets"
+			},
+			"storage": {
+				"description": "Les teves dades s'emmagatzemen de forma segura als nostres servidors. Implementem mesures de seguretat estàndard de la indústria, incloent connexions xifrades (HTTPS), hash segur de contrasenyes i auditories de seguretat regulars. Conservem les teves dades només mentre el teu compte estigui actiu o segons sigui necessari per proporcionar-te els nostres serveis.",
+				"title": "Emmagatzematge i Seguretat de Dades"
+			},
+			"title": "Política de Privacitat"
+		},
+		"terms": {
+			"metadata": {
+				"description": "Consulta les regles, responsabilitats i condicions legals per fer servir Transcendence.",
+				"title": "Termes de Servei"
+			},
+			"acceptance": {
+				"description": "En crear un compte o utilitzar els nostres serveis, acceptes aquests Termes en la seva totalitat. Si no estàs d'acord amb alguna part, t'has d'abstenir d'utilitzar la plataforma.",
+				"title": "Acceptació dels Termes"
+			},
+			"conduct": {
+				"description": "Per mantenir un entorn just, respectuós i divertit, et compromets a no:",
+				"items": {
+					"cheating": "Utilitzar trampes, programari d'automatització (bots) o hacks per obtenir avantatge.",
+					"disruption": "Intentar interrompre la integritat o seguretat dels nostres servidors.",
+					"harassment": "Assetjar, abusar o participar en conductes que danyin la comunitat o altres jugadors."
+				},
+				"title": "Conducta de l'Usuari"
+			},
+			"contact": {
+				"description": "Si tens preguntes o desitges exercir qualsevol dret relacionat amb aquests Termes, si us plau, contacta amb l'equip obrint una incidència en el nostre <link>repositori de GitHub</link>.",
+				"title": "Contacte"
+			},
+			"disclaimer": {
+				"description": "Transcendence és un projecte educatiu i comunitari. En conseqüència, el servei es proporciona tal com està i segons disponibilitat. No garantim que el servei sigui ininterromput, puntual, segur o lliure d'errors.",
+				"title": "Exempció de responsabilitat"
+			},
+			"intro": "Benvingut a Transcendence. L'ús d'aquesta plataforma està subjecte als següents Termes de Servei, que regeixen la relació entre tu i l'equip de desenvolupament.",
+			"ip": {
+				"description": "Tot el contingut, incloent el codi del joc, gràfics i marques registrades, és propietat de Transcendence. Atorguem una llicència limitada i no transferible per a ús personal i no comercial.",
+				"title": "Propietat Intel·lectual"
+			},
+			"lastUpdated": "Última actualització: Abril 2026",
+			"law": {
+				"description": "Aquests Termes es regeixen i interpreten d'acord amb les lleis aplicables als serveis digitals dins de l'àmbit de jurisdicció d'aquest projecte.",
+				"title": "Llei Aplicable"
+			},
+			"registration": {
+				"description": "Ets responsable de mantenir la confidencialitat de les teves credencials i de totes les activitats que es produeixin sota el teu compte.",
+				"items": {
+					"accuracy": "Acceptes proporcionar informació precisa i completa durant el registre.",
+					"security": "Ens has de notificar immediatament qualsevol ús no autoritzat del teu compte."
+				},
+				"title": "Registre de Compte"
+			},
+			"termination": {
+				"description": "Ens reservem el dret de suspendre o tancar el teu compte a la nostra discreció, sense previ avís, per conductes que considerem que violen aquests Termes o que resultin perjudicials per a altres usuaris o el projecte.",
+				"title": "Cancel·lació"
+			},
+			"title": "Termes de Servei"
+		}
+	},
+	"features": {
+		"auth": {
+			"actions": {
+				"continueWithGoogle": "Continuar amb Google",
+				"login": "Iniciar sessió",
+				"logoutAriaLabel": "Tancar sessió",
+				"resendEmail": "Tornar a enviar el correu",
+				"sendEmail": "Enviar correu electrònic",
+				"signup": "Crear compte"
+			},
+			"changePassword": {
+				"description": "Introdueix la teva contrasenya actual i tria'n una de nova.",
+				"submit": "Desa els canvis",
+				"success": "La contrasenya s'ha actualitzat correctament.",
+				"title": "Canvia la contrasenya"
+			},
+			"fields": {
+				"confirmPassword": {
+					"label": "Confirmar contrasenya",
+					"placeholder": "Torna a introduir la teva contrasenya"
+				},
+				"currentPassword": {
+					"label": "Contrasenya actual",
+					"placeholder": "Introdueix la teva contrasenya actual"
+				},
+				"email": {
+					"label": "Correu electrònic",
+					"placeholder": "nom@exemple.com"
+				},
+				"identifier": {
+					"description": "Utilitza el correu o el nom d'usuari amb el qual et vas registrar.",
+					"label": "Correu o nom d'usuari",
+					"placeholder": "nom@exemple.com o usuari"
+				},
+				"newPassword": {
+					"description": "Mínim 8 caràcters.",
+					"label": "Contrasenya nova",
+					"placeholder": "Introdueix la teva contrasenya nova"
+				},
+				"password": {
+					"description": "Mínim 8 caràcters.",
+					"label": "Contrasenya",
+					"placeholder": "Introdueix la teva contrasenya"
+				},
+				"username": {
+					"label": "Nom d'usuari",
+					"placeholder": "el_teu_usuari"
+				}
+			},
+			"login": {
+				"forgotPassword": "Has oblidat la contrasenya?",
+				"goToSignup": "Crear-ne un",
+				"metadata": {
+					"description": "Inicia sessió al teu compte de Transcendence per jugar, xatejar i gestionar el teu perfil.",
+					"title": "Iniciar sessió"
+				},
+				"noAccount": "No tens compte?",
+				"submit": "Iniciar sessió",
+				"title": "Iniciar sessió"
+			},
+			"messages": {
+				"or": "O",
+				"success": "Correu enviat. Espera per tornar-ho a intentar."
+			},
+			"recover": {
+				"backToLogin": "Torna a iniciar sessió",
+				"checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per crear una nova contrasenya.",
+				"checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, prova-ho de nou més tard.",
+				"metadata": {
+					"description": "Sol·licita un correu de restabliment de contrasenya per recuperar l'accés al teu compte de Transcendence.",
+					"title": "Recuperar compte"
+				},
+				"rememberedPassword": "Has recordat la teva contrasenya?",
+				"sent": "T'hem enviat instruccions per restablir la contrasenya al correu que has introduït.",
+				"title": "Revisa el teu correu"
+			},
+			"reset": {
+				"backToLogin": "Torna a iniciar sessió",
+				"description": "Introdueix la teva nova contrasenya.",
+				"metadata": {
+					"description": "Defineix una contrasenya nova per al teu compte de Transcendence.",
+					"title": "Restableix la contrasenya"
+				},
+				"rememberedPassword": "Has recordat la contrasenya?",
+				"submit": "Desa la contrasenya nova",
+				"success": "La contrasenya s'ha actualitzat correctament.",
+				"title": "Restableix la contrasenya"
+			},
+			"signup": {
+				"goToLogin": "Iniciar sessió",
+				"haveAccount": "Ja tens compte?",
+				"metadata": {
+					"description": "Crea el teu compte de Transcendence per començar a jugar i connectar amb amics.",
+					"title": "Crear compte"
+				},
+				"privacy": {
+					"error": "Has d'acceptar la Política de Privacitat per continuar.",
+					"label": "He llegit i accepto la <link>Política de Privacitat</link>"
+				},
+				"title": "Crear compte"
+			},
+			"verification": {
+				"backToLogin": "Iniciar sessió",
+				"checkInbox": "Revisa la teva safata d'entrada i segueix les instruccions per activar el teu compte.",
+				"checkSpam": "Si no el trobes, revisa la carpeta de correu brossa. Si tampoc hi és, pots tornar a enviar-lo.",
+				"invalidOrExpired": "L'enllaç de verificació no és vàlid o ha caducat.",
+				"isConfirmed": "Ja has confirmat?",
+				"metadata": {
+					"description": "Confirma la teva adreça de correu electrònic per activar el teu compte de Transcendence.",
+					"title": "Verifica el teu correu electrònic"
+				},
+				"missingToken": "Falta el token de verificació.",
+				"recoverTitle": "Recuperar compte",
+				"resendDescription": "Introdueix el correu electrònic que vas fer servir per crear el teu compte.",
+				"resending": "Enviant...",
+				"resendTitle": "Torna a enviar el correu de verificació",
+				"sent": "T'hem enviat un correu per confirmar el teu compte.",
+				"title": "Verifica el teu correu electrònic",
+				"verified": "Correu verificat. Redirigint al teu perfil...",
+				"verifying": "Verificant el teu correu..."
+			}
+		},
+		"chat": {
+			"errors": {
+				"INVALID_CHAT_MESSAGE": "No s'ha pogut enviar el missatge."
+			},
+			"hideChat": "Amaga el xat",
+			"messageAriaLabel": "Missatge",
+			"showChat": "Mostra el xat",
+			"system": {
+				"userJoined": "{username} s'ha unit al xat.",
+				"userLeft": "{username} ha sortit del xat."
+			}
+		},
+		"directMessages": {
+			"metadata": {
+				"description": "Obre converses privades amb els teus amics a Transcendence.",
+				"title": "Missatges directes"
+			},
+			"emptyState": "Encara no hi ha converses",
+			"listTitle": "Missatges",
+			"openList": "Obrir llista de missatges",
+			"closeList": "Tancar llista de missatges",
+			"selectionTitle": "Selecciona una conversa",
+			"selectionBody": "Tria un amic de la llista per obrir els teus missatges.",
+			"accessTitle": "Missatges directes",
+			"accessBody": {
+				"authenticated": "Aquesta conversa només està disponible entre amics acceptats.",
+				"unauthenticated": "Has d'iniciar sessió per obrir un xat privat."
+			},
+			"backToHome": "Torna a l'inici",
+			"presence": {
+				"online": "● En línia",
+				"away": "● Absent",
+				"offline": "Desconnectat"
+			}
+		},
+		"game": {
+			"endTurn": "Acabar torn",
+			"healthLabel": "HP",
+			"resetPlan": "Reiniciar pla",
+			"winScreen": "HAS GUANYAT!",
+			"loseScreen": "HAS PERDUT",
+			"unavailable": "Joc no disponible",
+			"roomNotReady": "La sala no està preparada",
+			"roomNotReadyDesc": "Només pots accedir al joc quan la sala té 4 jugadors.",
+			"paused": "Joc en pausa",
+			"pausedDesc": "Un jugador s'ha desconnectat. El joc queda bloquejat fins que la sala torni a estar completa.",
+			"connecting": "Connectant amb el servidor...",
+			"debugHint": "Consulta la consola del navegador per veure els registres detallats",
+			"turn": "Torn {num}",
+			"playingAs": "Jugant com a",
+			"dice": "d{num}",
+			"statusWithIcon": "⚡ {status}",
+			"doomIcon": "☠\ufe0e",
+			"classes": {
+				"assassin": "Assassí",
+				"paladin": "Paladí",
+				"mage": "Mag",
+				"alchemist": "Alquimista",
+				"spectator": "Espectador"
+			},
+			"instructions": {
+				"title": "Instruccions del joc",
+				"close": "Tancar",
+				"objective": {
+					"title": "Objectiu",
+					"intro": "Sou un escamot cooperatiu de 4 personatges. Heu de destruir el <strong>Generador enemic</strong> abans que la seva energia arribi al 100%.",
+					"energyTitle": "L'energia puja al final de cada ronda:",
+					"energyItems": [
+						"+5% pel generador.",
+						"+3% per cada enemic d'elit.",
+						"+1% per cada enemic comú."
+					],
+					"loseTitle": "Perdeu si:",
+					"loseItems": [
+						"el generador arriba al 100%, o",
+						"moren els 4 personatges de l'escamot."
+					],
+					"height": "L'<strong>alçada</strong> afecta el moviment, l'abast, els empentesos i els atacs que només funcionen a dalt o a baix."
+				},
+				"turnStructure": {
+					"title": "Estructura del torn",
+					"planning": {
+						"title": "A. Planificació conjunta (120 seg.)",
+						"body": "Els jugadors decideixen què fa cada personatge, quina habilitat usa, a quin objectiu apunta i quin enemic atacarà cadascú. Tots han d'estar d'acord per continuar."
+					},
+					"execution": {
+						"title": "B. Execució",
+						"body": "El joc executa automàticament el pla."
+					},
+					"enemy": {
+						"title": "C. Torn enemic",
+						"items": [
+							"Puja l'energia del generador.",
+							"Els enemics usen els seus daus i accions.",
+							"La interfície pot mostrar pistes d'objectiu."
+						]
+					}
+				},
+				"generalRules": {
+					"title": "Regles generals",
+					"items": [
+						"Cada personatge i enemic té el seu propi set de daus.",
+						"Cada acció consumeix 1 dau.",
+						"En un torn: moure's o usar habilitats (no ambdós).",
+						"Moviment: una vegada per torn, fins al valor més alt dels daus.",
+						"Habilitats: s'apliquen si es compleix la condició de la tirada.",
+						"Les unitats amb 0 PV moren."
+					],
+					"diceAction": "Cada acció consumeix 1 dau."
+				},
+				"abilities": {
+					"title": "Com usar les habilitats",
+					"steps": [
+						"Selecciona el teu personatge.",
+						"Tria una habilitat.",
+						"Passa el ratolí sobre un dau per veure l'abast o l'efecte.",
+						"Selecciona la casella o objectiu.",
+						"Confirma dins la planificació."
+					]
+				},
+				"playableClasses": {
+					"title": "Classes jugables",
+					"assassin": {
+						"name": "Assassí",
+						"role": "Dany ràpid, empentesos i control.",
+						"stats": ["PV: 13", "Daus: 4d4 + 1d8"],
+						"skills": [
+							{
+								"name": "Punyalada",
+								"details": [
+									"cos a cos · sense CD · dany: resultat / 2 · cond: parell"
+								]
+							},
+							{
+								"name": "Tir de navailles",
+								"details": ["abast lineal · dany: 2 · sense CD · cond: > 3"]
+							},
+							{
+								"name": "Patada",
+								"details": [
+									"cos a cos · sense CD · dany: 1 · empeny 1 casella · cond: senar",
+									"l'empentós s'aplica encara que falli"
+								]
+							},
+							{
+								"name": "Lligar",
+								"details": [
+									"cos a cos · sense CD · elimina 1 dau de l'enemic · cond: > 1",
+									"no es pot aplicar diverses vegades al mateix enemic"
+								]
+							}
+						]
+					},
+					"paladin": {
+						"name": "Paladí",
+						"role": "Tanc i protector.",
+						"stats": ["PV: 16", "Daus: 4d6"],
+						"skills": [
+							{
+								"name": "Estocada",
+								"details": ["abast 1 línia recta · CD 1 · dany: 2 · cond: > 3"]
+							},
+							{
+								"name": "Defensar",
+								"details": [
+									"abast 2 · àrea circular, objectiu únic · sense CD",
+									"redueix a la meitat les properes x instàncies de dany · cond: > 1"
+								]
+							},
+							{
+								"name": "Cop d'escut",
+								"details": [
+									"AOE en creu · CD 2 · dany: 4x · cond: > 5",
+									"empeny 1 casella als enemics dels extrems (encara que falli)"
+								]
+							},
+							{
+								"name": "Tall vertical",
+								"details": [
+									"cos a cos · CD 1 · cobreix tots els nivells",
+									"dany: 2x + 2 si nivell diferent · cond: > 3"
+								]
+							}
+						]
+					},
+					"alchemist": {
+						"name": "Alquimista",
+						"role": "Suport, control de zona i debilitació.",
+						"stats": ["PV: 10", "Daus: 1d6 + 1d8 + 1d10"],
+						"skills": [
+							{
+								"name": "Dopatge",
+								"details": [
+									"abast 2 en línia · CD 1 · pot aplicar-se a si mateix",
+									"dona la meitat del dau com a bonificació a la propera acció de l'objectiu"
+								]
+							},
+							{
+								"name": "Matràs de buit",
+								"details": [
+									"abast circular 2 · centre fins a 3 caselles · AOE · CD 2",
+									"dany: (resultat - 2) / 2 · absorbeix cap al centre · cond: > 5"
+								]
+							},
+							{
+								"name": "Matràs bombàstic",
+								"details": [
+									"abast circular 1 en creu · centre fins a 3 caselles · CD 2",
+									"dany: (resultat - 2) / 2 · empeny diag. cap amunt · cond: > 5"
+								]
+							},
+							{
+								"name": "Oxidació",
+								"details": [
+									"abast 1 circular · sense CD · redueix l'armadura de l'objectiu en x · cond: > 2"
+								]
+							}
+						]
+					},
+					"mage": {
+						"name": "Mag",
+						"role": "Dany en àrea, foc i control de nivells.",
+						"stats": ["PV: 8", "Daus: 1d4 + 1d8 + 1d12"],
+						"skills": [
+							{
+								"name": "Alè de foc",
+								"details": [
+									"abast 3 · AOE · CD 2 · aplica cremada 2 torns (1 dany/torn) · cond: > 3",
+									"cos a cos: dany = resultat / 3 + 2",
+									"mitjà: dany = resultat / 4 + 1 (nivell diferent)",
+									"llunyà: dany = resultat / 4 - 2 + 1 (nivell diferent)"
+								]
+							},
+							{
+								"name": "Cometa azur",
+								"details": [
+									"abast infinit mateix pla · CD 3 · dany: resultat / 2 + 2 · cond: > 3"
+								]
+							},
+							{
+								"name": "Petit meteorit",
+								"details": [
+									"abast 4 circular · CD 1 · només zona superior",
+									"dany: x + 2 si nivell diferent · cond: > 2"
+								]
+							},
+							{
+								"name": "Espines emergents",
+								"details": [
+									"abast 4 circular · CD 1 · només zona inferior",
+									"dany: x + 2 si nivell diferent · cond: > 2"
+								]
+							}
+						]
+					}
+				},
+				"enemyClasses": {
+					"title": "Classes enemigues",
+					"drone": {
+						"name": "Dron",
+						"stats": [
+							"PV: 3 · Daus: 3d4",
+							"atac cos a cos · dany: 1 · cond: x > 1"
+						]
+					},
+					"tracker": {
+						"name": "Rastrejador",
+						"stats": [
+							"PV: 4 · Daus: 2d4 + 1d6",
+							"atac cos a cos · dany: 1 · cond: x > 1"
+						]
+					},
+					"centurion": {
+						"name": "Centurió (d'elit)",
+						"stats": ["PV: 20 · Escut: 2 · Daus: d6 + 2d8"],
+						"skills": [
+							{
+								"name": "Embestida",
+								"details": [
+									"abast línia 3 · sense CD · es mou 3 caselles · empeny perpendicular",
+									"dany: resultat / 2 · cond: > 4 (l'empentós s'aplica igualment)"
+								]
+							},
+							{
+								"name": "Mini bomba atòmica",
+								"details": [
+									"abast circular 2 · CD 2 · es fa 4 de dany a si mateixa",
+									"dany: resultat / 2 + 2 · cond: > 3"
+								]
+							}
+						]
+					},
+					"jaeger": {
+						"name": "Jaeger (d'elit)",
+						"stats": ["PV: 10 · Escut: 1 · Daus: 2d6 + 1d10"],
+						"skills": [
+							{
+								"name": "Empentó",
+								"details": [
+									"cos a cos · sense CD · empeny 2 caselles · dany: x · cond: x > 3"
+								]
+							},
+							{
+								"name": "Tret d'impacte",
+								"details": [
+									"abast circular 6 · CD 1 · ignora barreres · al de més vida (empat: més llunyà)",
+									"dany: resultat / 2 · cond: > 5"
+								]
+							}
+						]
+					}
+				}
+			},
+			"room": {
+				"fields": {
+					"gameRoomId": "ID de la sala"
+				}
+			}
+		},
+		"navigation": {
+			"createAccount": "Crear compte",
+			"game": "Joc",
+			"home": "Inici",
+			"messages": "Missatges",
+			"login": "Iniciar sessió",
+			"logout": "Tancar sessió",
+			"mainAriaLabel": "Navegació principal",
+			"menu": "Menú",
+			"profile": "Perfil",
+			"settings": "Configuració",
+			"ui": "UI"
+		},
+		"profile": {
+			"actions": {
+				"changePassword": "Canviar contrasenya",
+				"deleteAccount": "Eliminar compte",
+				"editProfile": "Editar perfil"
+			},
+			"bio": "Biografia",
+			"delete": {
+				"body": "Aquesta acció elimina el teu compte de manera permanent, esborra el teu perfil i tanca la teva sessió. No es pot desfer.",
+				"cancel": "Cancel·lar",
+				"description": "Això elimina el teu compte de manera permanent i tanca la teva sessió.",
+				"title": "Eliminar compte?"
+			},
+			"edit": {
+				"avatarAlt": "Seleccionar avatar {name}",
+				"chooseAvatar": "Tria el teu avatar",
+				"placeholder": "Explica'ls a la resta de jugadors una mica sobre tu",
+				"submit": "Desar canvis",
+				"title": "Editar perfil"
+			},
+			"emptyBio": "Sense biografia",
+			"fail": "No s'ha pogut carregar el teu perfil.",
+			"metadata": {
+				"publicDescription": "Consulta el perfil públic de {username} a Transcendence."
+			},
+			"provider": "Proveïdor",
+			"userId": "ID d'usuari",
+			"username": "Nom d'usuari"
+		},
+		"settings": {
+			"dark": "Fosc",
+			"language": "Idioma",
+			"light": "Clar",
+			"theme": "Tema"
+		},
+		"social": {
+			"actions": {
+				"accept": "Acceptar",
+				"addFriend": "Afegir amic",
+				"cancel": "Cancel·lar",
+				"cancelRequest": "Cancel·lar sol·licitud",
+				"inviteSent": "Has enviat una invitacio a {username}",
+				"inviteToGame": "Convidar a partida",
+				"message": "Missatge",
+				"decline": "Rebutjar invitació",
+				"reject": "Rebutjar",
+				"unfriend": "Eliminar amic",
+				"inviteErrors": {
+					"GAME_INVITATION_ROOM_REQUIRED": "Connecta't a la sala de joc primer",
+					"GAME_INVITATION_ROOM_UNAVAILABLE": "La sala de joc ja no està disponible",
+					"GAME_INVITATION_DUPLICATE_PENDING": "Invitació ja pendent",
+					"GAME_INVITATION_RECENT_DUPLICATE": "Acabes d'enviar una invitació, espera un moment",
+					"GAME_INVITATION_PENDING_LIMIT": "Massa invitacions pendents",
+					"GAME_INVITATION_RATE_LIMITED": "Massa invitacions enviades, torna-ho a intentar més tard",
+					"GAME_INVITATION_NOT_FRIEND": "No ets amic d'aquest usuari",
+					"GAME_INVITATION_ALREADY_IN_ROOM": "Aquest usuari ja és en una sala de joc",
+					"default": "No s'ha pogut enviar la invitació"
+				}
+			},
+			"emptyStates": {
+				"offline": "No hi ha amics desconnectats",
+				"online": "No hi ha amics connectats",
+				"pending": "No has enviat sol·licituds",
+				"request": "No tens sol·licituds pendents",
+				"search": "No s’han trobat usuaris",
+				"gameInvitations": "Encara no hi ha invitacions de joc"
+			},
+			"friends": {
+				"offline": "Amics desconnectats",
+				"online": "Amics connectats",
+				"title": "Amics"
+			},
+			"guest": {
+				"body": "Per trobar amics, veure qui està connectat i jugar, necessites un compte.",
+				"login": "Iniciar sessió",
+				"noAccount": "No tens compte?",
+				"signup": "Crear-ne un",
+				"title": "Connecta amb la comunitat"
+			},
+			"requests": {
+				"now": "ara",
+				"received": "Rebudes",
+				"sent": "Enviades",
+				"title": "Sol·licituds"
+			},
+			"searchLabel": "Cercador",
+			"searchPlaceholder": "Cerca usuaris",
+			"title": "Social",
+			"gameInvitations": "Invitacions de joc",
+			"gameInvitationSubtitle": "Convidat a la sala {roomId}",
+			"gameInvitationSentSubtitle": "Invitació pending"
+		}
+	},
+	"validation": {
+		"FIELD_TOO_LONG": "Massa llarg.",
+		"FIELD_TOO_SHORT": "Massa curt.",
+		"INVALID_EMAIL": "Introdueix un correu electrònic vàlid.",
+		"INVALID_EMAIL_OR_USERNAME": "Introdueix un correu electrònic o nom d'usuari vàlid.",
+		"INVALID_FORMAT": "Format no vàlid.",
+		"INVALID_USERNAME": "El nom d'usuari ha de tenir entre 3 i 30 caràcters i només pot contenir lletres, números, guions baixos (_) o guions (-).",
+		"INVALID_USERNAME_FORMAT": "El nom d'usuari només pot contenir lletres, números, guions baixos (_) i guions (-).",
+		"OUT_OF_RANGE": "Sol·licitud fora de rang",
+		"PASSWORDS_DO_NOT_MATCH": "Les contrasenyes no coincideixen.",
+		"REQUIRED": "Aquest camp és obligatori.",
+		"USERNAME_TOO_LONG": "El nom d'usuari no pot superar els 30 caràcters.",
+		"USERNAME_TOO_SHORT": "El nom d'usuari ha de tenir almenys 3 caràcters."
+	},
+	"errors": {
+		"AUTH_ACCOUNT_LOCKED": "El teu compte està bloquejat temporalment. Torna-ho a provar més tard.",
+		"AUTH_EMAIL_ALREADY_EXISTS": "Aquest correu electrònic ja existeix",
+		"AUTH_EMAIL_NOT_VERIFIED": "Verifica el teu correu abans d'iniciar sessió.",
+		"AUTH_FORBIDDEN": "No tens permís per accedir a aquest recurs.",
+		"AUTH_INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+		"AUTH_INVALID_CREDENTIALS": "Credencials no vàlides",
+		"AUTH_NO_PENDING_RECOVER": "No s'ha trobat cap sol·licitud de restabliment. Torna a començar.",
+		"AUTH_RATE_LIMITED": "Massa intents. Torna-ho a provar més tard.",
+		"AUTH_TOKEN_EXPIRED": "L'enllaç de verificació no és vàlid o ha caducat.",
+		"AUTH_UNAUTHORIZED": "Has d'iniciar sessió per veure aquest contingut.",
+		"FETCH_FAILED": "Ha fallat la sol·licitud a l'API. Torna-ho a provar més tard.",
+		"FRIENDSHIP_ALREADY_ACCEPTED": "Aquesta sol·licitud ja ha estat acceptada.",
+		"FRIENDSHIP_ALREADY_EXISTS": "Ja sou amics.",
+		"FRIENDSHIP_NOT_FOUND": "No s'ha trobat l'amistat.",
+		"FRIENDSHIP_REQUEST_ALREADY_SENT": "Ja s'ha enviat una sol·licitud d'amistat.",
+		"FRIENDSHIP_REQUEST_NOT_FOUND": "La sol·licitud no existeix o ja no està disponible.",
+		"FRIENDSHIP_SELF_REQUEST": "No et pots afegir a tu mateix.",
+		"generic": "Alguna cosa ha anat malament. Torna-ho a provar.",
+		"INTERNAL_ERROR": "Alguna cosa ha anat malament. Torna-ho a provar.",
+		"UNAUTHORIZED_ACTION": "Acció no permesa.",
+		"USER_NOT_FOUND": "Usuari no trobat.",
+		"VALIDATION_ERROR": "Error de validació: revisa els camps i intenta de nou."
+	}
 }
