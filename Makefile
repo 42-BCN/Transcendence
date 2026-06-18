@@ -25,6 +25,7 @@ SOCKET_DIR = containers/socket/app
 ENV_FILES = \
 	containers/nginx/.env.$(ENV) \
 	containers/backend/docker/.env.$(ENV) \
+	containers/socket/docker/.env.$(ENV) \
 	containers/cloudflared/.env.$(ENV) \
 	containers/frontend/docker/.env.$(ENV) \
 	containers/database/docker/.env.$(ENV)
@@ -34,6 +35,7 @@ GENERATED_ENVS = development production
 ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/nginx/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/backend/docker/.env.$(env)) \
+	$(foreach env,$(GENERATED_ENVS),containers/socket/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/cloudflared/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/frontend/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/database/docker/.env.$(env))
@@ -60,7 +62,7 @@ all: dev switch-prod prod-tunnel-quick
 #---- Setup ----
 
 setup:
-	@APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
+	APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
 
 #---- Development ----
 
