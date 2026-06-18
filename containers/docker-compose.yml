@@ -140,6 +140,8 @@ services:
       - edge
 
   cloudflared:
+    profiles:
+      - tunnel
     image: cloudflare/cloudflared:latest
     env_file:
       - ./cloudflared/.env.${APP_ENV:-development}

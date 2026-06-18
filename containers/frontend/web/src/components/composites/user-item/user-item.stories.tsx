@@ -59,6 +59,26 @@ const meta = {
         },
       },
     },
+    href: {
+      control: 'text',
+      description: 'Optional internal link href. When provided, the entire user item becomes a clickable link.',
+      table: {
+        category: 'Navigation',
+        type: {
+          summary: 'InternalLinkProps["href"]',
+        },
+      },
+    },
+    subtitleClassName: {
+      control: 'text',
+      description: 'Optional className applied to the subtitle text element.',
+      table: {
+        category: 'Styling',
+        type: {
+          summary: 'string',
+        },
+      },
+    },
     className: {
       control: false,
       description: 'Optional className merged into the user item root styles.',

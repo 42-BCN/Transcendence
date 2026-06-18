@@ -131,7 +131,7 @@ const meta = {
     },
   },
   args: {
-    labelKey: 'features.auth.signup.acceptTerms',
+    labelKey: 'features.auth.signup.privacy.label',
     name: 'terms',
     value: 'accepted',
     defaultSelected: false,
@@ -155,7 +155,7 @@ export const Checked: Story = {
 
 export const WithError: Story = {
   args: {
-    errorKey: 'validation.required',
+    errorKey: 'validation.REQUIRED',
   },
   parameters: {
     docs: {
@@ -163,8 +163,8 @@ export const WithError: Story = {
         code: `<CheckboxField
   name="terms"
   value="accepted"
-  labelKey="features.auth.signup.acceptTerms"
-  errorKey="validation.required"
+  labelKey="features.auth.signup.privacy.label"
+  errorKey="validation.REQUIRED"
 />`,
       },
     },
@@ -173,7 +173,7 @@ export const WithError: Story = {
 
 export const WithLink: Story = {
   args: {
-    labelKey: 'features.auth.signup.acceptTermsWithLink',
+    labelKey: 'features.auth.signup.privacy.label',
     linkHref: '/privacy',
   },
   parameters: {
@@ -182,8 +182,8 @@ export const WithLink: Story = {
         code: `<CheckboxField
   name="terms"
   value="accepted"
-  labelKey="features.auth.signup.acceptTermsWithLink"
-  linkHref="/privacy-policy"
+  labelKey="features.auth.signup.privacy.label"
+  linkHref="/privacy"
 />`,
       },
     },
@@ -204,34 +204,34 @@ export const States: Story = {
   <CheckboxField
     name="terms"
     value="accepted"
-    labelKey="features.auth.signup.acceptTerms"
+    labelKey="features.auth.signup.privacy.label"
   />
 
   <CheckboxField
     name="terms-checked"
     value="accepted"
-    labelKey="features.auth.signup.acceptTerms"
+    labelKey="features.auth.signup.privacy.label"
     defaultSelected
   />
 
   <CheckboxField
     name="terms-error"
     value="accepted"
-    labelKey="features.auth.signup.acceptTerms"
-    errorKey="validation.required"
+    labelKey="features.auth.signup.privacy.label"
+    errorKey="validation.REQUIRED"
   />
 
   <CheckboxField
     name="terms-link"
     value="accepted"
-    labelKey="features.auth.signup.acceptTermsWithLink"
-    linkHref="/privacy-policy"
+    labelKey="features.auth.signup.privacy.label"
+    linkHref="/privacy"
   />
 
   <CheckboxField
     name="terms-disabled"
     value="accepted"
-    labelKey="features.auth.signup.acceptTerms"
+    labelKey="features.auth.signup.privacy.label"
     isDisabled
   />
 </div>`,
@@ -240,33 +240,33 @@ export const States: Story = {
   },
   render: () => (
     <div className="grid gap-4">
-      <CheckboxField name="terms" value="accepted" labelKey="features.auth.signup.acceptTerms" />
+      <CheckboxField name="terms" value="accepted" labelKey="features.auth.signup.privacy.label" />
 
       <CheckboxField
         name="terms-checked"
         value="accepted"
-        labelKey="features.auth.signup.acceptTerms"
+        labelKey="features.auth.signup.privacy.label"
         defaultSelected
       />
 
       <CheckboxField
         name="terms-error"
         value="accepted"
-        labelKey="features.auth.signup.acceptTerms"
-        errorKey="validation.required"
+        labelKey="features.auth.signup.privacy.label"
+        errorKey="validation.REQUIRED"
       />
 
       <CheckboxField
         name="terms-link"
         value="accepted"
-        labelKey="features.auth.signup.acceptTermsWithLink"
+        labelKey="features.auth.signup.privacy.label"
         linkHref="/privacy"
       />
 
       <CheckboxField
         name="terms-disabled"
         value="accepted"
-        labelKey="features.auth.signup.acceptTerms"
+        labelKey="features.auth.signup.privacy.label"
       />
     </div>
   ),

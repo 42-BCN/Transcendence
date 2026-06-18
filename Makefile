@@ -228,7 +228,7 @@ tunnel:
 	APP_ENV=$(ENV) sh $(TUNNEL_SCRIPT) $(ENV)
 
 tunnel-logs:
-	$(COMPOSE_DEV) logs -f cloudflared
+	$(COMPOSE_DEV) --profile tunnel logs -f cloudflared
 
 tunnel-down: tunnel-quick-down
 
@@ -244,19 +244,19 @@ tunnel-quick:
 	APP_ENV=development sh $(TUNNEL_QUICK_SCRIPT) development
 
 tunnel-quick-down:
-	$(COMPOSE_DEV) rm -sf cloudflared
+	$(COMPOSE_DEV) --profile tunnel rm -sf cloudflared
 
 tunnel-quick-logs:
-	$(COMPOSE_DEV) logs -f cloudflared
+	$(COMPOSE_DEV) --profile tunnel logs -f cloudflared
 
 prod-tunnel-quick:
 	APP_ENV=production sh $(TUNNEL_QUICK_SCRIPT) production
 
 prod-tunnel-quick-down:
-	$(COMPOSE_PROD) rm -sf cloudflared
+	$(COMPOSE_PROD) --profile tunnel rm -sf cloudflared
 
 prod-tunnel-quick-logs:
-	$(COMPOSE_PROD) logs -f cloudflared
+	$(COMPOSE_PROD) --profile tunnel logs -f cloudflared
 
 #---- Env cleanup ----
 

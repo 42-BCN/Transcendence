@@ -15,6 +15,16 @@ const meta = {
     },
   },
   argTypes: {
+    id: {
+      control: 'text',
+      description: 'HTML id attribute for the submit button element.',
+      table: {
+        category: 'Form',
+        type: {
+          summary: 'string',
+        },
+      },
+    },
     idleLabel: {
       control: 'text',
       description: 'Text shown when the form is not pending.',

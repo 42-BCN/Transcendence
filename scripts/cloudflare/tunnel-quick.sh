@@ -30,6 +30,7 @@ compose_env() {
   APP_ENV="$TARGET_ENV" NODE_ENV="$NODE_ENV_VALUE" docker compose \
     -f "$ROOT_DIR/containers/docker-compose.yml" \
     -f "$ROOT_DIR/$COMPOSE_OVERRIDE" \
+    --profile tunnel \
     "$@"
 }
 

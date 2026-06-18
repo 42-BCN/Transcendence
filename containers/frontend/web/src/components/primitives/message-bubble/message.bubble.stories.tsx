@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { MessageBubble } from './message-bubble';
 
 const meta = {
-  title: 'Components/Composites/MessageBubble',
+  title: 'Components/Primitives/MessageBubble',
   component: MessageBubble,
   tags: ['autodocs'],
   parameters: {
@@ -28,7 +28,7 @@ const meta = {
     },
     variant: {
       control: 'select',
-      options: ['error', 'user', 'me', 'system'],
+      options: ['error', 'user', 'me', 'system', 'game-event'],
       description: 'Visual style variant of the message bubble.',
       table: {
         category: 'Appearance',
@@ -97,6 +97,13 @@ export const Conversation: Story = {
       </div>
     </div>
   ),
+};
+
+export const GameEvent: Story = {
+  args: {
+    variant: 'game-event',
+    children: 'Player scored a point!',
+  },
 };
 
 export const LongMessage: Story = {

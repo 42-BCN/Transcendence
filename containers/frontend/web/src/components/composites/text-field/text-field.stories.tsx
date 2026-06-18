@@ -145,7 +145,6 @@ const meta = {
   args: {
     name: 'username',
     labelKey: 'features.auth.fields.username.label',
-    descriptionKey: 'features.auth.fields.username.description',
     inputProps: {
       placeholder: 'username',
     },
@@ -165,7 +164,6 @@ export const WithDescription: Story = {
   args: {
     name: 'email',
     labelKey: 'features.auth.fields.email.label',
-    descriptionKey: 'features.auth.fields.email.description',
     inputProps: {
       placeholder: 'email@example.com',
       type: 'email',
@@ -177,7 +175,7 @@ export const WithError: Story = {
   args: {
     name: 'password',
     labelKey: 'features.auth.fields.password.label',
-    errorKey: 'validation.required',
+    errorKey: 'validation.REQUIRED',
     inputProps: {
       placeholder: 'Password',
       type: 'password',
@@ -216,14 +214,13 @@ export const States: Story = {
   <TextField
     name="username"
     labelKey="features.auth.fields.username.label"
-    descriptionKey="features.auth.fields.username.description"
     inputProps={{ placeholder: 'username' }}
   />
 
   <TextField
     name="password"
     labelKey="features.auth.fields.password.label"
-    errorKey="validation.required"
+    errorKey="validation.REQUIRED"
     inputProps={{ placeholder: 'Password', type: 'password' }}
   />
 
@@ -242,14 +239,13 @@ export const States: Story = {
       <TextField
         name="username"
         labelKey="features.auth.fields.username.label"
-        descriptionKey="features.auth.fields.username.description"
         inputProps={{ placeholder: 'username' }}
       />
 
       <TextField
         name="password"
         labelKey="features.auth.fields.password.label"
-        errorKey="validation.required"
+        errorKey="validation.REQUIRED"
         inputProps={{ placeholder: 'Password', type: 'password' }}
       />
 

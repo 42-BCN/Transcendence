@@ -305,8 +305,6 @@ To run this project locally, ensure you have installed:
 - **GNU Make**
 - A Unix-like shell environment
 
-<<<<<<< HEAD
-
 ### Evaluation (42)
 
 ```bash
@@ -315,13 +313,7 @@ make
 
 This builds and starts production, prepares the database, and starts a Cloudflare quick tunnel. The tunnel URL is printed to the terminal — open it in a browser to access the app.
 
-### Quick Start (Development)
-
-=======
-
 ### Setup & Launch
-
-> > > > > > > main
 
 1. **Clone the repository**:
 
@@ -335,23 +327,11 @@ This builds and starts production, prepares the database, and starts a Cloudflar
 
    > **Note**: For detailed information on how environment variables and certificates are managed under the hood, refer to our internal documentation: [Environment Variables Configuration](scripts/env/README.md) and [Local SSL Certificate Setup](scripts/certs/README.md).
 
-   The project supports three deployment environments. For evaluation or live testing, it is highly recommended to run the **Demo** mode first.
+   The project supports two deployment environments:
 
-   #### A. Demo Mode (Recommended for Evaluation)
+   #### A. Production Mode
 
-   Runs the application compiled for production, but automatically provisions the database, pushes the schema, and populates it with **initial seed data** (test users, friendship graphs, etc.) so you can test features immediately.
-   To launch this environment for the first time (or to reset and re-seed the database), run:
-
-   ```bash
-   make demo-reset
-   ```
-
-   For subsequent runs (without resetting the database), you can simply use `make demo`.
-   _Access the app at: `https://localhost:8443`_
-
-   #### B. Production Mode
-
-   Runs the pure production environment without database seeding.
+   Runs the application compiled for production.
 
    ```bash
    make prod
@@ -359,7 +339,7 @@ This builds and starts production, prepares the database, and starts a Cloudflar
 
    _Access the app at: `https://localhost:8443`_
 
-   #### C. Development Mode
+   #### B. Development Mode
 
    Runs all services with hot-reloading and mounts source directories for live development.
 
@@ -389,12 +369,11 @@ To facilitate grading and remote code evaluation without configuring router fire
 
 1. **Start the tunnel matching your active environment**:
    - Dev: `make tunnel-quick`
-   - Demo: `make demo-tunnel-quick`
    - Prod: `make prod-tunnel-quick`
 2. **Find the public URL**:
    Inspect the tunnel logs:
    ```bash
-   make demo-tunnel-quick-logs
+   make tunnel-quick-logs
    ```
    Look for the printed line containing `https://[your-random-subdomain].trycloudflare.com`.
 3. **Google OAuth Callback Adjustment**:
@@ -403,7 +382,7 @@ To facilitate grading and remote code evaluation without configuring router fire
    - Update the authorized redirect URI in your Google Developer Console to: `https://[your-random-subdomain].trycloudflare.com/api/v1/auth/google/callback`.
 4. **Shutdown the tunnel**:
    ```bash
-   make demo-tunnel-quick-down
+   make tunnel-quick-down
    ```
 
 ---

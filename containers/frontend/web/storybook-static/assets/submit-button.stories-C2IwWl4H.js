@@ -1,0 +1,20 @@
+import{n as e}from"./chunk-BEldbCjX.js";import{C as t}from"./iframe-DMHpIwzT.js";import{n,t as r}from"./submit-button-BUps2NYz.js";function i(e,t,n,r,i,a,o){try{var s=e[a](o),c=s.value}catch(e){n(e);return}s.done?t(c):Promise.resolve(c).then(r,i)}function a(e){return function(){var t=this,n=arguments;return new Promise(function(r,a){var o=e.apply(t,n);function s(e){i(o,r,a,s,c,`next`,e)}function c(e){i(o,r,a,s,c,`throw`,e)}s(void 0)})}}function o(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function s(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]==null?{}:arguments[t],r=Object.keys(n);typeof Object.getOwnPropertySymbols==`function`&&(r=r.concat(Object.getOwnPropertySymbols(n).filter(function(e){return Object.getOwnPropertyDescriptor(n,e).enumerable}))),r.forEach(function(t){o(e,t,n[t])})}return e}function c(e,t){var n=Object.keys(e);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(e);t&&(r=r.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),n.push.apply(n,r)}return n}function l(e,t){return t??={},Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(t)):c(Object(t)).forEach(function(n){Object.defineProperty(e,n,Object.getOwnPropertyDescriptor(t,n))}),e}function u(e,t){var n,r,i,a={label:0,sent:function(){if(i[0]&1)throw i[1];return i[1]},trys:[],ops:[]},o=Object.create((typeof Iterator==`function`?Iterator:Object).prototype),s=Object.defineProperty;return s(o,`next`,{value:c(0)}),s(o,`throw`,{value:c(1)}),s(o,`return`,{value:c(2)}),typeof Symbol==`function`&&s(o,Symbol.iterator,{value:function(){return this}}),o;function c(e){return function(t){return l([e,t])}}function l(s){if(n)throw TypeError(`Generator is already executing.`);for(;o&&(o=0,s[0]&&(a=0)),a;)try{if(n=1,r&&(i=s[0]&2?r.return:s[0]?r.throw||((i=r.return)&&i.call(r),0):r.next)&&!(i=i.call(r,s[1])).done)return i;switch(r=0,i&&(s=[s[0]&2,i.value]),s[0]){case 0:case 1:i=s;break;case 4:return a.label++,{value:s[1],done:!1};case 5:a.label++,r=s[1],s=[0];continue;case 7:s=a.ops.pop(),a.trys.pop();continue;default:if((i=a.trys,!(i=i.length>0&&i[i.length-1]))&&(s[0]===6||s[0]===2)){a=0;continue}if(s[0]===3&&(!i||s[1]>i[0]&&s[1]<i[3])){a.label=s[1];break}if(s[0]===6&&a.label<i[1]){a.label=i[1],i=s;break}if(i&&a.label<i[2]){a.label=i[2],a.ops.push(s);break}i[2]&&a.ops.pop(),a.trys.pop();continue}s=t.call(e,a)}catch(e){s=[6,e],r=0}finally{n=i=0}if(s[0]&5)throw s[1];return{value:s[0]?s[1]:void 0,done:!0}}}var d,f,p,m;e((()=>{d=t(),n(),f={title:`Components/Composites/SubmitButton`,component:r,tags:[`autodocs`],parameters:{docs:{description:{component:`Submit button that reads pending state from useFormStatus. It disables itself and swaps the label while the parent form action is pending.`}}},argTypes:{id:{control:`text`,description:`HTML id attribute for the submit button element.`,table:{category:`Form`,type:{summary:`string`}}},idleLabel:{control:`text`,description:`Text shown when the form is not pending.`,table:{category:`Content`,type:{summary:`string`}}}},args:{idleLabel:`Submit`}},p={parameters:{docs:{source:{code:`<form action={formAction}>
+  <SubmitButton idleLabel="Submit" />
+</form>`}}},render:function(e){return(0,d.jsx)(`form`,{action:function(){return a(function(){return u(this,function(e){switch(e.label){case 0:return[4,new Promise(function(e){window.setTimeout(e,1500)})];case 1:return e.sent(),[2]}})})()},children:(0,d.jsx)(r,s({},e))})}},p.parameters=l(s({},p.parameters),{docs:l(s({},p.parameters?.docs),{source:s({originalSource:`{
+  parameters: {
+    docs: {
+      source: {
+        code: \`<form action={formAction}>
+  <SubmitButton idleLabel="Submit" />
+</form>\`
+      }
+    }
+  },
+  render: args => <form action={async () => {
+    await new Promise(resolve => {
+      window.setTimeout(resolve, 1500);
+    });
+  }}>
+      <SubmitButton {...args} />
+    </form>
+}`},p.parameters?.docs?.source)})}),m=[`Default`]}))();export{p as Default,m as __namedExportsOrder,f as default};

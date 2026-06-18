@@ -63,7 +63,7 @@ export const SignUpPrompt: Story = {
   args: {
     text: "Don't have an account?",
     linkLabel: 'Create account',
-    href: '/login',
+    href: '/create-account',
   },
   parameters: {
     docs: {

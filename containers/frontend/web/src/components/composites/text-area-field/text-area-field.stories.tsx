@@ -141,7 +141,7 @@ export const WithCharacterCounter: Story = {
 export const WithError: Story = {
   args: {
     value: 'This message has an error.',
-    errorKey: 'validation.required',
+    errorKey: 'validation.REQUIRED',
     maxLength: 160,
   },
 };
