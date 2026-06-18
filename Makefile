@@ -40,7 +40,7 @@ ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/frontend/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/database/docker/.env.$(env))
 
-.PHONY: all \
+.PHONY: all init-envs \
 	dev dev-build dev-down dev-clean dev-logs dev-ps \
 	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps \
 	up down clean fclean re \
@@ -57,11 +57,23 @@ ALL_ENV_FILES = \
 
 #---- Default ----
 
-all: all: setup-dev setup-prod dev switch-prod prod-tunnel-quick
+all: init-envs
+	$(COMPOSE_DEV) up -d --build
+	$(MAKE) db-setup
+	$(COMPOSE_DEV) down --remove-orphans
+	$(COMPOSE_PROD) up -d --build
+	APP_ENV=production sh $(TUNNEL_QUICK_SCRIPT) production
+
+init-envs:
+	$(MAKE) setup-dev
+	$(MAKE) setup-prod
 
 #---- Setup ----
 
 setup:
+	@printf '\n========================================\n'
+	@printf ' Setting up environment: %s\n' "$(ENV)"
+	@printf '========================================\n\n'
 	APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
 
 setup-dev: ENV=development
@@ -167,11 +179,11 @@ rebuild-nginx: setup
 rebuild-contracts: setup
 	$(COMPOSE_ENV) up -d --build $(CONTRACT_SERVICES)
 
-switch-dev:
+switch-dev: setup
 	$(COMPOSE_PROD) down --remove-orphans
 	$(COMPOSE_DEV) up -d
 
-switch-prod:
+switch-prod: setup
 	$(COMPOSE_DEV) down --remove-orphans
 	$(COMPOSE_PROD) up -d --build
 
