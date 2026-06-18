@@ -57,12 +57,7 @@ ALL_ENV_FILES = \
 
 #---- Default ----
 
-all:
-	$(MAKE) setup-dev
-	$(MAKE) setup-prod
-	$(MAKE) dev
-	$(MAKE) switch-prod
-	$(MAKE) prod-tunnel-quick
+all: all: setup-dev setup-prod dev switch-prod prod-tunnel-quick
 
 #---- Setup ----
 
