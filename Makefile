@@ -42,7 +42,7 @@ ALL_ENV_FILES = \
 
 .PHONY: all \
 	dev dev-build dev-down dev-clean dev-logs dev-ps \
-	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps prod-db-setup \
+	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps \
 	up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
 	tunnel tunnel-logs tunnel-down \
@@ -51,9 +51,9 @@ ALL_ENV_FILES = \
 	prod-tunnel-quick prod-tunnel-quick-down prod-tunnel-quick-logs \
 	db-reset db-seed db-push db-setup prisma-generate \
 	clean-env clean-all-env \
-	ps restart rebuild-front rebuild-back rebuild-nginx rebuild-contracts switch-dev switch-prod shell-frontend shell-api shell-db shell-socket setup stop \
+	ps restart rebuild-front rebuild-back rebuild-nginx rebuild-contracts switch-dev switch-prod shell-frontend shell-api shell-db shell-socket setup setup-dev setup-prod stop \
 	node-modules node-modules-backend node-modules-frontend node-modules-socket \
-	storybook storybook-build
+	storybook storybook-build fclean-docker
 
 #---- Default ----
 
@@ -63,6 +63,12 @@ all: dev switch-prod prod-tunnel-quick
 
 setup:
 	APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
+
+setup-dev: ENV=development
+setup-dev: setup
+
+setup-prod: ENV=production
+setup-prod: setup
 
 #---- Development ----
 
@@ -132,6 +138,10 @@ fclean:
 	$(COMPOSE_ENV) down -v --remove-orphans
 	docker system prune -f
 
+fclean-docker:
+	docker compose down -v --remove-orphans 2>/dev/null || true
+	docker system prune -af --volumes
+
 re: setup
 	$(COMPOSE_ENV) down --remove-orphans
 	$(COMPOSE_ENV) up -d --build
@@ -157,13 +167,11 @@ rebuild-nginx: setup
 rebuild-contracts: setup
 	$(COMPOSE_ENV) up -d --build $(CONTRACT_SERVICES)
 
-switch-dev: ENV=development
-switch-dev: setup
+switch-dev:
 	$(COMPOSE_PROD) down --remove-orphans
 	$(COMPOSE_DEV) up -d
 
-switch-prod: ENV=production
-switch-prod: setup
+switch-prod:
 	$(COMPOSE_DEV) down --remove-orphans
 	$(COMPOSE_PROD) up -d --build
 
