@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react';
-import { SplitScreenGrid } from '@components';
 import { ChatProvider } from '@/features/chat/chat.provider';
+import { GameChatUiProvider } from '@/features/game/game-chat-ui.context';
+import { GameLayoutClient } from './game-layout.client';
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  interactiveWidget: 'resizes-content',
+};
 
 type GameLayoutProps = {
   children: ReactNode;
@@ -9,7 +16,9 @@ type GameLayoutProps = {
 export default function GameLayout({ children, side }: GameLayoutProps) {
   return (
     <ChatProvider>
-      <SplitScreenGrid full={children} side={side} mobileSideLayout="overlay" />
+      <GameChatUiProvider>
+        <GameLayoutClient side={side}>{children}</GameLayoutClient>
+      </GameChatUiProvider>
     </ChatProvider>
   );
 }

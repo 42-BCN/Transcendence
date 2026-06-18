@@ -6,7 +6,7 @@ import { Text, Avatar } from '@components';
 import { useGameInvitationsStore } from '@/features/game-invitations/store/game-invitations.provider';
 import { gameRoomTestStyles } from './game-room-test.styles';
 
-const AVATAR_COUNT = 4;
+const AVATAR_COUNT = 14;
 function guestAvatarSrc(username: string): string {
   const index = [...username].reduce((acc, c) => acc + c.charCodeAt(0), 0) % AVATAR_COUNT;
   return `/avatars/avatar-${index + 1}.png`;
@@ -59,7 +59,10 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
   return (
     <div className={gameRoomTestStyles.sections}>
       {hasSent && (
-        <section className={gameRoomTestStyles.avatarSection} aria-labelledby="sent-invitations-heading">
+        <section
+          className={gameRoomTestStyles.avatarSection}
+          aria-labelledby="sent-invitations-heading"
+        >
           <Text as="h2" variant="caption" color="secondary" id="sent-invitations-heading">
             {t('invitationsHeading')}
           </Text>
@@ -67,7 +70,11 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
             <div className={gameRoomTestStyles.avatarRow}>
               {filteredSent.map((inv) => (
                 <div key={inv.id} className={gameRoomTestStyles.invitationAvatarItem}>
-                  <Avatar size="lg" src={guestAvatarSrc(inv.friendUsername)} alt={inv.friendUsername} />
+                  <Avatar
+                    size="lg"
+                    src={guestAvatarSrc(inv.friendUsername)}
+                    alt={inv.friendUsername}
+                  />
                   <Text
                     variant="body-xs"
                     color="secondary"
@@ -84,7 +91,10 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
       )}
 
       {hasReceived && (
-        <section className={gameRoomTestStyles.avatarSection} aria-labelledby="received-invitations-heading">
+        <section
+          className={gameRoomTestStyles.avatarSection}
+          aria-labelledby="received-invitations-heading"
+        >
           <Text as="h2" variant="caption" color="secondary" id="received-invitations-heading">
             {t('receivedInvitationsHeading')}
           </Text>
@@ -92,7 +102,11 @@ export function SentRoomInvitations({ roomId, teammateUsernames }: RoomInvitatio
             <div className={gameRoomTestStyles.avatarRow}>
               {filteredReceived.map((inv) => (
                 <div key={inv.id} className={gameRoomTestStyles.invitationAvatarItem}>
-                  <Avatar size="lg" src={guestAvatarSrc(inv.friendUsername)} alt={inv.friendUsername} />
+                  <Avatar
+                    size="lg"
+                    src={guestAvatarSrc(inv.friendUsername)}
+                    alt={inv.friendUsername}
+                  />
                   <Text
                     variant="body-xs"
                     color="secondary"

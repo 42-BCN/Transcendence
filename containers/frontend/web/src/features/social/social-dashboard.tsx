@@ -1,11 +1,10 @@
 /* eslint-disable local/no-literal-ui-strings */
 'use client';
 
-import { useContext, useEffect, useMemo, useState, useTransition } from 'react';
+import { useContext, useEffect, useMemo, useState, useTransition, type ReactNode } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import {
-  ScrollArea,
   Stack,
   Text,
   UserItem,
@@ -17,6 +16,7 @@ import {
   DisclosureFull,
   Button,
 } from '@/components';
+import { cn } from '@/lib/styles/cn';
 
 import { UserSearch, UsersList, SocialError } from './social-variants';
 import type { SocialErrorCode } from './store/social-store.types';
@@ -280,6 +280,20 @@ function GameInvitationsList() {
   );
 }
 
+function SocialScrollContainer({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <div
+      className={cn(
+        'w-full min-w-0',
+        'lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain lg:touch-pan-y',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 function SocialHeader() {
   const t = useTranslations('features.social');
   return (
@@ -309,25 +323,25 @@ function SocialContent() {
 
     if (isEmpty) {
       return (
-        <ScrollArea>
+        <SocialScrollContainer>
           <Stack align="center" justify="center" className="px-3 py-3 text-center">
             <Text variant="caption" color="tertiary">
               {t('emptyStates.search')}
             </Text>
           </Stack>
-        </ScrollArea>
+        </SocialScrollContainer>
       );
     }
 
     return (
-      <ScrollArea>
+      <SocialScrollContainer>
         <SearchResults />
-      </ScrollArea>
+      </SocialScrollContainer>
     );
   }
 
   return (
-    <Tabs defaultSelectedKey="friends" className="flex flex-1 min-h-0 flex-col">
+    <Tabs defaultSelectedKey="friends" className="flex w-full flex-col lg:flex-1 lg:min-h-0">
       <TabList className="px-3">
         <Tab id="friends">{t('friends.title')}</Tab>
         <Tab id="requests">{t('requests.title')}</Tab>
@@ -337,7 +351,7 @@ function SocialContent() {
         </Tab>
       </TabList>
 
-      <ScrollArea>
+      <SocialScrollContainer>
         <TabPanel id="friends" className="outline-none">
           <FriendsList error={errors.friends} />
         </TabPanel>
@@ -349,16 +363,16 @@ function SocialContent() {
         <TabPanel id="invitations" className="outline-none">
           <GameInvitationsList />
         </TabPanel>
-      </ScrollArea>
+      </SocialScrollContainer>
     </Tabs>
   );
 }
 
 export function SocialDashboard() {
   return (
-    <Stack className="h-full min-h-0 pointer-events-auto" gap="none">
+    <Stack className="pointer-events-auto lg:h-full lg:min-h-0" gap="none">
       <SocialHeader />
-      <main className="flex flex-1 min-h-0">
+      <main className="flex w-full lg:flex-1 lg:min-h-0">
         <SocialContent />
       </main>
     </Stack>

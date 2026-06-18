@@ -1,7 +1,7 @@
 import { cn } from '@/lib/styles/cn';
 
 export const messagesLayoutStyles = {
-  root: 'pointer-events-auto relative flex h-[100dvh] w-full min-w-0 flex-1 overflow-hidden',
+  root: 'pointer-events-auto relative flex h-full w-full min-w-0 flex-1 overflow-hidden',
   toggleButton: 'absolute right-4 top-16 z-20 pointer-events-auto lg:hidden lg:top-4',
   overlay:
     'absolute inset-0 z-10 flex pointer-events-none lg:static lg:z-auto lg:flex-none lg:pointer-events-auto',
@@ -18,5 +18,5 @@ export const messagesLayoutStyles = {
     ),
   panelInner:
     'flex min-h-0 w-full overflow-hidden rounded-e-2xl border-r border-border-primary bg-bg-primary/95 shadow-xl backdrop-blur-md glass-fallback lg:rounded-none lg:border-none lg:bg-transparent lg:shadow-none lg:backdrop-blur-none',
-  content: 'flex min-h-0 min-w-0 flex-1 overflow-hidden',
+  content: 'flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden touch-pan-y',
 };
