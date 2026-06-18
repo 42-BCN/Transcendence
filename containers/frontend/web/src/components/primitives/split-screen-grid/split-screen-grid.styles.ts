@@ -34,7 +34,7 @@ export function splitScreenGridStyles({
       `relative order-1 min-w-0 ${mobileFullHeight} lg:order-none lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:h-screen lg:h-[100dvh] lg:overflow-hidden`,
     ),
     side: cn(
-      `z-30 order-2 min-w-0 ${mobileSidePosition} ${mobileSidePointerEvents} lg:order-none lg:relative lg:col-start-2 lg:row-start-1 lg:h-screen lg:h-[100dvh] lg:inset-auto`,
+      `z-40 order-2 min-w-0 ${mobileSidePosition} ${mobileSidePointerEvents} lg:order-none lg:relative lg:col-start-2 lg:row-start-1 lg:h-screen lg:h-[100dvh] lg:inset-auto`,
     ),
   };
 }
