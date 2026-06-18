@@ -3,15 +3,15 @@ NODE_ENV_VALUE = $(if $(filter production,$(ENV)),production,development)
 
 COMPOSE_BASE = docker compose -f containers/docker-compose.yml
 COMPOSE_DEV = APP_ENV=development NODE_ENV=development $(COMPOSE_BASE) -f containers/docker-compose.dev.yml
-COMPOSE_DEMO = APP_ENV=demo NODE_ENV=production $(COMPOSE_BASE) -f containers/docker-compose.demo.yml
 COMPOSE_PROD = APP_ENV=production NODE_ENV=production $(COMPOSE_BASE) -f containers/docker-compose.prod.yml
 COMPOSE = APP_ENV=$(ENV) NODE_ENV=$(NODE_ENV_VALUE) $(COMPOSE_BASE)
-COMPOSE_ENV = $(if $(filter development,$(ENV)),$(COMPOSE_DEV),$(if $(filter demo,$(ENV)),$(COMPOSE_DEMO),$(if $(filter production,$(ENV)),$(COMPOSE_PROD),$(COMPOSE))))
+COMPOSE_ENV = $(if $(filter development,$(ENV)),$(COMPOSE_DEV),$(if $(filter production,$(ENV)),$(COMPOSE_PROD),$(COMPOSE)))
 
 FRONTEND_SERVICE = frontend
 BACKEND_SERVICE = backend
 NGINX_SERVICE = nginx
-CONTRACT_SERVICES = $(FRONTEND_SERVICE) $(BACKEND_SERVICE)
+SOCKET_SERVICE = socket
+CONTRACT_SERVICES = $(FRONTEND_SERVICE) $(BACKEND_SERVICE) $(SOCKET_SERVICE)
 
 SETUP_SCRIPT = scripts/env/setup-env.sh
 TUNNEL_SCRIPT = scripts/cloudflare/tunnel.sh
@@ -25,44 +25,62 @@ SOCKET_DIR = containers/socket/app
 ENV_FILES = \
 	containers/nginx/.env.$(ENV) \
 	containers/backend/docker/.env.$(ENV) \
+	containers/socket/docker/.env.$(ENV) \
 	containers/cloudflared/.env.$(ENV) \
 	containers/frontend/docker/.env.$(ENV) \
 	containers/database/docker/.env.$(ENV)
 
-GENERATED_ENVS = development demo production
+GENERATED_ENVS = development production
 
 ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/nginx/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/backend/docker/.env.$(env)) \
+	$(foreach env,$(GENERATED_ENVS),containers/socket/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/cloudflared/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/frontend/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/database/docker/.env.$(env))
 
-.PHONY: all \
+.PHONY: all init-envs \
 	dev dev-build dev-down dev-clean dev-logs dev-ps \
-	demo demo-db-setup demo-reset demo-down demo-clean demo-logs demo-ps demo-build demo-build-no-cache \
 	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps \
 	up down clean fclean re \
 	logs logs-frontend logs-api logs-nginx logs-db logs-last logs-frontend-last logs-split \
 	tunnel tunnel-logs tunnel-down \
 	tunnel-stable tunnel-stable-down tunnel-stable-logs \
 	tunnel-quick tunnel-quick-down tunnel-quick-logs \
-	demo-tunnel-quick demo-tunnel-quick-down demo-tunnel-quick-logs \
 	prod-tunnel-quick prod-tunnel-quick-down prod-tunnel-quick-logs \
 	db-reset db-seed db-push db-setup prisma-generate \
 	clean-env clean-all-env \
-	ps restart rebuild-front rebuild-back rebuild-nginx rebuild-contracts switch-dev switch-prod shell-frontend shell-api shell-db shell-socket setup stop \
+	ps restart rebuild-front rebuild-back rebuild-nginx rebuild-contracts switch-dev switch-prod shell-frontend shell-api shell-db shell-socket setup setup-dev setup-prod stop \
 	node-modules node-modules-backend node-modules-frontend node-modules-socket \
-	storybook storybook-build
+	storybook storybook-build fclean-docker
 
 #---- Default ----
 
-all: dev
+all: init-envs
+	$(COMPOSE_DEV) up -d --build
+	$(MAKE) db-setup
+	$(COMPOSE_DEV) down --remove-orphans
+	$(COMPOSE_PROD) up -d --build
+	$(MAKE) ENV=production tunnel
+
+init-envs:
+	$(MAKE) setup-dev
+	$(MAKE) setup-prod
 
 #---- Setup ----
 
 setup:
-	@APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
+	@printf '\n========================================\n'
+	@printf ' Setting up environment: %s\n' "$(ENV)"
+	@printf '========================================\n\n'
+	APP_ENV=$(ENV) sh $(SETUP_SCRIPT) $(ENV)
+
+setup-dev: ENV=development
+setup-dev: setup
+
+setup-prod: ENV=production
+setup-prod: setup
 
 #---- Development ----
 
@@ -90,49 +108,6 @@ dev-logs:
 
 dev-ps:
 	$(COMPOSE_DEV) ps
-
-#---- Demo ----
-# Demo means:
-# APP_ENV=demo           -> uses .env.demo files
-# NODE_ENV=production    -> runs the app like production
-# demo-db-setup uses NODE_ENV=development intentionally because seed blocks production.
-
-demo: ENV=demo
-demo: setup
-	$(COMPOSE_DEMO) up -d --build
-
-demo-db-setup: ENV=demo
-demo-db-setup: setup
-	APP_ENV=demo NODE_ENV=development $(COMPOSE_BASE) up -d postgres redis
-	APP_ENV=demo NODE_ENV=development $(COMPOSE_BASE) run --rm backend npm ci
-	APP_ENV=demo NODE_ENV=development $(COMPOSE_BASE) run --rm backend npm run prisma:db:push
-	APP_ENV=demo NODE_ENV=development $(COMPOSE_BASE) run --rm backend npm run db:seed
-
-demo-reset: ENV=demo
-demo-reset:
-	$(COMPOSE_DEMO) down -v --remove-orphans
-	$(MAKE) demo-db-setup
-	$(MAKE) demo
-
-demo-down:
-	$(COMPOSE_DEMO) down --remove-orphans
-
-demo-clean:
-	$(COMPOSE_DEMO) down -v --remove-orphans
-
-demo-logs:
-	$(COMPOSE_DEMO) logs -f
-
-demo-ps:
-	$(COMPOSE_DEMO) ps
-
-demo-build: ENV=demo
-demo-build: setup
-	$(COMPOSE_DEMO) build
-
-demo-build-no-cache: ENV=demo
-demo-build-no-cache: setup
-	$(COMPOSE_DEMO) build --no-cache
 
 #---- Production ----
 
@@ -175,6 +150,10 @@ fclean:
 	$(COMPOSE_ENV) down -v --remove-orphans
 	docker system prune -f
 
+fclean-docker:
+	docker compose down -v --remove-orphans 2>/dev/null || true
+	docker system prune -af --volumes
+
 re: setup
 	$(COMPOSE_ENV) down --remove-orphans
 	$(COMPOSE_ENV) up -d --build
@@ -200,12 +179,10 @@ rebuild-nginx: setup
 rebuild-contracts: setup
 	$(COMPOSE_ENV) up -d --build $(CONTRACT_SERVICES)
 
-switch-dev: ENV=development
 switch-dev: setup
 	$(COMPOSE_PROD) down --remove-orphans
 	$(COMPOSE_DEV) up -d
 
-switch-prod: ENV=production
 switch-prod: setup
 	$(COMPOSE_DEV) down --remove-orphans
 	$(COMPOSE_PROD) up -d --build
@@ -248,7 +225,7 @@ logs-split:
 #---- Cloudflare tunnel ----
 
 tunnel:
-	sh $(TUNNEL_SCRIPT)
+	APP_ENV=$(ENV) sh $(TUNNEL_SCRIPT) $(ENV)
 
 tunnel-logs:
 	$(COMPOSE_DEV) logs -f cloudflared
@@ -271,15 +248,6 @@ tunnel-quick-down:
 
 tunnel-quick-logs:
 	$(COMPOSE_DEV) logs -f cloudflared
-
-demo-tunnel-quick:
-	APP_ENV=demo sh $(TUNNEL_QUICK_SCRIPT) demo
-
-demo-tunnel-quick-down:
-	$(COMPOSE_DEMO) rm -sf cloudflared
-
-demo-tunnel-quick-logs:
-	$(COMPOSE_DEMO) logs -f cloudflared
 
 prod-tunnel-quick:
 	APP_ENV=production sh $(TUNNEL_QUICK_SCRIPT) production

@@ -46,7 +46,7 @@ frontend:
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/api}
 ```
 
-**To use different values for a different environment (demo, production, etc.), rebuild the Docker image with different build args.** Runtime environment variables have no effect on public variables.
+**To use different values for a different environment (development, production, etc.), rebuild the Docker image with different build args.** Runtime environment variables have no effect on public variables.
 
 ### Server-Only Variables — Runtime Configuration
 
@@ -55,8 +55,6 @@ Runtime variables are defined in the tracked example template and generated loca
 `./containers/frontend/docker/.env.development.example`
 
 `./containers/frontend/docker/.env.development`
-
-`./containers/frontend/docker/.env.demo`
 
 `./containers/frontend/docker/.env.production`
 

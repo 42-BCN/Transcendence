@@ -1,7 +1,10 @@
 #!/bin/sh
 set -eu
 
-echo "🔐 Setting up HTTPS for development..."
+echo
+echo "========================================"
+echo " Dev HTTPS Certificate Setup"
+echo "========================================"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -20,22 +23,22 @@ confirm_replace_certs_if_exist() {
   if [ -f "$CRT" ] || [ -f "$KEY" ] || [ -f "$CA" ]; then
 cat <<EOF
 
-Existing certificates detected:
-- CA certificate: $(pwd)/$CA
-- Certificate:    $(pwd)/$CRT
-- Private key:    $(pwd)/$KEY
+Existing development certificates were found:
+  CA certificate: $(pwd)/$CA
+  Server cert:    $(pwd)/$CRT
+  Private key:    $(pwd)/$KEY
 
-Do you want to replace them? [y/N]
+Replace them with a fresh set? [y/N]
 EOF
     read ans || ans=""
     case "$ans" in
       y|Y|yes|YES)
-        echo "Replacing existing certificates..."
+        echo "Removing current certificates..."
         rm -f "$CRT" "$KEY" "$CA"
         return 0
         ;;
       *)
-        echo "Keeping existing certificates. Skipping generation."
+        echo "Keeping the current certificates. Skipping regeneration."
         return 1
         ;;
     esac
@@ -44,35 +47,10 @@ EOF
 }
 
 choose_cert_method() {
-cat <<EOF
-
-🔐 HTTPS Certificate Setup
---------------------------------
-Choose how HTTPS certificates should be generated:
-
-  1) mkcert (needs testing)
-     - Installs a local trusted CA
-     - Generates a leaf certificate signed by that CA
-     - May require admin password
-
-  2) Self-signed certificate (recommended)
-     - Creates a local CA and a separate leaf certificate
-     - Browser will show warning until the CA is trusted
-     - No system changes
-
-  3) Skip (I already have certificates)
-
-EOF
-  printf "Select option [1/2/3] (default: 2): "
-  read choice || choice="2"
-
-  case "$choice" in
-    "1") CERT_METHOD="mkcert" ;;
-    ""|"2")    CERT_METHOD="selfsigned" ;;
-    "3")    CERT_METHOD="skip" ;;
-    *) echo "❌ Invalid choice"; exit 1 ;;
-  esac
-
+  echo
+  echo "Certificate mode"
+  echo "----------------"
+  echo "Using self-signed certificates for local development."
   export CERT_METHOD
 }
 
@@ -83,21 +61,11 @@ fi
 
 choose_cert_method
 
-case "$CERT_METHOD" in
-  mkcert)
-    "$SCRIPT_DIR/mkcert.sh"
-    ;;
-  selfsigned)
-    "$SCRIPT_DIR/selfsigned.sh"
-    ;;
-  skip)
-    echo "⚠️ Skipping cert generation"
-    exit 0
-    ;;
-esac
+"$SCRIPT_DIR/selfsigned.sh"
 
 echo
-echo "🎉 Certificates ready in: $CERT_DIR"
-echo "📄 CA certificate:  $(pwd)/$CA"
-echo "📄 Certificate:     $(pwd)/$CRT"
-echo "🔑 Private key:     $(pwd)/$KEY"
+echo "Certificates are ready."
+echo "  Folder:         $CERT_DIR"
+echo "  CA certificate: $(pwd)/$CA"
+echo "  Server cert:    $(pwd)/$CRT"
+echo "  Private key:    $(pwd)/$KEY"
