@@ -20,10 +20,8 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
   return (
     <SplitScreenGrid
       mobileStackMode="split"
-      mobileFullClassName="min-h-[60dvh]"
-      mobileSideClassName="min-h-[40dvh]"
       full={
-        <section className="flex h-full flex-col md:p-20" aria-labelledby="game-rooms-heading">
+        <section className="flex flex-col md:p-20 lg:h-full" aria-labelledby="game-rooms-heading">
           <h2 id="game-rooms-heading" className="sr-only">
             Game Rooms
           </h2>
@@ -35,7 +33,7 @@ export default async function SocialLayout({ children }: SocialLayoutProps) {
           className={cn(
             glassBackgroundStyles({ intensity: 'medium', blur: 'sm' }),
             glassBorderStyles(),
-            'flex flex-col h-full w-full overflow-hidden rounded-none pointer-events-auto md:rounded-s-md md:border-r-0',
+            'flex flex-col w-full rounded-none pointer-events-auto md:rounded-s-md md:border-r-0 lg:h-full lg:overflow-hidden',
           )}
         >
           {userId ? (

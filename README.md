@@ -104,34 +104,34 @@ The team's work was organized  mainly **by features and GitHub issues**, allowin
 
 ---
 ## Technical Stack
-The platform is built on a unified **TypeScript** stack, sharing type definitions and **Zod** validation schemas across the frontend, backend, and socket services to ensure end-to-end type safety and contract integrity.
+The platform is built on a unified **TypeScript** stack, sharing type definitions and **Zod** validation schemas across all services (frontend, backend, and sockets) via a shared contract workspace to ensure end-to-end type safety, robust form verification, and API validation.
 
-### Frontend
+### Frontend & BFF (Backend for Frontend)
 
-- **Framework**: **Next.js 16 + React 19 (App Router)**. Chosen for Server-Side Rendering (SSR) capabilities, modern routing, and providing a solid structure for a complex web application.
-- **Language**: **TypeScript**. Ensures strict typing, component safety, and maintainability across the client application.
+- **Framework**: **Next.js 16 + React 19 (App Router)**. Chosen for Server-Side Rendering (SSR) capabilities and modern routing. Beyond rendering the UI, it acts as a **Backend for Frontend (BFF)**, handling localized routes, server-side page rendering/hydration, and routing client-side requests securely.
+- **Language**: **TypeScript**. Ensures strict typing, component safety, and contract consistency with other services.
 - **Styling**: **Tailwind CSS**. Enables rapid iteration while maintaining design consistency across the app.
 - **UI & Accessibility**: **React Aria Components**. Helps build robust, accessible, and highly reusable custom components.
-- **State Management**: **Zustand**. Selected for its lightweight and efficient approach to global state handling compared to heavier alternatives.
-- **Internationalization**: **next-intl**. Perfectly integrates with Next.js App Router to handle localized routes and dynamic translations.
+- **State Management**: **Zustand**. Selected for its lightweight and efficient approach to global state handling.
+- **Internationalization**: **next-intl**. Handles localized routes and dynamic translations.
 - **3D Graphics**: **Three.js (@react-three/fiber)**. Powers the immersive, in-browser multiplayer game experience.
-- **Documentation**: **Storybook**. Used to visually document, test, and validate our custom design system.
+- **Documentation & UI Dev**: **Storybook**. Used to visually document, test, and build our custom design system.
 
 ### Backend
 
-- **Environment & Framework**: **Node.js + Express**. Selected to maintain a clear, lightweight, and tightly controlled REST API architecture.
-- **Language**: **TypeScript**. Enforces strict type consistency with the frontend and socket services to reduce integration errors.
-- **ORM (Database)**: **Prisma**. Makes interacting with the PostgreSQL database intuitive by providing a highly maintainable and fully typed relational model.
-- **Data Validation**: **Zod**. Used to explicitly validate shared API contracts, request payloads, and socket event data, ensuring maximum security and stability.
+- **Environment & Framework**: **Node.js + Express**. Selected to maintain a lightweight, decoupled REST API service separate from the frontend.
+- **Language**: **TypeScript**. Enforces strict type consistency with the frontend/BFF and socket services.
+- **ORM (Database)**: **Prisma**. Maps the relational schema to type-safe database queries.
+- **Data Validation**: **Zod**. Enforces shared API contracts on request payloads and responses. The OpenAPI specification is documented in [openapi.yaml](containers/backend/app/docs/openapi.yaml).
 
 ### Realtime layer
 
-- **Dedicated Service**: **Socket.IO**. Hosted as a completely independent service from the main HTTP backend to power low-latency bidirectional communication. Isolating the socket service allows us to handle persistent, stateful connections (like game sync and live presence) without blocking or overloading the stateless REST API.
+- **Dedicated Service**: **Socket.IO**. Hosted as a completely independent service from the REST API to handle low-latency bidirectional connections (game sync, chat, and presence status) without blocking the stateless HTTP backend.
 
 ### Database & Persistence
 
-- **Relational Database**: **PostgreSQL 16**. Chosen for its reliable relational model, which perfectly fits our structured data (users, friendships, and token-based flows). It integrates seamlessly with Prisma, providing a highly maintainable data foundation for the project.
-- **Session & Cache Layer**: **Redis**. Used for server-side session storage. We opted for this approach over stateless tokens (JWT) because it provides clearer control over the login state, simplifies session invalidation, and fits perfectly with our cookie and socket-based architecture, while allowing future real-time extensibility.
+- **Relational Database**: **PostgreSQL 16**. Chosen for structured relational persistence (users, friendships, tokens).
+- **Session & Cache Layer**: **Redis**. Used for stateful session storage. The system generates a random Session ID (SID) stored in Redis, sent to the browser in a secure `HttpOnly` cookie (`connect.sid`). This stateful approach was chosen over stateless JWTs to support immediate session revocation and seamless Socket.IO handshake authentication.
 
 ### Infrastructure
 
@@ -181,10 +181,16 @@ flowchart TD
 ```
 
 ### Code Organization & Architecture Principles
-Beyond the choice of frameworks, the codebase follows strict organizational patterns to ensure scalability and maintainability:
+Beyond the choice of frameworks, the codebase follows strict architectural patterns to ensure decoupling, type safety, and contract stability:
 
-- **Shared API Contracts**: We implemented a shared `contracts` workspace between the frontend and backend. This enforces end-to-end type safety using TypeScript, ensuring that the data the API sends perfectly matches what the frontend expects, eliminating integration mismatches.
-- **Feature-Based Frontend Structure**: The React application is organized by domain features (e.g., social, auth, game) rather than standard routes or a generic components folder. This modularity allows for easier code ownership and better scalability as the project grows.
+- **Next.js as a Backend for Frontend (BFF)**: The application is decoupled; it is not a monolith. Next.js runs as a dedicated BFF service. It manages SSR (Server-Side Rendering), manages the internationalization state, and coordinates front-end security policies (e.g., cookie-based page hydration). The Express service acts purely as a stateless REST API backend that handles database transactions and business logic.
+- **Shared API Contracts & Multi-Service Zod Validation**: Instead of duplicating validations or models, we built a shared `contracts` workspace. This workspace contains TypeScript types and **Zod validation schemas**. 
+  These schemas are imported and executed by **all three layers** for validation:
+  1. **Frontend / BFF**: Validates user forms client-side and validates API responses during Server-Side Rendering (SSR).
+  2. **Express Backend**: Validates request parameters, queries, and body payloads (using middlewares) before processing business logic.
+  3. **Socket.IO Server**: Validates incoming WebSocket event payloads in real-time before handling game state ticks or presence changes.
+  This shared approach ensures that validation schemas never drift and enforces absolute data contract compliance across all services.
+- **Feature-Based Frontend Structure**: The React application is organized by domain features (e.g., social, auth, game) rather than standard routes or a generic components folder, allowing better scalability as features expand.
 
 ---
 
@@ -282,33 +288,80 @@ To run this project locally, ensure you have installed:
 - **GNU Make**
 - A Unix-like shell environment
 
-### Quick Start
+### Setup & Launch
+
 1. **Clone the repository**:
-  ```bash
-  git clone https://github.com/42-BCN/Transcendence.git
-  cd Transcendence
-  ```
+   ```bash
+   git clone https://github.com/42-BCN/Transcendence.git
+   cd Transcendence
+   ```
 
-2. **Setup the environment**:
-  Run the setup script to automatically generate the necessary `.env` files and local HTTPS certificates.
-  ```bash
-  make setup
-  ```
+2. **Launch the application**:
+   *Note: You **do not** need to run `make setup` manually. The Makefile will automatically run the environment configuration and generate the required HTTPS certificates on-the-fly when starting any environment.*
 
-  > **Note**: For detailed information on how environment variables and certificates are managed under the hood, refer to our internal documentation: `scripts/env/README.md` and `scripts/certs/README.md`.
+   > **Note**: For detailed information on how environment variables and certificates are managed under the hood, refer to our internal documentation: [Environment Variables Configuration](scripts/env/README.md) and [Local SSL Certificate Setup](scripts/certs/README.md).
 
-3. **Launch the project**:
-  Start the development environment. This will build the containers, push the Prisma schema, and seed the database.
-  ```bash
-  make dev
-  ```
-  *The platform will be served through Nginx over HTTPS at: `https://localhost:8443`*
+   The project supports three deployment environments. For evaluation or live testing, it is highly recommended to run the **Demo** mode first.
 
-### Deployment Environments
-The project supports different deployment targets via Make:
-- `make dev` (Development mode with hot-reloading)
-- `make demo` (Demonstration mode)
-- `make prod` (Production build)
+   #### A. Demo Mode (Recommended for Evaluation)
+   Runs the application compiled for production, but automatically provisions the database, pushes the schema, and populates it with **initial seed data** (test users, friendship graphs, etc.) so you can test features immediately.
+   To launch this environment for the first time (or to reset and re-seed the database), run:
+   ```bash
+   make demo-reset
+   ```
+   For subsequent runs (without resetting the database), you can simply use `make demo`.
+   *Access the app at: `https://localhost:8443`*
+
+   #### B. Production Mode
+   Runs the pure production environment without database seeding.
+   ```bash
+   make prod
+   ```
+   *Access the app at: `https://localhost:8443`*
+
+   #### C. Development Mode
+   Runs all services with hot-reloading and mounts source directories for live development.
+   ```bash
+   make dev
+   ```
+   *Access the app at: `https://localhost:8443`*
+
+---
+
+### Component Development (Storybook)
+
+The custom design system and its components are documented and interactive inside Storybook. You can launch Storybook locally using:
+```bash
+make storybook
+```
+*Access the Storybook dev portal at: `http://localhost:6006`*
+
+---
+
+### Cloudflare Tunnels (For Grading & External Access)
+
+To facilitate grading and remote code evaluation without configuring router firewalls or port forwarding, you can expose the local running Nginx gateway over a secure, temporary Cloudflare Quick Tunnel (`*.trycloudflare.com`). No Cloudflare account is required.
+
+1. **Start the tunnel matching your active environment**:
+   * Dev: `make tunnel-quick`
+   * Demo: `make demo-tunnel-quick`
+   * Prod: `make prod-tunnel-quick`
+2. **Find the public URL**:
+   Inspect the tunnel logs:
+   ```bash
+   make demo-tunnel-quick-logs
+   ```
+   Look for the printed line containing `https://[your-random-subdomain].trycloudflare.com`.
+3. **Google OAuth Callback Adjustment**:
+   Because the tunnel URL changes every time you launch it, if you plan to test Google OAuth login:
+   * Copy the printed tunnel URL.
+   * Update the authorized redirect URI in your Google Developer Console to: `https://[your-random-subdomain].trycloudflare.com/api/v1/auth/google/callback`.
+4. **Shutdown the tunnel**:
+   ```bash
+   make demo-tunnel-quick-down
+   ```
+
+---
 
 ### Makefile Cheat Sheet
 We use a comprehensive Makefile to manage the Docker lifecycle and database utilities.
@@ -320,24 +373,15 @@ We use a comprehensive Makefile to manage the Docker lifecycle and database util
 - `make dev-logs`: View container logs
 
 **Database Utilities**
-- `make db-push`: Push Prisma schema to the database
-- `make db-seed`: Populate the database with initial seed data
-- `make db-reset`: Drop and recreate the database
+- `make db-push`: Push Prisma schema to the database (development only)
+- `make db-seed`: Populate the database with initial seed data (development only)
+- `make db-reset`: Drop, recreate, and seed the database (development only)
 
 **Container Shell Access**
 - `make shell-frontend`
 - `make shell-api`
 - `make shell-socket`
 - `make shell-db`
-
-**Cloudflare Quick Tunnels**
-Exposes the running app through a temporary `trycloudflare.com` URL (no Cloudflare account required).
-- `make tunnel-quick` — development
-- `make demo-tunnel-quick` — demo
-- `make prod-tunnel-quick` — production
-
-Use the matching logs/down command for the selected environment (e.g. `make demo-tunnel-quick-logs`, `make demo-tunnel-quick-down`).
-Quick Tunnel URLs change every time. If using Google OAuth, update the redirect URI to match the current URL.
 
 ---
 
@@ -418,11 +462,11 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 
 ##### [Major] Use a framework for both the frontend and backend (Next.js & Express)
 * **Subject Requirement**: Use a frontend framework (React, Vue, etc.) and a backend framework (Express, NestJS, etc.).
-* **Justification**: The application implements a decoupled architecture that utilizes Next.js (React 19) as the frontend framework and Express (Node.js) as the backend API framework.
+* **Justification**: The application implements a decoupled, non-monolithic architecture utilizing Next.js (React 19) as the frontend service/BFF and Express (Node.js) as the backend REST API service.
 * **Implementation Details**:
-  * **Frontend**: Next.js 16 (App Router, React 19) handles client-side rendering, routing, localized views, and user interface layouts.
-  * **Backend**: Express 5.2 handles the business logic, database transactions via Prisma, session validation, and inter-service communication.
-  * **Proxy & Integration**: Nginx acts as the primary reverse proxy, securing all external traffic over HTTPS and routing traffic to the respective decoupled containers.
+  * **Frontend**: Next.js 16 (App Router, React 19) is deployed as a dedicated service. Beyond serving UI views, it acts as a **Backend for Frontend (BFF)**, managing page routing, dynamic translations (i18n), and pre-rendering server-side pages (SSR).
+  * **Backend**: Express 5.2 acts as a decoupled API service that runs in a separate container, managing core business logic, database transactions via Prisma, and session caching.
+  * **Proxy & Integration**: Nginx coordinates traffic routing to these individual decoupled services over HTTPS.
 
 ##### [Major] Real-Time WebSockets
 * **Subject Requirement**: Implement real-time features using WebSockets or similar technology.
@@ -440,7 +484,16 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 ##### [Major] Public API with Secured Key & Rate Limiting
 * **Subject Requirement**: A public API to interact with the database with a secured API key, rate limiting, documentation, and at least 5 endpoints.
 * **Justification**: Secure external access gateway exposing system metrics and user metrics to third-party developers.
-* **Implementation Details**: Exposes exactly 6 public endpoints (`/health`, `/users`, `/users/count`, `/users/search`, `/users/username/:username`, `/users/:userId`). Secured via custom header keys (`x-api-key`) with timing-safe comparison (`timingSafeEqual`). Implements Redis-backed request rate limiting (120 req/min general API, 30 req/min search). Fully documented using OpenAPI specs (`openapi.yaml`).
+* **Implementation Details**: 
+  Exposes exactly 6 public endpoints prefixed under **`https://localhost:8443/public-api/`**:
+  * `GET /health` (System status)
+  * `GET /users` (Paginated list of users)
+  * `GET /users/count` (Total number of registered users)
+  * `GET /users/search` (Search users by query string)
+  * `GET /users/username/:username` (Retrieve user by username)
+  * `GET /users/:userId` (Retrieve user by ID)
+  
+  Secured via custom header keys (`x-api-key`) with timing-safe comparison (`timingSafeEqual`). Implements Redis-backed request rate limiting (120 req/min general API, 30 req/min search). Fully documented using OpenAPI specs in [openapi.yaml](containers/backend/app/docs/openapi.yaml).
 
 ##### [Minor] ORM with PostgreSQL (Prisma)
 * **Subject Requirement**: Use an ORM for the database.
@@ -479,9 +532,14 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 
 ##### [Major] Standard User Management & Authentication
 * **Subject Requirement**: Standard user management and authentication.
-* **Justification**: Secure credential registration, session persistence, user profile customization, and real-time connection state management.
+* **Justification**: Secure credential registration, session persistence, user profile customization, and real-time connection state management. Rather than stateless JWTs, a **stateful session architecture** backed by Redis was implemented. 
+  
+  **Why Session Cookies over JWT?**
+  1. **Instant Session Revocation**: In real-time apps, when a user is blocked or logs out, access must be revoked instantly. Stateless JWTs remain valid until they expire unless a database-backed blacklist is checked, negating JWT's stateless benefits. With Redis sessions, we simply delete the Session ID (SID), immediately blocking subsequent REST API requests and cutting off active WebSockets.
+  2. **WebSocket Handshake Security**: WebSockets do not support custom headers natively during handshake. By using standard secure HTTP cookies (`connect.sid`), the Socket.IO server interceptor validates the cookie against Redis in real-time, instantly establishing security and binding the socket connection to a verified `userId`.
+  3. **No Stale User Claims**: Claims stored in JWTs (like username or block status) can become stale. Stateful sessions fetch fresh status directly from PostgreSQL or the cache on request.
+  4. **XSS Protection**: The `connect.sid` cookie is flagged `HttpOnly`, `Secure`, and `SameSite=Strict`, making it inaccessible to client-side scripts and protecting users from token-theft via XSS.
 * **Implementation Details**: Passwords are secure-hashed using `Argon2`. Session data is managed in Redis (`connect-redis`) and validated through secure, HTTP-only cookies. The implementation includes token-based email verification, password recovery flows, profile editing with customizable user avatars (selected from a predefined asset list), and temporary account lockouts on excessive failed login attempts.
-
 
 ##### [Minor] Remote Authentication with OAuth 2.0
 * **Subject Requirement**: Implement remote authentication with OAuth 2.0.

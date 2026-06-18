@@ -503,10 +503,12 @@ export function DirectMessagesFeature({
         onDirectRead={handleDirectRead}
         onDirectError={handleDirectError}
       />
-      <DirectMessagesContent
-        friendUsername={friendUsername}
-        initialUnreadMessageId={initialUnreadMessageId}
-      />
+      <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden">
+        <DirectMessagesContent
+          friendUsername={friendUsername}
+          initialUnreadMessageId={initialUnreadMessageId}
+        />
+      </div>
     </DirectMessageContext.Provider>
   );
 }

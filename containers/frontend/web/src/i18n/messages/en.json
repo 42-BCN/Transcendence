@@ -1,486 +1,767 @@
 {
-  "common": {
-    "globalError": {
-      "title": "Something went wrong",
-      "tryAgain": "Try again",
-      "unexpectedMessage": "An unexpected error occurred"
-    }
-  },
-  "components": {
-    "breadcrumb": {
-      "edit": "Edit profile",
-      "home": "Home",
-      "me": "My Account",
-      "reset-password": "Reset Password"
-    },
-    "footer": {
-      "appName": "Transcendence",
-      "copyright": "© {year} {appName}. All rights reserved",
-      "github": "GitHub",
-      "privacy": "Privacy Policy",
-      "terms": "Terms of Service"
-    },
-    "localeSwitcher": {
-      "ariaLabel": "Language",
-      "ca": "CA",
-      "en": "EN",
-      "es": "ES"
-    },
-    "submitButton": {
-      "pendingLabel": "Submitting..."
-    },
-    "textAreaField": {
-      "characterCount": "{current} of {max} characters"
-    }
-  },
-  "layouts": {
-    "locale": {
-      "metadata": {
-        "description": "Play Transcendence, chat with friends, and manage your account in one place.",
-        "title": "Transcendence"
-      }
-    }
-  },
-  "pages": {
-    "home": {
-      "title": "Game Rooms",
-      "subtitle": "Join a room to start playing with other users.",
-      "room": {
-        "label": "Room #{id}",
-        "statusFull": "Room is full.",
-        "statusWaiting": "Waiting for players…",
-        "playersHeading": "Players in room",
-        "invitationsHeading": "Invitations sent",
-        "invitationsEmpty": "No invitations sent from this room yet.",
-        "invitationAccepted": "Accepted",
-        "invitationPending": "Pending",
-        "receivedInvitationsHeading": "Invitations received"
-      },
-      "actions": {
-        "join": "Join any available room",
-        "leave": "Leave room"
-      }
-    },
-    "game": {
-      "description": "Play the Transcendence game and manage your turns.",
-      "metadata": {
-        "description": "Play the Transcendence game and manage your turns.",
-        "title": "Game"
-      },
-      "title": "Game"
-    },
-    "me": {
-      "metadata": {
-        "description": "View and manage your Transcendence account details.",
-        "title": "My Account"
-      },
-      "subtitle": "Access your protected account data.",
-      "title": "My Account"
-    },
-    "notFound": {
-      "backToHome": "Back to Home",
-      "description": "The page you're looking for doesn't exist.",
-      "title": "Page not found"
-    },
-    "privacy": {
-      "metadata": {
-        "description": "Learn what data Transcendence collects, how it is used, and how it is protected.",
-        "title": "Privacy Policy"
-      },
-      "contact": {
-        "description": "If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>.",
-        "title": "Contact"
-      },
-      "dataCollected": {
-        "description": "When you use our platform, we may collect the following information:",
-        "items": {
-          "email": "Email address (used for account registration and authentication)",
-          "technical": "Technical data (browser type, device information, and IP address for security purposes)",
-          "usage": "Usage data (game history, scores, and interaction logs)",
-          "username": "Username (chosen by you to identify yourself in the game)"
-        },
-        "title": "Data Collected"
-      },
-      "dataUsage": {
-        "description": "The data we collect is used exclusively for the following purposes:",
-        "items": {
-          "account": "Account management and authentication",
-          "communication": "Sending necessary communications related to your account",
-          "gameplay": "Providing the game experience and social features",
-          "improvement": "Improving and optimizing the platform"
-        },
-        "title": "How We Use Your Data"
-      },
-      "intro": "At Transcendence, we value your privacy. This policy describes what data we collect, how we use it, how we store it, and what rights you have regarding your personal information.",
-      "lastUpdated": "Last updated: April 2026",
-      "rights": {
-        "description": "As a user, you have the following rights regarding your personal data:",
-        "items": {
-          "access": "Right to access your personal data",
-          "deletion": "Right to request deletion of your data",
-          "portability": "Right to data portability",
-          "rectification": "Right to correct inaccurate data"
-        },
-        "title": "Your Rights"
-      },
-      "storage": {
-        "description": "Your data is stored securely on our servers. We implement industry-standard security measures including encrypted connections (HTTPS), secure password hashing, and regular security audits. We retain your data only for as long as your account is active or as needed to provide you with our services.",
-        "title": "Data Storage and Security"
-      },
-      "title": "Privacy Policy"
-    },
-    "terms": {
-      "metadata": {
-        "description": "Review the rules, responsibilities, and legal terms for using Transcendence.",
-        "title": "Terms of Service"
-      },
-      "acceptance": {
-        "description": "By creating an account or using our services, you agree to these conditions in their entirety. If you do not agree with any part of these Terms, you must refrain from using the platform.",
-        "title": "Acceptance of Terms"
-      },
-      "conduct": {
-        "description": "To maintain a fair, respectful, and fun environment, you agree not to:",
-        "items": {
-          "cheating": "Use cheats, automation software (bots), or hacks to gain an advantage.",
-          "disruption": "Attempt to disrupt the integrity or security of our servers.",
-          "harassment": "Harass, abuse, or engage in behavior that harms the community or other players."
-        },
-        "title": "User Conduct"
-      },
-      "contact": {
-        "description": "If you have any questions or wish to exercise your rights, please contact the development team by opening an issue on our <link>GitHub repository</link>.",
-        "title": "Contact Us"
-      },
-      "disclaimer": {
-        "description": "Transcendence is an educational and community-driven project. Consequently, the service is provided as is and as available. We do not warrant that the service will be uninterrupted, timely, secure, or error-free.",
-        "title": "Disclaimers"
-      },
-      "intro": "Welcome to Transcendence. Your use of this platform is subject to the following Terms of Service, which govern the relationship between you and the development team.",
-      "ip": {
-        "description": "All content, including game code, graphics, and trademarks, is the property of Transcendence. We grant you a limited, non-transferable license for personal, non-commercial use.",
-        "title": "Intellectual Property"
-      },
-      "lastUpdated": "Last updated: April 2026",
-      "law": {
-        "description": "These Terms shall be governed by and construed in accordance with the laws applicable to digital services within the scope of this project's jurisdiction.",
-        "title": "Governing Law"
-      },
-      "registration": {
-        "description": "You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account.",
-        "items": {
-          "accuracy": "You agree to provide accurate and complete information during registration.",
-          "security": "You must notify us immediately of any unauthorized use of your account."
-        },
-        "title": "Account Registration"
-      },
-      "termination": {
-        "description": "We reserve the right to suspend or terminate your account at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties.",
-        "title": "Termination"
-      },
-      "title": "Terms of Service"
-    }
-  },
-  "features": {
-    "auth": {
-      "actions": {
-        "continueWithGoogle": "Continue with Google",
-        "login": "Log in",
-        "logoutAriaLabel": "Log out",
-        "resendEmail": "Resend email",
-        "sendEmail": "Send email",
-        "signup": "Create account"
-      },
-      "changePassword": {
-        "description": "Enter your current password and choose a new one.",
-        "submit": "Save changes",
-        "success": "Password updated successfully.",
-        "title": "Change password"
-      },
-      "fields": {
-        "confirmPassword": {
-          "label": "Confirm password",
-          "placeholder": "Re-enter your password"
-        },
-        "currentPassword": {
-          "label": "Current password",
-          "placeholder": "Enter your current password"
-        },
-        "email": {
-          "label": "Email",
-          "placeholder": "name@example.com"
-        },
-        "identifier": {
-          "description": "Use the email address or username you signed up with.",
-          "label": "Email or username",
-          "placeholder": "name@example.com or username"
-        },
-        "newPassword": {
-          "description": "Min 8 characters long.",
-          "label": "New password",
-          "placeholder": "Enter your new password"
-        },
-        "password": {
-          "description": "Min 8 characters long.",
-          "label": "Password",
-          "placeholder": "Enter your password"
-        },
-        "username": {
-          "label": "Username",
-          "placeholder": "your_username"
-        }
-      },
-      "login": {
-        "forgotPassword": "Forgot password?",
-        "goToSignup": "Create one",
-        "metadata": {
-          "description": "Sign in to your Transcendence account to play, chat, and manage your profile.",
-          "title": "Log in"
-        },
-        "noAccount": "Don’t have an account?",
-        "submit": "Log in",
-        "title": "Log in"
-      },
-      "messages": {
-        "or": "OR",
-        "success": "Email sent. Wait before trying again."
-      },
-      "recover": {
-        "backToLogin": "Back to login",
-        "checkInbox": "Check your inbox and follow the instructions to set a new password.",
-        "checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
-        "metadata": {
-          "description": "Request a password reset email to regain access to your Transcendence account.",
-          "title": "Recover account"
-        },
-        "rememberedPassword": "Remembered your password?",
-        "sent": "We've sent password reset instructions to the address you entered.",
-        "title": "Check your email"
-      },
-      "reset": {
-        "backToLogin": "Back to login",
-        "description": "Enter your new password.",
-        "metadata": {
-          "description": "Set a new password for your Transcendence account.",
-          "title": "Reset password"
-        },
-        "submit": "Save new password",
-        "success": "Password updated successfully.",
-        "title": "Reset password"
-      },
-      "signup": {
-        "goToLogin": "Log in",
-        "haveAccount": "Already have an account?",
-        "metadata": {
-          "description": "Create your Transcendence account to start playing and connecting with friends.",
-          "title": "Create account"
-        },
-        "privacy": {
-          "error": "You must accept the Privacy Policy to continue.",
-          "label": "I have read and agree to the <link>Privacy Policy</link>"
-        },
-        "title": "Create account"
-      },
-      "verification": {
-        "backToLogin": "Log In",
-        "checkInbox": "Check your inbox and follow the instructions to activate your account.",
-        "checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
-        "invalidOrExpired": "Verification link is invalid or expired.",
-        "isConfirmed": "Already confirmed?",
-        "metadata": {
-          "description": "Confirm your email address to activate your Transcendence account.",
-          "title": "Verify your email"
-        },
-        "missingToken": "Verification token is missing.",
-        "recoverTitle": "Recover account",
-        "resendDescription": "Enter the email address you used to create your account.",
-        "resending": "Sending...",
-        "resendTitle": "Resend verification email",
-        "sent": "We've sent you an email to confirm your account.",
-        "title": "Check your email",
-        "verified": "Email verified. Redirecting to your profile...",
-        "verifying": "Verifying your email..."
-      }
-    },
-    "chat": {
-      "hideChat": "Hide Chat",
-      "messageAriaLabel": "Message",
-      "showChat": "Show Chat"
-    },
-    "directMessages": {
-      "metadata": {
-        "description": "Open private conversations with your friends on Transcendence.",
-        "title": "Direct messages"
-      },
-      "emptyState": "No conversations yet",
-      "listTitle": "Messages",
-      "openList": "Open messages list",
-      "closeList": "Close messages list",
-      "selectionTitle": "Select a conversation",
-      "selectionBody": "Choose a friend from the list to open your messages.",
-      "accessTitle": "Direct messages",
-      "accessBody": {
-        "authenticated": "This conversation is only available between accepted friends.",
-        "unauthenticated": "You need to be signed in to open a private chat."
-      },
-      "backToHome": "Back to home",
-      "presence": {
-        "online": "● Online",
-        "away": "● Away",
-        "offline": "Offline"
-      }
-    },
-    "game": {
-      "endTurn": "End turn",
-      "healthLabel": "HP",
-      "resetPlan": "Reset plan",
-      "room": {
-        "fields": {
-          "gameRoomId": "Game room ID"
-        }
-      }
-    },
-    "navigation": {
-      "createAccount": "Create account",
-      "game": "Game",
-      "home": "Home",
-      "messages": "Messages",
-      "login": "Log in",
-      "logout": "Logout",
-      "mainAriaLabel": "Main navigation",
-      "menu": "Menu",
-      "profile": "Profile",
-      "settings": "Settings",
-      "ui": "UI"
-    },
-    "profile": {
-      "actions": {
-        "changePassword": "Change password",
-        "deleteAccount": "Delete account",
-        "editProfile": "Edit profile"
-      },
-      "bio": "Bio",
-      "delete": {
-        "body": "This action permanently deletes your account, removes your profile, and signs you out. This cannot be undone.",
-        "cancel": "Cancel",
-        "description": "This permanently deletes your account and signs you out.",
-        "title": "Delete account?"
-      },
-      "edit": {
-        "avatarAlt": "Select avatar {name}",
-        "chooseAvatar": "Choose your avatar",
-        "placeholder": "Tell other players a little about yourself",
-        "submit": "Save changes",
-        "title": "Edit profile"
-      },
-      "emptyBio": "No bio yet",
-      "fail": "Could not load your profile.",
-      "metadata": {
-        "publicDescription": "View {username}'s public Transcendence profile."
-      },
-      "provider": "Provider",
-      "userId": "User ID",
-      "username": "Username"
-    },
-    "settings": {
-      "dark": "Dark",
-      "language": "Language",
-      "light": "Light",
-      "theme": "Theme"
-    },
-    "social": {
-      "actions": {
-        "accept": "Accept",
-        "addFriend": "Add friend",
-        "cancel": "Cancel",
-        "cancelRequest": "Cancel Request",
-        "inviteSent": "You sent an invitation to {username}",
-        "inviteToGame": "Invite to Game",
-        "message": "Message",
-        "decline": "Decline",
-        "reject": "Reject",
-        "unfriend": "Remove Friend",
-        "inviteErrors": {
-          "GAME_INVITATION_ROOM_REQUIRED": "Connect to the game room first",
-          "GAME_INVITATION_ROOM_UNAVAILABLE": "Game room is no longer available",
-          "GAME_INVITATION_DUPLICATE_PENDING": "Invitation already pending",
-          "GAME_INVITATION_RECENT_DUPLICATE": "You just sent an invitation, wait a moment",
-          "GAME_INVITATION_PENDING_LIMIT": "Too many pending invitations",
-          "GAME_INVITATION_RATE_LIMITED": "Too many invitations sent, try later",
-          "GAME_INVITATION_NOT_FRIEND": "You are not friends with this user",
-          "GAME_INVITATION_ALREADY_IN_ROOM": "This user is already in a game room",
-          "default": "Could not send invitation"
-        }
-      },
-      "emptyStates": {
-        "offline": "No friends offline",
-        "online": "No friends online right now",
-        "pending": "No sent requests pending",
-        "request": "No pending friend requests",
-        "search": "No users found",
-        "gameInvitations": "No game invitations yet"
-      },
-      "friends": {
-        "offline": "Friends offline",
-        "online": "Friends online",
-        "title": "Friends"
-      },
-      "guest": {
-        "body": "To find friends, see who's online and play games, you need an account.",
-        "login": "Login",
-        "noAccount": "Don't have an account?",
-        "signup": "Create one",
-        "title": "Connect with the community"
-      },
-      "requests": {
-        "now": "now",
-        "received": "Received",
-        "sent": "Sent",
-        "title": "Requests"
-      },
-      "searchLabel": "Search",
-      "searchPlaceholder": "Search users",
-      "title": "Social",
-      "gameInvitations": "Game invitations",
-      "gameInvitationSubtitle": "Invited to room {roomId}",
-      "gameInvitationSentSubtitle": "Invitation pending"
-    }
-  },
-  "validation": {
-    "FIELD_TOO_LONG": "Too long.",
-    "FIELD_TOO_SHORT": "Too short.",
-    "INVALID_EMAIL": "Enter a valid email address.",
-    "INVALID_EMAIL_OR_USERNAME": "Enter a valid email address or username.",
-    "INVALID_FORMAT": "Invalid format.",
-    "INVALID_USERNAME": "Username must be 3–30 characters and contain only letters, numbers, underscores (_), or hyphens (-).",
-    "INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
-    "OUT_OF_RANGE": "Query out of range",
-    "PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
-    "REQUIRED": "This field is required.",
-    "USERNAME_TOO_LONG": "Username must be no more than 30 characters.",
-    "USERNAME_TOO_SHORT": "Username must be at least 3 characters."
-  },
-  "errors": {
-    "AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
-    "AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
-    "AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
-    "AUTH_FORBIDDEN": "You do not have permission to access this resource.",
-    "AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
-    "AUTH_INVALID_CREDENTIALS": "Invalid credentials",
-    "AUTH_NO_PENDING_RECOVER": "No password reset request was found. Please start again.",
-    "AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
-    "AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
-    "AUTH_UNAUTHORIZED": "You must be logged in to view this content.",
-    "FETCH_FAILED": "API request failed. Try again later.",
-    "FRIENDSHIP_ALREADY_ACCEPTED": "This request was already accepted.",
-    "FRIENDSHIP_ALREADY_EXISTS": "You are already friends.",
-    "FRIENDSHIP_NOT_FOUND": "Friendship not found.",
-    "FRIENDSHIP_REQUEST_ALREADY_SENT": "A friend request has already been sent.",
-    "FRIENDSHIP_REQUEST_NOT_FOUND": "Request not found or no longer available.",
-    "FRIENDSHIP_SELF_REQUEST": "You cannot add yourself.",
-    "generic": "Something went wrong. Please try again.",
-    "INTERNAL_ERROR": "Something went wrong. Please try again.",
-    "UNAUTHORIZED_ACTION": "Action not allowed.",
-    "USER_NOT_FOUND": "User not found.",
-    "VALIDATION_ERROR": "Validation error: please check the fields and try again."
-  }
+	"common": {
+		"globalError": {
+			"title": "Something went wrong",
+			"tryAgain": "Try again",
+			"unexpectedMessage": "An unexpected error occurred"
+		}
+	},
+	"components": {
+		"breadcrumb": {
+			"edit": "Edit profile",
+			"home": "Home",
+			"me": "My Account",
+			"reset-password": "Reset Password"
+		},
+		"footer": {
+			"appName": "Transcendence",
+			"copyright": "© {year} {appName}. All rights reserved",
+			"github": "GitHub",
+			"privacy": "Privacy Policy",
+			"terms": "Terms of Service"
+		},
+		"localeSwitcher": {
+			"ariaLabel": "Language",
+			"ca": "CA",
+			"en": "EN",
+			"es": "ES"
+		},
+		"submitButton": {
+			"pendingLabel": "Submitting..."
+		},
+		"textAreaField": {
+			"characterCount": "{current} of {max} characters"
+		}
+	},
+	"layouts": {
+		"locale": {
+			"metadata": {
+				"description": "Play Transcendence, chat with friends, and manage your account in one place.",
+				"title": "Transcendence"
+			}
+		}
+	},
+	"pages": {
+		"home": {
+			"title": "Game Rooms",
+			"subtitle": "Join a room to start playing with other users.",
+			"room": {
+				"label": "Room #{id}",
+				"statusFull": "Room is full",
+				"statusWaiting": "Waiting for players…",
+				"playersHeading": "Players in room",
+				"invitationsHeading": "Invitations sent",
+				"invitationsEmpty": "No invitations sent from this room yet.",
+				"invitationAccepted": "Accepted",
+				"invitationPending": "Pending",
+				"receivedInvitationsHeading": "Invitations received"
+			},
+			"actions": {
+				"join": "Join any available room",
+				"leave": "Leave room"
+			}
+		},
+		"game": {
+			"description": "Play the Transcendence game and manage your turns.",
+			"metadata": {
+				"description": "Play the Transcendence game and manage your turns.",
+				"title": "Game"
+			},
+			"title": "Game"
+		},
+		"me": {
+			"metadata": {
+				"description": "View and manage your Transcendence account details.",
+				"title": "My Account"
+			},
+			"subtitle": "Access your protected account data.",
+			"title": "My Account"
+		},
+		"notFound": {
+			"backToHome": "Back to Home",
+			"description": "The page you're looking for doesn't exist.",
+			"title": "Page not found"
+		},
+		"privacy": {
+			"metadata": {
+				"description": "Learn what data Transcendence collects, how it is used, and how it is protected.",
+				"title": "Privacy Policy"
+			},
+			"contact": {
+				"description": "If you have any questions about this policy or wish to exercise your rights, please contact the development team through our <link>GitHub repository</link>.",
+				"title": "Contact"
+			},
+			"dataCollected": {
+				"description": "When you use our platform, we may collect the following information:",
+				"items": {
+					"email": "Email address (used for account registration and authentication)",
+					"technical": "Technical data (browser type, device information, and IP address for security purposes)",
+					"usage": "Usage data (game history, scores, and interaction logs)",
+					"username": "Username (chosen by you to identify yourself in the game)"
+				},
+				"title": "Data Collected"
+			},
+			"dataUsage": {
+				"description": "The data we collect is used exclusively for the following purposes:",
+				"items": {
+					"account": "Account management and authentication",
+					"communication": "Sending necessary communications related to your account",
+					"gameplay": "Providing the game experience and social features",
+					"improvement": "Improving and optimizing the platform"
+				},
+				"title": "How We Use Your Data"
+			},
+			"intro": "At Transcendence, we value your privacy. This policy describes what data we collect, how we use it, how we store it, and what rights you have regarding your personal information.",
+			"lastUpdated": "Last updated: April 2026",
+			"rights": {
+				"description": "As a user, you have the following rights regarding your personal data:",
+				"items": {
+					"access": "Right to access your personal data",
+					"deletion": "Right to request deletion of your data",
+					"portability": "Right to data portability",
+					"rectification": "Right to correct inaccurate data"
+				},
+				"title": "Your Rights"
+			},
+			"storage": {
+				"description": "Your data is stored securely on our servers. We implement industry-standard security measures including encrypted connections (HTTPS), secure password hashing, and regular security audits. We retain your data only for as long as your account is active or as needed to provide you with our services.",
+				"title": "Data Storage and Security"
+			},
+			"title": "Privacy Policy"
+		},
+		"terms": {
+			"metadata": {
+				"description": "Review the rules, responsibilities, and legal terms for using Transcendence.",
+				"title": "Terms of Service"
+			},
+			"acceptance": {
+				"description": "By creating an account or using our services, you agree to these conditions in their entirety. If you do not agree with any part of these Terms, you must refrain from using the platform.",
+				"title": "Acceptance of Terms"
+			},
+			"conduct": {
+				"description": "To maintain a fair, respectful, and fun environment, you agree not to:",
+				"items": {
+					"cheating": "Use cheats, automation software (bots), or hacks to gain an advantage.",
+					"disruption": "Attempt to disrupt the integrity or security of our servers.",
+					"harassment": "Harass, abuse, or engage in behavior that harms the community or other players."
+				},
+				"title": "User Conduct"
+			},
+			"contact": {
+				"description": "If you have any questions or wish to exercise your rights, please contact the development team by opening an issue on our <link>GitHub repository</link>.",
+				"title": "Contact Us"
+			},
+			"disclaimer": {
+				"description": "Transcendence is an educational and community-driven project. Consequently, the service is provided as is and as available. We do not warrant that the service will be uninterrupted, timely, secure, or error-free.",
+				"title": "Disclaimers"
+			},
+			"intro": "Welcome to Transcendence. Your use of this platform is subject to the following Terms of Service, which govern the relationship between you and the development team.",
+			"ip": {
+				"description": "All content, including game code, graphics, and trademarks, is the property of Transcendence. We grant you a limited, non-transferable license for personal, non-commercial use.",
+				"title": "Intellectual Property"
+			},
+			"lastUpdated": "Last updated: April 2026",
+			"law": {
+				"description": "These Terms shall be governed by and construed in accordance with the laws applicable to digital services within the scope of this project's jurisdiction.",
+				"title": "Governing Law"
+			},
+			"registration": {
+				"description": "You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account.",
+				"items": {
+					"accuracy": "You agree to provide accurate and complete information during registration.",
+					"security": "You must notify us immediately of any unauthorized use of your account."
+				},
+				"title": "Account Registration"
+			},
+			"termination": {
+				"description": "We reserve the right to suspend or terminate your account at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties.",
+				"title": "Termination"
+			},
+			"title": "Terms of Service"
+		}
+	},
+	"features": {
+		"auth": {
+			"actions": {
+				"continueWithGoogle": "Continue with Google",
+				"login": "Log in",
+				"logoutAriaLabel": "Log out",
+				"resendEmail": "Resend email",
+				"sendEmail": "Send email",
+				"signup": "Create account"
+			},
+			"changePassword": {
+				"description": "Enter your current password and choose a new one.",
+				"submit": "Save changes",
+				"success": "Password updated successfully.",
+				"title": "Change password"
+			},
+			"fields": {
+				"confirmPassword": {
+					"label": "Confirm password",
+					"placeholder": "Re-enter your password"
+				},
+				"currentPassword": {
+					"label": "Current password",
+					"placeholder": "Enter your current password"
+				},
+				"email": {
+					"label": "Email",
+					"placeholder": "name@example.com"
+				},
+				"identifier": {
+					"description": "Use the email address or username you signed up with.",
+					"label": "Email or username",
+					"placeholder": "name@example.com or username"
+				},
+				"newPassword": {
+					"description": "Min 8 characters long.",
+					"label": "New password",
+					"placeholder": "Enter your new password"
+				},
+				"password": {
+					"description": "Min 8 characters long.",
+					"label": "Password",
+					"placeholder": "Enter your password"
+				},
+				"username": {
+					"label": "Username",
+					"placeholder": "your_username"
+				}
+			},
+			"login": {
+				"forgotPassword": "Forgot password?",
+				"goToSignup": "Create one",
+				"metadata": {
+					"description": "Sign in to your Transcendence account to play, chat, and manage your profile.",
+					"title": "Log in"
+				},
+				"noAccount": "Don’t have an account?",
+				"submit": "Log in",
+				"title": "Log in"
+			},
+			"messages": {
+				"or": "OR",
+				"success": "Email sent. Wait before trying again."
+			},
+			"recover": {
+				"backToLogin": "Back to login",
+				"checkInbox": "Check your inbox and follow the instructions to set a new password.",
+				"checkSpam": "If you can't find it, check your spam folder. If it's not there either, try again later.",
+				"metadata": {
+					"description": "Request a password reset email to regain access to your Transcendence account.",
+					"title": "Recover account"
+				},
+				"rememberedPassword": "Remembered your password?",
+				"sent": "We've sent password reset instructions to the address you entered.",
+				"title": "Check your email"
+			},
+			"reset": {
+				"backToLogin": "Back to login",
+				"description": "Enter your new password.",
+				"metadata": {
+					"description": "Set a new password for your Transcendence account.",
+					"title": "Reset password"
+				},
+				"submit": "Save new password",
+				"success": "Password updated successfully.",
+				"title": "Reset password"
+			},
+			"signup": {
+				"goToLogin": "Log in",
+				"haveAccount": "Already have an account?",
+				"metadata": {
+					"description": "Create your Transcendence account to start playing and connecting with friends.",
+					"title": "Create account"
+				},
+				"privacy": {
+					"error": "You must accept the Privacy Policy to continue.",
+					"label": "I have read and agree to the <link>Privacy Policy</link>"
+				},
+				"title": "Create account"
+			},
+			"verification": {
+				"backToLogin": "Log In",
+				"checkInbox": "Check your inbox and follow the instructions to activate your account.",
+				"checkSpam": "If you can't find it, check your spam folder. If it's not there either, you can resend it.",
+				"invalidOrExpired": "Verification link is invalid or expired.",
+				"isConfirmed": "Already confirmed?",
+				"metadata": {
+					"description": "Confirm your email address to activate your Transcendence account.",
+					"title": "Verify your email"
+				},
+				"missingToken": "Verification token is missing.",
+				"recoverTitle": "Recover account",
+				"resendDescription": "Enter the email address you used to create your account.",
+				"resending": "Sending...",
+				"resendTitle": "Resend verification email",
+				"sent": "We've sent you an email to confirm your account.",
+				"title": "Check your email",
+				"verified": "Email verified. Redirecting to your profile...",
+				"verifying": "Verifying your email..."
+			}
+		},
+		"chat": {
+			"errors": {
+				"INVALID_CHAT_MESSAGE": "Message could not be sent."
+			},
+			"hideChat": "Hide Chat",
+			"messageAriaLabel": "Message",
+			"showChat": "Show Chat",
+			"system": {
+				"userJoined": "{username} joined the chat.",
+				"userLeft": "{username} left the chat."
+			}
+		},
+		"directMessages": {
+			"metadata": {
+				"description": "Open private conversations with your friends on Transcendence.",
+				"title": "Direct messages"
+			},
+			"emptyState": "No conversations yet",
+			"listTitle": "Messages",
+			"openList": "Open messages list",
+			"closeList": "Close messages list",
+			"selectionTitle": "Select a conversation",
+			"selectionBody": "Choose a friend from the list to open your messages.",
+			"accessTitle": "Direct messages",
+			"accessBody": {
+				"authenticated": "This conversation is only available between accepted friends.",
+				"unauthenticated": "You need to be signed in to open a private chat."
+			},
+			"backToHome": "Back to home",
+			"presence": {
+				"online": "● Online",
+				"away": "● Away",
+				"offline": "Offline"
+			}
+		},
+		"game": {
+			"endTurn": "End turn",
+			"healthLabel": "HP",
+			"resetPlan": "Reset plan",
+			"winScreen": "YOU WIN!",
+			"loseScreen": "YOU LOSE!",
+			"unavailable": "Game unavailable",
+			"roomNotReady": "Room not ready",
+			"roomNotReadyDesc": "The game route is only available when the room has 4 players.",
+			"paused": "Game paused",
+			"pausedDesc": "A player disconnected. The game is blocked until the room is full again.",
+			"connecting": "Connecting to Server...",
+			"debugHint": "Check browser console for detailed logs",
+			"turn": "Turn {num}",
+			"playingAs": "Playing as",
+			"dice": "d{num}",
+			"statusWithIcon": "⚡ {status}",
+			"doomIcon": "☠\ufe0e",
+			"classes": {
+				"assassin": "Assassin",
+				"paladin": "Paladin",
+				"mage": "Mage",
+				"alchemist": "Alchemist",
+				"spectator": "Spectator"
+			},
+			"instructions": {
+				"title": "Game instructions",
+				"close": "Close",
+				"objective": {
+					"title": "Objective",
+					"intro": "You are a cooperative squad of 4 characters. You must destroy the <strong>enemy Generator</strong> before its energy reaches 100%.",
+					"energyTitle": "Energy increases at the end of each round:",
+					"energyItems": [
+						"+5% from the generator.",
+						"+3% for each elite enemy.",
+						"+1% for each common enemy."
+					],
+					"loseTitle": "You lose if:",
+					"loseItems": [
+						"the generator reaches 100%, or",
+						"all 4 squad characters die."
+					],
+					"height": "<strong>Height</strong> affects movement, range, pushes, and attacks that only work above or below."
+				},
+				"turnStructure": {
+					"title": "Turn structure",
+					"planning": {
+						"title": "A. Joint planning (120 sec.)",
+						"body": "Players decide what each character does, which ability to use, which target to aim at, and which enemy will attack each player. Everyone must agree before continuing."
+					},
+					"execution": {
+						"title": "B. Execution",
+						"body": "The game automatically executes the plan."
+					},
+					"enemy": {
+						"title": "C. Enemy turn",
+						"items": [
+							"Generator energy increases.",
+							"Enemies use their dice and actions.",
+							"The interface may show target hints."
+						]
+					}
+				},
+				"generalRules": {
+					"title": "General rules",
+					"items": [
+						"Each character and enemy has its own dice set.",
+						"Each action consumes 1 die.",
+						"On a turn: move or use abilities (not both).",
+						"Movement: once per turn, up to the highest die value.",
+						"Abilities: apply if the roll condition is met.",
+						"Units with 0 HP die."
+					],
+					"diceAction": "Each action consumes 1 die."
+				},
+				"abilities": {
+					"title": "How to use abilities",
+					"steps": [
+						"Select your character.",
+						"Choose an ability.",
+						"Hover over a die to see range or effect.",
+						"Select the tile or target.",
+						"Confirm within the planning phase."
+					]
+				},
+				"playableClasses": {
+					"title": "Playable classes",
+					"assassin": {
+						"name": "Assassin",
+						"role": "Fast damage, pushes and control.",
+						"stats": ["HP: 13", "Dice: 4d4 + 1d8"],
+						"skills": [
+							{
+								"name": "Backstab",
+								"details": ["melee · no CD · damage: result / 2 · cond: even"]
+							},
+							{
+								"name": "Blade throw",
+								"details": ["linear range · damage: 2 · no CD · cond: > 3"]
+							},
+							{
+								"name": "Kick",
+								"details": [
+									"melee · no CD · damage: 1 · pushes 1 tile · cond: odd",
+									"push applies even on failure"
+								]
+							},
+							{
+								"name": "Bind",
+								"details": [
+									"melee · no CD · removes 1 enemy die · cond: > 1",
+									"cannot be applied multiple times to the same enemy"
+								]
+							}
+						]
+					},
+					"paladin": {
+						"name": "Paladin",
+						"role": "Tank and protector.",
+						"stats": ["HP: 16", "Dice: 4d6"],
+						"skills": [
+							{
+								"name": "Thrust",
+								"details": [
+									"range 1 straight line · CD 1 · damage: 2 · cond: > 3"
+								]
+							},
+							{
+								"name": "Defend",
+								"details": [
+									"range 2 · circular area, single target · no CD",
+									"halves the next x damage instances · cond: > 1"
+								]
+							},
+							{
+								"name": "Shield bash",
+								"details": [
+									"cross AOE · CD 2 · damage: 4x · cond: > 5",
+									"pushes edge enemies 1 tile (even on failure)"
+								]
+							},
+							{
+								"name": "Vertical slash",
+								"details": [
+									"melee · CD 1 · covers all levels",
+									"damage: 2x + 2 if different level · cond: > 3"
+								]
+							}
+						]
+					},
+					"alchemist": {
+						"name": "Alchemist",
+						"role": "Support, zone control and weakening.",
+						"stats": ["HP: 10", "Dice: 1d6 + 1d8 + 1d10"],
+						"skills": [
+							{
+								"name": "Doping",
+								"details": [
+									"range 2 in line · CD 1 · can target self",
+									"grants half the die as bonus to target's next action"
+								]
+							},
+							{
+								"name": "Void flask",
+								"details": [
+									"circular range 2 · center up to 3 tiles · AOE · CD 2",
+									"damage: (result - 2) / 2 · pulls toward center · cond: > 5"
+								]
+							},
+							{
+								"name": "Bombastic flask",
+								"details": [
+									"circular range 1 in cross · center up to 3 tiles · CD 2",
+									"damage: (result - 2) / 2 · pushes diagonally upward · cond: > 5"
+								]
+							},
+							{
+								"name": "Oxidation",
+								"details": [
+									"circular range 1 · no CD · reduces target armor by x · cond: > 2"
+								]
+							}
+						]
+					},
+					"mage": {
+						"name": "Mage",
+						"role": "Area damage, fire and level control.",
+						"stats": ["HP: 8", "Dice: 1d4 + 1d8 + 1d12"],
+						"skills": [
+							{
+								"name": "Fire breath",
+								"details": [
+									"range 3 · AOE · CD 2 · applies burn for 2 turns (1 dmg/turn) · cond: > 3",
+									"melee: damage = result / 3 + 2",
+									"medium: damage = result / 4 + 1 (different level)",
+									"long: damage = result / 4 - 2 + 1 (different level)"
+								]
+							},
+							{
+								"name": "Azure comet",
+								"details": [
+									"infinite range same plane · CD 3 · damage: result / 2 + 2 · cond: > 3"
+								]
+							},
+							{
+								"name": "Small meteor",
+								"details": [
+									"circular range 4 · CD 1 · upper zone only",
+									"damage: x + 2 if different level · cond: > 2"
+								]
+							},
+							{
+								"name": "Emerging thorns",
+								"details": [
+									"circular range 4 · CD 1 · lower zone only",
+									"damage: x + 2 if different level · cond: > 2"
+								]
+							}
+						]
+					}
+				},
+				"enemyClasses": {
+					"title": "Enemy classes",
+					"drone": {
+						"name": "Drone",
+						"stats": [
+							"HP: 3 · Dice: 3d4",
+							"melee attack · damage: 1 · cond: x > 1"
+						]
+					},
+					"tracker": {
+						"name": "Tracker",
+						"stats": [
+							"HP: 4 · Dice: 2d4 + 1d6",
+							"melee attack · damage: 1 · cond: x > 1"
+						]
+					},
+					"centurion": {
+						"name": "Centurion (elite)",
+						"stats": ["HP: 20 · Shield: 2 · Dice: d6 + 2d8"],
+						"skills": [
+							{
+								"name": "Charge",
+								"details": [
+									"line range 3 · no CD · moves 3 tiles · perpendicular push",
+									"damage: result / 2 · cond: > 4 (push still applies)"
+								]
+							},
+							{
+								"name": "Mini atomic bomb",
+								"details": [
+									"circular range 2 · CD 2 · deals 4 self-damage",
+									"damage: result / 2 + 2 · cond: > 3"
+								]
+							}
+						]
+					},
+					"jaeger": {
+						"name": "Jaeger (elite)",
+						"stats": ["HP: 10 · Shield: 1 · Dice: 2d6 + 1d10"],
+						"skills": [
+							{
+								"name": "Shove",
+								"details": [
+									"melee · no CD · pushes 2 tiles · damage: x · cond: x > 3"
+								]
+							},
+							{
+								"name": "Impact shot",
+								"details": [
+									"circular range 6 · CD 1 · ignores barriers · targets highest HP (tie: farthest)",
+									"damage: result / 2 · cond: > 5"
+								]
+							}
+						]
+					}
+				}
+			},
+			"room": {
+				"fields": {
+					"gameRoomId": "Game room ID"
+				}
+			}
+		},
+		"navigation": {
+			"createAccount": "Create account",
+			"game": "Game",
+			"home": "Home",
+			"messages": "Messages",
+			"login": "Log in",
+			"logout": "Logout",
+			"mainAriaLabel": "Main navigation",
+			"menu": "Menu",
+			"profile": "Profile",
+			"settings": "Settings",
+			"ui": "UI"
+		},
+		"profile": {
+			"actions": {
+				"changePassword": "Change password",
+				"deleteAccount": "Delete account",
+				"editProfile": "Edit profile"
+			},
+			"bio": "Bio",
+			"delete": {
+				"body": "This action permanently deletes your account, removes your profile, and signs you out. This cannot be undone.",
+				"cancel": "Cancel",
+				"description": "This permanently deletes your account and signs you out.",
+				"title": "Delete account?"
+			},
+			"edit": {
+				"avatarAlt": "Select avatar {name}",
+				"chooseAvatar": "Choose your avatar",
+				"placeholder": "Tell other players a little about yourself",
+				"submit": "Save changes",
+				"title": "Edit profile"
+			},
+			"emptyBio": "No bio yet",
+			"fail": "Could not load your profile.",
+			"metadata": {
+				"publicDescription": "View {username}'s public Transcendence profile."
+			},
+			"provider": "Provider",
+			"userId": "User ID",
+			"username": "Username"
+		},
+		"settings": {
+			"dark": "Dark",
+			"language": "Language",
+			"light": "Light",
+			"theme": "Theme"
+		},
+		"social": {
+			"actions": {
+				"accept": "Accept",
+				"addFriend": "Add friend",
+				"cancel": "Cancel",
+				"cancelRequest": "Cancel Request",
+				"inviteSent": "You sent an invitation to {username}",
+				"inviteToGame": "Invite to Game",
+				"message": "Message",
+				"decline": "Decline",
+				"reject": "Reject",
+				"unfriend": "Remove Friend",
+				"inviteErrors": {
+					"GAME_INVITATION_ROOM_REQUIRED": "Connect to the game room first",
+					"GAME_INVITATION_ROOM_UNAVAILABLE": "Game room is no longer available",
+					"GAME_INVITATION_DUPLICATE_PENDING": "Invitation already pending",
+					"GAME_INVITATION_RECENT_DUPLICATE": "You just sent an invitation, wait a moment",
+					"GAME_INVITATION_PENDING_LIMIT": "Too many pending invitations",
+					"GAME_INVITATION_RATE_LIMITED": "Too many invitations sent, try later",
+					"GAME_INVITATION_NOT_FRIEND": "You are not friends with this user",
+					"GAME_INVITATION_ALREADY_IN_ROOM": "This user is already in a game room",
+					"default": "Could not send invitation"
+				}
+			},
+			"emptyStates": {
+				"offline": "No friends offline",
+				"online": "No friends online right now",
+				"pending": "No sent requests pending",
+				"request": "No pending friend requests",
+				"search": "No users found",
+				"gameInvitations": "No game invitations yet"
+			},
+			"friends": {
+				"offline": "Friends offline",
+				"online": "Friends online",
+				"title": "Friends"
+			},
+			"guest": {
+				"body": "To find friends, see who's online and play games, you need an account.",
+				"login": "Login",
+				"noAccount": "Don't have an account?",
+				"signup": "Create one",
+				"title": "Connect with the community"
+			},
+			"requests": {
+				"now": "now",
+				"received": "Received",
+				"sent": "Sent",
+				"title": "Requests"
+			},
+			"searchLabel": "Search",
+			"searchPlaceholder": "Search users",
+			"title": "Social",
+			"gameInvitations": "Game invitations",
+			"gameInvitationSubtitle": "Invited to room {roomId}",
+			"gameInvitationSentSubtitle": "Invitation pending"
+		}
+	},
+	"validation": {
+		"FIELD_TOO_LONG": "Too long.",
+		"FIELD_TOO_SHORT": "Too short.",
+		"INVALID_EMAIL": "Enter a valid email address.",
+		"INVALID_EMAIL_OR_USERNAME": "Enter a valid email address or username.",
+		"INVALID_FORMAT": "Invalid format.",
+		"INVALID_USERNAME": "Username must be 3–30 characters and contain only letters, numbers, underscores (_), or hyphens (-).",
+		"INVALID_USERNAME_FORMAT": "Username can only contain letters, numbers, underscores (_), and hyphens (-).",
+		"OUT_OF_RANGE": "Query out of range",
+		"PASSWORDS_DO_NOT_MATCH": "Passwords do not match.",
+		"REQUIRED": "This field is required.",
+		"USERNAME_TOO_LONG": "Username must be no more than 30 characters.",
+		"USERNAME_TOO_SHORT": "Username must be at least 3 characters."
+	},
+	"errors": {
+		"AUTH_ACCOUNT_LOCKED": "Your account is temporarily locked. Try again later.",
+		"AUTH_EMAIL_ALREADY_EXISTS": "This email already exists",
+		"AUTH_EMAIL_NOT_VERIFIED": "Verify your email before signing in.",
+		"AUTH_FORBIDDEN": "You do not have permission to access this resource.",
+		"AUTH_INTERNAL_ERROR": "Something went wrong. Please try again.",
+		"AUTH_INVALID_CREDENTIALS": "Invalid credentials",
+		"AUTH_NO_PENDING_RECOVER": "No password reset request was found. Please start again.",
+		"AUTH_RATE_LIMITED": "Too many attempts. Please try again later.",
+		"AUTH_TOKEN_EXPIRED": "The verification link is invalid or expired.",
+		"AUTH_UNAUTHORIZED": "You must be logged in to view this content.",
+		"FETCH_FAILED": "API request failed. Try again later.",
+		"FRIENDSHIP_ALREADY_ACCEPTED": "This request was already accepted.",
+		"FRIENDSHIP_ALREADY_EXISTS": "You are already friends.",
+		"FRIENDSHIP_NOT_FOUND": "Friendship not found.",
+		"FRIENDSHIP_REQUEST_ALREADY_SENT": "A friend request has already been sent.",
+		"FRIENDSHIP_REQUEST_NOT_FOUND": "Request not found or no longer available.",
+		"FRIENDSHIP_SELF_REQUEST": "You cannot add yourself.",
+		"generic": "Something went wrong. Please try again.",
+		"INTERNAL_ERROR": "Something went wrong. Please try again.",
+		"UNAUTHORIZED_ACTION": "Action not allowed.",
+		"USER_NOT_FOUND": "User not found.",
+		"VALIDATION_ERROR": "Validation error: please check the fields and try again."
+	}
 }
