@@ -44,35 +44,10 @@ EOF
 }
 
 choose_cert_method() {
-cat <<EOF
-
-🔐 HTTPS Certificate Setup
---------------------------------
-Choose how HTTPS certificates should be generated:
-
-  1) mkcert (needs testing)
-     - Installs a local trusted CA
-     - Generates a leaf certificate signed by that CA
-     - May require admin password
-
-  2) Self-signed certificate (recommended)
-     - Creates a local CA and a separate leaf certificate
-     - Browser will show warning until the CA is trusted
-     - No system changes
-
-  3) Skip (I already have certificates)
-
-EOF
-  printf "Select option [1/2/3] (default: 2): "
-  read choice || choice="2"
-
-  case "$choice" in
-    "1") CERT_METHOD="mkcert" ;;
-    ""|"2")    CERT_METHOD="selfsigned" ;;
-    "3")    CERT_METHOD="skip" ;;
-    *) echo "❌ Invalid choice"; exit 1 ;;
-  esac
-
+  echo
+  echo "🔐 HTTPS Certificate Setup"
+  echo "--------------------------------"
+  echo "Using self-signed certificates."
   export CERT_METHOD
 }
 
@@ -83,18 +58,7 @@ fi
 
 choose_cert_method
 
-case "$CERT_METHOD" in
-  mkcert)
-    "$SCRIPT_DIR/mkcert.sh"
-    ;;
-  selfsigned)
-    "$SCRIPT_DIR/selfsigned.sh"
-    ;;
-  skip)
-    echo "⚠️ Skipping cert generation"
-    exit 0
-    ;;
-esac
+"$SCRIPT_DIR/selfsigned.sh"
 
 echo
 echo "🎉 Certificates ready in: $CERT_DIR"
