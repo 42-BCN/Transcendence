@@ -10,6 +10,7 @@ import type {
 } from '@/contracts/sockets/friendships/friendships.schema';
 import { fetchGameInvitationState } from '@/features/game-invitations/game-invitations.client';
 import { GameInvitationsStoreContext } from '@/features/game-invitations/store/game-invitations.provider';
+import { friendsSocket } from '@/lib/sockets/friends-socket.client';
 
 export function SocialSocketBridge() {
   const currentUserId = useSocialStore((state) => state.currentUserId);
@@ -35,6 +36,30 @@ export function SocialSocketBridge() {
   useEffect(() => {
     if (!currentUserId) return;
     loadCanonicalState();
+  }, [currentUserId]);
+
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    const reloadState = () => {
+      loadCanonicalState();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadCanonicalState();
+      }
+    };
+
+    window.addEventListener('focus', reloadState);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    friendsSocket.on('connect', reloadState);
+
+    return () => {
+      window.removeEventListener('focus', reloadState);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      friendsSocket.off('connect', reloadState);
+    };
   }, [currentUserId]);
 
   if (!currentUserId) {

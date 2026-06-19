@@ -5,7 +5,7 @@ import { GameRoomsManager } from './GameRoomsManager';
 export const gameRoomsManager = new GameRoomsManager();
 const activeGameRoomConnections = new Map<string, number>();
 const pendingRoomRemovalTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
-const ROOM_MEMBER_RECONNECT_GRACE_MS = 30000;
+const ROOM_MEMBER_RECONNECT_GRACE_MS = 10000;
 
 function toMemberKey(prefix: 'user' | 'guest', value: unknown) {
   return typeof value === 'string' && value.length > 0 ? `${prefix}:${value}` : null;

@@ -1,10 +1,13 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 
-import { gameRoomsManager } from '../features/game-room/gameRooms.shared';
-import { hasActiveGameRoomConnection } from '../features/game-room/gameRooms.shared';
+import {
+  gameRoomsManager,
+  hasActiveGameRoomConnection,
+} from '../features/game-room/gameRooms.shared';
 import {
   broadcastGameRoomState,
+  cancelRoomInvitations,
   emitGameRoomJoined,
   emitGameRoomStateToMember,
   subscribeMemberToGameRoomChannel,
@@ -55,6 +58,24 @@ const InvitationStatusBodySchema = z.strictObject({
 
 function toMemberKey(userId: string) {
   return `user:${userId}`;
+}
+
+function clearClosedPreviousRoom(
+  memberKey: string,
+  room: Exclude<ReturnType<typeof gameRoomsManager.removeUserFromGameRoom>, string>,
+) {
+  unsubscribeMemberFromGameRoomChannel(memberKey, room.id);
+  broadcastGameRoomState(room.id, room);
+  if (room.teammates.length === 0) {
+    cancelRoomInvitations(room.id);
+  }
+}
+
+function clearPreviousRoom(memberKey: string) {
+  const previousRoom = gameRoomsManager.removeUserFromGameRoom(memberKey);
+  if (typeof previousRoom !== 'string') {
+    clearClosedPreviousRoom(memberKey, previousRoom);
+  }
 }
 
 function isRoomJoinable(roomId: number) {
@@ -142,12 +163,7 @@ export function handleAcceptInvitationRoom(req: Request, res: Response): void {
   }
 
   const memberKey = toMemberKey(parsed.data.invitedUserId);
-
-  const previousRoom = gameRoomsManager.removeUserFromGameRoom(memberKey);
-  if (typeof previousRoom !== 'string') {
-    unsubscribeMemberFromGameRoomChannel(memberKey, previousRoom.id);
-    broadcastGameRoomState(previousRoom.id, previousRoom);
-  }
+  clearPreviousRoom(memberKey);
 
   const joinResult = gameRoomsManager.joinUserToGameRoom(
     memberKey,

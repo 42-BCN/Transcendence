@@ -405,3 +405,49 @@ export async function listPendingInviteesForSender(args: {
     .map((r) => r.gameInvitationInvitedUserId)
     .filter((id): id is string => id !== null);
 }
+
+export async function cancelPendingInvitationsByRoom(args: {
+  roomId: number;
+  now: Date;
+}): Promise<Array<{ senderId: string; invitedUserId: string }>> {
+  const rows = await prisma.directMessage.findMany({
+    where: {
+      type: 'game_invitation',
+      gameInvitationRoomId: args.roomId,
+      gameInvitationInvitedUserId: { not: null },
+      gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    select: {
+      id: true,
+      senderId: true,
+      gameInvitationInvitedUserId: true,
+    },
+  });
+
+  const cancellableRows = rows.filter(
+    (row): row is typeof row & { gameInvitationInvitedUserId: string } =>
+      row.gameInvitationInvitedUserId !== null,
+  );
+
+  if (cancellableRows.length === 0) {
+    return [];
+  }
+
+  await prisma.directMessage.updateMany({
+    where: {
+      id: { in: cancellableRows.map((row) => row.id) },
+    },
+    data: {
+      gameInvitationCancelledAt: args.now,
+    },
+  });
+
+  return cancellableRows.map((row) => ({
+    senderId: row.senderId,
+    invitedUserId: row.gameInvitationInvitedUserId,
+  }));
+}
