@@ -39,12 +39,13 @@ It centralizes the state management of:
 
 - `values`
 - `touched`
+- `dirty`
 - `errors`
 - `setValue`
 - `setTouch`
 - `validateBeforeSubmit`
 
-Errors are only shown for touched fields, unless a full submit validation is triggered.
+Errors are only shown for fields that have been both dirtied and touched. `setTouch` is a no-op if the field has not been dirtied first — this ensures errors don't appear until the user has actually changed the value. A full submit validation (`validateBeforeSubmit`) marks all fields as touched regardless of dirty state.
 
 ---
 

@@ -5,27 +5,34 @@
 ```
 src  
 |  
-+-- app               # application layout and pages as stated by [Next.js](https://nextjs.org/docs/app/getting-started/layouts-and-pages)  
++-- app               # application layout and pages as stated by Next.js App Router  
 |   +-- subroutes     # nested routes  
-|   +-- \[locale]     # dynamic route  
-|   +-- (group)       # group -> the folder will be ignored on route construction
-|   +----------------- files  
-|   +-- page.tsx      # a page is UI that is rendered on a specific route.  
-|   +-- layout.tsx    # a layout is UI that is shared between multiple pages. On   navigation, layouts preserve state, remain interactive, and do not rerender.  
-|   +-- error.tsx     # catch errors in their child components and display a fallback UI instead of the component tree that crashed.  
-|   +-- loading.tsx   # react suspense boundary  
-|   +-- not-found.tsx # react error boundary for "not found" UI  
+|   +-- \[locale]     # dynamic locale route  
+|   +-- (group)       # group -> the folder is ignored on route construction
+|   +-- page.tsx      # a page is UI rendered on a specific route  
+|   +-- layout.tsx    # UI shared between multiple pages  
+|   +-- error.tsx     # error boundary fallback UI  
+|   +-- loading.tsx   # React Suspense boundary  
+|   +-- not-found.tsx # 404 UI  
 |  
 +-- components        # shared components used across the entire application  
 |   +-- composites    # reusable UI patterns composed of controls, still feature-agnostic.  
 |   +-- controls      # reusable interactive elements wrapping native inputs with accessibility built in.   
 |   +-- primitives    # reusable visual building blocks with no business logic.  
 |  
-+-- features          # feature based modules
++-- contracts         # frontend-local type copies / re-exports from the shared contracts workspace
+|
++-- features          # feature-based modules
+|
++-- hooks             # shared React hooks
+|
++-- i18n              # i18n configuration and message loading
 |
 +-- lib               # reusable libraries and exported variables preconfigured for the application
 |
-+-- i18n              # i18n configuration
++-- providers         # React context providers
+|
++-- types             # shared TypeScript type definitions
 
 ```
 ---
@@ -36,9 +43,9 @@ src
 ### 2.1 Component overview
 | Layer       | Purpose  | Styling Responsibility | Can Import From |
 |-------------|----------|------------------------|-----------------|
-| Primitives  | Low-level visual + layout building blocks | Layout, spacing, typography, tokens | shared/ui/primitives, shared/lib |
-| Controls (Controllers) | Accessible interactive components wrapping RAC | Variants, sizes, focus, disabled, invalid states | primitives + RAC |
-| Composites  | Reusable combinations of primitives + controls | Layout composition + slot styling | primitives + controls |
+| Primitives  | Low-level visual + layout building blocks | Layout, spacing, typography, tokens | `@/lib` |
+| Controls (Controllers) | Accessible interactive components wrapping RAC | Variants, sizes, focus, disabled, invalid states | `@/components/primitives` + RAC |
+| Composites  | Reusable combinations of primitives + controls | Layout composition + slot styling | `@/components/primitives` + `@/components/controls` |
 
 ---
 

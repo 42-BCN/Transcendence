@@ -46,13 +46,13 @@ To protect authentication endpoints from abuse, rate limits are enforced at the 
 
 All authentication endpoints are protected by a **reverse-proxy rate limit**.
 
-| Scope  | Limit                 | Enforcement Layer |
-| ------ | --------------------- | ----------------- |
-| Per IP | 5 requests per minute | Nginx             |
+| Scope  | Limit                  | Enforcement Layer |
+| ------ | ---------------------- | ----------------- |
+| Per IP | 100 requests per minute | Nginx            |
 
 Behavior:
 
-- Any authentication request exceeding **5 requests per minute per IP** is temporarily rate limited at the reverse-proxy layer.
+- Any authentication request exceeding **100 requests per minute per IP** is temporarily rate limited at the reverse-proxy layer.
 - This rule applies uniformly to **all authentication endpoints**.
 
 Protected endpoints include:
@@ -97,7 +97,7 @@ Behavior:
 | Rule               | Value         |
 | ------------------ | ------------- |
 | Minimum length     | 8 characters  |
-| Maximum length     | 72 characters |
+| Maximum length     | 128 characters |
 | Letters            | required      |
 | Numbers            | required      |
 | Special characters | allowed       |
@@ -118,9 +118,9 @@ Session cookies must use the following configuration:
 
 HttpOnly = true
 Secure = true
-SameSite = Lax
+SameSite = Lax (loopback/localhost) or None (public HTTPS hosts)
 
-OAuth is enabled in AUTH_V1, so SameSite=Lax is required.
+For localhost development, `SameSite=Lax` is used. When deployed on a non-loopback public HTTPS host, `SameSite=None` is set automatically to support cross-origin cookie delivery (e.g. Cloudflare tunnel URLs). The value is resolved at runtime from `APP_BASE_URL` via `auth.cookies.ts`.
 
 ### CSRF Token Validation
 

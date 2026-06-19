@@ -124,8 +124,8 @@ During handshake:
 
 Policy:
 
-- Only one active WebSocket connection per session
-- If a second connection opens, the previous one is disconnected
+- Most namespaces require a valid session during the handshake and disconnect if the session is invalid or revoked.
+- The `/chat` namespace uses optional identity attachment (`attachOptionalChatIdentity`) and tracks multi-tab connections per identity — `USER_JOINED`/`USER_LEFT` system messages fire only when the identity count crosses zero, not on every individual connection.
 
 If a session is revoked:
 

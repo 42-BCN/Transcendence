@@ -33,6 +33,8 @@ ARG NEXT_PUBLIC_LOCALE_COOKIE_NAME=locale
 
 RUN NEXT_PUBLIC_APP_URL="$NEXT_PUBLIC_APP_URL" \
     NEXT_PUBLIC_API_BASE_URL="$NEXT_PUBLIC_API_BASE_URL" \
+    NEXT_PUBLIC_SOCKET_URL="$NEXT_PUBLIC_SOCKET_URL" \
+    NEXT_PUBLIC_LOCALE_COOKIE_NAME="$NEXT_PUBLIC_LOCALE_COOKIE_NAME" \
     npm run build
 ```
 
@@ -44,6 +46,8 @@ frontend:
     args:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://localhost:8443}
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/api}
+      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://localhost:8443}
+      NEXT_PUBLIC_LOCALE_COOKIE_NAME: ${NEXT_PUBLIC_LOCALE_COOKIE_NAME:-locale}
 ```
 
 **To use different values for a different environment (development, production, etc.), rebuild the Docker image with different build args.** Runtime environment variables have no effect on public variables.
@@ -89,6 +93,8 @@ frontend:
     args:
       NEXT_PUBLIC_APP_URL: https://localhost:8443
       NEXT_PUBLIC_API_BASE_URL: /api
+      NEXT_PUBLIC_SOCKET_URL: https://localhost:8443
+      NEXT_PUBLIC_LOCALE_COOKIE_NAME: locale
 ```
 
 These are evaluated during `RUN npm run build` and baked into the static JavaScript. Changing them requires rebuilding the image.

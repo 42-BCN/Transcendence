@@ -59,13 +59,13 @@ This project now uses a **proper certificate chain** instead of a single self-si
 In env file
 
 ```sh
-CERT_DIR=certs/dev
+CERT_DIR=certs
 ```
 
 In scripts
 
 ```sh
-CERT_DIR="${CERT_DIR:-certs/dev}"
+CERT_DIR="${CERT_DIR:-certs}"
 ```
 
 In Docker compose

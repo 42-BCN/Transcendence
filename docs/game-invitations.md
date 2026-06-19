@@ -4,7 +4,7 @@ Feature that lets friends invite each other to join a game room via direct messa
 
 ## Overview
 
-A user sends a game invitation from the social sidebar. The invitation is persisted as a special direct-message card and is also exposed through a canonical invitation-state API used by the social dashboard, the DM thread, and the room panel. The recipient can accept or decline it. Invitations expire after 5 minutes.
+A user sends a game invitation from the social sidebar. The invitation is persisted as a special direct-message card and is also exposed through a canonical invitation-state API used by the social dashboard, the DM thread, and the room panel. The recipient can accept or decline it. Invitations expire after 2 minutes.
 
 ## Architecture
 
@@ -94,7 +94,7 @@ All limits are enforced in `game-invitations.service.ts`:
 
 | Rule | Limit | Error |
 |---|---|---|
-| Invitation TTL | 5 minutes | `GAME_INVITATION_EXPIRED` |
+| Invitation TTL | 2 minutes | `GAME_INVITATION_EXPIRED` |
 | Same-user cooldown (re-invite same person) | 60 seconds | `GAME_INVITATION_RECENT_DUPLICATE` |
 | Older duplicate to same person still pending | — | `GAME_INVITATION_DUPLICATE_PENDING` |
 | Max concurrent pending sent invitations | 5 | `GAME_INVITATION_PENDING_LIMIT` |
@@ -112,7 +112,7 @@ Defined in `contracts/api/game-invitations/game-invitations.errors.ts`:
 | `GAME_INVITATION_ALREADY_ACCEPTED` | 409 | Invitation was already accepted (race condition guard) |
 | `GAME_INVITATION_ALREADY_CANCELLED` | 409 | Invitation was already declined/cancelled |
 | `GAME_INVITATION_DUPLICATE_PENDING` | 409 | A pending invitation to this person already exists |
-| `GAME_INVITATION_EXPIRED` | 409 | Invitation past its 5-minute TTL |
+| `GAME_INVITATION_EXPIRED` | 409 | Invitation past its 2-minute TTL |
 | `GAME_INVITATION_NOT_JOINABLE` | 409 | Room was valid but accept failed at the socket layer |
 | `GAME_INVITATION_ROOM_REQUIRED` | 409 | Sender has no active `/game-room` socket connection |
 | `GAME_INVITATION_ROOM_UNAVAILABLE` | 409 | Room no longer exists or is full |

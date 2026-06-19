@@ -7,8 +7,10 @@
 | `id` | UUID | No | Primary key |
 | `email` | TEXT | No | Unique, normalized to lowercase |
 | `username` | TEXT | No | Unique |
+| `bio` | VARCHAR(600) | No | Default `""` |
+| `avatar` | TEXT | Yes | Nullable |
 | `password_hash` | TEXT | Yes | Nullable for OAuth-only accounts |
-| `provider` | TEXT | No | Default `local`; used for initial auth source |
+| `provider` | ENUM(`AuthProvider`) | No | Values: `local`, `google`; default `local` |
 | `google_id` | TEXT | Yes | Unique; nullable for non-Google users |
 | `email_verified_at` | TIMESTAMPTZ | Yes | Preferred over boolean `email_verified` |
 | `failed_attempts` | INTEGER | No | Default `0` |
@@ -28,7 +30,7 @@
 - Unique constraint on `email`
 - Unique constraint on `username`
 - Unique constraint on `google_id` when present
-- Optional check constraint on `provider IN ('local', 'google')`
+- `provider` is an `AuthProvider` enum enforced at the DB level (`local` | `google`)
 
 ---
 
@@ -191,12 +193,16 @@ If multi-provider support is added later, move from inline provider fields to a 
 ```text
 users
 	├──< password_resets
-	└──< email_verifications
+	├──< email_verifications
+	├──< friendships (as user_id_1 or user_id_2)
+	└──< direct_messages (as sender_id)
 	- id (PK)
 	- email (UQ)
 	- username (UQ)
-	- password_hash
-	- provider
+	- bio
+	- avatar (nullable)
+	- password_hash (nullable)
+	- provider: AuthProvider enum (local | google)
 	- google_id (UQ, nullable)
 	- email_verified_at
 	- failed_attempts
@@ -221,6 +227,25 @@ users
 	- expires_at
 	- used_at
 	- created_at
+
+	friendships
+	- id (PK)
+	- user_id_1 (FK -> users.id)
+	- user_id_2 (FK -> users.id)
+	- sender_id (FK -> users.id)
+	- status: FriendshipStatus enum (pending | accepted)
+	- created_at
+	- updated_at
+
+	direct_messages
+	- id (PK)
+	- friendship_id (FK -> friendships.id)
+	- sender_id (FK -> users.id)
+	- type: DirectMessageType enum (user | game_invitation)
+	- body (VARCHAR 300)
+	- read_at (nullable)
+	- created_at
+	- (game_invitation_* columns when type = game_invitation)
 ```
 Session note
 

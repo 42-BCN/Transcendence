@@ -1,88 +1,90 @@
 # Real-time multiplayer chat architecture
 
 ## Definitions
- - Chats will exist per match
- - Auth handled by express during handshake
- - wss
- - FE (next) connects from client to Socket.io
- - Messages will be session only (v0)
 
-## Socket.io events [domain:action]
+- Chats exist per match (one room per game)
+- Auth handled by Express session cookie during Socket.IO handshake
+- WSS (WebSocket Secure)
+- Next.js frontend connects from client to Socket.IO
+- Messages are session-only (in-memory, not persisted to DB)
+- History is capped at **50 messages** per room
 
-| Event Name          | Direction |
-|---------------------|-----------|
-| `chat:send`         | Client → Server |
-| `chat:message`      | Server → Clients |
-| `chat:system`       | Server → Clients |
-| `chat:error`        | Server → Client |
-| `chat:rate_limited` | Server → Client |
-| `chat:history`      | Server → Client |
+## Socket.IO events [domain:action]
 
+| Event Name          | Direction           | Description |
+|---------------------|---------------------|-------------|
+| `chat:send`         | Client → Server     | Send a chat message |
+| `chat:message`      | Server → Clients    | Broadcast a user message to room |
+| `chat:system`       | Server → Clients    | System event (`USER_JOINED`, `USER_LEFT`) |
+| `chat:error`        | Server → Client     | Validation error on a sent message |
+| `chat:history`      | Server → Client     | Up to 50 recent messages on connect |
+| `chat:identity`     | Server → Client     | Caller's identity info on connect |
+| `chat:game-event`   | Server → Client     | Game events relayed through the chat namespace |
 
-## Message validation by Zod
+## Message schemas (from `contracts/sockets/chat/chat.schema.ts`)
 
-
-``` ts
+```ts
+// Client → Server
 export const ChatSendSchema = z.object({
-  text: z
-    .string()
-    .trim()
-    .min(1, "VALIDATION.REQUIRED")
-    .max(300, "VALIDATION.MAX_CHAT_LEN"),
+  text: z.string().trim().min(1).max(300).transform((val) => val.trim()),
 });
 
-export const ChatMessageSchema = z.object({
-  id: z.uiid(),
-  matchId: z.uiid(),
+// Server → Client: user message
+export const ChatMessageSchema = BaseMessageSchema.extend({
+  type: z.literal('user'),
+  username: z.string(),
+  content: z.object({ text: z.string() }),
+});
 
-  sender: z.object({
-    id: z.uiid(),
-    username: z.string(),
-  }),
+// Server → Client: sender's own message echo (type 'me')
+export const ChatMeSchema = BaseMessageSchema.extend({
+  type: z.literal('me'),
+  username: z.string(),
+  content: z.object({ text: z.string() }),
+});
 
+// Server → Client: system event
+export const ChatSystemMessageSchema = BaseMessageSchema.extend({
+  type: z.literal('system'),
   content: z.object({
-    text: z.string(),
+    text: z.enum(['USER_JOINED', 'USER_LEFT']),
   }),
-
-  createdAt: z.number(),
 });
 
-export const ChatSystemMessageSchema = z.object({
-  type: z.enum([
-   // EVENTS (to define)
-  ]),
-  userId: z.uiid().optional(),
-  matchId: z.uiid(),
-  createdAt: z.number(),
+// Server → Client: error
+export const ChatErrorSchema = BaseMessageSchema.extend({
+  type: z.literal('error'),
+  content: z.object({ text: z.enum(['INVALID_CHAT_MESSAGE']) }),
 });
 
-
-export const ChatHistorySchema = z.object({
-  messages: z.array(ChatMessageSchema),
+// Server → Client: caller identity
+export const ChatIdentitySchema = z.object({
+  identityKey: z.string(),
+  username: z.string(),
+  isGuest: z.boolean(),
+  userId: z.string().optional(),
 });
 
+// Union type (discriminated by `type`)
+export const ChatMessageUnionSchema = z.discriminatedUnion('type', [
+  ChatMessageSchema,
+  ChatMeSchema,
+  ChatSystemMessageSchema,
+  ChatErrorSchema,
+  ChatGameEventSchema,
+]);
 
+// History payload
+export const ChatHistorySchema = z.array(ChatMessageUnionSchema);
 ```
-## How to handle spam
 
-- [ ] Check with the team rate limit. It's a nice to have so will be defined later.
+## Disconnect / reconnect behavior
 
-### Common Technical Implementations (by Google search)
- - Rate Limiting: Discarding messages if a user sends more than a set amount (e.g., >10 messages/minute).
- - Cooldowns: Forcing a waiting period between messages.
- - Repetition Filtering: Detecting and blocking identical, consecutive messages.
- - Character Limits: Restricting the number of capital letters or total characters in a single message. 
+- Socket checks the session cookie with Express on reconnect
+- Server sends the last 50 messages as `chat:history` on connect
+- `USER_LEFT` system message is delayed by **800 ms** (`CHAT_LEFT_GRACE_MS`) after disconnect — if the same identity reconnects within that window, the leave event is suppressed (handles tab refreshes / brief network blips)
+- Multi-tab: identity counts are tracked per room; `USER_JOINED` / `USER_LEFT` fire only when the count transitions through zero
 
+## Spam handling
 
-## What happens if a player disconnects and reconnects
-- Socket check the cookie with express again
-- Receives recent chat history
-- Server sends system messages on disconnect/connect
-
-
-# Pending
-
-- What happens on edge cases like player disconect too long? How game will continue?
-- What happens if the server fails? how frontend fails gracefully?
-
-
+No server-side rate limiting is implemented on the chat namespace. The 300-character limit on `chat:send` is enforced via Zod validation; invalid payloads return `chat:error` with `INVALID_CHAT_MESSAGE`.

@@ -3,49 +3,51 @@
 ## 1. Project structure 
 *root at: /containers/frontend*
 
-- apps | *where fe apps live*
-	- frontend | *frontend web with next.js*
-		- .next | *nextjs build output. git ignore*
+- web | *frontend web with next.js*
+	- .next | *nextjs build output. git ignore*
+	- src/
 		- app | section 2.1
 		- components | section 2.2
+			- composites
+				- *component-name*
+					- index.ts
+					- *component-name*.tsx
+					- *component-name*.style.ts
 			- controls
-				- *componente-name*
+				- *component-name*
 					- index.ts
-					- *componente-name*.tsx
-					- *componente-name*.style.ts
-			- primitive
-				- *componente-name*
+					- *component-name*.tsx
+					- *component-name*.style.ts
+			- primitives
+				- *component-name*
 					- index.ts
-					- *componente-name*.tsx
-					- *componente-name*.style.ts
-		- features 
-		- dev
+					- *component-name*.tsx
+					- *component-name*.style.ts
+		- contracts
+		- features
 		- hooks
+		- i18n
 		- lib
-		- node_modules | *dependencies. ignored.*
+		- providers
 		- types
-		- utils
-		- scripts | *Development utils*  
-			- create-index.sh | *Creates a component structure*
-			- lint-test.tsx  
-		- ------ | *config files*  
-		.prettierignore   
-		.prettierrc.json  
-		eslint.config.mjs  
-		next-env.d.ts  
-		postcss.config.js  
-		tailwind.config.js  
-		tsconfig.json  
-		- ---- | *node*  
-		package-lock.json  
-		package.json  
-		- ---- utils | misc
-
-		tsconfig.tsbuildinfo | *git ignore | ignore*  
+	- scripts | *Development utils*  
+		- create-component.mjs | *Creates a component structure*
+		- i18n/
+	- ------ | *config files*  
+	.prettierignore   
+	.prettierrc.json  
+	eslint.config.mjs  
+	next-env.d.ts  
+	postcss.config.js  
+	tailwind.config.js  
+	tsconfig.json  
+	- ---- | *node*  
+	package-lock.json  
+	package.json  
 
 - docker | *docker related files*
 	- dockerfile
-	- bash confing ffor colours
+	- bash config for colours
 	- docker entrypoint
 - ---- | *./*  
 README.md | *this documentation*  

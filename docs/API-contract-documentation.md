@@ -11,6 +11,7 @@ contracts/api
 |  
 +-- http                        # http generic definitions.  
 |   +-- index                   # export folder content.
+|   +-- errors                  # shared HTTP error types.
 |   +-- response                # API success and error wrappers
 |   +-- status                  # Error status codes mapped to HTTP status. 
 |   +-- validation              # Zod validation logic. 
@@ -102,7 +103,7 @@ Response:
 
 Type definitions:
 ``` ts
-    export type ApiError<Code, Details> = {
+    export type ApiReqError<Code extends string = string, Details = unknown> = {
       ok: false;
       error: {
         code: Code;
@@ -116,9 +117,9 @@ Type definitions:
 All responses use
 
 ``` ts
-    export type ApiResponse<T, Code, Details = unknown> =
+    export type ApiResponse<T, Code extends string = string, Details = unknown> =
       | ApiSuccess<T>
-      | ApiError<Code, Details>;
+      | ApiReqError<Code, Details>;
 ```
 
 

@@ -1,4 +1,4 @@
-_This project has been created as part of the 42 curriculum by cmanica-, [capapes](https://github.com/carolinapapes), mfontser, joanavar, tatahere._
+_This project has been created as part of the 42 curriculum by capapes, cmanica-, joanavar, mfontser, tatahere._
 
 ![DancingRaccon](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDAwdW4wYzhkeTVicHZidHl4ZThqNXJ5NDdva2pwZHRibzZzd3J2NiZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/aQwvKKi4Lv3t63nZl9/giphy.gif)
 
@@ -140,7 +140,7 @@ The platform is built on a unified **TypeScript** stack, sharing type definition
 
 ### Realtime layer
 
-- **Dedicated Service**: **Socket.IO**. Hosted as a completely independent service from the REST API to handle low-latency bidirectional connections (game sync, chat, and presence status) without blocking the stateless HTTP backend.
+- **Dedicated Service**: **Socket.IO**. Hosted as a completely independent service from the REST API to handle low-latency bidirectional connections (game sync, chat, and presence status) without blocking the stateless HTTP backend. Namespaces: `/chat`, `/friends`, `/game`, `/game-room`, `/direct-messages`.
 
 ### Database & Persistence
 
@@ -227,15 +227,15 @@ erDiagram
       string email UK
       string username UK
       string bio
-      string avatar
-      string provider
-      string passwordHash
-      string googleId
+      string avatar "nullable"
+      enum provider "AuthProvider: local | google"
+      string passwordHash "nullable"
+      string googleId "nullable"
       boolean isBlocked
       int failedAttempts
-      datetime lockedUntil
-      datetime lastLoginAt
-      datetime emailVerifiedAt
+      datetime lockedUntil "nullable"
+      datetime lastLoginAt "nullable"
+      datetime emailVerifiedAt "nullable"
       datetime createdAt
       datetime updatedAt
     }
@@ -245,7 +245,7 @@ erDiagram
       uuid userId1 FK
       uuid userId2 FK
       uuid senderId FK
-      string status
+      enum status "FriendshipStatus: pending | accepted"
       datetime createdAt
       datetime updatedAt
     }
@@ -254,17 +254,17 @@ erDiagram
       uuid id PK
       uuid friendshipId FK
       uuid senderId FK
-      string type
+      enum type "DirectMessageType: user | game_invitation"
       string body
-      datetime readAt
+      datetime readAt "nullable"
       datetime createdAt
-      int gameInvitationRoomId
-      uuid gameInvitationInvitedUserId
-      datetime gameInvitationExpiresAt
-      datetime gameInvitationAcceptedAt
-      uuid gameInvitationAcceptedByUserId
-      datetime gameInvitationCancelledAt
-      uuid gameInvitationCancelledByUserId
+      int gameInvitationRoomId "nullable"
+      uuid gameInvitationInvitedUserId "nullable"
+      datetime gameInvitationExpiresAt "nullable"
+      datetime gameInvitationAcceptedAt "nullable"
+      uuid gameInvitationAcceptedByUserId "nullable"
+      datetime gameInvitationCancelledAt "nullable"
+      uuid gameInvitationCancelledByUserId "nullable"
     }
 
     PasswordReset {
@@ -305,23 +305,7 @@ To run this project locally, ensure you have installed:
 - **GNU Make**
 - A Unix-like shell environment
 
-<<<<<<< HEAD
-
-### Evaluation (42)
-
-```bash
-make
-```
-
-This builds and starts production, prepares the database, and starts a Cloudflare quick tunnel. The tunnel URL is printed to the terminal — open it in a browser to access the app.
-
-### Quick Start (Development)
-
-=======
-
 ### Setup & Launch
-
-> > > > > > > main
 
 1. **Clone the repository**:
 
@@ -335,36 +319,24 @@ This builds and starts production, prepares the database, and starts a Cloudflar
 
    > **Note**: For detailed information on how environment variables and certificates are managed under the hood, refer to our internal documentation: [Environment Variables Configuration](scripts/env/README.md) and [Local SSL Certificate Setup](scripts/certs/README.md).
 
-   The project supports three deployment environments. For evaluation or live testing, it is highly recommended to run the **Demo** mode first.
+   The project supports two deployment environments. For evaluation or live testing, it is highly recommended to run the **Demo** mode first.
 
-   #### A. Demo Mode (Recommended for Evaluation)
+   #### A. Demo Mode
 
-   Runs the application compiled for production, but automatically provisions the database, pushes the schema, and populates it with **initial seed data** (test users, friendship graphs, etc.) so you can test features immediately.
-   To launch this environment for the first time (or to reset and re-seed the database), run:
+   Runs all services with hot-reloading, pushes the Prisma schema, and populates the database with **initial seed data** (test users, friendship graphs, etc.) so you can test features immediately.
 
    ```bash
-   make demo-reset
+   make dev
    ```
 
-   For subsequent runs (without resetting the database), you can simply use `make demo`.
    _Access the app at: `https://localhost:8443`_
 
    #### B. Production Mode
 
-   Runs the pure production environment without database seeding.
+   Runs the pure production environment without hot-reloading or database seeding.
 
    ```bash
    make prod
-   ```
-
-   _Access the app at: `https://localhost:8443`_
-
-   #### C. Development Mode
-
-   Runs all services with hot-reloading and mounts source directories for live development.
-
-   ```bash
-   make dev
    ```
 
    _Access the app at: `https://localhost:8443`_
@@ -389,12 +361,11 @@ To facilitate grading and remote code evaluation without configuring router fire
 
 1. **Start the tunnel matching your active environment**:
    - Dev: `make tunnel-quick`
-   - Demo: `make demo-tunnel-quick`
    - Prod: `make prod-tunnel-quick`
 2. **Find the public URL**:
    Inspect the tunnel logs:
    ```bash
-   make demo-tunnel-quick-logs
+   make tunnel-quick-logs
    ```
    Look for the printed line containing `https://[your-random-subdomain].trycloudflare.com`.
 3. **Google OAuth Callback Adjustment**:
@@ -403,7 +374,7 @@ To facilitate grading and remote code evaluation without configuring router fire
    - Update the authorized redirect URI in your Google Developer Console to: `https://[your-random-subdomain].trycloudflare.com/api/v1/auth/google/callback`.
 4. **Shutdown the tunnel**:
    ```bash
-   make demo-tunnel-quick-down
+   make tunnel-quick-down
    ```
 
 ---
@@ -560,7 +531,7 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 
 - **Subject Requirement**: Implement real-time features using WebSockets or similar technology.
 - **Justification**: Low-latency, bidirectional real-time communication for gameplay updates, player status notifications, and instant messaging.
-- **Implementation Details**: A dedicated socket.io server written in TypeScript handles events under specialized namespaces (`/chat`, `/friends`, `/game`). Sockets are authenticated and securely linked to users via Express session cookies during the connection handshake. Key features include presence heartbeats, message broadcasting, and low-latency game tick syncing.
+- **Implementation Details**: A dedicated socket.io server written in TypeScript handles events under specialized namespaces (`/chat`, `/friends`, `/game`, `/game-room`, `/direct-messages`). Sockets are authenticated and securely linked to users via Express session cookies during the connection handshake. Key features include presence heartbeats, message broadcasting, and low-latency game tick syncing.
 
 ##### [Major] User Interaction
 
@@ -576,7 +547,7 @@ We claim a total of **22 points** from fully completed modules (8 Major modules 
 - **Subject Requirement**: A public API to interact with the database with a secured API key, rate limiting, documentation, and at least 5 endpoints.
 - **Justification**: Secure external access gateway exposing system metrics and user metrics to third-party developers.
 - **Implementation Details**:
-  Exposes exactly 6 public endpoints prefixed under **`https://localhost:8443/public-api/`**:
+  Exposes exactly 6 public endpoints prefixed under **`https://localhost:8443/api/public-api/`**:
   - `GET /health` (System status)
   - `GET /users` (Paginated list of users)
   - `GET /users/count` (Total number of registered users)
