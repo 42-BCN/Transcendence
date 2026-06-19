@@ -12,6 +12,18 @@ const mainNavItems = [
     exact: true,
   },
   {
+    key: 'game',
+    href: '/game',
+    icon: 'gamepad',
+    exact: false,
+  },
+  {
+    key: 'messages',
+    href: '/messages',
+    icon: 'messages',
+    exact: false,
+  },
+  {
     key: 'profile',
     href: '/me',
     icon: 'user',

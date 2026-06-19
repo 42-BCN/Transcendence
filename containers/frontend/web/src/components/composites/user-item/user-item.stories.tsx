@@ -40,8 +40,7 @@ const meta = {
     },
     subtitle: {
       control: 'text',
-      description:
-        'Optional secondary text. Currently not rendered because the subtitle block is commented out in the component.',
+      description: 'Optional secondary text rendered below the username.',
       table: {
         category: 'Content',
         type: {
@@ -73,7 +72,8 @@ const meta = {
   },
   args: {
     avatarUrl: null,
-    username: 'carolina',
+    username: 'robotfan',
+    subtitle: 'Ready for a rematch',
   },
 } satisfies Meta<typeof UserItem>;
 
@@ -85,7 +85,8 @@ export const Default: Story = {};
 
 export const WithActions: Story = {
   args: {
-    username: 'friend-request',
+    username: 'match-invite',
+    subtitle: 'Invited you to a new game',
     avatarUrl: 'https://i.pravatar.cc/120?img=12',
     className: 'w-[400px]',
     children: (
@@ -99,7 +100,8 @@ export const WithActions: Story = {
     docs: {
       source: {
         code: `<UserItem
-  username="friend-request"
+  username="match-invite"
+  subtitle="Invited you to a new game"
   avatarUrl="https://i.pravatar.cc/120?img=12"
 >
     <IconButton label="Accept" icon="check" />

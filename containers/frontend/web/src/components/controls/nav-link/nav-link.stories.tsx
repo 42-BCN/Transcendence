@@ -126,21 +126,21 @@ export const Current: Story = {
 
 export const WithIcon: Story = {
   args: {
-    href: '/settings',
+    href: '/game',
     isCurrent: false,
     children: (
       <>
-        <Icon name="settings" size={18} />
-        Settings
+        <Icon name="gamepad" size={18} />
+        Game
       </>
     ),
   },
   parameters: {
     docs: {
       source: {
-        code: `<NavLink href="/settings">
-  <Icon name="settings" size={18} />
-  Settings
+        code: `<NavLink href="/game">
+  <Icon name="gamepad" size={18} />
+  Game
 </NavLink>`,
       },
     },

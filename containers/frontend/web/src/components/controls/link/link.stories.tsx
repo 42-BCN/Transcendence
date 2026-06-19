@@ -146,7 +146,7 @@ export const InternalButtonLink: Story = {
   parameters: {
     docs: {
       source: {
-        code: `<InternalLink href="/signup" as="button" variant="cta" w="auto">
+        code: `<InternalLink href="/create-account" as="button" variant="cta" w="auto">
   Create account
 </InternalLink>`,
       },
@@ -157,23 +157,23 @@ export const InternalButtonLink: Story = {
 export const InternalWithIcon: Story = {
   args: {
     href: '/me',
-    children: 'Settings',
+    children: 'Profile',
     as: 'button',
     variant: 'secondary',
     w: 'auto',
-    icon: <Icon name="settings" size={18} />,
+    icon: <Icon name="user" size={18} />,
   },
   parameters: {
     docs: {
       source: {
         code: `<InternalLink
-  href="/settings"
+  href="/me"
   as="button"
   variant="secondary"
   w="auto"
-  icon={<Icon name="settings" size={18} />}
+  icon={<Icon name="user" size={18} />}
 >
-  Settings
+  Profile
 </InternalLink>`,
       },
     },
@@ -253,9 +253,9 @@ export const States: Story = {
     docs: {
       source: {
         code: `<div className="grid w-full max-w-xs gap-4">
-  <InternalLink href="/profile">Text link</InternalLink>
+  <InternalLink href="/me">Text link</InternalLink>
 
-  <InternalLink href="/signup" as="button" variant="cta" w="auto">
+  <InternalLink href="/create-account" as="button" variant="cta" w="auto">
     Button link
   </InternalLink>
 
@@ -274,7 +274,7 @@ export const States: Story = {
     <div className="grid w-full max-w-xs gap-4">
       <InternalLink href="/me">Text link</InternalLink>
 
-      <InternalLink href="/login" as="button" variant="cta" w="auto">
+      <InternalLink href="/create-account" as="button" variant="cta" w="auto">
         Button link
       </InternalLink>
 

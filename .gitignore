@@ -69,6 +69,7 @@ secrets/
 /src/web/apps/web/dev
 out/
 dist/
+containers/frontend/web/storybook-static/
 
 # ------------------------------
 # Logs

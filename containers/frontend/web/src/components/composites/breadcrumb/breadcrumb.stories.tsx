@@ -52,7 +52,7 @@ const meta = {
         href: '/me',
       },
       {
-        label: 'Settings',
+        label: 'Reset password',
         href: '/me/reset-password',
       },
     ],
@@ -85,7 +85,7 @@ export const HideHome: Story = {
         href: '/me',
       },
       {
-        label: 'Settings',
+        label: 'Reset password',
         href: '/me/reset-password',
       },
     ],

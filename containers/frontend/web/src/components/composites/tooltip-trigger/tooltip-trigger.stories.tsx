@@ -180,15 +180,15 @@ export const Link: Story = {
           'TooltipLink composes InternalLink with TooltipTrigger for link-specific tooltip usage.',
       },
       source: {
-        code: `<TooltipLink href="/settings" label="Go to settings">
-  Settings
+        code: `<TooltipLink href="/me" label="Go to profile">
+  Profile
 </TooltipLink>`,
       },
     },
   },
   render: () => (
-    <TooltipLink href="/me" label="Go to settings" placement="left">
-      Settings
+    <TooltipLink href="/me" label="Go to profile" placement="left">
+      Profile
     </TooltipLink>
   ),
 };

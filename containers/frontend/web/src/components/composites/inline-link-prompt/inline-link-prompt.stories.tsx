@@ -63,7 +63,7 @@ export const SignUpPrompt: Story = {
   args: {
     text: "Don't have an account?",
     linkLabel: 'Create account',
-    href: '/login',
+    href: '/create-account',
   },
   parameters: {
     docs: {
@@ -71,7 +71,7 @@ export const SignUpPrompt: Story = {
         code: `<InlineLinkPrompt
   text="Don't have an account?"
   linkLabel="Create account"
-  href="/signup"
+  href="/create-account"
 />`,
       },
     },
@@ -90,7 +90,7 @@ export const ForgotPasswordPrompt: Story = {
         code: `<InlineLinkPrompt
   text="Forgot your password?"
   linkLabel="Reset it"
-  href="/forgot-password"
+  href="/reset-password"
 />`,
       },
     },
