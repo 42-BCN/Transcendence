@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/nextjs-vite';
 import { NextIntlClientProvider } from 'next-intl';
 
-import { mono, primary } from '../src/app/fonts';
+import { primary } from '../src/app/fonts';
 
 import '../src/app/globals.css';
 import './preview.css';
@@ -30,7 +30,7 @@ const preview: Preview = {
       const theme = context.globals.theme as 'light' | 'dark';
       const documentElement = context.canvasElement.ownerDocument.documentElement;
 
-      documentElement.classList.add(primary.variable, mono.variable);
+      documentElement.classList.add(primary.variable);
       documentElement.classList.toggle('dark', theme === 'dark');
 
       return (

@@ -1,13 +1,9 @@
-import { JetBrains_Mono, Montserrat } from 'next/font/google';
-
-export const mono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-});
+import { Montserrat } from 'next/font/google';
 
 export const primary = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-primary',
+  variable: '--font-montserrat',
   display: 'swap',
+  preload: false,
 });

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { mono, primary } from './fonts';
+import { primary } from './fonts';
 import { createAppMetadata } from '@/lib/metadata/metadata.config';
 import { routing } from '@/i18n/routing';
 import './globals.css';
@@ -24,11 +24,7 @@ export const viewport = {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang={routing.defaultLocale}
-      className={`${primary.variable} ${mono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={routing.defaultLocale} className={`${primary.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
