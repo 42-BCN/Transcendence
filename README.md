@@ -429,6 +429,7 @@ We use a comprehensive Makefile to manage the Docker lifecycle and database util
 
 **Environment Setup**
 
+- `make init-envs`: Generate development `.env` files and copy them to the production `.env` paths
 - `make setup-dev`: Generate development `.env` files and local certificates
 - `make setup-prod`: Generate production `.env` files and local certificates
 - `make switch-dev`: Stop production containers and start the dev stack

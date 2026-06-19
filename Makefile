@@ -30,6 +30,16 @@ ENV_FILES = \
 	containers/frontend/docker/.env.$(ENV) \
 	containers/database/docker/.env.$(ENV)
 
+DEV_ENV_FILES = \
+	containers/nginx/.env.development \
+	containers/backend/docker/.env.development \
+	containers/socket/docker/.env.development \
+	containers/cloudflared/.env.development \
+	containers/frontend/docker/.env.development \
+	containers/database/docker/.env.development
+
+PROD_ENV_FILES = $(patsubst %.development,%.production,$(DEV_ENV_FILES))
+
 GENERATED_ENVS = development production
 
 ALL_ENV_FILES = \
@@ -40,7 +50,7 @@ ALL_ENV_FILES = \
 	$(foreach env,$(GENERATED_ENVS),containers/frontend/docker/.env.$(env)) \
 	$(foreach env,$(GENERATED_ENVS),containers/database/docker/.env.$(env))
 
-.PHONY: all init-envs \
+.PHONY: all init-envs copy-prod-envs \
 	dev dev-build dev-down dev-clean dev-logs dev-ps \
 	prod prod-build prod-build-no-cache prod-down prod-clean prod-logs prod-ps \
 	up down clean fclean re \
@@ -64,9 +74,18 @@ all: init-envs
 	$(COMPOSE_PROD) up -d --build
 	$(MAKE) ENV=production tunnel
 
-init-envs:
-	$(MAKE) setup-dev
-	$(MAKE) setup-prod
+init-envs: setup-dev copy-prod-envs
+
+copy-prod-envs:
+	@printf '\n========================================\n'
+	@printf ' Copying generated env files to production\n'
+	@printf '========================================\n\n'
+	@set -e; \
+	for src in $(DEV_ENV_FILES); do \
+		dest=$${src%.development}.production; \
+		cp "$$src" "$$dest"; \
+		printf 'Copied %s -> %s\n' "$$src" "$$dest"; \
+	done
 
 #---- Setup ----
 
