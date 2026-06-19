@@ -406,6 +406,28 @@ export async function listPendingInviteesForSender(args: {
     .filter((id): id is string => id !== null);
 }
 
+export async function listPendingInvitationSendersForInvitee(args: {
+  invitedUserId: string;
+  now: Date;
+}): Promise<string[]> {
+  const rows = await prisma.directMessage.findMany({
+    where: {
+      type: 'game_invitation',
+      gameInvitationInvitedUserId: args.invitedUserId,
+      gameInvitationAcceptedAt: null,
+      gameInvitationCancelledAt: null,
+      gameInvitationExpiresAt: {
+        gt: args.now,
+      },
+    },
+    select: {
+      senderId: true,
+    },
+  });
+
+  return rows.map((row) => row.senderId);
+}
+
 export async function cancelPendingInvitationsByRoom(args: {
   roomId: number;
   now: Date;

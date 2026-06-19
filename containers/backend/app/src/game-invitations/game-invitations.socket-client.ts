@@ -146,8 +146,7 @@ export async function acceptInvitationRoom(args: {
 }
 
 export async function resolveActiveInvitationIds(args: {
-  userId: string;
-  invitations: { invitationId: string; roomId: number }[];
+  invitations: { invitationId: string; roomId: number; invitedUserId: string }[];
 }): Promise<string[]> {
   const result = await postInternal<{ activeInvitationIds: string[] }>(
     '/internal/game-invitations/status',

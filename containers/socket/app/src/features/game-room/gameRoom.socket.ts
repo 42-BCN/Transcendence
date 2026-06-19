@@ -26,6 +26,22 @@ function notifyPendingInvitees(userId: string): void {
   }).catch(() => undefined);
 }
 
+function getUserIdFromMemberKey(memberKey: string): string | null {
+  return memberKey.startsWith('user:') ? memberKey.slice(5) : null;
+}
+
+export function notifyInvitationStateForMembers(memberKeys: string[]): void {
+  const userIds = new Set(
+    memberKeys
+      .map((memberKey) => getUserIdFromMemberKey(memberKey))
+      .filter((userId): userId is string => userId !== null && userId.length > 0),
+  );
+
+  for (const userId of userIds) {
+    notifyPendingInvitees(userId);
+  }
+}
+
 function markJoinedRoom(userId: string, roomId: number): void {
   const secret = processEnv.process?.env?.SOCKET_INTERNAL_SECRET;
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -175,6 +191,9 @@ function handleJoinResult(
   broadcastRoomUpdate(socket, gameRoom.id, gameRoom);
   subscribeMemberToGameRoomChannel(memberKey, gameRoom.id);
   emitGameRoomStateToMember(memberKey, gameRoom);
+  if (gameRoom.isGameRoomFull) {
+    notifyInvitationStateForMembers(gameRoom.teammates.map((teammate) => teammate.userId));
+  }
 }
 
 function handleLeaveResult(
@@ -255,8 +274,8 @@ export function registerGameRoomSocket(nsp: Namespace) {
     socket.on('gameRoom:teammate:leave', () => {
       const gameRoom = gameRoomsManager.removeUserFromGameRoom(roomMemberKey);
       handleLeaveResult(socket, roomMemberKey, username, gameRoom);
-      if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
-        notifyPendingInvitees(socket.data.userId as string);
+      if (typeof gameRoom !== 'string') {
+        notifyInvitationStateForMembers(gameRoom.affectedMemberKeys);
       }
     });
 
@@ -293,9 +312,7 @@ export function registerGameRoomSocket(nsp: Namespace) {
           unsubscribeMemberFromGameRoomChannel(expiredMemberKey, gameRoom.room.id);
         }
 
-        if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
-          notifyPendingInvitees(socket.data.userId as string);
-        }
+        notifyInvitationStateForMembers(gameRoom.affectedMemberKeys);
       });
     });
   });

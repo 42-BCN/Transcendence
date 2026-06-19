@@ -11,6 +11,7 @@ import {
   emitGameRoomJoined,
   emitEmptyGameRoomStateToMember,
   emitGameRoomStateToMember,
+  notifyInvitationStateForMembers,
   subscribeMemberToGameRoomChannel,
   unsubscribeMemberFromGameRoomChannel,
 } from '../features/game-room/gameRoom.socket';
@@ -48,11 +49,11 @@ const AcceptInvitationRoomBodySchema = z.strictObject({
 });
 
 const InvitationStatusBodySchema = z.strictObject({
-  userId: z.string().uuid(),
   invitations: z.array(
     z.strictObject({
       invitationId: z.string().uuid(),
       roomId: z.number().int().positive(),
+      invitedUserId: z.string().uuid(),
     }),
   ),
 });
@@ -189,6 +190,9 @@ export function handleAcceptInvitationRoom(req: Request, res: Response): void {
   subscribeMemberToGameRoomChannel(memberKey, joinResult.id);
   emitGameRoomJoined(joinResult.id, parsed.data.invitedUsername);
   broadcastGameRoomState(joinResult.id, joinResult);
+  if (joinResult.isGameRoomFull) {
+    notifyInvitationStateForMembers(joinResult.teammates.map((teammate) => teammate.userId));
+  }
 
   res.json({
     ok: true,
@@ -208,7 +212,7 @@ export function handleInvitationStatus(req: Request, res: Response): void {
   }
 
   const activeInvitationIds = parsed.data.invitations
-    .filter((invitation) => isRoomJoinable(invitation.roomId).ok)
+    .filter((invitation) => canUserReceiveInvitation(invitation.invitedUserId, invitation.roomId).ok)
     .map((invitation) => invitation.invitationId);
 
   res.json({

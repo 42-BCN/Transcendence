@@ -20,6 +20,7 @@ import {
   listInvitationsForUserState,
   listPendingGameInvitationsForUser,
   listPendingInviteesForSender,
+  listPendingInvitationSendersForInvitee,
   markGameInvitationAccepted,
   markGameInvitationCancelled,
   markReceivedInvitationsAcceptedByRoom,
@@ -52,9 +53,9 @@ async function buildGameInvitationSummary(userId: string): Promise<GameInvitatio
     .map((invitation) => ({
       invitationId: invitation.id,
       roomId: invitation.gameInvitationRoomId as number,
+      invitedUserId: userId,
     }));
   const activeInvitationIds = await resolveActiveInvitationIds({
-    userId,
     invitations: actionable,
   });
 
@@ -68,6 +69,16 @@ async function notifyInvitationSummary(userId: string): Promise<GameInvitationSu
   const summary = await buildGameInvitationSummary(userId);
   await notifyGameInvitationSummary(userId, summary);
   return summary;
+}
+
+async function notifyInvitationRoomContextUsers(
+  invitedUserId: string,
+  now: Date,
+  extraUserIds: Iterable<string> = [],
+): Promise<void> {
+  const pendingSenderIds = await listPendingInvitationSendersForInvitee({ invitedUserId, now });
+  const userIds = new Set<string>([invitedUserId, ...pendingSenderIds, ...extraUserIds]);
+  await Promise.all([...userIds].map((userId) => notifyInvitationSummary(userId)));
 }
 
 function assertGameInvitationRow(message: DirectMessage): asserts message is Extract<
@@ -88,10 +99,10 @@ export async function getGameInvitationState(
   const actionable = rows.map((row) => ({
     invitationId: row.id,
     roomId: row.roomId,
+    invitedUserId: row.invitedUserId,
   }));
 
   const activeInvitationIds = await resolveActiveInvitationIds({
-    userId,
     invitations: actionable,
   });
 
@@ -144,19 +155,17 @@ export async function markJoinedRoomInvitations(
 ): Promise<void> {
   const now = new Date();
   const senderIds = await markReceivedInvitationsAcceptedByRoom({ invitedUserId, roomId, now });
-  await Promise.all([
-    notifyInvitationSummary(invitedUserId),
-    ...senderIds.map((senderId) => notifyInvitationSummary(senderId)),
-  ]);
+  await notifyInvitationRoomContextUsers(invitedUserId, now, senderIds);
 }
 
 export async function notifyPendingInviteesForSender(senderId: string): Promise<void> {
   const now = new Date();
-  const inviteeIds = await listPendingInviteesForSender({ senderId, now });
-  await Promise.all([
-    notifyInvitationSummary(senderId),
-    ...inviteeIds.map((inviteeId) => notifyInvitationSummary(inviteeId)),
+  const [inviteeIds, pendingSenderIds] = await Promise.all([
+    listPendingInviteesForSender({ senderId, now }),
+    listPendingInvitationSendersForInvitee({ invitedUserId: senderId, now }),
   ]);
+  const userIds = new Set<string>([senderId, ...inviteeIds, ...pendingSenderIds]);
+  await Promise.all([...userIds].map((userId) => notifyInvitationSummary(userId)));
 }
 
 export async function cancelPendingRoomInvitations(roomId: number): Promise<void> {
