@@ -48,8 +48,7 @@ function FloatingVfx({ entityId }: { entityId: string }) {
       document.head.appendChild(style);
     }
   }, []);
-  if (entries.length === 0)
-    return null;
+  if (entries.length === 0) return null;
   return (
     <>
       {entries.map((v) => (
@@ -161,8 +160,9 @@ function AbButtons() {
     <div className="flex flex-wrap gap-2 md:gap-4">
       {ent?.abilities.map((ability) => {
         const cd = abilityCD?.[ability] || 0;
-        const cn = `${cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'
-          } py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm`;
+        const cn = `${
+          cd === 0 ? 'bg-red-600 text-white' : 'bg-gray-600 text-white'
+        } py-1 px-2.5 text-[11px] md:h-7 md:px-4 md:text-sm`;
         return (
           <Button
             key={ability}
@@ -245,7 +245,7 @@ function DiceButtons() {
           }}
           onPress={() => {
             if (assignedCharacter === useGame.getState().selectedEnt?.replace('clone_', '')) {
-              (!canSelect || Boolean(ability)) ? selectDice(diceNum) : movDice(diceNum);
+              !canSelect || Boolean(ability) ? selectDice(diceNum) : movDice(diceNum);
             }
           }}
           className={`px-4 py-2 bg-blue-500 text-white transition-all rounded
@@ -254,7 +254,7 @@ function DiceButtons() {
           {`d${diceNum}`}
         </Button>
       ))}
-    </div >
+    </div>
   );
 }
 
@@ -377,22 +377,18 @@ function Tile({ id, pos }: { id: string; pos: Position }) {
       onPointerOver={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(true);
-        if (isSelectable && selectedAb)
-          setAoePreview(id);
+        if (isSelectable && selectedAb) setAoePreview(id);
       }}
       onPointerOut={(event: ThreeEvent<PointerEvent>) => {
         event.stopPropagation();
         setHover(false);
-        if (isSelectable && selectedAb)
-          clearAoePreview();
+        if (isSelectable && selectedAb) clearAoePreview();
       }}
       onClick={(event: ThreeEvent<MouseEvent>) => {
         if (phase !== 'PLAN') return;
         event.stopPropagation();
-        if (isSelectable && isHovered)
-          addHistoryAbility(id);
-        else if (isHighlighted && !selectedAb && isHovered)
-          moveClone(id);
+        if (isSelectable && isHovered) addHistoryAbility(id);
+        else if (isHighlighted && !selectedAb && isHovered) moveClone(id);
       }}
     >
       <boxGeometry args={[s, s, s]} />
@@ -760,14 +756,15 @@ function TopBar() {
             : isDark
               ? 'rgba(0,0,0,0.90)'
               : 'rgba(255,255,255,0.92)',
-        borderBottom: `1px solid ${pct >= 80
-          ? isDark
-            ? '#ef444430'
-            : '#fca5a5'
-          : isDark
-            ? 'rgba(255,255,255,0.07)'
-            : 'rgba(0,0,0,0.08)'
-          }`,
+        borderBottom: `1px solid ${
+          pct >= 80
+            ? isDark
+              ? '#ef444430'
+              : '#fca5a5'
+            : isDark
+              ? 'rgba(255,255,255,0.07)'
+              : 'rgba(0,0,0,0.08)'
+        }`,
       }}
     >
       <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-gray-400 uppercase shrink-0 w-24 md:w-40 truncate">
@@ -791,10 +788,7 @@ function TopBar() {
             }}
           />
         </div>
-        <span
-          className="text-[11px] font-mono shrink-0 tabular-nums"
-          style={{ color: fillColor }}
-        >
+        <span className="text-[11px] font-mono shrink-0 tabular-nums" style={{ color: fillColor }}>
           {pct}
         </span>
       </div>
@@ -884,7 +878,6 @@ function GameCanvas() {
   );
 }
 
-
 function HandlePhaseScreen() {
   const t = useTranslations('features.game');
   const phase = useGame((state) => state.phase);
@@ -925,10 +918,10 @@ function HandlePhaseScreen() {
           extra={
             <div className="flex gap-4 justify-center">
               <Button variant="primary" w="auto" onPress={resetGame}>
-                {t('Reset')}
+                {t('reset')}
               </Button>
               <Button w="auto" onPress={handleExitRoom}>
-                {t('Exit')}
+                {t('exit')}
               </Button>
             </div>
           }
