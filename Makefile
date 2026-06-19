@@ -72,7 +72,7 @@ all: init-envs
 	$(MAKE) db-setup
 	$(COMPOSE_DEV) down --remove-orphans
 	$(COMPOSE_PROD) up -d --build
-	$(MAKE) ENV=production tunnel
+	$(MAKE) ENV=production tunnel-quick
 
 init-envs: setup-dev copy-prod-envs
 
