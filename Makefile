@@ -262,7 +262,7 @@ tunnel-stable-logs: tunnel-logs
 
 # Quick (dashboard-free) tunnel
 tunnel-quick:
-	APP_ENV=development sh $(TUNNEL_QUICK_SCRIPT) development
+	APP_ENV=$(or $(ENV),development) sh $(TUNNEL_QUICK_SCRIPT) $(or $(ENV),development)
 
 tunnel-quick-down:
 	$(COMPOSE_DEV) rm -sf cloudflared

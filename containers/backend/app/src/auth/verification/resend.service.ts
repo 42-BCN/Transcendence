@@ -3,9 +3,11 @@ import { createHash, randomBytes } from 'node:crypto';
 import { ApiError, getRedisClient } from '@shared';
 
 import { authSecurityConfig } from '../security.config';
+import { MailServiceError, isMailServiceConfigured } from '@lib/mail.service';
 import * as SharedRepo from '../shared.repo';
 import * as VerificationRepo from './verification.repo';
 import { sendSignupVerificationEmail, type EmailLocale } from '../mail';
+import { logEvents } from '../auth.logs';
 
 type ResendVerificationUser = {
   id: string;
@@ -100,15 +102,23 @@ export async function resendVerification(
     throw new ApiError('AUTH_RESEND_VERIFICATION_COOLDOWN');
   }
 
+  if (!isMailServiceConfigured()) {
+    return;
+  }
+
+  const verificationToken = await deps.issueVerificationToken(user.id);
   try {
-    const verificationToken = await deps.issueVerificationToken(user.id);
     await deps.sendVerificationEmail({
       toEmail: user.email,
       username: user.username,
       verificationToken,
       locale: input.locale,
     });
-  } catch {
-    throw new ApiError('AUTH_INTERNAL_ERROR');
+  } catch (error) {
+    logEvents.info({
+      event: 'resend_verification_mail_failed',
+      userId: user.id,
+      error: error instanceof MailServiceError ? `${error.code}:${error.message}` : String(error),
+    });
   }
 }
