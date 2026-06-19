@@ -4,8 +4,9 @@
 
 :root {
   /* font family */
-  --font-family-primary: var(--font-montserrat);
-  --font-family-mono: var(--font-mono);
+  --font-primary: 'Montserrat';
+  --font-family-primary: 'Montserrat', sans-serif;
+  --font-family-mono: monospace;
 
   /* font weight */
   --font-weight-regular: 400;
