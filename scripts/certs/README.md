@@ -6,7 +6,6 @@
 | -------------------- | --------------------------------- | ---------------------------------------------- | ---------------------------- | ------------------------------ |
 | **HTTPS**            | HTTP over an encrypted connection | Protects data in transit (privacy + integrity) | ✅ Trusted (if cert is valid) | All modern websites            |
 | **TLS**              | Encryption/security protocol      | Handles encryption and identity verification   | ✅ Depends on cert            | Underlies HTTPS and WSS        |
-| **mkcert**           | Local development cert tool       | Creates locally trusted certificates           | ✅ Trusted locally            | Local development environments |
 | **Self-signed Cert** | Certificate signed by itself      | Provides encryption without trusted authority  | ❌ Not trusted by default     | Testing, internal tools        |
 
 
@@ -120,19 +119,3 @@ rm -rf "${CERT_DIR:-certs}"
 2. Custom -> Trusted certificates
 
 3. Select and delete
-
-## Remove mkcert installation & trust (if mkcert was used)
-
-### Uninstall mkcert local CA trust
-
-mkcert -uninstall
-
-### Remove the binary
-
-macOS (Homebrew): brew uninstall mkcert
-
-Windows (Chocolatey): choco uninstall mkcert -y
-
-Linux: remove the binary you installed (commonly /usr/local/bin/mkcert)
-
-
