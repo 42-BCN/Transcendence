@@ -4,14 +4,19 @@ info:
   version: 1.0.0
   description: OpenAPI specification for the current Express API routes.
 servers:
+  - url: /api
+    description: Routes exposed through nginx in the local container stack.
   - url: /
+    description: Raw Express mount paths inside the backend container.
 tags:
   - name: Health
   - name: Public API
   - name: Auth
   - name: Protected
+  - name: Game Invitations
   - name: Users
   - name: Friends
+  - name: Internal
 paths:
   /health:
     get:
@@ -49,6 +54,12 @@ paths:
                 $ref: '#/components/schemas/PublicApiHealthResponse'
         '401':
           description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limit exceeded
           content:
             application/json:
               schema:
@@ -248,6 +259,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /public-api/users/username/{username}:
     get:
@@ -283,6 +300,12 @@ paths:
                 $ref: '#/components/schemas/GenericErrorResponse'
         '429':
           description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
           content:
             application/json:
               schema:
@@ -491,6 +514,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limited (too many verification attempts)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '500':
           description: Internal error
           content:
@@ -528,6 +557,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Rate limited (too many reset attempts)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '500':
           description: Internal error
           content:
@@ -543,6 +578,12 @@ paths:
       responses:
         '302':
           description: Redirect to Google OAuth consent screen with state parameter for CSRF protection
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
 
   /auth/callback/google:
     get:
@@ -564,9 +605,15 @@ paths:
           description: State parameter for CSRF validation
       responses:
         '302':
-          description: Login successful; redirect to /profile with session created
+          description: Login successful; redirect to /me with session created
         '403':
           description: OAuth state validation failed (CSRF attack detected)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '429':
+          description: Rate limited
           content:
             application/json:
               schema:
@@ -590,6 +637,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NullResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+
+  /auth/guest/session:
+    post:
+      tags: [Auth]
+      summary: Create or resume a guest session identity
+      description: Returns a guest identity for the current session, or the authenticated user identity when the session already belongs to a user.
+      operationId: postAuthGuestSession
+      responses:
+        '200':
+          description: Guest or authenticated session identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionIdentityResponse'
+        '401':
+          description: Session references a user that no longer exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+
+  /auth/session/identity:
+    get:
+      tags: [Auth]
+      summary: Get the current user or guest session identity
+      description: Returns the identity stored in the current session. Responds with 401 when no authenticated or guest identity exists.
+      operationId: getAuthSessionIdentity
+      responses:
+        '200':
+          description: Current session identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionIdentityResponse'
+        '401':
+          description: No active user or guest session identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
         '500':
           description: Internal error
           content:
@@ -749,6 +866,198 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
 
+  /protected/game-invitations/state:
+    get:
+      tags: [Game Invitations]
+      summary: Get canonical game invitation state for the current user
+      operationId: getProtectedGameInvitationsState
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Current invitation state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGameInvitationStateResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /protected/game-invitations/send:
+    post:
+      tags: [Game Invitations]
+      summary: Send a game invitation to an accepted friend
+      operationId: postProtectedGameInvitationSend
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendGameInvitationRequest'
+      responses:
+        '201':
+          description: Invitation created and room context prepared
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendGameInvitationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '403':
+          description: Target user is not an accepted friend
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: Target user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
+          description: Duplicate, expired, cancelled, or room-state conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Invitation send rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /protected/game-invitations/accept:
+    post:
+      tags: [Game Invitations]
+      summary: Accept a pending game invitation
+      operationId: postProtectedGameInvitationAccept
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptGameInvitationRequest'
+      responses:
+        '200':
+          description: Invitation accepted and room joined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcceptGameInvitationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: Invitation or user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
+          description: Invitation or room conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /protected/game-invitations/decline:
+    post:
+      tags: [Game Invitations]
+      summary: Decline a pending game invitation
+      operationId: postProtectedGameInvitationDecline
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeclineGameInvitationRequest'
+      responses:
+        '200':
+          description: Invitation declined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeclineGameInvitationResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '409':
+          description: Invitation has already been accepted, cancelled, or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
   /users:
     get:
       tags: [Users]
@@ -805,7 +1114,8 @@ paths:
           required: true
           schema:
             type: string
-            minLength: 2
+            minLength: 1
+            maxLength: 100
         - in: query
           name: limit
           required: false
@@ -877,6 +1187,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
 
   /users/username/{username}:
     get:
@@ -898,6 +1214,12 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '404':
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '500':
+          description: Internal error
           content:
             application/json:
               schema:
@@ -1140,6 +1462,352 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+
+  /internal/friends:
+    post:
+      tags: [Internal]
+      summary: List accepted friend ids for a user
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalFriends
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalFriendsListRequest'
+      responses:
+        '200':
+          description: Friend ids for the requested user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalFriendsListResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+
+  /internal/direct-messages/history:
+    post:
+      tags: [Internal]
+      summary: Load direct message history for an accepted friendship
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalDirectMessagesHistory
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalDirectMessageThreadRequest'
+      responses:
+        '200':
+          description: Direct message thread history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalDirectMessageHistoryResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '403':
+          description: Users are not accepted friends
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+
+  /internal/direct-messages/send:
+    post:
+      tags: [Internal]
+      summary: Persist and fan out an internal direct message
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalDirectMessagesSend
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalDirectMessageSendRequest'
+      responses:
+        '200':
+          description: Saved direct message and unread count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalDirectMessageSendResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '403':
+          description: Users are not accepted friends
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+
+  /internal/direct-messages/read:
+    post:
+      tags: [Internal]
+      summary: Mark a direct message thread as read
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalDirectMessagesRead
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalDirectMessageThreadRequest'
+      responses:
+        '200':
+          description: Updated unread count for the thread
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalDirectMessageReadResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '403':
+          description: Users are not accepted friends
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+
+  /internal/game-invitations/notify-invitees:
+    post:
+      tags: [Internal]
+      summary: Notify users holding pending invitations from a sender
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalGameInvitationsNotifyInvitees
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalNotifyInviteesRequest'
+      responses:
+        '200':
+          description: Invitee notifications dispatched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOkResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+
+  /internal/game-invitations/cancel-room:
+    post:
+      tags: [Internal]
+      summary: Cancel all pending invitations for a room
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalGameInvitationsCancelRoom
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalCancelRoomInvitationsRequest'
+      responses:
+        '200':
+          description: Pending room invitations cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOkResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+
+  /internal/game-invitations/mark-joined:
+    post:
+      tags: [Internal]
+      summary: Mark matching invitations as joined for a room
+      description: Internal socket-facing endpoint protected by `x-internal-secret`.
+      operationId: postInternalGameInvitationsMarkJoined
+      security:
+        - internalSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalMarkJoinedRoomRequest'
+      responses:
+        '200':
+          description: Matching invitations marked as joined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOkResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '401':
+          description: Missing or invalid internal secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
+        '503':
+          description: Internal secret is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalErrorResponse'
 
 components:
   securitySchemes:
@@ -1152,6 +1820,11 @@ components:
       in: header
       name: x-api-key
       description: Shared API key configured in the backend as `PUBLIC_API_KEY`.
+    internalSecret:
+      type: apiKey
+      in: header
+      name: x-internal-secret
+      description: Shared secret used by the socket service when calling backend-internal endpoints.
   schemas:
     ApiError:
       type: object
@@ -1234,6 +1907,24 @@ components:
           enum: [true]
         data:
           nullable: true
+    InternalOkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+    InternalErrorResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+        errors:
+          type: object
+          nullable: true
+          additionalProperties: true
     AuthUser:
       type: object
       required: [id, email, username]
@@ -1364,13 +2055,61 @@ components:
           properties:
             userId:
               type: string
+              format: uuid
+    SessionIdentity:
+      type: object
+      required: [identityKey, sessionId, username, isGuest]
+      properties:
+        identityKey:
+          type: string
+          description: Namespaced identity key in the form `user:<userId>` or `guest:<guestId>`.
+        sessionId:
+          type: string
+        username:
+          type: string
+        isGuest:
+          type: boolean
+        userId:
+          type: string
+          format: uuid
+        guestId:
+          type: string
+          description: Generated guest id stored in the session.
+    SessionIdentityResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: '#/components/schemas/SessionIdentity'
     UpdateMeProfileRequest:
       type: object
-      required: [bio]
+      additionalProperties: false
+      required: [bio, avatar]
       properties:
         bio:
           type: string
           maxLength: 600
+        avatar:
+          type: string
+          nullable: true
+          enum:
+            - /avatars/avatar-1.png
+            - /avatars/avatar-2.png
+            - /avatars/avatar-3.png
+            - /avatars/avatar-4.png
+            - /avatars/avatar-5.png
+            - /avatars/avatar-6.png
+            - /avatars/avatar-7.png
+            - /avatars/avatar-8.png
+            - /avatars/avatar-9.png
+            - /avatars/avatar-10.png
+            - /avatars/avatar-11.png
+            - /avatars/avatar-12.png
+            - /avatars/avatar-13.png
+            - /avatars/avatar-14.png
     UserPublic:
       type: object
       required: [id, username, avatar, bio]
@@ -1542,7 +2281,7 @@ components:
           format: date-time
     FriendPublic:
       type: object
-      required: [id, username, avatar, presence]
+      required: [id, username, avatar, presence, unreadMessageCount, friendshipId]
       properties:
         id:
           type: string
@@ -1550,10 +2289,17 @@ components:
         username:
           type: string
         avatar:
+          type: string
           nullable: true
         presence:
           type: string
           enum: [online, away, offline]
+        unreadMessageCount:
+          type: integer
+          minimum: 0
+        friendshipId:
+          type: string
+          format: uuid
     FriendshipsListResponse:
       type: object
       required: [ok, data]
@@ -1676,6 +2422,408 @@ components:
             deleted:
               type: boolean
               enum: [true]
+    PlayerState:
+      type: object
+      required: [userId, userName]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        userName:
+          type: string
+    GameRoomState:
+      type: object
+      required: [id, isGameRoomFull, status, teammates]
+      properties:
+        id:
+          type: integer
+        isGameRoomFull:
+          type: boolean
+        status:
+          type: string
+          enum: [open, locked]
+        teammates:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerState'
+    DirectMessageUser:
+      type: object
+      required: [type, id, createdAt, senderId, username, readAt, content]
+      properties:
+        type:
+          type: string
+          enum: [user]
+        clientMessageId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: integer
+        senderId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        readAt:
+          type: integer
+          nullable: true
+        content:
+          type: object
+          required: [text]
+          properties:
+            text:
+              type: string
+    DirectMessageGameInvitation:
+      type: object
+      required: [type, id, createdAt, senderId, username, readAt, content]
+      properties:
+        type:
+          type: string
+          enum: [game_invitation]
+        clientMessageId:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: integer
+        senderId:
+          type: string
+          format: uuid
+        username:
+          type: string
+        readAt:
+          type: integer
+          nullable: true
+        content:
+          type: object
+          required:
+            [invitationId, roomId, inviterId, invitedUserId, inviterUsername, createdAt, expiresAt]
+          properties:
+            invitationId:
+              type: string
+              format: uuid
+            roomId:
+              type: string
+            inviterId:
+              type: string
+              format: uuid
+            invitedUserId:
+              type: string
+              format: uuid
+            inviterUsername:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            expiresAt:
+              type: string
+              format: date-time
+            acceptedAt:
+              type: string
+              format: date-time
+              nullable: true
+            cancelledAt:
+              type: string
+              format: date-time
+              nullable: true
+    DirectMessage:
+      oneOf:
+        - $ref: '#/components/schemas/DirectMessageUser'
+        - $ref: '#/components/schemas/DirectMessageGameInvitation'
+    DirectMessageRead:
+      type: object
+      required: [friendUserId, unreadCount]
+      properties:
+        friendUserId:
+          type: string
+          format: uuid
+        unreadCount:
+          type: integer
+          minimum: 0
+    GameInvitationView:
+      type: object
+      required:
+        [
+          id,
+          roomId,
+          direction,
+          friendUserId,
+          friendUsername,
+          inviterId,
+          invitedUserId,
+          inviterUsername,
+          createdAt,
+          expiresAt,
+          acceptedAt,
+          cancelledAt,
+          status,
+          sourceMessageId,
+        ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: integer
+        direction:
+          type: string
+          enum: [sent, received]
+        friendUserId:
+          type: string
+          format: uuid
+        friendUsername:
+          type: string
+        inviterId:
+          type: string
+          format: uuid
+        invitedUserId:
+          type: string
+          format: uuid
+        inviterUsername:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        acceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        cancelledAt:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [pending, accepted, expired, unavailable, cancelled]
+        sourceMessageId:
+          type: string
+          format: uuid
+    GameInvitationSummary:
+      type: object
+      required: [activeInvitationCount, activeInvitationIds]
+      properties:
+        activeInvitationCount:
+          type: integer
+          minimum: 0
+        activeInvitationIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    GetGameInvitationStateResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [invitations]
+          properties:
+            invitations:
+              type: array
+              items:
+                $ref: '#/components/schemas/GameInvitationView'
+    SendGameInvitationRequest:
+      type: object
+      additionalProperties: false
+      required: [friendUserId]
+      properties:
+        friendUserId:
+          type: string
+          format: uuid
+    SendGameInvitationResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [message, room, summary]
+          properties:
+            message:
+              $ref: '#/components/schemas/DirectMessage'
+            room:
+              $ref: '#/components/schemas/GameRoomState'
+            summary:
+              $ref: '#/components/schemas/GameInvitationSummary'
+    AcceptGameInvitationRequest:
+      type: object
+      additionalProperties: false
+      required: [invitationId]
+      properties:
+        invitationId:
+          type: string
+          format: uuid
+    AcceptGameInvitationResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [invitationId, room, summary]
+          properties:
+            invitationId:
+              type: string
+              format: uuid
+            room:
+              $ref: '#/components/schemas/GameRoomState'
+            summary:
+              $ref: '#/components/schemas/GameInvitationSummary'
+    DeclineGameInvitationRequest:
+      type: object
+      additionalProperties: false
+      required: [invitationId]
+      properties:
+        invitationId:
+          type: string
+          format: uuid
+    DeclineGameInvitationResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [invitationId, summary]
+          properties:
+            invitationId:
+              type: string
+              format: uuid
+            summary:
+              $ref: '#/components/schemas/GameInvitationSummary'
+    InternalFriendsListRequest:
+      type: object
+      additionalProperties: false
+      required: [userId]
+      properties:
+        userId:
+          type: string
+          format: uuid
+    InternalFriendsListResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [friendIds]
+          properties:
+            friendIds:
+              type: array
+              items:
+                type: string
+                format: uuid
+    InternalDirectMessageThreadRequest:
+      type: object
+      additionalProperties: false
+      required: [currentUserId, friendUserId]
+      properties:
+        currentUserId:
+          type: string
+          format: uuid
+        friendUserId:
+          type: string
+          format: uuid
+    InternalDirectMessageSendRequest:
+      type: object
+      additionalProperties: false
+      required: [currentUserId, friendUserId, text]
+      properties:
+        currentUserId:
+          type: string
+          format: uuid
+        friendUserId:
+          type: string
+          format: uuid
+        text:
+          type: string
+          minLength: 1
+          maxLength: 300
+    InternalDirectMessageHistoryResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [messages]
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/DirectMessage'
+    InternalDirectMessageSendResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          required: [message, unreadCount]
+          properties:
+            message:
+              $ref: '#/components/schemas/DirectMessage'
+            unreadCount:
+              type: integer
+              minimum: 0
+    InternalDirectMessageReadResponse:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: '#/components/schemas/DirectMessageRead'
+    InternalNotifyInviteesRequest:
+      type: object
+      additionalProperties: false
+      required: [userId]
+      properties:
+        userId:
+          type: string
+          format: uuid
+    InternalCancelRoomInvitationsRequest:
+      type: object
+      additionalProperties: false
+      required: [roomId]
+      properties:
+        roomId:
+          type: integer
+          minimum: 1
+    InternalMarkJoinedRoomRequest:
+      type: object
+      additionalProperties: false
+      required: [userId, roomId]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        roomId:
+          type: integer
+          minimum: 1
     AuthErrorResponse:
       type: object
       required: [ok, error]
