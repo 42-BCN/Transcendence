@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-
+import { envPublic } from '@/lib/config/env.public';
 import { chatSocket, ensureChatSessionIdentity, robotsSocket, type Robot } from './socket';
 import type {
   ChatError,
@@ -17,7 +17,8 @@ type RobotsSocketManagerProps = {
 export const RobotsSocketManager = ({ onRobots }: RobotsSocketManagerProps) => {
   useEffect(() => {
     const handleConnect = () => {
-      console.log('Connected to robots socket server', robotsSocket.id);
+      envPublic.processEnv === 'development' &&
+        console.log('Connected to robots socket server', robotsSocket.id);
     };
 
     const handleRobots = (robots: Robot[]) => {
@@ -25,7 +26,8 @@ export const RobotsSocketManager = ({ onRobots }: RobotsSocketManagerProps) => {
     };
 
     const handleDisconnect = () => {
-      console.log('Disconnected from robots socket server');
+      envPublic.processEnv === 'development' &&
+        console.log('Disconnected from robots socket server');
     };
 
     const listeners = [
@@ -87,11 +89,13 @@ export const ChatSocketManager = ({
 
   useEffect(() => {
     const handleConnect = () =>
+      envPublic.processEnv === 'development' &&
       console.log('Connected to chat socket server', chatSocket.id, 'roomId=', roomId);
     const handleConnectError = (error: Error) => {
-      console.error('Chat socket connect error', error);
+      envPublic.processEnv === 'development' && console.error('Chat socket connect error', error);
     };
     const handleDisconnect = () =>
+      envPublic.processEnv === 'development' &&
       console.log('Disconnected from chat socket server', 'roomId=', roomId);
     const handleChatMessage = (payload: ChatMessage) => onChatMessageRef.current(payload);
     const handleChatSystemMessage = (payload: ChatSystemMessage) =>
@@ -129,7 +133,8 @@ export const ChatSocketManager = ({
           }
         })
         .catch((error) => {
-          console.error('Failed to initialize chat session identity', error);
+          envPublic.processEnv === 'development' &&
+            console.error('Failed to initialize chat session identity', error);
         });
     } else {
       chatSocket.disconnect();

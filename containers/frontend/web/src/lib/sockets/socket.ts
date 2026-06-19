@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import type { Socket } from 'socket.io-client';
-
 import { envPublic } from '@/lib/config/env.public';
+
 import type {
   ServerToClientChatEvents,
   ClientToServerChatEvents,
@@ -82,9 +82,7 @@ export async function ensureChatSessionIdentity(): Promise<void> {
 
         if (!guestResponse.ok) {
           sessionPromise = null;
-          throw new Error(
-            `Failed to initialize chat session identity (${guestResponse.status})`,
-          );
+          throw new Error(`Failed to initialize chat session identity (${guestResponse.status})`);
         }
       });
     })
@@ -135,14 +133,15 @@ export const gameSocket: Socket<ServerToClientGameEvents, ClientToServerGameEven
 );
 
 gameSocket.on('connect_error', (error: unknown) => {
-  console.error('🔴 [gameSocket] connect_error:', error);
+  envPublic.processEnv === 'development' && console.error('🔴 [gameSocket] connect_error:', error);
   if (error instanceof Error) {
-    console.error('  Error message:', error.message);
-    console.error('  Error stack:', error.stack);
+    envPublic.processEnv === 'development' && console.error('  Error message:', error.message);
+    envPublic.processEnv === 'development' && console.error('  Error stack:', error.stack);
   }
 });
 
-console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
+envPublic.processEnv === 'development' &&
+  console.log('📋 [gameSocket] Configured for URL:', gameSocketUrl);
 
 export const robotsSocket: Socket<ServerToClientRobotsEvents, ClientToServerRobotsEvents> = io(
   robotsSocketUrl,
@@ -163,11 +162,9 @@ export const chatSocket: Socket<ServerToClientChatEvents, ClientToServerChatEven
   },
 );
 
-export const gameRoomSocket: Socket<
-  ServerToClientGameRoomsEvents,
-  ClientToServerGameRoomsEvents
-> = io(gameRoomSocketUrl, {
-  autoConnect: false,
-  transports: ['websocket'],
-  withCredentials: true,
-});
+export const gameRoomSocket: Socket<ServerToClientGameRoomsEvents, ClientToServerGameRoomsEvents> =
+  io(gameRoomSocketUrl, {
+    autoConnect: false,
+    transports: ['websocket'],
+    withCredentials: true,
+  });

@@ -28,7 +28,6 @@ const preview: Preview = {
       const theme = context.globals.theme as 'light' | 'dark';
       const documentElement = context.canvasElement.ownerDocument.documentElement;
 
-      documentElement.classList.add(primary.variable);
       documentElement.classList.toggle('dark', theme === 'dark');
 
       return (

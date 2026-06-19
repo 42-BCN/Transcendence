@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { envPublic } from '@/lib/config/env.public';
 
 type Theme = 'light' | 'dark';
 
@@ -29,7 +30,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (e) {
       // Storage might be blocked (e.g. Incognito mode in some browsers)
-      console.warn('ThemeProvider: localStorage access failed during init', e);
+      envPublic.processEnv === 'development' &&
+        console.warn('ThemeProvider: localStorage access failed during init', e);
     }
 
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -76,7 +78,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('theme', value);
     } catch (e) {
       // Ignore storage persistence failures so the UI theme still updates.
-      console.warn('ThemeProvider: Failed to persist theme to localStorage', e);
+      envPublic.processEnv === 'development' &&
+        console.warn('ThemeProvider: Failed to persist theme to localStorage', e);
     }
   };
 

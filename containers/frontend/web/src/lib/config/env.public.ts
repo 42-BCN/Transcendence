@@ -7,6 +7,7 @@ export const envPublic = {
   appUrl: required(process.env.NEXT_PUBLIC_APP_URL, 'NEXT_PUBLIC_APP_URL'),
   apiBaseUrl: required(process.env.NEXT_PUBLIC_API_BASE_URL, 'NEXT_PUBLIC_API_BASE_URL'),
   socketUrl: required(process.env.NEXT_PUBLIC_SOCKET_URL, 'NEXT_PUBLIC_SOCKET_URL'),
+  processEnv: required(process.env.NODE_ENV, 'development'),
   localeCookieName: required(
     process.env.NEXT_PUBLIC_LOCALE_COOKIE_NAME,
     'NEXT_PUBLIC_LOCALE_COOKIE_NAME',

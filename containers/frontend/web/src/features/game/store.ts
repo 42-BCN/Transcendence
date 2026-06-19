@@ -1,29 +1,30 @@
 import { create } from 'zustand';
 import { gameSocket, ensureChatSessionIdentity } from '@/lib/sockets/socket';
+import { envPublic } from '@/lib/config/env.public';
 
 export type pos = {
-  x: number,
-  y: number,
-  z: number
-}
+  x: number;
+  y: number;
+  z: number;
+};
 
 export type mapInfo = {
   width: number;
   height: number;
   depth: number;
-}
+};
 
 export type tile = {
-  id: string,
-  type: string,
-  position: pos
-}
+  id: string;
+  type: string;
+  position: pos;
+};
 
 export type parse_entity = {
-  id: string,
-  type: string,
-  position: pos
-}
+  id: string;
+  type: string;
+  position: pos;
+};
 
 export type player = parse_entity & {
   hp: number;
@@ -45,11 +46,11 @@ export type enemy = player;
 export type entity = player | enemy;
 
 export type node = {
-  id: string,
-  pos: pos,
-  g: number,
-  f: number
-}
+  id: string;
+  pos: pos;
+  g: number;
+  f: number;
+};
 
 export type historyAction = {
   id: string;
@@ -60,7 +61,7 @@ export type historyAction = {
   aftermov: boolean;
   abName: string | null;
   dependsOn: string | null;
-}
+};
 
 export type abilityInfo = {
   name: string;
@@ -73,7 +74,7 @@ export type abilityInfo = {
   AoE?: string;
   AoErange?: number;
   effect?: string[];
-}
+};
 
 export type vfx = {
   vfxid: string;
@@ -81,7 +82,7 @@ export type vfx = {
   type: string;
   amount: number | null;
   label: string;
-}
+};
 
 export type globalGameState = {
   phase: 'PLAN' | 'EXEC' | 'ENEMY' | 'END' | 'WIN' | 'LOSE';
@@ -97,7 +98,7 @@ export type globalGameState = {
   mapBounds: mapInfo;
   readyPlayers?: string[];
   activePlayers?: string[];
-}
+};
 
 export type localGameState = {
   highlights: Record<string, boolean>;
@@ -106,41 +107,41 @@ export type localGameState = {
   selectedAb: string | null;
   selectedEnt: string | null;
   selectedDice: number | null;
-}
-
-type gameState = globalGameState & localGameState & {
-
-  //local state
-  assignedCharacter: string;
-  connectionError: string | null;
-  typeEnt: string | null;
-  affected: Record<string, boolean>;
-  vfx: Record<string, vfx>;
-  entityTints: Record<string, { color: string; expiresAt: number }>;
-
-  nextPhase: () => void;
-  resetGame: () => void;
-
-  initSocketListeners: () => void;
-  cleanupSocketListeners: () => void;
-
-  selectEntity: (Id: string) => void;
-  getSel: () => entity | undefined;
-  movDice: (mov: number) => void;
-  selectDice: (dice: number) => void;
-  moveClone: (tileId: string) => void;
-  selectAbility: (name: string) => void;
-  showMoveRange: (mov: number) => void;
-  showAbRange: (name: string) => void;
-  resetHistory: () => void;
-  addHistoryAbility: (target: string) => void;
-  clearHighlights: () => void;
-  clearSelectables: () => void;
-  clearSelectedDice: () => void;
-  aoePreview: Record<string, boolean>;
-  setAoePreview: (targetId: string) => void;
-  clearAoePreview: () => void;
 };
+
+type gameState = globalGameState &
+  localGameState & {
+    //local state
+    assignedCharacter: string;
+    connectionError: string | null;
+    typeEnt: string | null;
+    affected: Record<string, boolean>;
+    vfx: Record<string, vfx>;
+    entityTints: Record<string, { color: string; expiresAt: number }>;
+
+    nextPhase: () => void;
+    resetGame: () => void;
+
+    initSocketListeners: () => void;
+    cleanupSocketListeners: () => void;
+
+    selectEntity: (Id: string) => void;
+    getSel: () => entity | undefined;
+    movDice: (mov: number) => void;
+    selectDice: (dice: number) => void;
+    moveClone: (tileId: string) => void;
+    selectAbility: (name: string) => void;
+    showMoveRange: (mov: number) => void;
+    showAbRange: (name: string) => void;
+    resetHistory: () => void;
+    addHistoryAbility: (target: string) => void;
+    clearHighlights: () => void;
+    clearSelectables: () => void;
+    clearSelectedDice: () => void;
+    aoePreview: Record<string, boolean>;
+    setAoePreview: (targetId: string) => void;
+    clearAoePreview: () => void;
+  };
 
 const ABILITY_AOE: Record<string, { type: string; range: number }> = {
   'Shield Bash': { type: 'cross', range: 2 },
@@ -167,8 +168,7 @@ function getAoePreviewTiles(
     cy = cy + 1;
   } else {
     const ent = players[targetId] || enemies[targetId] || clones[targetId];
-    if (!ent)
-      return {};
+    if (!ent) return {};
     ({ x: cx, y: cy, z: cz } = ent.position);
   }
 
@@ -180,24 +180,26 @@ function getAoePreviewTiles(
   };
 
   if (aoeType === 'cross') {
-    const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]] as const;
+    const DIRS = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ] as const;
     for (const [dx, dz] of DIRS) {
       for (let n = 1; n <= aoeRange; ++n) {
         const x = cx + n * dx;
         const z = cz + n * dz;
-        if (tiles[`${x},${cy},${z}`])
-          break;
+        if (tiles[`${x},${cy},${z}`]) break;
         const floorKey = `${x},${cy - 1},${z}`;
-        if (!tiles[floorKey])
-          break;
+        if (!tiles[floorKey]) break;
         result[floorKey] = true;
       }
     }
   } else if (aoeType === 'circle') {
     for (let dx = -aoeRange; dx <= aoeRange; ++dx) {
       for (let dz = -aoeRange; dz <= aoeRange; ++dz) {
-        if (aoeRange * aoeRange < dx * dx + dz * dz)
-          continue;
+        if (aoeRange * aoeRange < dx * dx + dz * dz) continue;
         markTile(cx + dx, cy, cz + dz);
       }
     }
@@ -206,23 +208,33 @@ function getAoePreviewTiles(
     markTile(cx, cy + 1, cz);
     markTile(cx, cy - 1, cz);
   } else if (aoeType === 'cone') {
-    if (!attackerId)
-      return result;
+    if (!attackerId) return result;
     const attacker =
       players[attackerId] ||
       clones[attackerId] ||
       players[attackerId.replace('clone_', '')] ||
       clones[`clone_${attackerId}`];
-    if (!attacker)
-      return result;
+    if (!attacker) return result;
     const o = attacker.position;
     const fx = Math.sign(cx - o.x);
     const fz = Math.sign(cz - o.z);
     const [px, pz] = [fz, fx];
     const CONE = [
-      [1, 0, 0], [2, 0, 0], [2, 1, 0], [2, -1, 0], [2, 0, -1],
-      [2, 0, 1], [3, 0, 0], [3, 1, 0], [3, -1, 0], [3, 0, 1],
-      [3, 1, 1], [3, -1, 1], [3, 0, -1], [3, 1, -1], [3, -1, -1],
+      [1, 0, 0],
+      [2, 0, 0],
+      [2, 1, 0],
+      [2, -1, 0],
+      [2, 0, -1],
+      [2, 0, 1],
+      [3, 0, 0],
+      [3, 1, 0],
+      [3, -1, 0],
+      [3, 0, 1],
+      [3, 1, 1],
+      [3, -1, 1],
+      [3, 0, -1],
+      [3, 1, -1],
+      [3, -1, -1],
     ] as const;
     for (const [fwd, hgt, prp] of CONE) {
       const x = o.x + fx * fwd + px * prp;
@@ -235,7 +247,6 @@ function getAoePreviewTiles(
 }
 
 export const useGame = create<gameState>()((set, get) => ({
-
   assignedCharacter: 'spectator',
   connectionError: null,
 
@@ -279,7 +290,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
   selectEntity: (id) => {
     gameSocket.emit('game:client:selectEntity', id);
-    console.log('ent id: ', id);
+    envPublic.processEnv === 'development' && console.log('ent id: ', id);
   },
 
   getSel: () => {
@@ -302,18 +313,19 @@ export const useGame = create<gameState>()((set, get) => ({
   },
 
   resetHistory: () => {
-    console.log('history before reset:', get().history);
+    envPublic.processEnv === 'development' && console.log('history before reset:', get().history);
     gameSocket.emit('game:client:resetHistory');
   },
 
   addHistoryAbility: (target: string) => {
-    console.log('history before ability: ', get().history);
+    envPublic.processEnv === 'development' &&
+      console.log('history before ability: ', get().history);
     set({ aoePreview: {} });
     gameSocket.emit('game:client:addHistoryAbility', target);
   },
 
   moveClone: (tileId) => {
-    console.log('history before move: ', get().history);
+    envPublic.processEnv === 'development' && console.log('history before move: ', get().history);
     gameSocket.emit('game:client:moveClone', tileId);
   },
 
@@ -350,8 +362,13 @@ export const useGame = create<gameState>()((set, get) => ({
     const ab = s.selectedAb ? ABILITY_AOE[s.selectedAb] : undefined;
     if (!ab) return;
     const preview = getAoePreviewTiles(
-      targetId, ab.type, ab.range,
-      s.tiles, s.players, s.enemies, s.clones,
+      targetId,
+      ab.type,
+      ab.range,
+      s.tiles,
+      s.players,
+      s.enemies,
+      s.clones,
       s.selectedEnt,
     );
     set({ aoePreview: preview });
@@ -369,18 +386,20 @@ export const useGame = create<gameState>()((set, get) => ({
     gameSocket.off('game:server:sync');
     (gameSocket as any).off('game:server:error');
     const handleJoin = (id: string) => {
-      console.log('👤 Player joined with ID:', id);
+      envPublic.processEnv === 'development' && console.log('👤 Player joined with ID:', id);
       set({ assignedCharacter: id, connectionError: null });
     };
 
     const handleGlobalSync = (state: globalGameState) => {
-      console.log('📡 Received global sync');
-      console.log('history after action: ', state.history);
-      console.log('activePlayers after action: ', state.activePlayers);
-      console.log('readyPLayers after action: ', state.readyPlayers);
+      envPublic.processEnv === 'development' && console.log('📡 Received global sync');
+      envPublic.processEnv === 'development' &&
+        console.log('history after action: ', state.history);
+      envPublic.processEnv === 'development' &&
+        console.log('activePlayers after action: ', state.activePlayers);
+      envPublic.processEnv === 'development' &&
+        console.log('readyPLayers after action: ', state.readyPlayers);
       const prevPhase = get().phase;
-      const isGameReset =
-        (prevPhase === 'WIN' || prevPhase === 'LOSE') && state.phase === 'PLAN';
+      const isGameReset = (prevPhase === 'WIN' || prevPhase === 'LOSE') && state.phase === 'PLAN';
 
       set({
         phase: state.phase,
@@ -400,18 +419,25 @@ export const useGame = create<gameState>()((set, get) => ({
     };
 
     const handleVfx = (effect: vfx) => {
-      if (!effect)
-        return;
+      if (!effect) return;
       const label =
-        effect.type === 'damage' ? `-${effect.amount}` :
-          effect.type === 'doom' ? `☠ +${effect.amount ?? 0}` :
-            effect.type === 'burn' ? `🔥 ${effect.type}` :
-              effect.type === 'restrain' ? `⛓ ${effect.type}` :
-                effect.type === 'oxidation' ? `⚗ ${effect.type}` :
-                  effect.type === 'boost' ? `⚡ ${effect.type}` :
-                    effect.type === 'shield' ? `🛡 ${effect.type}` :
-                      effect.type === 'miss' ? `✗ MISS` :
-                        effect.type;
+        effect.type === 'damage'
+          ? `-${effect.amount}`
+          : effect.type === 'doom'
+            ? `☠ +${effect.amount ?? 0}`
+            : effect.type === 'burn'
+              ? `🔥 ${effect.type}`
+              : effect.type === 'restrain'
+                ? `⛓ ${effect.type}`
+                : effect.type === 'oxidation'
+                  ? `⚗ ${effect.type}`
+                  : effect.type === 'boost'
+                    ? `⚡ ${effect.type}`
+                    : effect.type === 'shield'
+                      ? `🛡 ${effect.type}`
+                      : effect.type === 'miss'
+                        ? `✗ MISS`
+                        : effect.type;
       set((s) => ({
         vfx: {
           ...s.vfx,
@@ -451,7 +477,7 @@ export const useGame = create<gameState>()((set, get) => ({
 
     const handleSync = (state: localGameState) => {
       if (!state) return;
-      console.log('🔄 Received sync event');
+      envPublic.processEnv === 'development' && console.log('🔄 Received sync event');
       set({
         highlights: state.highlights,
         selectables: state.selectables,
@@ -464,7 +490,7 @@ export const useGame = create<gameState>()((set, get) => ({
     };
 
     const handleGameError = (message: string) => {
-      console.error('🎮 game socket error:', message);
+      envPublic.processEnv === 'development' && console.error('🎮 game socket error:', message);
       set({
         connectionError: message,
         mapBounds: { width: 0, height: 0, depth: 0 },
@@ -472,11 +498,11 @@ export const useGame = create<gameState>()((set, get) => ({
     };
 
     gameSocket.on('connect', () => {
-      console.log('✅ Connected to game socket server');
+      envPublic.processEnv === 'development' && console.log('✅ Connected to game socket server');
     });
 
     gameSocket.on('disconnect', () => {
-      console.log('❌ Disconnected from game socket:');
+      envPublic.processEnv === 'development' && console.log('❌ Disconnected from game socket:');
     });
 
     gameSocket.on('game:server:join', handleJoin);
@@ -488,7 +514,8 @@ export const useGame = create<gameState>()((set, get) => ({
     ensureChatSessionIdentity()
       .then(() => gameSocket.connect())
       .catch((error) => {
-        console.error('Failed to initialize game session identity', error);
+        envPublic.processEnv === 'development' &&
+          console.error('Failed to initialize game session identity', error);
       });
   },
 
