@@ -7,6 +7,7 @@ export const fieldsBase = {
     labelKey: 'features.auth.fields.identifier.label',
     placeholderKey: 'features.auth.fields.identifier.placeholder',
     isRequired: true,
+    autoComplete: 'username',
   },
   password: {
     name: 'password',
