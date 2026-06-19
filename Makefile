@@ -179,10 +179,12 @@ rebuild-nginx: setup
 rebuild-contracts: setup
 	$(COMPOSE_ENV) up -d --build $(CONTRACT_SERVICES)
 
+switch-dev: ENV=development
 switch-dev: setup
 	$(COMPOSE_PROD) down --remove-orphans
 	$(COMPOSE_DEV) up -d
 
+switch-prod: ENV=production
 switch-prod: setup
 	$(COMPOSE_DEV) down --remove-orphans
 	$(COMPOSE_PROD) up -d --build
