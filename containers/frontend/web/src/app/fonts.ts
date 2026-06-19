@@ -5,5 +5,5 @@ export const primary = Montserrat({
   weight: ['400', '500', '600', '700'],
   variable: '--font-montserrat',
   display: 'swap',
-  preload: false,
+  preload: true,
 });
