@@ -15,6 +15,7 @@ import type {
 
 import {
   acceptGameInvitation,
+  cancelPendingRoomInvitations,
   declineGameInvitation,
   getGameInvitationState,
   markJoinedRoomInvitations,
@@ -36,6 +37,7 @@ function ensureInternalSecret(req: Request, res: Response): boolean {
 }
 
 const NotifyInviteesBodySchema = z.object({ userId: z.string().uuid() });
+const CancelRoomInvitationsBodySchema = z.object({ roomId: z.number().int().positive() });
 
 export async function getGameInvitationStateController(
   req: Request,
@@ -99,6 +101,22 @@ export function handleInternalNotifyInvitees(req: Request, res: Response): void 
   }
 
   void notifyPendingInviteesForSender(parsed.data.userId).then(() => {
+    res.json({ ok: true });
+  }).catch(() => {
+    res.status(500).json({ ok: false });
+  });
+}
+
+export function handleInternalCancelRoomInvitations(req: Request, res: Response): void {
+  if (!ensureInternalSecret(req, res)) return;
+
+  const parsed = CancelRoomInvitationsBodySchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ ok: false });
+    return;
+  }
+
+  void cancelPendingRoomInvitations(parsed.data.roomId).then(() => {
     res.json({ ok: true });
   }).catch(() => {
     res.status(500).json({ ok: false });

@@ -12,7 +12,10 @@ import {
   sendGameInvitation,
 } from '@/features/game-invitations/game-invitations.client';
 import { gameRoomSocket, ensureChatSessionIdentity } from '@/lib/sockets/socket';
-import { GameInvitationsStoreContext } from '@/features/game-invitations/store/game-invitations.provider';
+import {
+  GameInvitationsStoreContext,
+  useGameInvitationsStore,
+} from '@/features/game-invitations/store/game-invitations.provider';
 
 import { SocialFriendshipActions } from './social-friendship-actions';
 import type { UsersListType } from './users-list';
@@ -91,8 +94,9 @@ function InviteToGameAction(args: {
   inviteLabel: string;
   inviteSentLabel: string;
   inviteError: string | null;
-  inviteStatus: 'idle' | 'sent' | 'error';
+  inviteStatus: 'idle' | 'error';
   isSendingInvite: boolean;
+  hasPendingSentInvitation: boolean;
   onInvite: () => void;
   onOpenMessage: () => void;
 }) {
@@ -104,10 +108,10 @@ function InviteToGameAction(args: {
           icon="gamepad"
           variant="primary"
           onPress={args.onInvite}
-          isDisabled={args.isSendingInvite || args.inviteStatus === 'sent'}
+          isDisabled={args.isSendingInvite || args.hasPendingSentInvitation}
         />
       </TooltipTrigger>
-      {args.inviteStatus === 'sent' && (
+      {args.hasPendingSentInvitation && (
         <button
           type="button"
           onClick={args.onOpenMessage}
@@ -133,14 +137,21 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
   const unreadMessageCount = useSocialStore(
     (state) => state.friends.find((friend) => friend.id === userId)?.unreadMessageCount ?? 0,
   );
+  const invitationsById = useGameInvitationsStore((state) => state.invitationsById);
   const [isSendingInvite, startSendingInvite] = useTransition();
-  const [inviteStatus, setInviteStatus] = useState<'idle' | 'sent' | 'error'>('idle');
+  const [inviteStatus, setInviteStatus] = useState<'idle' | 'error'>('idle');
   const [inviteError, setInviteError] = useState<string | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messageHref = { pathname: '/messages/[userId]' as const, params: { userId: username } };
   const showMessageAction = type === 'online' || type === 'offline';
   const showInviteAction = type === 'online';
   const showFriendshipActions = type === 'request' || type === 'pending' || type === 'search';
+  const hasPendingSentInvitation = Object.values(invitationsById).some(
+    (invitation) =>
+      invitation.friendUserId === userId
+      && invitation.direction === 'sent'
+      && invitation.status === 'pending',
+  );
 
   useEffect(() => {
     return () => {
@@ -176,7 +187,7 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
             return;
           }
 
-          setInviteStatus('sent');
+          setInviteStatus('idle');
           setInviteError(null);
           roomsStore?.setRoomState(response.data.room);
           refreshInvitationState();
@@ -204,6 +215,7 @@ export function SocialUserActions({ type, userId, username }: SocialUserActionsP
           inviteError={inviteError}
           inviteStatus={inviteStatus}
           isSendingInvite={isSendingInvite}
+          hasPendingSentInvitation={hasPendingSentInvitation}
           onInvite={handleInvite}
           onOpenMessage={() => {
             setInviteStatus('idle');

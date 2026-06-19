@@ -21,6 +21,7 @@ import { getAuthCookieSameSite } from './auth/auth.cookies';
 import { publicApiRouter } from './public-api/public-api.routes';
 import { gameInvitationsRouter } from './game-invitations/game-invitations.routes';
 import {
+  handleInternalCancelRoomInvitations,
   handleInternalMarkJoinedRoom,
   handleInternalNotifyInvitees,
 } from './game-invitations/game-invitations.controller';
@@ -86,6 +87,7 @@ app.post('/internal/direct-messages/history', handleInternalDirectMessageHistory
 app.post('/internal/direct-messages/read', handleInternalDirectMessageRead);
 app.post('/internal/direct-messages/send', handleInternalDirectMessageSend);
 app.post('/internal/game-invitations/notify-invitees', handleInternalNotifyInvitees);
+app.post('/internal/game-invitations/cancel-room', handleInternalCancelRoomInvitations);
 app.post('/internal/game-invitations/mark-joined', handleInternalMarkJoinedRoom);
 
 app.use(errorMiddleware);

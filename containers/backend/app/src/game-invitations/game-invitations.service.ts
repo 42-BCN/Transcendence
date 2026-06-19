@@ -10,6 +10,7 @@ import type {
 } from '@contracts/game-invitations/game-invitations.contracts';
 
 import {
+  cancelPendingInvitationsByRoom,
   countUnreadDirectMessagesForFriendship,
   countActivePendingInvitationsSentByUser,
   countRecentGameInvitationsSentByUser,
@@ -37,7 +38,7 @@ import {
   validateInvitationReceiver,
 } from './game-invitations.socket-client';
 
-const INVITATION_TTL_MS = 5 * 60 * 1000;
+const INVITATION_TTL_MS = 120 * 1000;
 const SAME_USER_COOLDOWN_MS = 60 * 1000;
 const SEND_WINDOW_MS = 10 * 60 * 1000;
 const MAX_ACTIVE_PENDING_SENT = 5;
@@ -156,6 +157,22 @@ export async function notifyPendingInviteesForSender(senderId: string): Promise<
     notifyInvitationSummary(senderId),
     ...inviteeIds.map((inviteeId) => notifyInvitationSummary(inviteeId)),
   ]);
+}
+
+export async function cancelPendingRoomInvitations(roomId: number): Promise<void> {
+  const now = new Date();
+  const affectedUsers = await cancelPendingInvitationsByRoom({ roomId, now });
+  if (affectedUsers.length === 0) {
+    return;
+  }
+
+  const userIds = new Set<string>();
+  for (const affectedUser of affectedUsers) {
+    userIds.add(affectedUser.senderId);
+    userIds.add(affectedUser.invitedUserId);
+  }
+
+  await Promise.all([...userIds].map((userId) => notifyInvitationSummary(userId)));
 }
 
 export async function sendGameInvitation(

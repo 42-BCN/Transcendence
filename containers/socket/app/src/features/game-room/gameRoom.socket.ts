@@ -39,6 +39,24 @@ function markJoinedRoom(userId: string, roomId: number): void {
   }).catch(() => undefined);
 }
 
+export function cancelRoomInvitations(roomId: number): void {
+  const secret = processEnv.process?.env?.SOCKET_INTERNAL_SECRET;
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (secret) headers['x-internal-secret'] = secret;
+
+  void fetch(`${BACKEND_URL}/internal/game-invitations/cancel-room`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ roomId }),
+  }).catch(() => undefined);
+}
+
+function cancelRoomInvitationsIfClosed(gameRoom: gameRoomState): void {
+  if (gameRoom.teammates.length === 0) {
+    cancelRoomInvitations(gameRoom.id);
+  }
+}
+
 type EmptyGameRoomState = {
   id: 0;
   isGameRoomFull: false;
@@ -178,6 +196,7 @@ function handleLeaveResult(
   socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
   socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
   emitGameRoomStateToMember(memberKey, EMPTY_GAME_ROOM_STATE);
+  cancelRoomInvitationsIfClosed(gameRoom);
   gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:debug:msg', 'left room');
 }
 
@@ -251,6 +270,7 @@ export function registerGameRoomSocket(nsp: Namespace) {
         const gameRoomChannel = getGameRoomChannel(gameRoom.id);
         socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
         socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
+        cancelRoomInvitationsIfClosed(gameRoom);
         if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
           notifyPendingInvitees(socket.data.userId as string);
         }
