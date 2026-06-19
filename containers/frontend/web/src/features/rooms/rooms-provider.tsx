@@ -22,6 +22,7 @@ export type RoomsStore = {
 export const RoomStateEmpty: gameRoomState = {
   id: 0,
   isGameRoomFull: false,
+  status: 'open',
   teammates: [],
 };
 
@@ -46,6 +47,7 @@ function readStoredRoomState(): gameRoomState {
     return {
       id: parsed.id,
       isGameRoomFull: Boolean(parsed.isGameRoomFull),
+      status: parsed.status === 'locked' ? 'locked' : 'open',
       teammates: parsed.teammates,
     };
   } catch {

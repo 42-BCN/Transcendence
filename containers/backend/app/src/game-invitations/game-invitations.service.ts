@@ -245,7 +245,7 @@ export async function sendGameInvitation(
     );
   }
 
-  if (room.room.id <= 0 || room.room.isGameRoomFull) {
+  if (room.room.id <= 0 || room.room.isGameRoomFull || room.room.status !== 'open') {
     throw new ApiError('GAME_INVITATION_ROOM_UNAVAILABLE');
   }
 

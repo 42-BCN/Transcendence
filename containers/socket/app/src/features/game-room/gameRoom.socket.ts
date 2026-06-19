@@ -2,7 +2,6 @@ import type { Namespace, Socket } from 'socket.io';
 import type { gameRoomState } from '@contracts/sockets/rooms/gameRooms.schema';
 
 import {
-  cancelPendingGameRoomRemoval,
   decrementGameRoomConnection,
   gameRoomsManager,
   getRoomMemberKey,
@@ -51,21 +50,17 @@ export function cancelRoomInvitations(roomId: number): void {
   }).catch(() => undefined);
 }
 
-function cancelRoomInvitationsIfClosed(gameRoom: gameRoomState): void {
-  if (gameRoom.teammates.length === 0) {
-    cancelRoomInvitations(gameRoom.id);
-  }
-}
-
 type EmptyGameRoomState = {
   id: 0;
   isGameRoomFull: false;
+  status: 'open';
   teammates: [];
 };
 
 const EMPTY_GAME_ROOM_STATE: EmptyGameRoomState = {
   id: 0,
   isGameRoomFull: false,
+  status: 'open',
   teammates: [],
 };
 
@@ -89,6 +84,10 @@ function emitGameRoomError(socket: Socket, message: string) {
 
 export function emitGameRoomStateToMember(memberKey: string, gameRoom: gameRoomState) {
   gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:room:update', gameRoom);
+}
+
+export function emitEmptyGameRoomStateToMember(memberKey: string) {
+  gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:room:update', EMPTY_GAME_ROOM_STATE);
 }
 
 export function emitGameRoomErrorToMember(memberKey: string, message: string) {
@@ -190,13 +189,24 @@ function handleLeaveResult(
     return;
   }
 
-  const { id: gameRoomId } = gameRoom;
+  const { room, closed, affectedMemberKeys } = gameRoom;
+  const { id: gameRoomId } = room;
   const gameRoomChannel = getGameRoomChannel(gameRoomId);
-  unsubscribeMemberFromGameRoomChannel(memberKey, gameRoomId);
   socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
-  socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
-  emitGameRoomStateToMember(memberKey, EMPTY_GAME_ROOM_STATE);
-  cancelRoomInvitationsIfClosed(gameRoom);
+
+  if (closed) {
+    gameRoomNamespace?.to(gameRoomChannel).emit('gameRoom:room:update', EMPTY_GAME_ROOM_STATE);
+    for (const affectedMemberKey of affectedMemberKeys) {
+      emitEmptyGameRoomStateToMember(affectedMemberKey);
+      unsubscribeMemberFromGameRoomChannel(affectedMemberKey, gameRoomId);
+    }
+    cancelRoomInvitations(gameRoomId);
+  } else {
+    unsubscribeMemberFromGameRoomChannel(memberKey, gameRoomId);
+    socket.to(gameRoomChannel).emit('gameRoom:room:update', room);
+    emitEmptyGameRoomStateToMember(memberKey);
+  }
+
   gameRoomNamespace?.to(getGameRoomMemberChannel(memberKey)).emit('gameRoom:debug:msg', 'left room');
 }
 
@@ -267,10 +277,22 @@ export function registerGameRoomSocket(nsp: Namespace) {
           return;
         }
 
-        const gameRoomChannel = getGameRoomChannel(gameRoom.id);
+        const gameRoomChannel = getGameRoomChannel(gameRoom.room.id);
         socket.to(gameRoomChannel).emit('gameRoom:room:left', username);
-        socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom);
-        cancelRoomInvitationsIfClosed(gameRoom);
+
+        if (gameRoom.closed) {
+          gameRoomNamespace?.to(gameRoomChannel).emit('gameRoom:room:update', EMPTY_GAME_ROOM_STATE);
+          for (const affectedMemberKey of gameRoom.affectedMemberKeys) {
+            emitEmptyGameRoomStateToMember(affectedMemberKey);
+            unsubscribeMemberFromGameRoomChannel(affectedMemberKey, gameRoom.room.id);
+          }
+          cancelRoomInvitations(gameRoom.room.id);
+        } else {
+          socket.to(gameRoomChannel).emit('gameRoom:room:update', gameRoom.room);
+          emitEmptyGameRoomStateToMember(expiredMemberKey);
+          unsubscribeMemberFromGameRoomChannel(expiredMemberKey, gameRoom.room.id);
+        }
+
         if (typeof socket.data.userId === 'string' && socket.data.userId.length > 0) {
           notifyPendingInvitees(socket.data.userId as string);
         }

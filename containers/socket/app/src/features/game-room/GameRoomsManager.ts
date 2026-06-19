@@ -7,6 +7,11 @@ type GameRoomError =
   | 'error:no_assigned_room';
 
 type Teammate = gameRoomState['teammates'][number];
+export type GameRoomRemovalResult = {
+  room: gameRoomState;
+  closed: boolean;
+  affectedMemberKeys: string[];
+};
 
 const MAX_TEAMMATES_PER_ROOM = 4;
 
@@ -58,6 +63,7 @@ export class GameRoomsManager {
     const newGameRoom: gameRoomState = {
       id: newGameRoomId,
       isGameRoomFull: false,
+      status: 'open',
       teammates: [],
     };
 
@@ -71,7 +77,7 @@ export class GameRoomsManager {
 
   getFirstNonEmtyGameRoomId(): gameRoomState | undefined {
     for (const gameRoom of this.gameRooms.values()) {
-      if (!gameRoom.isGameRoomFull) {
+      if (this.isRoomJoinable(gameRoom)) {
         return gameRoom;
       }
     }
@@ -113,7 +119,7 @@ export class GameRoomsManager {
       return 'error:invalid_room_id';
     }
 
-    if (gameRoom.teammates.length >= MAX_TEAMMATES_PER_ROOM) {
+    if (!this.isRoomJoinable(gameRoom)) {
       console.log('[ gameRoom ][ error ] full_room: ');
       console.log('\t-->\tmember key:', memberKey);
       console.log('\t-->\tuser name:', userName);
@@ -123,7 +129,7 @@ export class GameRoomsManager {
 
     const teammate: Teammate = { userId: memberKey, userName };
     gameRoom.teammates.push(teammate);
-    gameRoom.isGameRoomFull = gameRoom.teammates.length >= MAX_TEAMMATES_PER_ROOM;
+    this.syncRoomFlags(gameRoom);
     this.memberRoomIds.set(memberKey, gameRoomId);
 
     return gameRoom;
@@ -137,7 +143,7 @@ export class GameRoomsManager {
         teammate.userName = userName;
       }
 
-      if (existingRoom.isGameRoomFull) {
+      if (!this.isRoomJoinable(existingRoom)) {
         return 'error:full_room';
       }
 
@@ -153,7 +159,7 @@ export class GameRoomsManager {
     return result;
   }
 
-  removeUserFromGameRoom(memberKey: string): gameRoomState | 'error:no_assigned_room' {
+  removeUserFromGameRoom(memberKey: string): GameRoomRemovalResult | 'error:no_assigned_room' {
     const gameRoomId = this.memberRoomIds.get(memberKey);
     if (gameRoomId === undefined) {
       console.log('[ gameRoom ][ error ] no_assigned_room: ');
@@ -170,14 +176,36 @@ export class GameRoomsManager {
     }
 
     gameRoom.teammates = gameRoom.teammates.filter((item) => item.userId !== memberKey);
-    gameRoom.isGameRoomFull = false;
+    const shouldCloseRoom = gameRoom.status === 'locked' || gameRoom.teammates.length === 0;
 
-    if (gameRoom.teammates.length === 0) {
+    if (shouldCloseRoom) {
+      const affectedMemberKeys = [memberKey, ...gameRoom.teammates.map((item) => item.userId)];
+      for (const affectedMemberKey of affectedMemberKeys) {
+        this.memberRoomIds.delete(affectedMemberKey);
+      }
+
       this.gameRooms.delete(gameRoomId);
       this.onRoomDeleted?.(gameRoomId);
+
+      return {
+        room: {
+          ...gameRoom,
+          teammates: [],
+          isGameRoomFull: false,
+          status: gameRoom.status,
+        },
+        closed: true,
+        affectedMemberKeys,
+      };
     }
 
-    return gameRoom;
+    this.syncRoomFlags(gameRoom);
+
+    return {
+      room: gameRoom,
+      closed: false,
+      affectedMemberKeys: [memberKey],
+    };
   }
 
   private getExistingRoomForMember(memberKey: string) {
@@ -195,4 +223,12 @@ export class GameRoomsManager {
     return room;
   }
 
+  private isRoomJoinable(room: gameRoomState) {
+    return room.status === 'open' && room.teammates.length < MAX_TEAMMATES_PER_ROOM;
+  }
+
+  private syncRoomFlags(room: gameRoomState) {
+    room.isGameRoomFull = room.teammates.length >= MAX_TEAMMATES_PER_ROOM;
+    room.status = room.isGameRoomFull ? 'locked' : 'open';
+  }
 }

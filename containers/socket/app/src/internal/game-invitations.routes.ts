@@ -9,6 +9,7 @@ import {
   broadcastGameRoomState,
   cancelRoomInvitations,
   emitGameRoomJoined,
+  emitEmptyGameRoomStateToMember,
   emitGameRoomStateToMember,
   subscribeMemberToGameRoomChannel,
   unsubscribeMemberFromGameRoomChannel,
@@ -62,13 +63,21 @@ function toMemberKey(userId: string) {
 
 function clearClosedPreviousRoom(
   memberKey: string,
-  room: Exclude<ReturnType<typeof gameRoomsManager.removeUserFromGameRoom>, string>,
+  removal: Exclude<ReturnType<typeof gameRoomsManager.removeUserFromGameRoom>, string>,
 ) {
-  unsubscribeMemberFromGameRoomChannel(memberKey, room.id);
-  broadcastGameRoomState(room.id, room);
-  if (room.teammates.length === 0) {
+  const { room, closed, affectedMemberKeys } = removal;
+  if (closed) {
+    for (const affectedMemberKey of affectedMemberKeys) {
+      emitEmptyGameRoomStateToMember(affectedMemberKey);
+      unsubscribeMemberFromGameRoomChannel(affectedMemberKey, room.id);
+    }
     cancelRoomInvitations(room.id);
+    return;
   }
+
+  unsubscribeMemberFromGameRoomChannel(memberKey, room.id);
+  emitEmptyGameRoomStateToMember(memberKey);
+  broadcastGameRoomState(room.id, room);
 }
 
 function clearPreviousRoom(memberKey: string) {
@@ -81,7 +90,7 @@ function clearPreviousRoom(memberKey: string) {
 function isRoomJoinable(roomId: number) {
   const room = gameRoomsManager.getGameRoomById(roomId);
   if (!room) return { ok: false as const, reason: 'room_missing' };
-  if (room.isGameRoomFull) return { ok: false as const, reason: 'room_full' };
+  if (room.status !== 'open' || room.isGameRoomFull) return { ok: false as const, reason: 'room_full' };
   return { ok: true as const, room };
 }
 
@@ -91,7 +100,7 @@ function canUserReceiveInvitation(invitedUserId: string, roomId: number) {
   if (typeof inviteeCurrentRoom !== 'string' && inviteeCurrentRoom.id === roomId) {
     return { ok: false as const, reason: 'already_in_room' };
   }
-  if (typeof inviteeCurrentRoom !== 'string' && inviteeCurrentRoom.isGameRoomFull) {
+  if (typeof inviteeCurrentRoom !== 'string') {
     return { ok: false as const, reason: 'already_in_room' };
   }
   return isRoomJoinable(roomId);

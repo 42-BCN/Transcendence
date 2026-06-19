@@ -10,6 +10,7 @@ export type PlayerState = {
 export type gameRoomState = {
 	id: number;
 	isGameRoomFull: boolean;
+	status: 'open' | 'locked';
 	teammates: PlayerState[];
 };
 
@@ -27,4 +28,3 @@ export type ServerToClientGameRoomsEvents = {
   'gameRoom:room:joined': (username: string) => void;
   'gameRoom:room:left': (username: string) => void;
 };
-
