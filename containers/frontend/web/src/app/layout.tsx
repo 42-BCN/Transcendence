@@ -18,7 +18,7 @@ export const metadata = createAppMetadata({
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  interactiveWidget: 'overlays-content',
+  interactiveWidget: 'resize-content',
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
