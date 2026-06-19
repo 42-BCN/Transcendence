@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { envPublic } from '@/lib/config/env.public';
 
 import { ensureChatSessionIdentity } from './socket';
 import {
@@ -30,34 +31,38 @@ export function DirectMessagesSocketManager({
 }: DirectMessagesSocketManagerProps) {
   useEffect(() => {
     const handleConnect = () => {
-      console.log('✅ Connected to direct-messages socket server', directMessagesSocket.id);
+      envPublic.processEnv === 'development' &&
+        console.log('✅ Connected to direct-messages socket server', directMessagesSocket.id);
     };
 
     const handleConnectError = (error: Error) => {
-      console.error('❌ Direct messages socket connect error:', error);
+      envPublic.processEnv === 'development' &&
+        console.error('❌ Direct messages socket connect error:', error);
     };
 
     const handleDisconnect = (reason: string) => {
-      console.log('⚠️ Disconnected from direct-messages socket server:', reason);
+      envPublic.processEnv === 'development' &&
+        console.log('⚠️ Disconnected from direct-messages socket server:', reason);
     };
 
     const handleMessage = (message: DirectMessage) => {
-      console.log('📨 Received message:', message);
+      envPublic.processEnv === 'development' && console.log('📨 Received message:', message);
       onDirectMessage(message);
     };
 
     const handleHistory = (history: DirectMessageHistory) => {
-      console.log('📜 Received history:', history.length, 'messages');
+      envPublic.processEnv === 'development' &&
+        console.log('📜 Received history:', history.length, 'messages');
       onDirectHistory(history);
     };
 
     const handleRead = (payload: DirectMessageRead) => {
-      console.log('👀 Received read state:', payload);
+      envPublic.processEnv === 'development' && console.log('👀 Received read state:', payload);
       onDirectRead(payload);
     };
 
     const handleError = (error: DirectMessageError) => {
-      console.error('⚠️ Direct message error:', error);
+      envPublic.processEnv === 'development' && console.error('⚠️ Direct message error:', error);
       onDirectError(error);
     };
 
@@ -87,7 +92,8 @@ export function DirectMessagesSocketManager({
         }
       })
       .catch((error) => {
-        console.error('Failed to initialize direct-messages session identity', error);
+        envPublic.processEnv === 'development' &&
+          console.error('Failed to initialize direct-messages session identity', error);
       });
 
     return () => {

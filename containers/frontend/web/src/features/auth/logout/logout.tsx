@@ -6,6 +6,7 @@ import { logoutAction } from './logout.action';
 import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { Button as AriaButton } from 'react-aria-components';
+import { envPublic } from '@/lib/config/env.public';
 
 type LogoutProps = {
   onPress?: () => void;
@@ -28,7 +29,7 @@ export function Logout({
     const data = await logoutAction();
     if (!data.ok) {
       // TODO handle error
-      console.error('Failed to log out');
+      envPublic.processEnv === 'development' && console.error('Failed to log out');
     }
 
     router.push('/login');
@@ -54,7 +55,9 @@ export function Logout({
         <div className={navigationIconWrapperClassName}>
           <Icon name="logOut" size={20} />
         </div>
-        {isExpanded ? <span className="whitespace-nowrap pe-3 leading-none">{visibleLabel}</span> : null}
+        {isExpanded ? (
+          <span className="whitespace-nowrap pe-3 leading-none">{visibleLabel}</span>
+        ) : null}
       </AriaButton>
     );
   }
