@@ -7,9 +7,5 @@ export const viewport = {
 };
 
 export default function MessagesRouteLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="h-dvh w-full overflow-hidden lg:h-auto lg:overflow-visible">
-      {children}
-    </div>
-  );
+  return <div className="flex h-dvh min-h-0 w-full">{children}</div>;
 }
